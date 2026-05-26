@@ -49,7 +49,7 @@ networks:
   penpot:
 
 volumes:
-  penpot_postgres_v15:
+  penpot_opengauss:
   penpot_assets:
   # penpot_traefik:
 
@@ -134,7 +134,7 @@ services:
       ## Database connection parameters. Don't touch them unless you are using custom
       ## postgresql connection parameters.
 
-      PENPOT_DATABASE_URI: postgresql://penpot-postgres/penpot
+      PENPOT_DATABASE_URI: opengauss://penpot-postgres:5432/penpot?preferQueryMode=simple
       PENPOT_DATABASE_USERNAME: penpot
       PENPOT_DATABASE_PASSWORD: penpot
 
@@ -206,28 +206,27 @@ services:
       PENPOT_REDIS_URI: redis://penpot-valkey/0
 
   penpot-postgres:
-    image: "postgres:15"
+    image: "opengauss/opengauss:5.0.0"
     restart: always
     stop_signal: SIGINT
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U penpot"]
+      test: ["CMD-SHELL", "pg_isready -U penpot -d penpot"]
       interval: 2s
       timeout: 10s
       retries: 5
-      start_period: 2s
+      start_period: 20s
 
     volumes:
-      - penpot_postgres_v15:/var/lib/postgresql/data
+      - penpot_opengauss:/var/lib/opengauss/data
 
     networks:
       - penpot
 
     environment:
-      - POSTGRES_INITDB_ARGS=--data-checksums
-      - POSTGRES_DB=penpot
-      - POSTGRES_USER=penpot
-      - POSTGRES_PASSWORD=penpot
+      - GS_PASSWORD=Penpot@123
+      - GS_USERNAME=penpot
+      - GS_DBNAME=penpot
 
   penpot-valkey:
     image: valkey/valkey:8.1

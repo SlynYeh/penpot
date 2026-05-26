@@ -383,7 +383,7 @@
     (try
       (-> (db/insert! conn :profile params)
           (profile/decode-row))
-      (catch org.postgresql.util.PSQLException cause
+      (catch com.huawei.opengauss.jdbc.util.PSQLException cause
         (if (db/duplicate-key-error? cause)
           (ex/raise :type :validation
                     :code :email-already-exists

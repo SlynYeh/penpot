@@ -8,6 +8,8 @@ ENV LANG='C.UTF-8' \
     TZ=Etc/UTC
 
 RUN set -ex; \
+    sed -i 's|http://archive.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list.d/ubuntu.sources; \
+    sed -i 's|http://security.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list.d/ubuntu.sources; \
     apt-get -qq update; \
     apt-get -qq dist-upgrade; \
     apt-get -qqy --no-install-recommends install \
@@ -59,6 +61,8 @@ ENV LANG='C.UTF-8' \
 
 RUN set -ex; \
     useradd -U -M -u 1001 -s /bin/false -d /opt/penpot penpot; \
+    sed -i 's|http://archive.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list.d/ubuntu.sources; \
+    sed -i 's|http://security.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list.d/ubuntu.sources; \
     apt-get -qq update; \
     apt-get -qq dist-upgrade; \
     apt-get -qqy --no-install-recommends install \

@@ -235,7 +235,7 @@
     [:profile-complaint-max-age {:optional true} ::ct/duration]
     [:profile-complaint-threshold {:optional true} ::sm/int]
 
-    [:redis-uri {:optional true} ::sm/uri]
+    [:redis-uri {:optional true} :string]
 
     [:email-domain-blacklist {:optional true} ::fs/path]
     [:email-domain-whitelist {:optional true} ::fs/path]

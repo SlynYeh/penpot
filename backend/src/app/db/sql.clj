@@ -31,10 +31,10 @@
    (let [opts (merge default-opts opts)
          opts (cond-> opts
                 (::db/on-conflict-do-nothing? opts)
-                (assoc :suffix "ON CONFLICT DO NOTHING")
+                (assoc :suffix "")
 
                 (::on-conflict-do-nothing opts)
-                (assoc :suffix "ON CONFLICT DO NOTHING"))]
+                (assoc :suffix ""))]
      (sql/for-insert table key-map opts))))
 
 (defn insert-many
@@ -42,7 +42,7 @@
   (let [opts (merge default-opts opts)
         opts (cond-> opts
                (::on-conflict-do-nothing opts)
-               (assoc :suffix "ON CONFLICT DO NOTHING"))]
+               (assoc :suffix ""))]
     (sql/for-insert-multi table cols rows opts)))
 
 (defn select

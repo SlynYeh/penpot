@@ -87,15 +87,13 @@
   [info]
   (= (:mtype info) "image/svg+xml"))
 
-;; NOTE: we use the `on conflict do update` instead of `do nothing`
-;; because postgresql does not returns anything if no update is
-;; performed, the `do update` does the trick.
+;; NOTE: we removed the `on conflict do update` trick because
+;; OpenGauss does not support ON CONFLICT syntax.
 
 (def sql:create-file-media-object
   "insert into file_media_object (id, file_id, is_local, name, media_id, thumbnail_id, width, height, mtype)
    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-       on conflict (id) do update set created_at=file_media_object.created_at
-       returning *")
+   returning *")
 
 ;; NOTE: the following function executes without a transaction, this
 ;; means that if something fails in the middle of this function, it

@@ -19,6 +19,7 @@
    [app.db.sql :as sql]
    [app.metrics :as mtx]
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [clojure.set :as set]
    [integrant.core :as ig]
    [next.jdbc :as jdbc]
@@ -112,9 +113,10 @@
   [{:keys [::uri] :as cfg}]
 
   ;; (app.common.pprint/pprint cfg)
-  (let [config   (HikariConfig.)
-        max-size (::max-size cfg)
-        min-size (or (::min-size cfg) max-size)]
+  (let [uri (-> uri
+                (str/replace #"\?preferQueryMode=simple" "")
+                (str/replace #"&preferQueryMode=simple" ""))
+        config (HikariConfig.)]
     (doto config
       (.setJdbcUrl           (str "jdbc:" uri))
       (.setPoolName          (d/name (::name cfg)))
@@ -330,7 +332,7 @@
       (try
         (jdbc/execute-one! conn sql opts)
         (catch Exception e
-          (if (duplicate-key-error? (ex-cause e))
+          (if (duplicate-key-error? e)
             nil
             (throw e))))
       (jdbc/execute-one! conn sql opts))))
@@ -358,7 +360,7 @@
       (try
         (jdbc/execute! conn sql opts)
         (catch Exception e
-          (if (duplicate-key-error? (ex-cause e))
+          (if (duplicate-key-error? e)
             nil
             (throw e))))
       (jdbc/execute! conn sql opts))))

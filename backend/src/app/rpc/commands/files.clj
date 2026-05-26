@@ -542,7 +542,7 @@
 (def ^:private sql:team-shared-files
   "WITH file_library_agg AS (
       SELECT flr.file_id,
-             coalesce(array_agg(flr.library_file_id) filter (WHERE flr.library_file_id IS NOT NULL), '{}') AS library_file_ids
+             coalesce(array_agg(CASE WHEN flr.library_file_id IS NOT NULL THEN flr.library_file_id END), '{}') AS library_file_ids
         FROM file_library_rel flr
        GROUP BY flr.file_id
    )
@@ -1071,15 +1071,16 @@
 
 (def sql:link-file-to-library
   "insert into file_library_rel (file_id, library_file_id)
-   values (?, ?)
-       on conflict do nothing;")
+   values (?, ?)")
 
 (defn link-file-to-library
   [conn {:keys [file-id library-id] :as params}]
-  (db/exec-one! conn [sql:link-file-to-library file-id library-id])
-  (bfc/upsert-file-library-sync! conn {:file-id file-id
-                                       :library-file-id library-id
-                                       :synced-at (ct/now)}))
+  (try
+    (db/exec-one! conn [sql:link-file-to-library file-id library-id])
+    (catch com.huawei.opengauss.jdbc.util.PSQLException cause
+      (if (db/duplicate-key-error? cause)
+        nil
+        (throw cause)))))
 
 (def ^:private
   schema:link-file-to-library

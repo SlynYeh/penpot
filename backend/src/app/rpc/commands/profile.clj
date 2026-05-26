@@ -621,5 +621,5 @@
 (defn decode-row
   [{:keys [props] :as row}]
   (cond-> row
-    (db/pgobject? props "jsonb")
+    (db/pgobject? props)
     (assoc :props (db/decode-transit-pgobject props))))

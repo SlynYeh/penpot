@@ -689,6 +689,16 @@
         (t/decode-str val)
         val))))
 
+(defn decode-transit-jsonb
+  "Decode a JSONB/JSON value regardless of whether the JDBC driver
+  returns it as a PGobject or a raw String (GaussDB may return raw
+  strings for JSONB columns)."
+  [value]
+  (cond
+    (pgobject? value) (decode-transit-pgobject value)
+    (string? value)   (t/decode-str value)
+    :else             value))
+
 (defn inet
   [ip-addr]
   (when ip-addr

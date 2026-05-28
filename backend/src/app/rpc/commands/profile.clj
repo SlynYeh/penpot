@@ -9,6 +9,7 @@
    [app.auth :as auth]
    [app.common.data :as d]
    [app.common.exceptions :as ex]
+   [app.common.logging :as l]
    [app.common.schema :as sm]
    [app.common.time :as ct]
    [app.common.types.plugins :refer [schema:plugin-registry]]
@@ -115,9 +116,10 @@
       (with-nitrate-licence profile cfg))
 
     (catch Throwable cause
-      (if (= :not-found (-> cause ex-data :type))
-        {:id uuid/zero :fullname "Anonymous User"}
-        (throw cause)))))
+      (l/wrn :hint "get-profile failed, returning anonymous"
+             :profile-id (str profile-id)
+             :cause cause)
+      {:id uuid/zero :fullname "Anonymous User"})))
 
 (defn get-profile
   "Get profile by id. Throws not-found exception if no profile found."

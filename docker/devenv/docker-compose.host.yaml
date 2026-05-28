@@ -1,6 +1,6 @@
 # Override to expose service ports to host for local development
 services:
-  postgres:
+  opengauss:
     ports:
       - "5432:5432"
 

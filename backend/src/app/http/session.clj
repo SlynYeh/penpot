@@ -212,8 +212,8 @@
   (try
     (tokens/verify cfg {:token token :iss "authentication"})
     (catch Throwable cause
-      (l/trc :hint "exception on decoding token"
-             :token token
+      (l/wrn :hint "exception on decoding token"
+             :token (str token)
              :cause cause))))
 
 (defn get-session
@@ -259,36 +259,47 @@
                 ;; BACKWARD COMPATIBILITY WITH OLD TOKENS
                 0 (read-session manager token)
                 1 (some->> (:sid claims) (read-session manager))
-                nil)
+                nil)]
 
-              request
-              (cond-> request
-                (some? session)
-                (-> (assoc ::profile-id (:profile-id session))
-                    (assoc ::session session)))
+          (when (and (nil? session) (some? claims))
+            (l/wrn :hint "session not found for valid token"
+                   :sid (str (:sid claims))
+                   :profile-id (str (:uid claims))))
 
-              response
-              (binding [ct/*clock* (clock/get-clock (:profile-id session))]
-                (handler request))]
+          (let [request
+                (cond-> request
+                  (some? session)
+                  (-> (assoc ::profile-id (:profile-id session))
+                      (assoc ::session session)))
 
-          (if (and session (renew-session? session))
-            (let [session (->> session
-                               (update-session manager)
-                               (assign-token cfg))]
-              (assign-session-cookie response session))
-            response))
+                response
+                (binding [ct/*clock* (clock/get-clock (:profile-id session))]
+                  (handler request))]
+
+            (if (and session (renew-session? session))
+              (let [session (->> session
+                                 (update-session manager)
+                                 (assign-token cfg))]
+                (assign-session-cookie response session))
+              response)))
 
         (= type :bearer)
         (let [session (case (:ver metadata)
                         ;; BACKWARD COMPATIBILITY WITH OLD TOKENS
                         0 (read-session manager token)
                         1 (some->> (:sid claims) (read-session manager))
-                        nil)
-              request (cond-> request
-                        (some? session)
-                        (-> (assoc ::profile-id (:profile-id session))
-                            (assoc ::session session)))]
-          (handler request))
+                        nil)]
+
+          (when (and (nil? session) (some? claims))
+            (l/wrn :hint "session not found for valid bearer token"
+                   :sid (str (:sid claims))
+                   :profile-id (str (:uid claims))))
+
+          (let [request (cond-> request
+                          (some? session)
+                          (-> (assoc ::profile-id (:profile-id session))
+                              (assoc ::session session)))]
+            (handler request)))
 
         :else
         (handler request)))))

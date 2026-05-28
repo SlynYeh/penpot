@@ -129,16 +129,16 @@
         updated     (db/exec-one! cfg [sql:update-file-data
                                        modified-at deleted-at backend metadata data
                                        file-id id])]
-    (when-not updated
-      (db/exec-one! cfg [sql:insert-file-data
-                         file-id id
-                         created-at
-                         modified-at
-                         deleted-at
-                         type
-                         backend
-                         metadata
-                         data]))))
+    (or updated
+        (db/exec-one! cfg [sql:insert-file-data
+                           file-id id
+                           created-at
+                           modified-at
+                           deleted-at
+                           type
+                           backend
+                           metadata
+                           data]))))
 
 (defn- handle-persistence
   [cfg {:keys [type backend id file-id data] :as params}]
@@ -245,9 +245,8 @@
     (some->> (:metadata params)
              (process-metadata cfg))
 
-    (-> (handle-persistence cfg params)
-        (db/get-update-count)
-        (pos?))))
+    (some? (handle-persistence cfg params))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; POINTER-MAP

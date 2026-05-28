@@ -79,11 +79,15 @@
   (perms/make-check-fn has-read-permissions?))
 
 (defn decode-row
-  [{:keys [features subscription] :as row}]
+  [{:keys [features subscription sub-type sub-status sub-seats] :as row}]
   (when row
     (cond-> row
       (some? features) (assoc :features (db/decode-pgarray features #{}))
-      (some? subscription) (assoc :subscription (db/decode-transit-pgobject subscription)))))
+      (some? subscription) (assoc :subscription (db/decode-transit-pgobject subscription))
+      (some? sub-type) (assoc :subscription {:type sub-type
+                                             :status sub-status
+                                             :seats (some-> sub-seats parse-long)})
+      :always (dissoc :sub-type :sub-status :sub-seats))))
 
 ;; FIXME: move
 
@@ -136,15 +140,12 @@
           tp.is_admin,
           tp.can_edit,
           (t.id = ?) AS is_default,
-
-          jsonb_build_object(
-            '~:type', COALESCE(p.props->'~:subscription'->>'~:type', 'professional'),
-            '~:status', CASE COALESCE(p.props->'~:subscription'->>'~:type', 'professional')
-                          WHEN 'professional' THEN 'active'
-                          ELSE COALESCE(p.props->'~:subscription'->>'~:status', 'incomplete')
-                       END,
-            '~:seats', p.props->'~:subscription'->'~:quantity'
-          ) AS subscription
+          COALESCE(p.props->'~:subscription'->>'~:type', 'professional') AS sub_type,
+          CASE COALESCE(p.props->'~:subscription'->>'~:type', 'professional')
+            WHEN 'professional' THEN 'active'
+            ELSE COALESCE(p.props->'~:subscription'->>'~:status', 'incomplete')
+          END AS sub_status,
+          p.props->'~:subscription'->>'~:quantity' AS sub_seats
      FROM team_profile_rel AS tp
      JOIN team AS t ON (t.id = tp.team_id)
      JOIN team_profile_rel AS tpr

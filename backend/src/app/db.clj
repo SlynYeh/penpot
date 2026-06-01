@@ -316,6 +316,28 @@
                 (into default-opts (rename-opts opts)))]
      (jdbc/execute-one! conn sv opts))))
 
+(defn set-config!
+  "Set a database configuration parameter via SET statement.
+  Silently ignores 'unrecognized configuration parameter' errors
+  for cross-database compatibility."
+  [conn sql]
+  (try
+    (exec-one! conn [sql])
+    (catch Throwable e
+      (if (str/includes? (ex-message e) "unrecognized configuration parameter")
+        (l/wrn :hint "skipping unrecognized configuration parameter"
+               :sql sql
+               :message (ex-message e))
+        (throw e)))))
+
+(defn disable-idle-timeout!
+  "Disable idle-in-transaction timeout (GaussDB: idle_in_transaction_timeout)
+  to allow long-running operations."
+  [conn & {:keys [local?] :or {local? true}}]
+  (let [scope (if local? "LOCAL" "")
+        sql   (str/trim (str "SET " scope " idle_in_transaction_timeout = 0"))]
+    (exec-one! conn [sql])))
+
 (defn insert!
   "A helper that builds an insert sql statement and executes it. By
   default returns the inserted row with all the field; you can delimit

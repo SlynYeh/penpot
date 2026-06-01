@@ -53,7 +53,7 @@
       (try
         (db/tx-run! cfg (fn [{:keys [::db/conn]}]
                           (db/exec-one! conn ["SET LOCAL statement_timeout=0;"])
-                          (db/exec-one! conn ["SET LOCAL idle_in_transaction_session_timeout=0;"])
+                          (db/disable-idle-timeout! conn)
                           (when (lock-scheduled-task! conn id)
                             (db/update! conn :scheduled-task
                                         {:cron-expr (str cron)

@@ -490,7 +490,7 @@
         process-items
         (fn [{:keys [::db/conn] :as system}]
           (db/exec! conn ["SET statement_timeout = 0"])
-          (db/exec! conn ["SET idle_in_transaction_session_timeout = 0"])
+          (db/disable-idle-timeout! conn :local? false)
 
           (->> (db/plan conn query {:fetch-size (* max-jobs 3)})
                (transduce (take max-items)

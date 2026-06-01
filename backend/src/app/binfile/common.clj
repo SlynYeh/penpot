@@ -651,7 +651,7 @@
 (defn disable-database-timeouts!
   [cfg]
   (let [conn (db/get-connection cfg)]
-    (db/exec-one! conn ["SET LOCAL idle_in_transaction_session_timeout = 0"])
+    (db/disable-idle-timeout! conn)
     (db/exec-one! conn ["SET CONSTRAINTS ALL DEFERRED"])))
 
 (defn invalidate-thumbnails

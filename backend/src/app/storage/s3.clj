@@ -250,30 +250,65 @@
 
 (defn- make-request-body
   "Creates an AsyncRequestBody from content object.
-  Reads entire content into bytes first to ensure consistent SHA256 calculation."
+  Reads entire content into bytes first to ensure consistent SHA256 calculation.
+  Logs size comparison for debugging potential SHA256 mismatches."
   [counter content]
-  (let [input (io/input-stream content)
-        bytes (try
-                (.readAllBytes ^InputStream input)
-                (finally
-                  (.close ^InputStream input)))]
+  (let [declared-size (impl/get-size content)
+        input         (io/input-stream content)
+        bytes         (try
+                        (.readAllBytes ^InputStream input)
+                        (finally
+                          (.close ^InputStream input)))
+        actual-size   (alength ^bytes bytes)]
+    (l/dbg :hint "s3 request body prepared"
+           :declared-size declared-size
+           :actual-size actual-size
+           :size-match? (= declared-size actual-size))
+    (when (not= declared-size actual-size)
+      (l/wrn :hint "s3 content size mismatch detected"
+             :declared-size declared-size
+             :actual-size actual-size
+             :delta (- declared-size actual-size)))
     (AsyncRequestBody/fromBytes bytes)))
 
 (defn- put-object
   [{:keys [::client ::bucket ::prefix ::counter]} {:keys [id] :as object} content]
-  (let [path    (dm/str prefix (impl/id->path id))
-        mdata   (meta object)
-        mtype   (:content-type mdata "application/octet-stream")
-        rbody   (make-request-body counter content)
-        request (.. (PutObjectRequest/builder)
-                    (bucket bucket)
-                    (contentType mtype)
-                    (key path)
-                    (build))]
+  (let [path      (dm/str prefix (impl/id->path id))
+        mdata     (meta object)
+        mtype     (:content-type mdata "application/octet-stream")
+        content-size (impl/get-size content)
+        rbody     (make-request-body counter content)
+        request   (.. (PutObjectRequest/builder)
+                      (bucket bucket)
+                      (contentType mtype)
+                      (key path)
+                      (build))]
+    (l/dbg :hint "s3 put-object start"
+           :object-id (str id)
+           :bucket bucket
+           :key path
+           :content-type mtype
+           :content-size content-size)
     (->> (.putObject ^S3AsyncClient client
                      ^PutObjectRequest request
                      ^AsyncRequestBody rbody)
-         (p/fmap (constantly object)))))
+         (p/fmap (fn [result]
+                   (l/dbg :hint "s3 put-object success"
+                          :object-id (str id)
+                          :bucket bucket
+                          :key path
+                          :size content-size)
+                   object))
+         (p/merr (fn [cause]
+                   (l/error :hint "s3 put-object failed"
+                            :object-id (str id)
+                            :bucket bucket
+                            :key path
+                            :content-type mtype
+                            :content-size content-size
+                            :error (ex-message cause)
+                            :cause cause)
+                   cause)))))
 
 ;; FIXME: research how to avoid reflection on close method
 (defn- path->stream

@@ -34,7 +34,13 @@
    software.amazon.awssdk.core.async.AsyncRequestBody
    software.amazon.awssdk.core.async.AsyncResponseTransformer
    software.amazon.awssdk.core.client.config.ClientAsyncConfiguration
-   software.amazon.awssdk.core.ResponseBytes
+   software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
+   software.amazon.awssdk.core.interceptor.Context$AfterTransmission
+   software.amazon.awssdk.core.interceptor.Context$BeforeTransmission
+   software.amazon.awssdk.core.interceptor.ExecutionAttributes
+   software.amazon.awssdk.core.interceptor.ExecutionInterceptor
+   software.amazon.awssdk.http.SdkHttpRequest
+   software.amazon.awssdk.http.SdkHttpResponse
    software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient
    software.amazon.awssdk.http.nio.netty.SdkEventLoopGroup
    software.amazon.awssdk.regions.Region
@@ -194,6 +200,39 @@
   [region]
   (Region/of (name region)))
 
+(defn- s3-debug-interceptor
+  "AWS SDK ExecutionInterceptor that logs key request/response details
+  for diagnosing S3 compatibility issues (e.g., SHA256 mismatches)."
+  []
+  (reify ExecutionInterceptor
+    (^void beforeTransmission [_ ^Context$BeforeTransmission ctx ^ExecutionAttributes attrs]
+      (let [req ^SdkHttpRequest (.httpRequest ctx)]
+        (l/dbg :hint "s3 request ->"
+               :method (str (.method req))
+               :uri (str (.getUri req))
+               :x-amz-content-sha256 (some-> (.firstMatchingHeader req "x-amz-content-sha256")
+                                             (str))
+               :content-type (some-> (.firstMatchingHeader req "Content-Type")
+                                     (str))
+               :content-length (some-> (.firstMatchingHeader req "Content-Length")
+                                       (str))
+               :transfer-encoding (some-> (.firstMatchingHeader req "Transfer-Encoding")
+                                          (str))
+               :amz-checksum (some-> (.firstMatchingHeader req "x-amz-checksum-sha256")
+                                     (str)))))
+    (^void afterTransmission [_ ^Context$AfterTransmission ctx ^ExecutionAttributes attrs]
+      (let [rsp ^SdkHttpResponse (.httpResponse ctx)]
+        (l/dbg :hint "s3 response <-"
+               :status (.statusCode rsp)
+               :status-text (some-> (.statusText rsp) (str))
+               :x-amz-request-id (some-> (.firstMatchingHeader rsp "x-amz-request-id")
+                                         (str)))))
+    (^void onExecutionFailure [_ ^software.amazon.awssdk.core.interceptor.Context$FailedExecution ctx ^ExecutionAttributes attrs]
+      (let [cause (.exception ctx)]
+        (l/error :hint "s3 execution failure"
+                 :error-message (ex-message cause)
+                 :error-type (str (type cause)))))))
+
 (defn- build-s3-client
   [{:keys [::region ::endpoint ::wrk/netty-io-executor] :as params}]
   (let [creds-provider (DefaultCredentialsProvider/create)
@@ -214,27 +253,36 @@
                      (.maxPendingConnectionAcquires (int max-pending-connection-acquires))
                      (.build))
 
+        use-custom-endpoint? (some? endpoint)
+        _ (when use-custom-endpoint?
+            (l/info :hint "s3 custom endpoint detected - will configure UNSIGNED-PAYLOAD"
+                    :endpoint (str endpoint)
+                    :region (str region)))
+
         client   (let [builder (S3AsyncClient/builder)
                        builder (.serviceConfiguration ^S3AsyncClientBuilder builder ^S3Configuration sconfig)
                        builder (.asyncConfiguration ^S3AsyncClientBuilder builder ^ClientAsyncConfiguration aconfig)
                        builder (.httpClient ^S3AsyncClientBuilder builder ^NettyNioAsyncHttpClient hclient)
                        builder (.region ^S3AsyncClientBuilder builder (lookup-region region))
                        builder (.credentialsProvider ^S3AsyncClientBuilder builder creds-provider)
-                       ;; For non-AWS S3 compatible endpoints, disable payload signing
-                       ;; to avoid XAmzContentSHA256Mismatch errors.
+                       builder (.addExecutionInterceptor ^S3AsyncClientBuilder builder (s3-debug-interceptor))
+                       ;; For non-AWS S3 compatible endpoints (e.g., Tencent COS),
+                       ;; set x-amz-content-sha256 to UNSIGNED-PAYLOAD to avoid
+                       ;; XAmzContentSHA256Mismatch caused by SigV4 implementation differences.
                        builder (cond-> ^S3AsyncClientBuilder builder
-                                 (some? endpoint)
+                                 use-custom-endpoint?
                                  (.endpointOverride (URI. (str endpoint)))
-                                 (some? endpoint)
+                                 use-custom-endpoint?
                                  (.overrideConfiguration
-                                   (-> (software.amazon.awssdk.core.client.config.ClientOverrideConfiguration/builder)
+                                   (-> (ClientOverrideConfiguration/builder)
                                        (.putHeader "x-amz-content-sha256" "UNSIGNED-PAYLOAD")
                                        (.build))))]
                    (.build ^S3AsyncClientBuilder builder))]
 
-    (when (some? endpoint)
-      (l/info :hint "s3 client configured with custom endpoint - payload signing disabled"
-              :endpoint (str endpoint)))
+    (l/info :hint "s3 client created"
+            :region (str region)
+            :custom-endpoint? use-custom-endpoint?
+            :payload-signing-disabled? use-custom-endpoint?)
 
     (reify
       clojure.lang.IDeref

@@ -195,7 +195,7 @@
   (Region/of (name region)))
 
 (defn- build-s3-client
-  [{:keys [::region ::endpoint ::wrk/netty-io-executor]}]
+  [{:keys [::region ::endpoint ::wrk/netty-io-executor] :as params}]
   (let [creds-provider (DefaultCredentialsProvider/create)
         aconfig  (-> (ClientAsyncConfiguration/builder)
                      (.build))
@@ -220,10 +220,21 @@
                        builder (.httpClient ^S3AsyncClientBuilder builder ^NettyNioAsyncHttpClient hclient)
                        builder (.region ^S3AsyncClientBuilder builder (lookup-region region))
                        builder (.credentialsProvider ^S3AsyncClientBuilder builder creds-provider)
+                       ;; For non-AWS S3 compatible endpoints, disable payload signing
+                       ;; to avoid XAmzContentSHA256Mismatch errors.
                        builder (cond-> ^S3AsyncClientBuilder builder
                                  (some? endpoint)
-                                 (.endpointOverride (URI. (str endpoint))))]
+                                 (.endpointOverride (URI. (str endpoint)))
+                                 (some? endpoint)
+                                 (.overrideConfiguration
+                                   (-> (software.amazon.awssdk.core.client.config.ClientOverrideConfiguration/builder)
+                                       (.putHeader "x-amz-content-sha256" "UNSIGNED-PAYLOAD")
+                                       (.build))))]
                    (.build ^S3AsyncClientBuilder builder))]
+
+    (when (some? endpoint)
+      (l/info :hint "s3 client configured with custom endpoint - payload signing disabled"
+              :endpoint (str endpoint)))
 
     (reify
       clojure.lang.IDeref

@@ -250,15 +250,14 @@
 
 (defn- make-request-body
   "Creates an AsyncRequestBody from content object.
-  Uses fromInputStream to properly handle SHA256 content checksum."
+  Reads entire content into bytes first to ensure consistent SHA256 calculation."
   [counter content]
-  (let [size  (impl/get-size content)
-        input (io/input-stream content)]
-    (try
-      (AsyncRequestBody/fromInputStream ^InputStream input (long size))
-      (catch Throwable cause
-        (.close ^InputStream input)
-        (throw cause)))))
+  (let [input (io/input-stream content)
+        bytes (try
+                (.readAllBytes ^InputStream input)
+                (finally
+                  (.close ^InputStream input)))]
+    (AsyncRequestBody/fromBytes bytes)))
 
 (defn- put-object
   [{:keys [::client ::bucket ::prefix ::counter]} {:keys [id] :as object} content]

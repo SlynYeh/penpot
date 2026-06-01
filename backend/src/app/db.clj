@@ -685,7 +685,8 @@
     (let [typ (.getType o)
           val (.getValue o)]
       (if (or (= typ "json")
-              (= typ "jsonb"))
+              (= typ "jsonb")
+              (nil? typ))
         (t/decode-str val)
         val))))
 
@@ -698,6 +699,23 @@
     (pgobject? value) (decode-transit-pgobject value)
     (string? value)   (t/decode-str value)
     :else             value))
+
+(defn safe-decode-jsonb
+  "Safely decode a JSONB value into a map, handling all possible types
+  that different JDBC drivers may return (PGobject, String, CharSequence,
+  or already-decoded map). Returns an empty map on any failure."
+  [v]
+  (try
+    (let [decoded (cond
+                    (nil? v)    nil
+                    (map? v)    v
+                    (pgobject? v) (decode-transit-pgobject v)
+                    (string? v) (t/decode-str v)
+                    (instance? CharSequence v) (t/decode-str (str v))
+                    :else       nil)]
+      (if (map? decoded) decoded {}))
+    (catch Throwable _
+      {})))
 
 (defn inet
   [ip-addr]

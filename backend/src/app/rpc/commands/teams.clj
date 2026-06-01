@@ -83,7 +83,7 @@
   (when row
     (cond-> row
       (some? features) (assoc :features (db/decode-pgarray features #{}))
-      (some? subscription) (assoc :subscription (db/decode-transit-pgobject subscription))
+      (some? subscription) (assoc :subscription (db/safe-decode-jsonb subscription))
       (some? sub-type) (assoc :subscription {:type sub-type
                                              :status sub-status
                                              :seats (some-> sub-seats parse-long)})

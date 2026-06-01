@@ -158,7 +158,7 @@
   [{:keys [participants position mentions] :as row}]
   (cond-> row
     (db/pgpoint? position) (assoc :position (db/decode-pgpoint position))
-    (db/pgobject? participants) (assoc :participants (db/decode-transit-pgobject participants))
+    (some? participants) (assoc :participants (db/safe-decode-jsonb participants))
     (db/pgarray? mentions) (assoc :mentions (db/decode-pgarray mentions #{}))))
 
 (def xf-decode-row

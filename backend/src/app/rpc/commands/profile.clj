@@ -119,7 +119,7 @@
       (l/wrn :hint "get-profile failed, returning anonymous"
              :profile-id (str profile-id)
              :cause cause)
-      {:id uuid/zero :fullname "Anonymous User"})))
+      {:id uuid/zero :fullname "Anonymous User" :props {}})))
 
 (defn get-profile
   "Get profile by id. Throws not-found exception if no profile found."
@@ -618,10 +618,12 @@
 (defn filter-props
   "Removes all namespace qualified props from `props` attr."
   [props]
-  (into {} (filter (fn [[k _]] (simple-ident? k))) props))
+  (if (map? props)
+    (into {} (filter (fn [[k _]] (simple-ident? k))) props)
+    {}))
 
 (defn decode-row
   [{:keys [props] :as row}]
-  (if (or (db/pgobject? props) (string? props))
-    (assoc row :props (db/decode-transit-jsonb props))
+  (if (some? row)
+    (assoc row :props (filter-props (db/safe-decode-jsonb props)))
     row))

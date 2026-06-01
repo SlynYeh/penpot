@@ -33,9 +33,9 @@
        v)})
 
 (def default
-  {:database-uri "postgresql://postgres/penpot"
+  {:database-uri "opengauss://localhost:5432/penpot?preferQueryMode=simple"
    :database-username "penpot"
-   :database-password "penpot"
+   :database-password "Penpot@123"
 
    :default-blob-version 4
 

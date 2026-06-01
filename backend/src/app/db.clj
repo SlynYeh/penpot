@@ -787,17 +787,51 @@
     (int? n)  n
     :else (throw (IllegalArgumentException. "uuid or number allowed"))))
 
+(def ^:private sql:pg-xact-lock
+  "select pg_advisory_xact_lock(?::bigint) as lock")
+
+(def ^:private sql:pg-xact-try-lock
+  "select pg_try_advisory_xact_lock(?::bigint) as lock")
+
+(def ^:private sql:gauss-xact-lock
+  "select gs_advisory_xact_lock(?::bigint) as lock")
+
+(def ^:private sql:gauss-xact-try-lock
+  "select gs_try_advisory_xact_lock(?::bigint) as lock")
+
+(defn- advisory-lock-fn-not-found?
+  [e]
+  (let [msg (ex-message e)]
+    (or (str/includes? msg "does not exist")
+        (str/includes? msg "function")
+        (str/includes? msg "unrecognized"))))
+
 (defn xact-lock!
+  "Acquire an exclusive transaction-level advisory lock.
+  Uses PostgreSQL's pg_advisory_xact_lock; falls back to
+  GaussDB native mechanism if unavailable."
   [conn n]
   (let [n (xact-check-param n)]
-    (exec-one! conn ["select pg_advisory_xact_lock(?::bigint) as lock" n])
+    (try
+      (exec-one! conn [sql:pg-xact-lock n])
+      (catch Throwable e
+        (if (advisory-lock-fn-not-found? e)
+          (exec-one! conn [sql:gauss-xact-lock n])
+          (throw e))))
     true))
 
 (defn xact-try-lock!
+  "Try to acquire an exclusive transaction-level advisory lock.
+  Uses PostgreSQL's pg_try_advisory_xact_lock; falls back to
+  GaussDB native mechanism if unavailable."
   [conn n]
-  (let [n   (xact-check-param n)
-        row (exec-one! conn ["select pg_try_advisory_xact_lock(?::bigint) as lock" n])]
-    (:lock row)))
+  (let [n (xact-check-param n)]
+    (try
+      (:lock (exec-one! conn [sql:pg-xact-try-lock n]))
+      (catch Throwable e
+        (if (advisory-lock-fn-not-found? e)
+          (:lock (exec-one! conn [sql:gauss-xact-try-lock n]))
+          (throw e))))))
 
 (defn sql-exception?
   [cause]

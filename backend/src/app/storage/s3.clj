@@ -33,10 +33,12 @@
    software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
    software.amazon.awssdk.core.async.AsyncRequestBody
    software.amazon.awssdk.core.async.AsyncResponseTransformer
+   software.amazon.awssdk.auth.signer.S3SignerExecutionAttribute
    software.amazon.awssdk.core.client.config.ClientAsyncConfiguration
    software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
    software.amazon.awssdk.core.interceptor.Context$AfterTransmission
    software.amazon.awssdk.core.interceptor.Context$BeforeTransmission
+   software.amazon.awssdk.core.interceptor.Context$ModifyHttpRequest
    software.amazon.awssdk.core.interceptor.ExecutionAttributes
    software.amazon.awssdk.core.interceptor.ExecutionInterceptor
    software.amazon.awssdk.http.SdkHttpRequest
@@ -201,10 +203,19 @@
   (Region/of (name region)))
 
 (defn- s3-debug-interceptor
-  "AWS SDK ExecutionInterceptor that logs key request/response details
-  for diagnosing S3 compatibility issues (e.g., SHA256 mismatches)."
-  []
+  "AWS SDK ExecutionInterceptor that:
+   - Sets ENABLE_PAYLOAD_SIGNING=false for custom endpoints (avoids XAmzContentSHA256Mismatch)
+   - Logs key request/response details for diagnosing S3 compatibility issues."
+  [use-custom-endpoint?]
   (reify ExecutionInterceptor
+    ;; --- modifyHttpRequest: runs BEFORE signing, sets execution attributes ---
+    (^SdkHttpRequest modifyHttpRequest [_ ^Context$ModifyHttpRequest ctx ^ExecutionAttributes attrs]
+      (when use-custom-endpoint?
+        (.putAttribute attrs S3SignerExecutionAttribute/ENABLE_PAYLOAD_SIGNING false)
+        (.putAttribute attrs S3SignerExecutionAttribute/ENABLE_CHUNKED_ENCODING false))
+      (.httpRequest ctx))
+
+    ;; --- beforeTransmission: runs AFTER signing, logs what's actually sent ---
     (^void beforeTransmission [_ ^Context$BeforeTransmission ctx ^ExecutionAttributes attrs]
       (let [req ^SdkHttpRequest (.httpRequest ctx)]
         (l/dbg :hint "s3 request ->"
@@ -265,18 +276,17 @@
                        builder (.httpClient ^S3AsyncClientBuilder builder ^NettyNioAsyncHttpClient hclient)
                        builder (.region ^S3AsyncClientBuilder builder (lookup-region region))
                        builder (.credentialsProvider ^S3AsyncClientBuilder builder creds-provider)
-                       builder (.addExecutionInterceptor ^S3AsyncClientBuilder builder (s3-debug-interceptor))
-                       ;; For non-AWS S3 compatible endpoints (e.g., Tencent COS),
-                       ;; set x-amz-content-sha256 to UNSIGNED-PAYLOAD to avoid
-                       ;; XAmzContentSHA256Mismatch caused by SigV4 implementation differences.
+                       ;; Always add the debug interceptor. For custom endpoints,
+                       ;; it also disables payload signing and chunked encoding
+                       ;; via S3SignerExecutionAttribute (set in modifyHttpRequest
+                       ;; before signing) to avoid XAmzContentSHA256Mismatch.
+                       builder (.overrideConfiguration ^S3AsyncClientBuilder builder
+                                 (-> (ClientOverrideConfiguration/builder)
+                                     (.addExecutionInterceptor (s3-debug-interceptor use-custom-endpoint?))
+                                     (.build)))
                        builder (cond-> ^S3AsyncClientBuilder builder
                                  use-custom-endpoint?
-                                 (.endpointOverride (URI. (str endpoint)))
-                                 use-custom-endpoint?
-                                 (.overrideConfiguration
-                                   (-> (ClientOverrideConfiguration/builder)
-                                       (.putHeader "x-amz-content-sha256" "UNSIGNED-PAYLOAD")
-                                       (.build))))]
+                                 (.endpointOverride (URI. (str endpoint))))]
                    (.build ^S3AsyncClientBuilder builder))]
 
     (l/info :hint "s3 client created"

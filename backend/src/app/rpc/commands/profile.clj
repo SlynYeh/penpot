@@ -135,8 +135,8 @@
   schema:update-profile
   [:map {:title "update-profile"}
    [:fullname [::sm/word-string {:max 250}]]
-   [:lang {:optional true} [:string {:max 8}]]
-   [:theme {:optional true} [:string {:max 250}]]])
+   [:lang {:optional true} [:maybe [:string {:max 8}]]]
+   [:theme {:optional true} [:maybe [:string {:max 250}]]]])
 
 (sv/defmethod ::update-profile
   {::doc/added "1.0"

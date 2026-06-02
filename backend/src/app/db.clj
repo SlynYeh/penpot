@@ -62,7 +62,7 @@
    [::max-size {:optional true} ::sm/int]
    [::min-size {:optional true} ::sm/int]
    [::name {:optional true} :keyword]
-   [::uri {:optional true} ::sm/uri]
+   [::uri {:optional true} :string]
    [::password {:optional true} :string]
    [::username {:optional true} :string]
    [::validation-timeout {:optional true} ::sm/int]
@@ -330,13 +330,38 @@
                :message (ex-message e))
         (throw e)))))
 
+(def ^:private idle-timeout-params
+  "Ordered list of idle-in-transaction timeout parameters to probe.
+  GaussDB (Huawei Cloud): idle_in_transaction_timeout
+  openGauss:              idle_in_transaction_session_timeout
+  PostgreSQL 14+:         idle_in_transaction_session_timeout"
+  ["idle_in_transaction_timeout"
+   "idle_in_transaction_session_timeout"])
+
 (defn disable-idle-timeout!
-  "Disable idle-in-transaction timeout (GaussDB: idle_in_transaction_timeout)
-  to allow long-running operations."
+  "Disable idle-in-transaction timeout to allow long-running operations.
+  Probes pg_settings to detect which parameter the database supports,
+  avoiding 'unrecognized configuration parameter' errors that would
+  abort the current transaction on GaussDB/openGauss."
   [conn & {:keys [local?] :or {local? true}}]
   (let [scope (if local? "LOCAL" "")
-        sql   (str/trim (str "SET " scope " idle_in_transaction_timeout = 0"))]
-    (exec-one! conn [sql])))
+        ;; Probe pg_settings to find supported parameter (safe, won't abort tx)
+        supported
+        (try
+          (->> (exec! conn [(str "SELECT name FROM pg_settings WHERE name IN ("
+                                 (str/join "," (map #(str "'" % "'") idle-timeout-params))
+                                 ")")])
+               (map :name)
+               (into #{}))
+          (catch Exception _
+            #{}))]
+    (if-let [param (some supported idle-timeout-params)]
+      (let [sql (str/trim (str "SET " scope " " param " = 0"))]
+        (l/dbg :hint "disable idle-in-transaction timeout"
+               :param param :scope scope)
+        (exec-one! conn [sql]))
+      (l/wrn :hint "unable to disable idle-in-transaction timeout, no supported parameter found"
+             :probed idle-timeout-params))))
 
 (defn insert!
   "A helper that builds an insert sql statement and executes it. By
@@ -692,16 +717,26 @@
               :hint (format "no implementation found for value %s" (pr-str o)))))
 
 (defn decode-json-pgobject
+  "Decode a JSON/JSONB PGobject to a Clojure data structure.
+  Handles GaussDB JDBC driver which may return non-standard type names."
   [^PGobject o]
   (when o
     (let [typ (.getType o)
           val (.getValue o)]
       (if (or (= typ "json")
-              (= typ "jsonb"))
+              (= typ "jsonb")
+              ;; GaussDB may return type names like 'jsonb' with
+              ;; different casing or nil; try parsing as JSON anyway
+              (nil? typ))
         (json/decode val :key-fn keyword)
-        val))))
+        (try
+          (json/decode val :key-fn keyword)
+          (catch Exception _
+            val))))))
 
 (defn decode-transit-pgobject
+  "Decode a Transit-encoded JSON/JSONB PGobject to a Clojure data structure.
+  Handles GaussDB JDBC driver which may return non-standard type names."
   [^PGobject o]
   (when o
     (let [typ (.getType o)
@@ -710,7 +745,10 @@
               (= typ "jsonb")
               (nil? typ))
         (t/decode-str val)
-        val))))
+        (try
+          (t/decode-str val)
+          (catch Exception _
+            val))))))
 
 (defn decode-transit-jsonb
   "Decode a JSONB/JSON value regardless of whether the JDBC driver

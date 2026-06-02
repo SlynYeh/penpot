@@ -168,7 +168,7 @@
     [:worker-webhook-parallelism {:optional true} ::sm/int]
 
     [:database-password {:optional true} [:maybe :string]]
-    [:database-uri {:optional true} ::sm/uri]
+    [:database-uri {:optional true} :string]
     [:database-username {:optional true} [:maybe :string]]
     [:database-readonly {:optional true} ::sm/boolean]
     [:database-min-pool-size {:optional true} ::sm/int]

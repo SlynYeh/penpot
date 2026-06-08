@@ -89,12 +89,9 @@
    ;; time to avoid email sending after profile modification
    :email-verify-threshold "15m"
 
-   :quotes-upload-sessions-per-profile 5
-   :quotes-upload-chunks-per-session 20
-
-   ;; SSRF protection
-   :ssrf-allowed-hosts #{}
-   :ssrf-extra-blocked-cidrs #{}})
+   ;; disable automatic database migration on startup
+   ;; set to true when using offline migration scripts
+   :disable-auto-migration false})
 
 (def schema:config
   (do #_sm/optional-keys
@@ -171,6 +168,7 @@
     [:database-uri {:optional true} :string]
     [:database-username {:optional true} [:maybe :string]]
     [:database-readonly {:optional true} ::sm/boolean]
+    [:disable-auto-migration {:optional true} ::sm/boolean]
     [:database-min-pool-size {:optional true} ::sm/int]
     [:database-max-pool-size {:optional true} ::sm/int]
 

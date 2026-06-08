@@ -8,6 +8,7 @@
   (:require
    [app.common.data.macros :as dm]
    [app.common.logging :as l]
+   [app.config :as cf]
    [app.db :as db]
    [app.migrations.clj.migration-0023 :as mg0023]
    [app.migrations.clj.migration-0145 :as mg0145]
@@ -506,7 +507,9 @@
   (assert (db/pool? pool) "expected valid pool"))
 
 (defmethod ig/init-key ::migrations
-  [module {:keys [::db/pool]}]
-  (when-not (db/read-only? pool)
-    (l/info :hint "running migrations" :module module)
-    (some->> (seq migrations) (apply-migrations! pool "main"))))
+  [module {:keys [::db/pool] :as cfg}]
+  (let [disabled? (or (db/read-only? pool)
+                      (cf/get :disable-auto-migration))]
+    (when-not disabled?
+      (l/info :hint "running migrations" :module module)
+      (some->> (seq migrations) (apply-migrations! pool "main")))))

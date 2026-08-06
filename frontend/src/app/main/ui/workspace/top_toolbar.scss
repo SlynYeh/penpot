@@ -1,0 +1,207 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "refactor/common-refactor.scss" as deprecated;
+@use "ds/_borders.scss" as *;
+@use "ds/_utils.scss" as *;
+@use "ds/typography.scss" as t;
+
+.main-toolbar {
+  cursor: initial;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: deprecated.$s-56;
+  padding: deprecated.$s-8 deprecated.$s-16;
+  border-radius: deprecated.$s-8;
+  border: deprecated.$s-2 solid var(--panel-border-color);
+  z-index: deprecated.$z-index-1;
+  background-color: var(--color-background-primary);
+  transition:
+    top 0.3s,
+    height 0.3s,
+    opacity 0.3s;
+
+  --toolbar-position-y: #{deprecated.$s-28};
+  --toolbar-offset-y: 0px;
+
+  top: calc(var(--toolbar-position-y) + var(--toolbar-offset-y));
+}
+
+.main-toolbar-no-rulers {
+  --toolbar-position-y: 0px;
+  --toolbar-offset-y: #{deprecated.$s-8};
+}
+
+.main-toolbar-hidden {
+  --toolbar-offset-y: calc(-1 * #{deprecated.$s-4});
+
+  height: deprecated.$s-16;
+  z-index: deprecated.$z-index-1;
+  border-radius: 0 0 deprecated.$s-8 deprecated.$s-8;
+  border-block-start: 0;
+
+  .main-toolbar-options {
+    opacity: deprecated.$op-0;
+    visibility: hidden;
+  }
+}
+
+.main-toolbar-options {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  opacity: deprecated.$op-10;
+  transition: opacity 0.3s ease;
+
+  li {
+    position: relative;
+  }
+}
+
+.main-toolbar-options-button {
+  @extend %button-tertiary;
+
+  height: deprecated.$s-36;
+  width: deprecated.$s-36;
+  flex-shrink: 0;
+  border-radius: deprecated.$s-8;
+  margin: 0 deprecated.$s-2;
+
+  svg {
+    @extend %button-icon;
+
+    stroke: var(--color-foreground-secondary);
+  }
+
+  &.selected {
+    @extend %button-icon-selected;
+  }
+}
+
+.mcp-button {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  width: fit-content;
+  margin-inline-start: var(--sp-xs);
+  padding-inline: var(--sp-s);
+}
+
+.mcp-button-label {
+  @include t.use-typography("body-small");
+
+  &.connected {
+    color: var(--color-accent-primary);
+  }
+}
+
+.mcp-status-dot {
+  // Connection indicator placed before the label, vertically centered:
+  // a muted gray when disconnected, the primary accent when connected.
+  position: relative;
+  flex-shrink: 0;
+  inline-size: px2rem(6);
+  block-size: px2rem(6);
+  border-radius: 50%;
+  background-color: var(--color-background-disabled);
+
+  &.connected {
+    background-color: var(--color-accent-primary);
+  }
+
+  // One-shot "blob" ripple that confirms the moment the tab becomes
+  // connected (e.g. after using "Switch here"). Triggered purely by the
+  // `.connected` class appearing, in sync with the color change.
+  &.connected::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: var(--color-accent-primary);
+    opacity: 0;
+    animation: mcp-status-blob 0.5s ease-out;
+  }
+}
+
+@keyframes mcp-status-blob {
+  from {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+.mcp-menu {
+  @include deprecated.menu-shadow;
+
+  position: absolute;
+  inset-block-start: calc(100% + var(--sp-xs));
+  inset-inline-start: var(--sp-xs);
+  z-index: var(--z-index-dropdown);
+  margin: 0;
+  padding: var(--sp-xs);
+  list-style: none;
+  border: $b-1 solid var(--panel-border-color);
+  border-radius: $br-8;
+  background-color: var(--menu-background-color);
+}
+
+// Non-interactive informational text inside the menu (no hover, not focusable).
+.mcp-menu-info {
+  @include t.use-typography("body-small");
+
+  padding: var(--sp-s) var(--sp-m);
+  color: var(--color-foreground-secondary);
+  white-space: nowrap;
+}
+
+.mcp-menu-item {
+  @include t.use-typography("body-small");
+
+  display: flex;
+  align-items: center;
+  padding: var(--sp-s) var(--sp-m);
+  border-radius: $br-8;
+  color: var(--menu-foreground-color);
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--menu-background-color-hover);
+  }
+}
+
+.toolbar-handler {
+  @include deprecated.flex-center;
+  @include deprecated.button-style;
+
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: deprecated.$s-12;
+  width: 100%;
+
+  .toolbar-handler-btn {
+    height: deprecated.$s-4;
+    width: 100%;
+    max-width: deprecated.$s-64;
+    padding: 0;
+    border-radius: deprecated.$s-4;
+    background-color: var(--palette-handler-background-color);
+  }
+}
+
+ul.main-toolbar-panels {
+  display: none;
+}

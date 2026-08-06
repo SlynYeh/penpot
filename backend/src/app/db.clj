@@ -116,6 +116,8 @@
   (let [uri (-> uri
                 (str/replace #"\?preferQueryMode=simple" "")
                 (str/replace #"&preferQueryMode=simple" ""))
+        max-size (::max-size cfg)
+        min-size (or (::min-size cfg) max-size)
         config (HikariConfig.)]
     (doto config
       (.setJdbcUrl           (str "jdbc:" uri))

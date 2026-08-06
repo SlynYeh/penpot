@@ -60,8 +60,6 @@
    :auth-token-cookie-name "auth-token"
 
    :assets-path "/internal/assets/"
-   :smtp-default-reply-to "Penpot <no-reply@example.com>"
-   :smtp-default-from "Penpot <no-reply@example.com>"
 
    :profile-complaint-max-age (ct/duration {:days 7})
    :profile-complaint-threshold 2
@@ -237,15 +235,6 @@
 
     [:email-domain-blacklist {:optional true} ::fs/path]
     [:email-domain-whitelist {:optional true} ::fs/path]
-
-    [:smtp-default-from {:optional true} :string]
-    [:smtp-default-reply-to {:optional true} :string]
-    [:smtp-host {:optional true} :string]
-    [:smtp-password {:optional true} [:maybe :string]]
-    [:smtp-port {:optional true} ::sm/int]
-    [:smtp-ssl {:optional true} ::sm/boolean]
-    [:smtp-tls {:optional true} ::sm/boolean]
-    [:smtp-username {:optional true} [:maybe :string]]
 
     [:urepl-host {:optional true} :string]
     [:urepl-port {:optional true} ::sm/int]

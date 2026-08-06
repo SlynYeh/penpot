@@ -33,6 +33,7 @@
    software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
    software.amazon.awssdk.core.async.AsyncRequestBody
    software.amazon.awssdk.core.async.AsyncResponseTransformer
+   software.amazon.awssdk.core.ResponseBytes
    software.amazon.awssdk.auth.signer.S3SignerExecutionAttribute
    software.amazon.awssdk.core.client.config.ClientAsyncConfiguration
    software.amazon.awssdk.core.client.config.ClientOverrideConfiguration

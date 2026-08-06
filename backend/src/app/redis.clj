@@ -54,6 +54,7 @@
    io.lettuce.core.ScriptOutputType
    io.lettuce.core.SetArgs
    io.netty.channel.nio.NioEventLoopGroup
+   io.netty.util.concurrent.EventExecutorGroup
    io.netty.util.HashedWheelTimer
    io.netty.util.Timer
    java.lang.AutoCloseable
@@ -582,7 +583,7 @@
     (RedisURI/create uri-str)))
 
 (defmethod ig/init-key ::client
-  [_ {:keys [::uri ::wrk/netty-io-executor] :as params}]
+  [_ {:keys [::uri ::wrk/netty-io-executor ::wrk/netty-executor] :as params}]
 
   (l/inf :hint "initialize redis client" :uri (str uri))
 

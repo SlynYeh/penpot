@@ -115,30 +115,35 @@
                           type, backend, metadata, data)
    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
-(def ^:private sql:update-file-data
-  "UPDATE file_data
-      SET modified_at = ?, deleted_at = ?, backend = ?, metadata = ?, data = ?
-    WHERE file_id = ? AND id = ?
-    RETURNING *")
+(def ^:private sql:upsert-file-data
+  (str sql:insert-file-data
+       " ON CONFLICT (file_id, id)
+         DO UPDATE SET modified_at=?,
+                       deleted_at=?,
+                       backend=?,
+                       metadata=?,
+                       data=?"))
 
 (defn- upsert-in-database
   [cfg {:keys [id file-id created-at modified-at deleted-at type backend data metadata]}]
   (let [created-at  (or created-at (ct/now))
         metadata    (some-> metadata db/json)
-        modified-at (or modified-at created-at)
-        updated     (db/exec-one! cfg [sql:update-file-data
-                                       modified-at deleted-at backend metadata data
-                                       file-id id])]
-    (or updated
-        (db/exec-one! cfg [sql:insert-file-data
-                           file-id id
-                           created-at
-                           modified-at
-                           deleted-at
-                           type
-                           backend
-                           metadata
-                           data]))))
+        modified-at (or modified-at created-at)]
+
+    (db/exec-one! cfg [sql:upsert-file-data
+                       file-id id
+                       created-at
+                       modified-at
+                       deleted-at
+                       type
+                       backend
+                       metadata
+                       data
+                       modified-at
+                       deleted-at
+                       backend
+                       metadata
+                       data])))
 
 (defn- handle-persistence
   [cfg {:keys [type backend id file-id data] :as params}]
@@ -245,8 +250,9 @@
     (some->> (:metadata params)
              (process-metadata cfg))
 
-    (some? (handle-persistence cfg params))))
-
+    (-> (handle-persistence cfg params)
+        (db/get-update-count)
+        (pos?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; POINTER-MAP

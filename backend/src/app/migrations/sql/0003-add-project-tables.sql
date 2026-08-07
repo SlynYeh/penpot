@@ -173,7 +173,7 @@ CREATE TABLE page_version (
 
   version bigint NOT NULL DEFAULT 0,
 
-  label text NOT NULL,
+  label text NOT NULL DEFAULT '',
   data bytea NOT NULL,
 
   changes bytea NULL DEFAULT NULL
@@ -200,7 +200,7 @@ CREATE TABLE page_change (
 
   revn bigint NOT NULL DEFAULT 0,
 
-  label text NOT NULL,
+  label text NOT NULL DEFAULT '',
   data bytea NOT NULL,
 
   changes bytea NULL DEFAULT NULL

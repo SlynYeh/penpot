@@ -56,8 +56,8 @@
 (defn- decode-task-row
   [{:keys [props] :as row}]
   (cond-> row
-    (some? props)
-    (assoc :props (db/safe-decode-jsonb props))))
+    (db/pgobject? props)
+    (assoc :props (db/decode-transit-pgobject props))))
 
 (defn get-error-context
   [_ item]

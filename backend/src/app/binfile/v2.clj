@@ -395,7 +395,7 @@
 
     (try
       (db/tx-run! cfg (fn [{:keys [::db/conn] :as cfg}]
-                        (db/disable-idle-timeout! conn :local? false)
+                        (db/exec-one! conn ["SET idle_in_transaction_session_timeout = 0"])
                         (db/exec-one! conn ["SET CONSTRAINTS ALL DEFERRED"])
 
                         (binding [bfc/*state* (volatile! {:index {}})]

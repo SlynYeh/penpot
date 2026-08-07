@@ -72,14 +72,6 @@
  {:type ::registry
   :pred #(satisfies? IRegistry %)})
 
-(sm/register!
- {:type ::netty-executor
-  :pred some?})
-
-(sm/register!
- {:type ::netty-io-executor
-  :pred some?})
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SUBMIT API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

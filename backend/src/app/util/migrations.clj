@@ -9,7 +9,6 @@
    [app.common.logging :as l]
    [clojure.java.io :as io]
    [clojure.spec.alpha :as s]
-   [clojure.string :as str]
    [next.jdbc :as jdbc]))
 
 (s/def ::name string?)
@@ -38,8 +37,8 @@
   [pool modname {:keys [name] :as migration}]
   (when-not (registered? pool modname (:name migration))
     (l/info :action "apply migration" :module modname :name name)
-    ((:fn migration) pool)
-    (register! pool modname name)))
+    (register! pool modname name)
+    ((:fn migration) pool)))
 
 (defn- impl-migrate
   [conn migrations _opts]
@@ -72,37 +71,12 @@
   ([conn migrations options]
    (impl-migrate conn migrations options)))
 
-(defn- split-sql-statements
-  "Split a SQL string into individual statements, respecting $tag$ dollar-quoting."
-  [^String sql]
-  ;; Replace dollar-quoted sections with placeholders, split on ;, then restore
-  (let [dollar-re #"(?s)\$(\w*)\$(.*?)\$\1\$"
-        placeholders (atom [])]
-    ;; Collect dollar-quoted sections and replace with markers
-    (let [masked (str/replace sql dollar-re
-                              (fn [[_ tag body]]
-                                (let [idx (count @placeholders)]
-                                  (swap! placeholders conj (str "$" tag "$" body "$" tag "$"))
-                                  (str "___DOLLARQUOTE_" idx "___"))))]
-      (->> (str/split masked #";")
-           (mapv str/trim)
-           (remove str/blank?)
-           ;; Restore dollar-quoted sections
-           (mapv (fn [stmt]
-                   (let [restored (reduce-kv (fn [s idx original]
-                                               (str/replace s (str "___DOLLARQUOTE_" idx "___") original))
-                                             stmt
-                                             @placeholders)]
-                     restored)))))))
-
 (defn resource
   "Helper for setup migration functions
   just using a simple path to sql file
   located in the class path."
   [path]
   (fn [pool]
-    (let [sql (slurp (io/resource path))
-          statements (split-sql-statements sql)]
-      (doseq [stmt statements]
-        (jdbc/execute! pool [stmt]))
+    (let [sql (slurp (io/resource path))]
+      (jdbc/execute! pool [sql])
       true)))

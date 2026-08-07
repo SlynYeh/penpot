@@ -85,7 +85,7 @@
                     :fs)
         backends (d/without-nils backends)]
 
-    (l/info :hint "storage initialized"
+    (l/dbg :hint "initialize"
            :default (d/name backend)
            :available (str/join "," (map d/name (keys backends))))
 
@@ -242,9 +242,8 @@
   ^InputStream
   [storage object]
   (assert (valid-storage? storage))
-  (when (and object
-             (or (nil? (:expired-at object))
-                 (ct/is-after? (:expired-at object) (ct/now))))
+  (when (or (nil? (:expired-at object))
+            (ct/is-after? (:expired-at object) (ct/now)))
     (-> (impl/resolve-backend storage (:backend object))
         (impl/get-object-data object))))
 
@@ -252,9 +251,8 @@
   "Returns a byte array of object content."
   [storage object]
   (assert (valid-storage? storage))
-  (when (and object
-             (or (nil? (:expired-at object))
-                 (ct/is-after? (:expired-at object) (ct/now))))
+  (when (or (nil? (:expired-at object))
+            (ct/is-after? (:expired-at object) (ct/now)))
     (-> (impl/resolve-backend storage (:backend object))
         (impl/get-object-bytes object))))
 
@@ -263,9 +261,8 @@
    (get-object-url storage object nil))
   ([storage object options]
    (assert (valid-storage? storage))
-   (when (and object
-              (or (nil? (:expired-at object))
-                  (ct/is-after? (:expired-at object) (ct/now))))
+   (when (or (nil? (:expired-at object))
+             (ct/is-after? (:expired-at object) (ct/now)))
      (-> (impl/resolve-backend storage (:backend object))
          (impl/get-object-url object options)))))
 
@@ -274,12 +271,11 @@
   storages."
   [storage object]
   (assert (valid-storage? storage))
-  (when object
-    (let [backend (impl/resolve-backend storage (:backend object))]
-      (when (and (= :fs (::type backend))
-                 (or (nil? (:expired-at object))
-                     (ct/is-after? (:expired-at object) (ct/now))))
-        (-> (impl/get-object-url backend object nil) file-url->path)))))
+  (let [backend (impl/resolve-backend storage (:backend object))]
+    (when (and (= :fs (::type backend))
+               (or (nil? (:expired-at object))
+                   (ct/is-after? (:expired-at object) (ct/now))))
+      (-> (impl/get-object-url backend object nil) file-url->path))))
 
 (defn del-object!
   [{:keys [::db/connectable] :as storage} object-or-id]

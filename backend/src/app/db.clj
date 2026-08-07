@@ -19,7 +19,6 @@
    [app.db.sql :as sql]
    [app.metrics :as mtx]
    [clojure.java.io :as io]
-   [clojure.string :as str]
    [clojure.set :as set]
    [integrant.core :as ig]
    [next.jdbc :as jdbc]
@@ -39,13 +38,13 @@
    java.sql.Connection
    java.sql.PreparedStatement
    java.sql.Savepoint
-   com.huawei.opengauss.jdbc.geometric.PGpoint
-   com.huawei.opengauss.jdbc.jdbc.PgArray
-   com.huawei.opengauss.jdbc.largeobject.LargeObject
-   com.huawei.opengauss.jdbc.largeobject.LargeObjectManager
-   com.huawei.opengauss.jdbc.PGConnection
-   com.huawei.opengauss.jdbc.util.PGInterval
-   com.huawei.opengauss.jdbc.util.PGobject))
+   org.postgresql.geometric.PGpoint
+   org.postgresql.jdbc.PgArray
+   org.postgresql.largeobject.LargeObject
+   org.postgresql.largeobject.LargeObjectManager
+   org.postgresql.PGConnection
+   org.postgresql.util.PGInterval
+   org.postgresql.util.PGobject))
 
 (def ^:dynamic *conn* nil)
 
@@ -62,7 +61,7 @@
    [::max-size {:optional true} ::sm/int]
    [::min-size {:optional true} ::sm/int]
    [::name {:optional true} :keyword]
-   [::uri {:optional true} :string]
+   [::uri {:optional true} ::sm/uri]
    [::password {:optional true} :string]
    [::username {:optional true} :string]
    [::validation-timeout {:optional true} ::sm/int]
@@ -107,18 +106,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def initsql
-  "SET statement_timeout = 300000")
+  (str "SET statement_timeout = 300000;\n"
+       "SET idle_in_transaction_session_timeout = 300000;"))
 
 (defn- create-datasource-config
   [{:keys [::uri] :as cfg}]
 
   ;; (app.common.pprint/pprint cfg)
-  (let [uri (-> uri
-                (str/replace #"\?preferQueryMode=simple" "")
-                (str/replace #"&preferQueryMode=simple" ""))
+  (let [config   (HikariConfig.)
         max-size (::max-size cfg)
-        min-size (or (::min-size cfg) max-size)
-        config (HikariConfig.)]
+        min-size (or (::min-size cfg) max-size)]
     (doto config
       (.setJdbcUrl           (str "jdbc:" uri))
       (.setPoolName          (d/name (::name cfg)))
@@ -213,7 +210,7 @@
 
 (defn lobj-manager
   [conn]
-  (let [conn (unwrap conn com.huawei.opengauss.jdbc.PGConnection)]
+  (let [conn (unwrap conn org.postgresql.PGConnection)]
     (.getLargeObjectAPI ^PGConnection conn)))
 
 (defn lobj-create
@@ -292,8 +289,6 @@
   [opts]
   (set/rename-keys opts params-mapping))
 
-(declare duplicate-key-error?)
-
 (def ^:private default-insert-opts
   (assoc sql/default-opts :return-keys true))
 
@@ -318,53 +313,6 @@
                 (into default-opts (rename-opts opts)))]
      (jdbc/execute-one! conn sv opts))))
 
-(defn set-config!
-  "Set a database configuration parameter via SET statement.
-  Silently ignores 'unrecognized configuration parameter' errors
-  for cross-database compatibility."
-  [conn sql]
-  (try
-    (exec-one! conn [sql])
-    (catch Throwable e
-      (if (str/includes? (ex-message e) "unrecognized configuration parameter")
-        (l/wrn :hint "skipping unrecognized configuration parameter"
-               :sql sql
-               :message (ex-message e))
-        (throw e)))))
-
-(def ^:private idle-timeout-params
-  "Ordered list of idle-in-transaction timeout parameters to probe.
-  GaussDB (Huawei Cloud): idle_in_transaction_timeout
-  openGauss:              idle_in_transaction_session_timeout
-  PostgreSQL 14+:         idle_in_transaction_session_timeout"
-  ["idle_in_transaction_timeout"
-   "idle_in_transaction_session_timeout"])
-
-(defn disable-idle-timeout!
-  "Disable idle-in-transaction timeout to allow long-running operations.
-  Probes pg_settings to detect which parameter the database supports,
-  avoiding 'unrecognized configuration parameter' errors that would
-  abort the current transaction on GaussDB/openGauss."
-  [conn & {:keys [local?] :or {local? true}}]
-  (let [scope (if local? "LOCAL" "")
-        ;; Probe pg_settings to find supported parameter (safe, won't abort tx)
-        supported
-        (try
-          (->> (exec! conn [(str "SELECT name FROM pg_settings WHERE name IN ("
-                                 (str/join "," (map #(str "'" % "'") idle-timeout-params))
-                                 ")")])
-               (map :name)
-               (into #{}))
-          (catch Exception _
-            #{}))]
-    (if-let [param (some supported idle-timeout-params)]
-      (let [sql (str/trim (str "SET " scope " " param " = 0"))]
-        (l/dbg :hint "disable idle-in-transaction timeout"
-               :param param :scope scope)
-        (exec-one! conn [sql]))
-      (l/wrn :hint "unable to disable idle-in-transaction timeout, no supported parameter found"
-             :probed idle-timeout-params))))
-
 (defn insert!
   "A helper that builds an insert sql statement and executes it. By
   default returns the inserted row with all the field; you can delimit
@@ -374,17 +322,8 @@
         sql  (sql/insert table params opts)
         opts (if (empty? opts)
                default-insert-opts
-               (into default-insert-opts (rename-opts opts)))
-        conflict-do-nothing? (or (::sql/on-conflict-do-nothing opts)
-                                 (::on-conflict-do-nothing? opts))]
-    (if conflict-do-nothing?
-      (try
-        (jdbc/execute-one! conn sql opts)
-        (catch Exception e
-          (if (duplicate-key-error? e)
-            nil
-            (throw e))))
-      (jdbc/execute-one! conn sql opts))))
+               (into default-insert-opts (rename-opts opts)))]
+    (jdbc/execute-one! conn sql opts)))
 
 (defn insert-many!
   "An optimized version of `insert!` that perform insertion of multiple
@@ -402,17 +341,8 @@
         opts (if (empty? opts)
                default-insert-opts
                (into default-insert-opts (rename-opts opts)))
-        opts (update opts :return-keys boolean)
-        conflict-do-nothing? (or (::sql/on-conflict-do-nothing opts)
-                                 (::on-conflict-do-nothing? opts))]
-    (if conflict-do-nothing?
-      (try
-        (jdbc/execute! conn sql opts)
-        (catch Exception e
-          (if (duplicate-key-error? e)
-            nil
-            (throw e))))
-      (jdbc/execute! conn sql opts))))
+        opts (update opts :return-keys boolean)]
+    (jdbc/execute! conn sql opts)))
 
 (def ^:private default-max-params
   "PostgreSQL PreparedStatement parameter limit."
@@ -615,7 +545,7 @@
 
 (defn create-array
   [conn type objects]
-  (let [^PGConnection conn (unwrap conn com.huawei.opengauss.jdbc.PGConnection)]
+  (let [^PGConnection conn (unwrap conn org.postgresql.PGConnection)]
     (if (coll? objects)
       (.createArrayOf conn ^String type (into-array Object objects))
       (.createArrayOf conn ^String type objects))))
@@ -630,7 +560,7 @@
 
 (defn pginterval
   [data]
-  (com.huawei.opengauss.jdbc.util.PGInterval. ^String data))
+  (org.postgresql.util.PGInterval. ^String data))
 
 (defn savepoint
   ([^Connection conn]
@@ -719,70 +649,29 @@
               :hint (format "no implementation found for value %s" (pr-str o)))))
 
 (defn decode-json-pgobject
-  "Decode a JSON/JSONB PGobject to a Clojure data structure.
-  Handles GaussDB JDBC driver which may return non-standard type names."
   [^PGobject o]
   (when o
     (let [typ (.getType o)
           val (.getValue o)]
       (if (or (= typ "json")
-              (= typ "jsonb")
-              ;; GaussDB may return type names like 'jsonb' with
-              ;; different casing or nil; try parsing as JSON anyway
-              (nil? typ))
+              (= typ "jsonb"))
         (json/decode val :key-fn keyword)
-        (try
-          (json/decode val :key-fn keyword)
-          (catch Exception _
-            val))))))
+        val))))
 
 (defn decode-transit-pgobject
-  "Decode a Transit-encoded JSON/JSONB PGobject to a Clojure data structure.
-  Handles GaussDB JDBC driver which may return non-standard type names."
   [^PGobject o]
   (when o
     (let [typ (.getType o)
           val (.getValue o)]
       (if (or (= typ "json")
-              (= typ "jsonb")
-              (nil? typ))
+              (= typ "jsonb"))
         (t/decode-str val)
-        (try
-          (t/decode-str val)
-          (catch Exception _
-            val))))))
-
-(defn decode-transit-jsonb
-  "Decode a JSONB/JSON value regardless of whether the JDBC driver
-  returns it as a PGobject or a raw String (GaussDB may return raw
-  strings for JSONB columns)."
-  [value]
-  (cond
-    (pgobject? value) (decode-transit-pgobject value)
-    (string? value)   (t/decode-str value)
-    :else             value))
-
-(defn safe-decode-jsonb
-  "Safely decode a JSONB value into a map, handling all possible types
-  that different JDBC drivers may return (PGobject, String, CharSequence,
-  or already-decoded map). Returns an empty map on any failure."
-  [v]
-  (try
-    (let [decoded (cond
-                    (nil? v)    nil
-                    (map? v)    v
-                    (pgobject? v) (decode-transit-pgobject v)
-                    (string? v) (t/decode-str v)
-                    (instance? CharSequence v) (t/decode-str (str v))
-                    :else       nil)]
-      (if (map? decoded) decoded {}))
-    (catch Throwable _
-      {})))
+        val))))
 
 (defn inet
   [ip-addr]
   (when ip-addr
-    (doto (com.huawei.opengauss.jdbc.util.PGobject.)
+    (doto (org.postgresql.util.PGobject.)
       (.setType "inet")
       (.setValue (str ip-addr)))))
 
@@ -797,7 +686,7 @@
   "Encode as transit json."
   [data]
   (when data
-    (doto (com.huawei.opengauss.jdbc.util.PGobject.)
+    (doto (org.postgresql.util.PGobject.)
       (.setType "jsonb")
       (.setValue (t/encode-str data {:type :json-verbose})))))
 
@@ -805,7 +694,7 @@
   "Encode as plain json."
   [data]
   (when data
-    (doto (com.huawei.opengauss.jdbc.util.PGobject.)
+    (doto (org.postgresql.util.PGobject.)
       (.setType "jsonb")
       (.setValue (json/encode data)))))
 
@@ -827,51 +716,17 @@
     (int? n)  n
     :else (throw (IllegalArgumentException. "uuid or number allowed"))))
 
-(def ^:private sql:pg-xact-lock
-  "select pg_advisory_xact_lock(?::bigint) as lock")
-
-(def ^:private sql:pg-xact-try-lock
-  "select pg_try_advisory_xact_lock(?::bigint) as lock")
-
-(def ^:private sql:gauss-xact-lock
-  "select gs_advisory_xact_lock(?::bigint) as lock")
-
-(def ^:private sql:gauss-xact-try-lock
-  "select gs_try_advisory_xact_lock(?::bigint) as lock")
-
-(defn- advisory-lock-fn-not-found?
-  [e]
-  (let [msg (ex-message e)]
-    (or (str/includes? msg "does not exist")
-        (str/includes? msg "function")
-        (str/includes? msg "unrecognized"))))
-
 (defn xact-lock!
-  "Acquire an exclusive transaction-level advisory lock.
-  Uses PostgreSQL's pg_advisory_xact_lock; falls back to
-  GaussDB native mechanism if unavailable."
   [conn n]
   (let [n (xact-check-param n)]
-    (try
-      (exec-one! conn [sql:pg-xact-lock n])
-      (catch Throwable e
-        (if (advisory-lock-fn-not-found? e)
-          (exec-one! conn [sql:gauss-xact-lock n])
-          (throw e))))
+    (exec-one! conn ["select pg_advisory_xact_lock(?::bigint) as lock" n])
     true))
 
 (defn xact-try-lock!
-  "Try to acquire an exclusive transaction-level advisory lock.
-  Uses PostgreSQL's pg_try_advisory_xact_lock; falls back to
-  GaussDB native mechanism if unavailable."
   [conn n]
-  (let [n (xact-check-param n)]
-    (try
-      (:lock (exec-one! conn [sql:pg-xact-try-lock n]))
-      (catch Throwable e
-        (if (advisory-lock-fn-not-found? e)
-          (:lock (exec-one! conn [sql:gauss-xact-try-lock n]))
-          (throw e))))))
+  (let [n   (xact-check-param n)
+        row (exec-one! conn ["select pg_try_advisory_xact_lock(?::bigint) as lock" n])]
+    (:lock row)))
 
 (defn sql-exception?
   [cause]

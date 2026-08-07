@@ -1,19 +1,4 @@
-CREATE OR REPLACE FUNCTION uuid_generate_v4()
-  RETURNS uuid
-  LANGUAGE plpgsql
-  AS $$
-  BEGIN
-    RETURN md5(random()::text || clock_timestamp()::text)::uuid;
-  END;
-$$;
-
-CREATE OR REPLACE FUNCTION uuid_nil()
-  RETURNS uuid
-  LANGUAGE sql
-  IMMUTABLE
-  AS $$
-  SELECT '00000000-0000-0000-0000-000000000000'::uuid;
-$$;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE FUNCTION update_modified_at()
   RETURNS TRIGGER AS $updt$

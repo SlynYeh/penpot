@@ -39,7 +39,8 @@
   metosin/reitit-core {:mvn/version "0.10.1"}
   nrepl/nrepl {:mvn/version "1.7.0"}
 
-  org.xerial/sqlite-jdbc {:mvn/version "3.50.3.0"}
+  org.postgresql/postgresql {:mvn/version "42.7.13"}
+  org.xerial/sqlite-jdbc {:mvn/version "3.53.2.1"}
 
   com.zaxxer/HikariCP {:mvn/version "7.1.0"}
 
@@ -66,7 +67,7 @@
   software.amazon.awssdk/s3 {:mvn/version "2.50.1"}
   software.amazon.awssdk/sts {:mvn/version "2.50.1"}}
 
- :paths ["src" "resources" "target/classes" "lib/opengaussjdbc.jar"]
+ :paths ["src" "resources" "target/classes"]
  :aliases
  {:dev
   {:jvm-opts ["--sun-misc-unsafe-memory-access=allow"

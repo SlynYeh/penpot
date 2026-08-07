@@ -49,7 +49,7 @@ networks:
   penpot:
 
 volumes:
-  penpot_opengauss:
+  penpot_postgres_v15:
   penpot_assets:
   # penpot_traefik:
 
@@ -117,17 +117,24 @@ services:
     volumes:
       - penpot_assets:/opt/data/assets
 
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+      penpot-valkey:
+        condition: service_healthy
+
     networks:
       - penpot
 
     ## Configuration envronment variables for the backend container.
+
     environment:
       << : [*penpot-flags, *penpot-public-uri, *penpot-http-body-size, *penpot-secret-key]
 
       ## Database connection parameters. Don't touch them unless you are using custom
       ## postgresql connection parameters.
 
-      PENPOT_DATABASE_URI: opengauss://penpot-postgres:5432/penpot?preferQueryMode=simple
+      PENPOT_DATABASE_URI: postgresql://penpot-postgres/penpot
       PENPOT_DATABASE_USERNAME: penpot
       PENPOT_DATABASE_PASSWORD: penpot
 
@@ -138,13 +145,17 @@ services:
 
       ## Default configuration for assets storage: using filesystem based with all files
       ## stored in a docker volume.
+
+      PENPOT_OBJECTS_STORAGE_BACKEND: fs
+      PENPOT_OBJECTS_STORAGE_FS_DIRECTORY: /opt/data/assets
+
       ## Also can be configured to to use a S3 compatible storage.
 
-      AWS_ACCESS_KEY_ID: <KEY_ID>
-      AWS_SECRET_ACCESS_KEY: <ACCESS_KEY>
-      PENPOT_OBJECTS_STORAGE_BACKEND: s3
-      PENPOT_OBJECTS_STORAGE_S3_ENDPOINT: <ENDPOINT>
-      PENPOT_OBJECTS_STORAGE_S3_BUCKET: <BUKET_NAME>
+      # AWS_ACCESS_KEY_ID: <KEY_ID>
+      # AWS_SECRET_ACCESS_KEY: <ACCESS_KEY>
+      # PENPOT_OBJECTS_STORAGE_BACKEND: s3
+      # PENPOT_OBJECTS_STORAGE_S3_ENDPOINT: <ENDPOINT>
+      # PENPOT_OBJECTS_STORAGE_S3_BUCKET: <BUKET_NAME>
 
       ## Telemetry. When enabled, a periodical process will send anonymous data about this
       ## instance. Telemetry data will enable us to learn how the application is used,
@@ -178,6 +189,10 @@ services:
     image: "penpotapp/exporter:${PENPOT_VERSION:-2.16}"
     restart: always
 
+    depends_on:
+      penpot-valkey:
+        condition: service_healthy
+
     networks:
       - penpot
 
@@ -189,3 +204,60 @@ services:
 
       ## Valkey (or previously Redis) is used for the websockets notifications.
       PENPOT_REDIS_URI: redis://penpot-valkey/0
+
+  penpot-postgres:
+    image: "postgres:15"
+    restart: always
+    stop_signal: SIGINT
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U penpot"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      start_period: 2s
+
+    volumes:
+      - penpot_postgres_v15:/var/lib/postgresql/data
+
+    networks:
+      - penpot
+
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=penpot
+      - POSTGRES_USER=penpot
+      - POSTGRES_PASSWORD=penpot
+
+  penpot-valkey:
+    image: valkey/valkey:8.1
+    restart: always
+
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+
+    networks:
+      - penpot
+
+    environment:
+      # You can increase the max memory size if you have sufficient resources,
+      # although this should not be necessary.
+      - VALKEY_EXTRA_FLAGS=--maxmemory 128mb --maxmemory-policy volatile-lfu
+
+  ## A mailcatch service, used as temporal SMTP server. You can access via HTTP to the
+  ## port 1080 for read all emails the penpot platform has sent. Should be only used as a
+  ## temporal solution while no real SMTP provider is configured.
+
+  penpot-mailcatch:
+    image: sj26/mailcatcher:latest
+    restart: always
+    expose:
+      - '1025'
+    ports:
+      - "1080:1080"
+    networks:
+      - penpot

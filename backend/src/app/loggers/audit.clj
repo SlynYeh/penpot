@@ -88,7 +88,8 @@
   #{:session-id
     :password
     :old-password
-    :token})
+    :token
+    :client-secret})
 
 (defn extract-utm-params
   "Extracts additional data from params and namespace them under
@@ -156,7 +157,7 @@
 ;; COLLECTOR API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare ^:private prepare-context-from-request)
+(declare prepare-context-from-request)
 
 ;; Defines a service that collects the audit/activity log using
 ;; internal database. Later this audit log can be transferred to
@@ -185,7 +186,7 @@
 (def valid-event?
   (sm/validator schema:event))
 
-(defn- prepare-context-from-request
+(defn prepare-context-from-request
   "Prepare backend event context from request"
   [request]
   (let [client-event-origin (get-client-event-origin request)
@@ -339,7 +340,9 @@
   (let [resultm      (meta result)
         request      (-> params meta ::http/request)
         profile-id   (or (::profile-id resultm)
-                         (:profile-id result)
+                         (some-> (:profile-id result)
+                                 (cond-> (string? (:profile-id result))
+                                   uuid/parse*))
                          (::rpc/profile-id params)
                          uuid/zero)
 
@@ -414,7 +417,7 @@
                   (update :ip-addr d/nilv "0.0.0.0")
                   (update :props d/nilv {})
                   (update :context d/nilv {})
-                  (assoc :source "backend")
+                  (update :source d/nilv "backend")
                   (d/without-nils))]
     (submit* cfg event)))
 
@@ -431,7 +434,7 @@
                     (update :profile-id d/nilv uuid/zero)
                     (update :props d/nilv {})
                     (update :context d/nilv {})
-                    (assoc :source "backend")
+                    (update :source d/nilv "backend")
                     (select-keys event-keys)
                     (check-event))]
       (db/run! cfg append-audit-entry event))))

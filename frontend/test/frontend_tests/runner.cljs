@@ -6,9 +6,13 @@
    [clojure.tools.cli :refer [parse-opts]]
    [frontend-tests.basic-shapes-test]
    [frontend-tests.code-gen-style-test]
+   [frontend-tests.composable-tests.comp.sync-test]
    [frontend-tests.copy-as-svg-test]
+   [frontend-tests.data.dashboard-test]
+   [frontend-tests.data.exports-assets-test]
    [frontend-tests.data.nitrate-test]
    [frontend-tests.data.repo-test]
+   [frontend-tests.data.store-test]
    [frontend-tests.data.uploads-test]
    [frontend-tests.data.viewer-test]
    [frontend-tests.data.workspace-colors-test]
@@ -16,6 +20,8 @@
    [frontend-tests.data.workspace-interactions-test]
    [frontend-tests.data.workspace-mcp-test]
    [frontend-tests.data.workspace-media-test]
+   [frontend-tests.data.workspace-pages-test]
+   [frontend-tests.data.workspace-reflow-test]
    [frontend-tests.data.workspace-shortcuts-test]
    [frontend-tests.data.workspace-texts-test]
    [frontend-tests.data.workspace-thumbnails-test]
@@ -26,6 +32,7 @@
    [frontend-tests.logic.copying-and-duplicating-test]
    [frontend-tests.logic.frame-guides-test]
    [frontend-tests.logic.groups-test]
+   [frontend-tests.logic.nudge-selected-shapes-test]
    [frontend-tests.logic.pasting-in-containers-test]
    [frontend-tests.main-errors-test]
    [frontend-tests.plugins.comments-test]
@@ -44,8 +51,13 @@
    [frontend-tests.plugins.tokens-test]
    [frontend-tests.plugins.utils-test]
    [frontend-tests.plugins.value-objects-test]
+   [frontend-tests.render-dimensions-test]
    [frontend-tests.render-wasm.process-objects-test]
+   [frontend-tests.render-wasm.text-editor-apply-styles-test]
+   [frontend-tests.render-wasm.text-editor-caret-color-test]
    [frontend-tests.svg-fills-test]
+   [frontend-tests.text-editor-paste-guard-test]
+   [frontend-tests.tokens.copy-paste-props-test]
    [frontend-tests.tokens.import-export-test]
    [frontend-tests.tokens.logic.token-actions-test]
    [frontend-tests.tokens.logic.token-data-test]
@@ -53,13 +65,23 @@
    [frontend-tests.tokens.style-dictionary-test]
    [frontend-tests.tokens.token-errors-test]
    [frontend-tests.tokens.workspace-tokens-remap-test]
+   [frontend-tests.ui.colorpicker-token-set-order-test]
+   [frontend-tests.ui.comments-clustering-test]
    [frontend-tests.ui.comments-position-modifier-test]
    [frontend-tests.ui.ds-controls-numeric-input-test]
+   [frontend-tests.ui.gradient-handlers-test]
+   [frontend-tests.ui.layout-container-multiple-test]
    [frontend-tests.ui.measures-menu-props-test]
+   [frontend-tests.ui.settings-password-schema-test]
+   [frontend-tests.ui.settings-shortcuts-test]
+   [frontend-tests.util-clipboard-test]
    [frontend-tests.util-object-test]
    [frontend-tests.util-range-tree-test]
    [frontend-tests.util-simple-math-test]
+   [frontend-tests.util-text-editor-test]
    [frontend-tests.util-webapi-test]
+   [frontend-tests.util-zip-test]
+   [frontend-tests.util.dom.dnd-test]
    [frontend-tests.worker-snap-test]
    [goog.object :as gobj]))
 
@@ -75,14 +97,15 @@
     (.exit js/process 1)))
 
 (def test-namespaces
-  ['frontend-tests.plugins.text-test
-   'frontend-tests.basic-shapes-test
+  ['frontend-tests.basic-shapes-test
    'frontend-tests.code-gen-style-test
+   'frontend-tests.composable-tests.comp.sync-test
    'frontend-tests.copy-as-svg-test
+   'frontend-tests.data.dashboard-test
    'frontend-tests.data.nitrate-test
    'frontend-tests.data.repo-test
-   'frontend-tests.errors-test
-   'frontend-tests.main-errors-test
+   'frontend-tests.data.store-test
+   'frontend-tests.data.exports-assets-test
    'frontend-tests.data.uploads-test
    'frontend-tests.data.viewer-test
    'frontend-tests.data.workspace-colors-test
@@ -90,18 +113,23 @@
    'frontend-tests.data.workspace-interactions-test
    'frontend-tests.data.workspace-mcp-test
    'frontend-tests.data.workspace-media-test
+   'frontend-tests.data.workspace-pages-test
+   'frontend-tests.data.workspace-reflow-test
    'frontend-tests.data.workspace-shortcuts-test
    'frontend-tests.data.workspace-texts-test
    'frontend-tests.data.workspace-thumbnails-test
+   'frontend-tests.errors-test
    'frontend-tests.helpers-shapes-test
    'frontend-tests.logic.comp-remove-swap-slots-test
    'frontend-tests.logic.components-and-tokens
    'frontend-tests.logic.copying-and-duplicating-test
    'frontend-tests.logic.frame-guides-test
    'frontend-tests.logic.groups-test
+   'frontend-tests.logic.nudge-selected-shapes-test
    'frontend-tests.logic.pasting-in-containers-test
-   'frontend-tests.plugins.context-shapes-test
+   'frontend-tests.main-errors-test
    'frontend-tests.plugins.comments-test
+   'frontend-tests.plugins.context-shapes-test
    'frontend-tests.plugins.file-test
    'frontend-tests.plugins.format-test
    'frontend-tests.plugins.grid-test
@@ -109,8 +137,6 @@
    'frontend-tests.plugins.library-test
    'frontend-tests.plugins.local-storage-test
    'frontend-tests.plugins.page-active-validation-test
-   'frontend-tests.plugins.interactions-test
-   'frontend-tests.plugins.format-test
    'frontend-tests.plugins.page-test
    'frontend-tests.plugins.parser-test
    'frontend-tests.plugins.shape-bugfixes-test
@@ -118,7 +144,11 @@
    'frontend-tests.plugins.tokens-test
    'frontend-tests.plugins.utils-test
    'frontend-tests.plugins.value-objects-test
+   'frontend-tests.render-wasm.process-objects-test
+   'frontend-tests.render-wasm.text-editor-apply-styles-test
+   'frontend-tests.render-wasm.text-editor-caret-color-test
    'frontend-tests.svg-fills-test
+   'frontend-tests.tokens.copy-paste-props-test
    'frontend-tests.tokens.import-export-test
    'frontend-tests.tokens.logic.token-actions-test
    'frontend-tests.tokens.logic.token-data-test
@@ -126,14 +156,25 @@
    'frontend-tests.tokens.style-dictionary-test
    'frontend-tests.tokens.token-errors-test
    'frontend-tests.tokens.workspace-tokens-remap-test
+   'frontend-tests.ui.colorpicker-token-set-order-test
+   'frontend-tests.ui.comments-clustering-test
    'frontend-tests.ui.comments-position-modifier-test
    'frontend-tests.ui.ds-controls-numeric-input-test
+   'frontend-tests.ui.gradient-handlers-test
+   'frontend-tests.ui.layout-container-multiple-test
    'frontend-tests.ui.measures-menu-props-test
-   'frontend-tests.render-wasm.process-objects-test
+   'frontend-tests.render-dimensions-test
+   'frontend-tests.text-editor-paste-guard-test
+   'frontend-tests.ui.settings-password-schema-test
+   'frontend-tests.ui.settings-shortcuts-test
+   'frontend-tests.util-clipboard-test
    'frontend-tests.util-object-test
    'frontend-tests.util-range-tree-test
    'frontend-tests.util-simple-math-test
+   'frontend-tests.util-text-editor-test
    'frontend-tests.util-webapi-test
+   'frontend-tests.util.dom.dnd-test
+   'frontend-tests.util-zip-test
    'frontend-tests.worker-snap-test])
 
 (assert (every? find-ns-obj test-namespaces)

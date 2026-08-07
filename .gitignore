@@ -9,6 +9,7 @@
 .clj-kondo
 .cpcache
 .lsp
+.env
 .nrepl-port
 .nyc_output
 .rebel_readline_history
@@ -57,6 +58,8 @@ opencode.json
 /docker/images/bundle*
 /exporter/target
 /exporter/.shadow-cljs
+/exporter/resources/wasm/
+/exporter/src/app/wasm/shared.js
 /frontend/.storybook/preview-body.html
 /frontend/.storybook/preview-head.html
 /frontend/playwright-report/
@@ -73,8 +76,6 @@ opencode.json
 /frontend/target/
 /frontend/test-results/
 /frontend/.shadow-cljs
-/other/
-/scripts/
 /nexus/
 /tmp/
 /vendor/**/target
@@ -89,6 +90,7 @@ opencode.json
 /blob-report/
 /playwright/.cache/
 /render-wasm/target/
+/media-processor/dist/
 /**/node_modules
 /**/.yarn/*
 /.pnpm-store

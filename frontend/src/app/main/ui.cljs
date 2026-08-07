@@ -133,18 +133,21 @@
    ::mf/private true}
   [{:keys [team-id children]}]
   (mf/with-effect [team-id]
-    (st/emit! (dtm/initialize-team team-id))
-    (fn []
-      (st/emit! (dtm/finalize-team team-id))))
+    (when (uuid? team-id)
+      (st/emit! (dtm/initialize-team team-id))
+      (fn []
+        (st/emit! (dtm/finalize-team team-id)))))
 
-  (let [{:keys [permissions] :as team} (mf/deref refs/team)]
-    (when (= team-id (:id team))
-      [:> (mf/provider ctx/current-team-id) {:value team-id}
-       [:> (mf/provider ctx/permissions) {:value permissions}
-        [:> (mf/provider ctx/can-edit?) {:value (:can-edit permissions)}
-         ;; The `:key` is mandatory here because we want to reinitialize
-         ;; all dom tree instead of simple rerender.
-         [:* {:key (str team-id)} children]]]])))
+  (if-not (uuid? team-id)
+    nil
+    (let [{:keys [permissions] :as team} (mf/deref refs/team)]
+      (when (= team-id (:id team))
+        [:> (mf/provider ctx/current-team-id) {:value team-id}
+         [:> (mf/provider ctx/permissions) {:value permissions}
+          [:> (mf/provider ctx/can-edit?) {:value (:can-edit permissions)}
+           ;; The `:key` is mandatory here because we want to reinitialize
+           ;; all dom tree instead of simple rerender.
+           [:* {:key (str team-id)} children]]]]))))
 
 (mf/defc page*
   {::mf/props :obj
@@ -154,8 +157,7 @@
         props   (get profile :props)
         section (get data :name)
         team    (mf/deref refs/team)
-        nitrate-entry-active? (dnt/nitrate-entry-active?)
-
+        nitrate-entry-active? (dnt/nitrate-entry-popup-pending?)
 
         show-question-modal?
         (and (contains? cf/flags :onboarding)
@@ -200,7 +202,8 @@
         :settings-feedback
         :settings-subscription
         :settings-integrations
-        :settings-notifications)
+        :settings-notifications
+        :settings-shortcuts)
        (let [params (get params :query)
              error-report-id (some-> params :error-report-id uuid/parse*)]
          [:? [:> settings-page*
@@ -229,11 +232,12 @@
         :dashboard-settings
         :dashboard-deleted)
        (let [params        (get params :query)
-             team-id       (some-> params :team-id uuid/parse*)
-             project-id    (some-> params :project-id uuid/parse*)
-             search-term   (some-> params :search-term)
-             plugin-url    (some-> params :plugin)
-             template      (some-> params :template)]
+             team-id             (some-> params :team-id uuid/parse*)
+             project-id          (some-> params :project-id uuid/parse*)
+             search-term         (some-> params :search-term)
+             plugin-url          (some-> params :plugin)
+             template            (some-> params :template)
+             pending-action-id   (some-> params :pending-action-id uuid/parse*)]
          [:?
           #_[:& app.main.ui.releases/release-notes-modal {:version "2.5"}]
           #_[:& app.main.ui.onboarding/onboarding-templates-modal]
@@ -257,7 +261,8 @@
                                 :search-term search-term
                                 :plugin-url plugin-url
                                 :project-id project-id
-                                :template template}]]])
+                                :template template
+                                :pending-action-id pending-action-id}]]])
 
        :workspace
        (let [params     (get params :query)

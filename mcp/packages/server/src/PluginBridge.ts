@@ -9,10 +9,56 @@ import type { RedisBridge } from "./RedisBridge";
 
 const KEEP_ALIVE_TIME = 30000; // 30 seconds
 
-interface ClientConnection {
+/**
+ * Maximum plugin heartbeat age before a connection is stale.
+ *
+ * This uses plugin heartbeats rather than WebSocket pongs because the browser can answer
+ * protocol pings while the tab's JavaScript event loop is frozen.
+ */
+export const HEARTBEAT_STALE_THRESHOLD_MS = 30000;
+
+/**
+ * Observable liveness state of a plugin connection.
+ */
+export interface PluginLivenessState {
+    /** timestamp of the last plugin message, in ms since epoch. */
+    lastHeartbeat: number;
+    /** whether the plugin reported a browser freeze. */
+    frozen: boolean;
+}
+
+interface ClientConnection extends PluginLivenessState {
     socket: WebSocket;
     userToken: string | null;
     pingInterval: NodeJS.Timeout;
+}
+
+/**
+ * Throws if the plugin tab cannot currently run tasks.
+ *
+ * A socket can stay open while the page event loop is paused, so task dispatch must check
+ * plugin-level liveness before sending work.
+ */
+export function assertPluginResponsive(
+    state: PluginLivenessState,
+    now: number,
+    staleThresholdMs: number = HEARTBEAT_STALE_THRESHOLD_MS
+): void {
+    if (state.frozen) {
+        throw new Error(
+            `The Penpot plugin tab has been frozen by the browser and cannot run tasks. ` +
+                `Please click/focus the Penpot tab to wake it, then retry.`
+        );
+    }
+
+    const heartbeatAge = now - state.lastHeartbeat;
+    if (heartbeatAge > staleThresholdMs) {
+        throw new Error(
+            `The Penpot plugin tab appears to be suspended by the browser (no heartbeat for ` +
+                `${Math.round(heartbeatAge / 1000)}s). Please click/focus the Penpot tab to wake it, ` +
+                `then retry.`
+        );
+    }
 }
 
 /**
@@ -20,8 +66,11 @@ interface ClientConnection {
  * over these connections.
  */
 export class PluginBridge {
+    public static readonly MULTIUSER_CONNECTION_ERROR_MESSAGE = `No Penpot instance connected for user token. Please ensure that Penpot is connected and that the MCP client connection is using the correct token.`;
+
     private readonly logger = createLogger("PluginBridge");
     private readonly wsServer: WebSocketServer;
+
     private readonly connectedClients: Map<WebSocket, ClientConnection> = new Map();
     private readonly clientsByToken: Map<string, ClientConnection> = new Map();
     private readonly pendingTasks: Map<string, AbstractPluginTask<any, any>> = new Map();
@@ -37,12 +86,13 @@ export class PluginBridge {
      *   holding the relevant plugin's WebSocket connection (which may be this same
      *   instance) via Redis, rather than dispatched directly over a local socket.
      * @param taskTimeoutSecs - Timeout, in seconds, for plugin task execution
+     *   (defaults to {@link DEFAULT_TASK_TIMEOUT_SECS})
      */
     constructor(
         public readonly mcpServer: PenpotMcpServer,
         private port: number,
-        private readonly redisBridge?: RedisBridge,
-        private taskTimeoutSecs: number = 30
+        private readonly taskTimeoutSecs: number,
+        private readonly redisBridge?: RedisBridge
     ) {
         this.wsServer = new WebSocketServer({ port: port });
         this.setupWebSocketHandlers();
@@ -79,7 +129,13 @@ export class PluginBridge {
             }, KEEP_ALIVE_TIME);
 
             // register the client connection with both indexes
-            const connection: ClientConnection = { socket: ws, userToken, pingInterval };
+            const connection: ClientConnection = {
+                socket: ws,
+                userToken,
+                pingInterval,
+                lastHeartbeat: Date.now(),
+                frozen: false,
+            };
             this.connectedClients.set(ws, connection);
             if (userToken) {
                 // ensure only one connection per userToken
@@ -107,8 +163,20 @@ export class PluginBridge {
             ws.on("message", (data: Buffer) => {
                 this.logger.debug("Received WebSocket message: %s", data.toString());
                 try {
-                    const response: PluginTaskResponse<any> = JSON.parse(data.toString());
-                    this.handlePluginTaskResponse(response);
+                    // any plugin message proves the page event loop is running
+                    connection.lastHeartbeat = Date.now();
+
+                    const message = JSON.parse(data.toString());
+                    if (message?.type === "freeze") {
+                        connection.frozen = true;
+                        this.logger.info("Plugin tab reported it is being frozen by the browser");
+                        return;
+                    }
+                    connection.frozen = false;
+                    if (message?.type === "heartbeat") {
+                        return;
+                    }
+                    this.handlePluginTaskResponse(message as PluginTaskResponse<any>);
                 } catch (error) {
                     this.logger.error(error, "Failure while processing WebSocket message");
                 }
@@ -131,9 +199,10 @@ export class PluginBridge {
     /**
      * Removes a client connection and releases all resources associated with it.
      *
-     * Clears the per-connection keep-alive interval and removes the connection
-     * from both the socket-keyed and token-keyed indexes. Safe to call with a
-     * socket that is not (or no longer) registered.
+     * Clears the per-connection keep-alive interval and removes the connection from the
+     * socket-keyed index. The token-keyed index entry (and, in multi-instance mode, the
+     * token's Redis task subscription) is removed only if it is owned by the given
+     * connection. Safe to call with a socket that is not (or no longer) registered.
      *
      * @param ws - The WebSocket whose connection state should be removed
      */
@@ -145,12 +214,18 @@ export class PluginBridge {
         clearInterval(connection.pingInterval);
         this.connectedClients.delete(ws);
         if (connection.userToken) {
-            this.clientsByToken.delete(connection.userToken);
+            // Perform the token-keyed cleanup only if this connection owns the token registration.
+            // A connection rejected as a duplicate carries the same token but must not remove token associations.
+            if (this.clientsByToken.get(connection.userToken) !== connection) {
+                this.logger.debug("Removed connection does not own its token registration; skipping token cleanup");
+            } else {
+                this.clientsByToken.delete(connection.userToken);
 
-            if (this.redisBridge) {
-                this.redisBridge
-                    .unsubscribeFromTasks(connection.userToken)
-                    .catch((error) => this.logger.error(error, "Failed to unsubscribe from Redis task channel"));
+                if (this.redisBridge) {
+                    this.redisBridge
+                        .unsubscribeFromTasks(connection.userToken)
+                        .catch((error) => this.logger.error(error, "Failed to unsubscribe from Redis task channel"));
+                }
             }
         }
     }
@@ -190,6 +265,35 @@ export class PluginBridge {
     }
 
     /**
+     * Rejects a still-pending task with the given error, releasing its correlation state.
+     *
+     * Clears the task's timeout (if armed) and removes the task from the pending-task
+     * index before rejecting its promise. Safe to call for a task that has already been
+     * settled (e.g. by a response or a timeout), in which case nothing happens.
+     *
+     * @param taskId - The ID of the task to reject
+     * @param error - The error with which to reject the task
+     * @returns Whether the task was still pending and has been rejected
+     */
+    private rejectPendingTask(taskId: string, error: Error): boolean {
+        const pendingTask = this.pendingTasks.get(taskId);
+        if (!pendingTask) {
+            return false;
+        }
+
+        const timeoutHandle = this.taskTimeouts.get(taskId);
+        if (timeoutHandle) {
+            clearTimeout(timeoutHandle);
+            this.taskTimeouts.delete(taskId);
+        }
+        this.pendingTasks.delete(taskId);
+
+        pendingTask.rejectWithError(error);
+        this.logger.info(`Task ${taskId} rejected: ${error.message}`);
+        return true;
+    }
+
+    /**
      * Determines the client connection to use for executing a task.
      *
      * In single-user mode, returns the single connected client.
@@ -207,9 +311,7 @@ export class PluginBridge {
 
             const connection = this.clientsByToken.get(sessionContext.userToken);
             if (!connection) {
-                throw new Error(
-                    `No plugin instance connected for user token. Please ensure the plugin is running and connected with the correct token.`
-                );
+                throw new Error(PluginBridge.MULTIUSER_CONNECTION_ERROR_MESSAGE);
             }
 
             return connection;
@@ -257,6 +359,10 @@ export class PluginBridge {
      * `resolveWithResult`/`rejectWithError` methods. The same correlation and timeout
      * handling therefore applies regardless of the transport.
      *
+     * When routing via Redis, the task is rejected immediately (rather than timing out)
+     * if the published request reached no instance, i.e. if no instance holds a plugin
+     * connection for the session's user token, or if publishing fails outright.
+     *
      * @param task - The task to dispatch
      * @param useRedis - Whether to route the request via Redis (multi-instance) rather
      *   than directly over the local WebSocket connection
@@ -279,9 +385,17 @@ export class PluginBridge {
 
             // register the task for result correlation, then publish the request via Redis
             this.pendingTasks.set(task.id, task);
-            void redisBridge.sendTaskRequest(userToken, task.toRequest(), (response) =>
-                this.handlePluginTaskResponse(response)
-            );
+            void redisBridge
+                .sendTaskRequest(userToken, task.toRequest(), (response) => this.handlePluginTaskResponse(response))
+                .then((receiverCount) => {
+                    // fail fast when no instance received the request (no connection with matching user token in any instance)
+                    if (receiverCount === 0) {
+                        this.rejectPendingTask(task.id, new Error(PluginBridge.MULTIUSER_CONNECTION_ERROR_MESSAGE));
+                    }
+                })
+                .catch((error) => {
+                    this.rejectPendingTask(task.id, error instanceof Error ? error : new Error(String(error)));
+                });
 
             // on timeout, release the response-channel subscription, since no response
             // will arrive to trigger its self-unsubscribe.
@@ -293,6 +407,9 @@ export class PluginBridge {
                 throw new Error(`Plugin instance is disconnected. Task could not be sent.`);
             }
 
+            // the socket can be open while browser-throttled plugin JS cannot run tasks
+            assertPluginResponsive(target, Date.now());
+
             // register the task for result correlation, then send over the socket
             this.pendingTasks.set(task.id, task);
             target.socket.send(JSON.stringify(task.toRequest()));
@@ -300,14 +417,13 @@ export class PluginBridge {
 
         // Set up a timeout to reject the task if no response is received
         const timeoutHandle = setTimeout(() => {
-            const pendingTask = this.pendingTasks.get(task.id);
-            if (pendingTask) {
-                this.pendingTasks.delete(task.id);
-                this.taskTimeouts.delete(task.id);
-                onTimeout?.();
-                pendingTask.rejectWithError(
+            if (
+                this.rejectPendingTask(
+                    task.id,
                     new Error(`Task ${task.id} timed out after ${this.taskTimeoutSecs} seconds`)
-                );
+                )
+            ) {
+                onTimeout?.();
             }
         }, this.taskTimeoutSecs * 1000);
 

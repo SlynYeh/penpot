@@ -800,7 +800,8 @@
   (ptk/reify ::library-thumbnails-fetched
     ptk/UpdateEvent
     (update [_ state]
-      (update state :thumbnails merge thumbnails))))
+      (update state :thumbnails merge
+              (d/update-vals thumbnails (fn [uri] {:uri uri :rendered-at nil}))))))
 
 (defn fetch-library-thumbnails
   [library-id]
@@ -1541,7 +1542,8 @@
          (->> (rp/cmd! :get-file-object-thumbnails {:file-id library-id :tag "component"})
               (rx/map (fn [thumbnails]
                         (fn [state]
-                          (update state :thumbnails merge thumbnails))))))))))
+                          (update state :thumbnails merge
+                                  (d/update-vals thumbnails (fn [uri] {:uri uri :rendered-at nil}))))))))))))
 
 (defn link-file-to-library
   [file-id library-id]
@@ -1571,7 +1573,12 @@
                                (as-> libraries-to-load $
                                  (remove loaded-libraries $)
                                  (conj $ library-id)
-                                 (map #(load-library-file file-id %) $))))))
+                                 (map #(load-library-file file-id %) $))))
+               (rx/catch (fn [cause]
+                           (let [error (ex-data cause)]
+                             (if (= (:code error) :circular-library-reference)
+                               (rx/of (ntf/error (tr "errors.circular-library-reference")))
+                               (rx/throw cause)))))))
          (rx/of (ptk/reify ::attach-library-finished))
          (when (pos? variants-count)
            (->> (rp/cmd! :get-library-usage {:file-id library-id})

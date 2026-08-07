@@ -21,7 +21,8 @@
    [clojure.java.io :as io]
    [datoteka.fs :as fs]
    [integrant.core :as ig]
-   [promesa.core :as p])
+   [promesa.core :as p]
+   [promesa.exec :as px])
   (:import
    java.io.FilterInputStream
    java.io.InputStream
@@ -30,20 +31,14 @@
    java.time.Duration
    java.util.Collection
    java.util.concurrent.atomic.AtomicLong
+   java.util.Optional
+   org.reactivestreams.Subscriber
    software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
    software.amazon.awssdk.core.async.AsyncRequestBody
    software.amazon.awssdk.core.async.AsyncResponseTransformer
-   software.amazon.awssdk.core.ResponseBytes
-   software.amazon.awssdk.auth.signer.S3SignerExecutionAttribute
+   software.amazon.awssdk.core.async.BlockingInputStreamAsyncRequestBody
    software.amazon.awssdk.core.client.config.ClientAsyncConfiguration
-   software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
-   software.amazon.awssdk.core.interceptor.Context$AfterTransmission
-   software.amazon.awssdk.core.interceptor.Context$BeforeTransmission
-   software.amazon.awssdk.core.interceptor.Context$ModifyHttpRequest
-   software.amazon.awssdk.core.interceptor.ExecutionAttributes
-   software.amazon.awssdk.core.interceptor.ExecutionInterceptor
-   software.amazon.awssdk.http.SdkHttpRequest
-   software.amazon.awssdk.http.SdkHttpResponse
+   software.amazon.awssdk.core.ResponseBytes
    software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient
    software.amazon.awssdk.http.nio.netty.SdkEventLoopGroup
    software.amazon.awssdk.regions.Region
@@ -203,50 +198,8 @@
   [region]
   (Region/of (name region)))
 
-(defn- s3-debug-interceptor
-  "AWS SDK ExecutionInterceptor that:
-   - Sets ENABLE_PAYLOAD_SIGNING=false for custom endpoints (avoids XAmzContentSHA256Mismatch)
-   - Logs key request/response details for diagnosing S3 compatibility issues."
-  [use-custom-endpoint?]
-  (reify ExecutionInterceptor
-    ;; --- modifyHttpRequest: runs BEFORE signing, sets execution attributes ---
-    (^SdkHttpRequest modifyHttpRequest [_ ^Context$ModifyHttpRequest ctx ^ExecutionAttributes attrs]
-      (when use-custom-endpoint?
-        (.putAttribute attrs S3SignerExecutionAttribute/ENABLE_PAYLOAD_SIGNING false)
-        (.putAttribute attrs S3SignerExecutionAttribute/ENABLE_CHUNKED_ENCODING false))
-      (.httpRequest ctx))
-
-    ;; --- beforeTransmission: runs AFTER signing, logs what's actually sent ---
-    (^void beforeTransmission [_ ^Context$BeforeTransmission ctx ^ExecutionAttributes attrs]
-      (let [req ^SdkHttpRequest (.httpRequest ctx)]
-        (l/dbg :hint "s3 request ->"
-               :method (str (.method req))
-               :uri (str (.getUri req))
-               :x-amz-content-sha256 (some-> (.firstMatchingHeader req "x-amz-content-sha256")
-                                             (str))
-               :content-type (some-> (.firstMatchingHeader req "Content-Type")
-                                     (str))
-               :content-length (some-> (.firstMatchingHeader req "Content-Length")
-                                       (str))
-               :transfer-encoding (some-> (.firstMatchingHeader req "Transfer-Encoding")
-                                          (str))
-               :amz-checksum (some-> (.firstMatchingHeader req "x-amz-checksum-sha256")
-                                     (str)))))
-    (^void afterTransmission [_ ^Context$AfterTransmission ctx ^ExecutionAttributes attrs]
-      (let [rsp ^SdkHttpResponse (.httpResponse ctx)]
-        (l/dbg :hint "s3 response <-"
-               :status (.statusCode rsp)
-               :status-text (some-> (.statusText rsp) (str))
-               :x-amz-request-id (some-> (.firstMatchingHeader rsp "x-amz-request-id")
-                                         (str)))))
-    (^void onExecutionFailure [_ ^software.amazon.awssdk.core.interceptor.Context$FailedExecution ctx ^ExecutionAttributes attrs]
-      (let [cause (.exception ctx)]
-        (l/error :hint "s3 execution failure"
-                 :error-message (ex-message cause)
-                 :error-type (str (type cause)))))))
-
 (defn- build-s3-client
-  [{:keys [::region ::endpoint ::wrk/netty-io-executor] :as params}]
+  [{:keys [::region ::endpoint ::wrk/netty-io-executor]}]
   (let [creds-provider (DefaultCredentialsProvider/create)
         aconfig  (-> (ClientAsyncConfiguration/builder)
                      (.build))
@@ -265,35 +218,16 @@
                      (.maxPendingConnectionAcquires (int max-pending-connection-acquires))
                      (.build))
 
-        use-custom-endpoint? (some? endpoint)
-        _ (when use-custom-endpoint?
-            (l/info :hint "s3 custom endpoint detected - will configure UNSIGNED-PAYLOAD"
-                    :endpoint (str endpoint)
-                    :region (str region)))
-
         client   (let [builder (S3AsyncClient/builder)
                        builder (.serviceConfiguration ^S3AsyncClientBuilder builder ^S3Configuration sconfig)
                        builder (.asyncConfiguration ^S3AsyncClientBuilder builder ^ClientAsyncConfiguration aconfig)
                        builder (.httpClient ^S3AsyncClientBuilder builder ^NettyNioAsyncHttpClient hclient)
                        builder (.region ^S3AsyncClientBuilder builder (lookup-region region))
                        builder (.credentialsProvider ^S3AsyncClientBuilder builder creds-provider)
-                       ;; Always add the debug interceptor. For custom endpoints,
-                       ;; it also disables payload signing and chunked encoding
-                       ;; via S3SignerExecutionAttribute (set in modifyHttpRequest
-                       ;; before signing) to avoid XAmzContentSHA256Mismatch.
-                       builder (.overrideConfiguration ^S3AsyncClientBuilder builder
-                                 (-> (ClientOverrideConfiguration/builder)
-                                     (.addExecutionInterceptor (s3-debug-interceptor use-custom-endpoint?))
-                                     (.build)))
                        builder (cond-> ^S3AsyncClientBuilder builder
-                                 use-custom-endpoint?
+                                 (some? endpoint)
                                  (.endpointOverride (URI. (str endpoint))))]
                    (.build ^S3AsyncClientBuilder builder))]
-
-    (l/info :hint "s3 client created"
-            :region (str region)
-            :custom-endpoint? use-custom-endpoint?
-            :payload-signing-disabled? use-custom-endpoint?)
 
     (reify
       clojure.lang.IDeref
@@ -318,67 +252,50 @@
         (.credentialsProvider creds-provider)
         (.build))))
 
+(defn- write-input-stream
+  [delegate input]
+  (try
+    (.writeInputStream ^BlockingInputStreamAsyncRequestBody delegate
+                       ^InputStream input)
+    (catch Throwable cause
+      (l/error :hint "encountered error while writing input stream to service"
+               :cause cause))
+    (finally
+      (.close ^InputStream input))))
+
 (defn- make-request-body
-  "Creates an AsyncRequestBody from content object.
-  Reads entire content into bytes first to ensure consistent SHA256 calculation.
-  Logs size comparison for debugging potential SHA256 mismatches."
   [counter content]
-  (let [declared-size (impl/get-size content)
-        input         (io/input-stream content)
-        bytes         (try
-                        (.readAllBytes ^InputStream input)
-                        (finally
-                          (.close ^InputStream input)))
-        actual-size   (alength ^bytes bytes)]
-    (l/dbg :hint "s3 request body prepared"
-           :declared-size declared-size
-           :actual-size actual-size
-           :size-match? (= declared-size actual-size))
-    (when (not= declared-size actual-size)
-      (l/wrn :hint "s3 content size mismatch detected"
-             :declared-size declared-size
-             :actual-size actual-size
-             :delta (- declared-size actual-size)))
-    (AsyncRequestBody/fromBytes bytes)))
+  (let [size (impl/get-size content)]
+    (reify
+      AsyncRequestBody
+      (contentLength [_]
+        (Optional/of (long size)))
+
+      (^void subscribe [_ ^Subscriber subscriber]
+        (let [delegate (AsyncRequestBody/forBlockingInputStream (long size))
+              input    (io/input-stream content)]
+
+          (px/thread-call (partial write-input-stream delegate input)
+                          {:name (str "penpot/storage/" (.getAndIncrement ^AtomicLong counter))})
+
+          (.subscribe ^BlockingInputStreamAsyncRequestBody delegate
+                      ^Subscriber subscriber))))))
 
 (defn- put-object
   [{:keys [::client ::bucket ::prefix ::counter]} {:keys [id] :as object} content]
-  (let [path      (dm/str prefix (impl/id->path id))
-        mdata     (meta object)
-        mtype     (:content-type mdata "application/octet-stream")
-        content-size (impl/get-size content)
-        rbody     (make-request-body counter content)
-        request   (.. (PutObjectRequest/builder)
-                      (bucket bucket)
-                      (contentType mtype)
-                      (key path)
-                      (build))]
-    (l/dbg :hint "s3 put-object start"
-           :object-id (str id)
-           :bucket bucket
-           :key path
-           :content-type mtype
-           :content-size content-size)
+  (let [path    (dm/str prefix (impl/id->path id))
+        mdata   (meta object)
+        mtype   (:content-type mdata "application/octet-stream")
+        rbody   (make-request-body counter content)
+        request (.. (PutObjectRequest/builder)
+                    (bucket bucket)
+                    (contentType mtype)
+                    (key path)
+                    (build))]
     (->> (.putObject ^S3AsyncClient client
                      ^PutObjectRequest request
                      ^AsyncRequestBody rbody)
-         (p/fmap (fn [result]
-                   (l/dbg :hint "s3 put-object success"
-                          :object-id (str id)
-                          :bucket bucket
-                          :key path
-                          :size content-size)
-                   object))
-         (p/merr (fn [cause]
-                   (l/error :hint "s3 put-object failed"
-                            :object-id (str id)
-                            :bucket bucket
-                            :key path
-                            :content-type mtype
-                            :content-size content-size
-                            :error (ex-message cause)
-                            :cause cause)
-                   cause)))))
+         (p/fmap (constantly object)))))
 
 ;; FIXME: research how to avoid reflection on close method
 (defn- path->stream

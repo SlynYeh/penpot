@@ -1,14 +1,3 @@
-CREATE OR REPLACE FUNCTION try_current_setting(name text)
-  RETURNS text
-  LANGUAGE plpgsql
-  AS $$
-  BEGIN
-    RETURN current_setting(name);
-  EXCEPTION WHEN OTHERS THEN
-    RETURN NULL;
-  END;
-$$;
-
 CREATE OR REPLACE FUNCTION raise_deletion_protection()
   RETURNS TRIGGER AS $$
   BEGIN

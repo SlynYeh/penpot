@@ -31,25 +31,20 @@
   (let [conn       (db/get-connection cfg)
         migrations (or (-> file meta ::fmg/migrated)
                        (-> file :migrations))
-        _          (when-not migrations
-                     (ex/raise :type :internal
-                               :code :missing-migrations
-                               :hint "no migrations available on file"))
-        ;; OpenGauss does not support ON CONFLICT, so we pre-filter
-        ;; existing migrations to avoid duplicate key violations
-        existing   (->> (db/exec! conn [sql:get-file-migrations id])
-                        (into #{} (map :name)))
         columns    [:file-id :name]
         rows       (->> migrations
-                        (remove #(contains? existing %))
                         (mapv (fn [name] [id name]))
-                        (seq))]
+                        (not-empty))]
 
-    (if-not rows
-      0
-      (-> (db/insert-many! conn :file-migration columns rows
-                           {::db/return-keys false})
-          (db/get-update-count)))))
+    (when-not rows
+      (ex/raise :type :internal
+                :code :missing-migrations
+                :hint "no migrations available on file"))
+
+    (-> (db/insert-many! conn :file-migration columns rows
+                         {::db/return-keys false
+                          ::sql/on-conflict-do-nothing true})
+        (db/get-update-count))))
 
 (defn reset-migrations!
   "Replace file migrations"

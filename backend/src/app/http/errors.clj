@@ -178,7 +178,7 @@
       (handle-exception (:handling edata) request error)
       (handle-exception error request parent-cause))))
 
-(defmethod handle-exception com.huawei.opengauss.jdbc.util.PSQLException
+(defmethod handle-exception org.postgresql.util.PSQLException
   [error request parent-cause]
   (let [state (.getSQLState ^java.sql.SQLException error)
         cause (or parent-cause error)]

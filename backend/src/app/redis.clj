@@ -24,17 +24,6 @@
    [integrant.core :as ig])
   (:import
    clojure.lang.MapEntry
-   io.lettuce.core.KeyValue
-   io.lettuce.core.RedisClient
-   io.lettuce.core.RedisCommandInterruptedException
-   io.lettuce.core.RedisCommandTimeoutException
-   io.lettuce.core.RedisException
-   io.lettuce.core.RedisURI
-   io.lettuce.core.RedisURI$Builder
-   io.lettuce.core.resource.ClientResources
-   io.lettuce.core.resource.DefaultClientResources
-   io.lettuce.core.ScriptOutputType
-   io.lettuce.core.SetArgs
    io.lettuce.core.api.StatefulRedisConnection
    io.lettuce.core.api.sync.RedisCommands
    io.lettuce.core.api.sync.RedisScriptingCommands
@@ -54,11 +43,9 @@
    io.lettuce.core.ScriptOutputType
    io.lettuce.core.SetArgs
    io.netty.channel.nio.NioEventLoopGroup
-   io.netty.util.concurrent.EventExecutorGroup
    io.netty.util.HashedWheelTimer
    io.netty.util.Timer
    java.lang.AutoCloseable
-   java.net.URLDecoder
    java.time.Duration))
 
 (set! *warn-on-reflection* true)
@@ -206,7 +193,7 @@
     (try
       (let [keys (into-array String keys)]
         (when-let [res (.blpop cmd
-                               ^long timeout
+                               ^double timeout
                                ^"[Ljava.lang.String;" keys)]
           (MapEntry/create
            (.getKey ^KeyValue res)
@@ -400,13 +387,16 @@
   (let [keys    (if (vector? key-or-keys) key-or-keys [key-or-keys])
         timeout (cond
                   (ct/duration? timeout)
-                  (max 1 (long (/ (inst-ms timeout) 1000)))
+                  (/ (double (inst-ms timeout)) 1000.0)
+
+                  (double? timeout)
+                  timeout
 
                   (int? timeout)
-                  (max 1 (long (/ timeout 1000)))
+                  (/ (double timeout) 1000.0)
 
                   :else
-                  (long timeout))]
+                  0)]
 
     (assert (every? string? keys) "only string keys allowed")
     (-blpop conn keys timeout)))
@@ -536,8 +526,7 @@
 (def ^:private schema:client-params
   [:map {:title "redis-params"}
    ::wrk/netty-io-executor
-   ::wrk/netty-executor
-   [::uri :string]
+   [::uri ::sm/uri]
    [::timeout ::ct/duration]])
 
 (def ^:private check-client-params
@@ -547,43 +536,8 @@
   [_ params]
   (check-client-params params))
 
-(defn- create-redis-uri
-  "Create a RedisURI from a URI string. Supports standalone (redis://) and
-  sentinel (redis-sentinel://) schemes."
-  [^String uri-str]
-  (if (str/starts-with? uri-str "redis-sentinel")
-    (let [ju       (java.net.URI/create uri-str)
-          db       (let [p (.getPath ju)]
-                     (if (and p (pos? (count p)))
-                       (Integer/parseInt (subs p 1))
-                       0))
-          master   (or (.getFragment ju) "mymaster")
-          auth     (.getRawAuthority ju)
-          ;; Manually extract password from raw authority since java.net.URI
-          ;; can't parse comma-separated sentinel hosts.
-          [password host-part] (if-let [idx (str/index-of auth "@")]
-                                 [(subs auth 0 idx) (subs auth (inc idx))]
-                                 [nil auth])
-          password (when password (java.net.URLDecoder/decode ^String password "UTF-8"))
-          [first-host & rest-hosts] (str/split host-part #",")
-          [fh fport] (str/split first-host #":" 2)
-          sentinel-port (Integer/parseInt (or fport "26379"))
-          ^RedisURI$Builder builder
-          (RedisURI$Builder/sentinel fh sentinel-port master)]
-      ;; Password is for the data node (master/replica), not the sentinel.
-      ;; Sentinel password is not supported via URI; sentinels typically run
-      ;; without authentication in trusted networks.
-      (when password
-        (.withPassword builder ^CharSequence password))
-      (.withDatabase builder db)
-      (doseq [h rest-hosts]
-        (let [[hp hpp] (str/split h #":" 2)]
-          (.withSentinel builder hp (Integer/parseInt (or hpp "26379")))))
-      (.build builder))
-    (RedisURI/create uri-str)))
-
 (defmethod ig/init-key ::client
-  [_ {:keys [::uri ::wrk/netty-io-executor ::wrk/netty-executor] :as params}]
+  [_ {:keys [::uri ::wrk/netty-io-executor] :as params}]
 
   (l/inf :hint "initialize redis client" :uri (str uri))
 
@@ -591,18 +545,26 @@
         cache     (atom {})
 
         resources (.. (DefaultClientResources/builder)
-                      (eventExecutorGroup ^EventExecutorGroup netty-executor)
+
+                      ;; We provide lettuce with a shared event loop
+                      ;; group instance instead of letting lettuce to
+                      ;; create its own
                       (eventLoopGroupProvider
                        (reify io.lettuce.core.resource.EventLoopGroupProvider
                          (allocate [_ _] netty-io-executor)
                          (threadPoolSize [_]
                            (.executorCount ^NioEventLoopGroup netty-io-executor))
-                         (release [_ _ _ _ _])
-                         (shutdown [_ _ _ _])))
+                         (release [_ _ _ _ _]
+                           ;; Do nothing
+                           )
+                         (shutdown [_ _ _ _]
+                           ;; Do nothing
+                           )))
+
                       (timer ^Timer timer)
                       (build))
 
-        redis-uri (create-redis-uri ^String (str uri))
+        redis-uri (RedisURI/create ^String (str uri))
         client    (RedisClient/create ^ClientResources resources
                                       ^RedisURI redis-uri)]
 

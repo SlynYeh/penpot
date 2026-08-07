@@ -10,7 +10,6 @@
    [app.auth.passwords :as passwords]
    [app.common.data :as d]
    [app.common.exceptions :as ex]
-   [app.common.logging :as l]
    [app.common.schema :as sm]
    [app.common.time :as ct]
    [app.common.types.plugins :refer [schema:plugin-registry]]
@@ -135,10 +134,9 @@
       (with-nitrate-licence profile cfg))
 
     (catch Throwable cause
-      (l/wrn :hint "get-profile failed, returning anonymous"
-             :profile-id (str profile-id)
-             :cause cause)
-      {:id uuid/zero :fullname "Anonymous User" :props {}})))
+      (if (= :not-found (-> cause ex-data :type))
+        {:id uuid/zero :fullname "Anonymous User"}
+        (throw cause)))))
 
 (defn get-profile
   "Get profile by id. Throws not-found exception if no profile found."
@@ -154,8 +152,8 @@
   schema:update-profile
   [:map {:title "update-profile"}
    [:fullname [::sm/word-string {:max 250}]]
-   [:lang {:optional true} [:maybe [:string {:max 8}]]]
-   [:theme {:optional true} [:maybe [:string {:max 250}]]]])
+   [:lang {:optional true} [:string {:max 8}]]
+   [:theme {:optional true} [:string {:max 250}]]])
 
 (sv/defmethod ::update-profile
   {::doc/added "1.0"
@@ -643,12 +641,10 @@
 (defn filter-props
   "Removes all namespace qualified props from `props` attr."
   [props]
-  (if (map? props)
-    (into {} (filter (fn [[k _]] (simple-ident? k))) props)
-    {}))
+  (into {} (filter (fn [[k _]] (simple-ident? k))) props))
 
 (defn decode-row
   [{:keys [props] :as row}]
-  (if (some? row)
-    (assoc row :props (filter-props (db/safe-decode-jsonb props)))
-    row))
+  (cond-> row
+    (db/pgobject? props "jsonb")
+    (assoc :props (db/decode-transit-pgobject props))))

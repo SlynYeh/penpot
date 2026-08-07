@@ -1,6 +1,4 @@
 DROP TABLE IF EXISTS task;
-DROP TABLE IF EXISTS task_completed;
-DROP TABLE IF EXISTS task_default;
 
 CREATE TABLE task (
   id uuid DEFAULT uuid_generate_v4(),
@@ -21,7 +19,10 @@ CREATE TABLE task (
   status text NOT NULL DEFAULT 'new',
 
   PRIMARY KEY (id, status)
-);
+) PARTITION BY list(status);
+
+CREATE TABLE task_completed partition OF task FOR VALUES IN ('completed', 'failed');
+CREATE TABLE task_default partition OF task default;
 
 CREATE INDEX task__scheduled_at__queue__idx
     ON task (scheduled_at, queue)

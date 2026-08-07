@@ -10,7 +10,7 @@
    [app.common.logging :as l]
    [app.util.services :as sv])
   (:import
-   com.huawei.opengauss.jdbc.util.PSQLException))
+   org.postgresql.util.PSQLException))
 
 (defn conflict-exception?
   "Check if exception matches a insertion conflict on postgresql."

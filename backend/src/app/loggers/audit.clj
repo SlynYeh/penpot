@@ -107,22 +107,19 @@
 
 (defn profile->props
   [profile]
-  (let [props (:props profile)]
-    (-> profile
-        (select-keys profile-props)
-        (cond-> (map? props) (merge props))
-        (d/without-nils))))
+  (-> profile
+      (select-keys profile-props)
+      (merge (:props profile))
+      (d/without-nils)))
 
 (defn clean-props
   [props]
-  (if (map? props)
-    (into {}
-          (comp
-           (d/without-nils)
-           (d/without-qualified)
-           (remove #(contains? reserved-props (key %))))
-          props)
-    props))
+  (into {}
+        (comp
+         (d/without-nils)
+         (d/without-qualified)
+         (remove #(contains? reserved-props (key %))))
+        props))
 
 (defn get-external-session-id
   [request]

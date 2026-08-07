@@ -51,15 +51,11 @@
                     :cause cause)))
         instance-id)))
 
-
-(def sql:update-prop
-  "UPDATE server_prop
-      SET content=?, preload=?
-    WHERE id=?")
-
-(def sql:insert-prop
+(def sql:add-prop
   "INSERT INTO server_prop (id, content, preload)
-   VALUES (?, ?, ?)")
+   VALUES (?, ?, ?)
+       ON CONFLICT (id)
+       DO UPDATE SET content=?, preload=?")
 
 (defn get-prop
   ([system prop] (get-prop system prop nil))
@@ -74,12 +70,7 @@
   (let [value (db/tjson value)
         prop  (d/name prop)]
     (db/run! system (fn [{:keys [::db/conn]}]
-                      (let [updated (db/exec-one! conn [sql:update-prop value false prop])]
-                        (when (zero? (:next.jdbc/update-count updated))
-                          (db/insert! conn :server-prop
-                                      {:id prop
-                                       :content value
-                                       :preload false})))))))
+                      (db/exec-one! conn [sql:add-prop prop value false value false])))))
 
 (defmethod ig/assert-key ::props
   [_ params]

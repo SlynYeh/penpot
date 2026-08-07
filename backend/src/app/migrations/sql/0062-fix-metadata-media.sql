@@ -1,4 +1,8 @@
 -- Fix problem with content-type incoherence
--- NOTE: jsonb_set and jsonb || operator not available in OpenGauss;
--- this data fix is not needed for fresh installs.
+
+UPDATE storage_object so
+SET metadata = jsonb_set(metadata, '{~:content-type}', to_jsonb(fmo.mtype))
+FROM file_media_object fmo
+WHERE so.id = fmo.media_id and
+      so.metadata->>'~:content-type' != fmo.mtype;
 

@@ -55,7 +55,7 @@
    java.io.PipedInputStream
    java.io.PipedOutputStream
    java.util.UUID
-   com.huawei.opengauss.jdbc.ds.PGSimpleDataSource))
+   org.postgresql.ds.PGSimpleDataSource))
 
 (def ^:dynamic *system* nil)
 (def ^:dynamic *pool* nil)

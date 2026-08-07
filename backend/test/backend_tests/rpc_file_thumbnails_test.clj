@@ -306,7 +306,7 @@
     (let [[row1 :as rows] (th/db-query :file-thumbnail {:file-id (:id file)})]
       (t/is (= 1 (count rows)))
 
-      (t/is (thrown? com.huawei.opengauss.jdbc.util.PSQLException
+      (t/is (thrown? org.postgresql.util.PSQLException
                      (th/db-delete! :storage-object {:id (:media-id row1)}))))))
 
 (t/deftest get-file-object-thumbnail

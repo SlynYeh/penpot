@@ -16,14 +16,12 @@ DROP FUNCTION on_media_object_insert () CASCADE;
 
 --- Remove CASCADE from file FOREIGN KEY
 ALTER TABLE file_media_object
- DROP CONSTRAINT file_media_object_file_id_fkey;
-ALTER TABLE file_media_object
-  ADD CONSTRAINT file_media_object_file_id_fkey FOREIGN KEY (file_id) REFERENCES file(id) DEFERRABLE;
+ DROP CONSTRAINT file_media_object_file_id_fkey,
+  ADD FOREIGN KEY (file_id) REFERENCES file(id) DEFERRABLE;
 
 --- Add deletion protection
-DROP TRIGGER IF EXISTS deletion_protection__tgr ON file_media_object;
-CREATE TRIGGER deletion_protection__tgr
+CREATE OR REPLACE TRIGGER deletion_protection__tgr
 BEFORE DELETE ON file_media_object FOR EACH STATEMENT
-  WHEN ((try_current_setting('rules.deletion_protection') IN ('on', '')) OR
-        (try_current_setting('rules.deletion_protection') IS NULL))
+  WHEN ((current_setting('rules.deletion_protection', true) IN ('on', '')) OR
+        (current_setting('rules.deletion_protection', true) IS NULL))
   EXECUTE PROCEDURE raise_deletion_protection();

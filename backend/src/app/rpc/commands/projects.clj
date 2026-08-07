@@ -218,10 +218,11 @@
 ;; --- MUTATION: Toggle Project Pin
 
 (def ^:private
-  sql:upsert-project-pin
-  "update team_project_profile_rel
-      set is_pinned = ?
-    where team_id = ? and project_id = ? and profile_id = ?")
+  sql:update-project-pin
+  "insert into team_project_profile_rel (team_id, project_id, profile_id, is_pinned)
+   values (?, ?, ?, ?)
+       on conflict (team_id, project_id, profile_id)
+       do update set is_pinned=?")
 
 (def ^:private schema:update-project-pin
   [:map {:title "update-project-pin"}
@@ -237,15 +238,9 @@
    ::webhooks/batch-key (webhooks/key-fn ::rpc/profile-id :id)
    ::webhooks/event? true
    ::db/transaction true}
-  [{:keys [::db/conn]} {:keys [::rpc/profile-id id team-id is-pinned] :as params}]
-  (check-read-permissions! conn profile-id id)
-  (let [updated (db/exec-one! conn [sql:upsert-project-pin is-pinned team-id id profile-id])]
-    (when (zero? (:next.jdbc/update-count updated))
-      (db/insert! conn :team-project-profile-rel
-                  {:team-id team-id
-                   :project-id id
-                   :profile-id profile-id
-                   :is-pinned is-pinned})))
+  [{:keys [::db/conn] :as cfg} {:keys [::rpc/profile-id id team-id is-pinned] :as params}]
+  (check-read-permissions! cfg profile-id id)
+  (db/exec-one! conn [sql:update-project-pin team-id id profile-id is-pinned is-pinned])
   nil)
 
 ;; --- MUTATION: Rename Project

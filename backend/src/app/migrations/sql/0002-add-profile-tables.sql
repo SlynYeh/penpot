@@ -5,9 +5,9 @@ CREATE TABLE profile (
   modified_at timestamptz NOT NULL DEFAULT clock_timestamp(),
   deleted_at timestamptz NULL,
 
-  fullname text NOT NULL,
+  fullname text NOT NULL DEFAULT '',
   email text NOT NULL,
-  photo text,
+  photo text NOT NULL,
   password text NOT NULL,
 
   lang text NULL,
@@ -62,7 +62,7 @@ CREATE TABLE team (
   deleted_at timestamptz NULL,
 
   name text NOT NULL,
-  photo text,
+  photo text NOT NULL,
 
   is_default boolean NOT NULL DEFAULT false
 );

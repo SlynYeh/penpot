@@ -6,6 +6,7 @@
 
 (ns app.auth
   (:require
+   [app.common.logging :as l]
    [buddy.hashers :as hashers]))
 
 (def ^:private default-options
@@ -22,6 +23,7 @@
   [attempt password]
   (try
     (hashers/verify attempt password default-options)
-    (catch Throwable _
+    (catch Throwable cause
+      (l/err :hint "password verification error" :cause cause)
       {:update false
        :valid false})))

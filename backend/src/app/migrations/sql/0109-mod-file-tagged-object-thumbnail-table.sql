@@ -11,16 +11,19 @@ CREATE INDEX IF NOT EXISTS file_tagged_object_thumbnail__deleted_at__idx
 
 --- Remove CASCADE from media_id and file_id foreign constraint
 ALTER TABLE file_tagged_object_thumbnail
- DROP CONSTRAINT file_tagged_object_thumbnail_media_id_fkey,
-  ADD FOREIGN KEY (media_id) REFERENCES storage_object(id) DEFERRABLE;
+ DROP CONSTRAINT file_tagged_object_thumbnail_media_id_fkey;
+ALTER TABLE file_tagged_object_thumbnail
+  ADD CONSTRAINT file_tagged_object_thumbnail_media_id_fkey FOREIGN KEY (media_id) REFERENCES storage_object(id) DEFERRABLE;
 
 ALTER TABLE file_tagged_object_thumbnail
- DROP CONSTRAINT file_tagged_object_thumbnail_file_id_fkey,
-  ADD FOREIGN KEY (file_id) REFERENCES file(id) DEFERRABLE;
+ DROP CONSTRAINT file_tagged_object_thumbnail_file_id_fkey;
+ALTER TABLE file_tagged_object_thumbnail
+  ADD CONSTRAINT file_tagged_object_thumbnail_file_id_fkey FOREIGN KEY (file_id) REFERENCES file(id) DEFERRABLE;
 
 --- Add deletion protection
-CREATE OR REPLACE TRIGGER deletion_protection__tgr
+DROP TRIGGER IF EXISTS deletion_protection__tgr ON file_tagged_object_thumbnail;
+CREATE TRIGGER deletion_protection__tgr
 BEFORE DELETE ON file_tagged_object_thumbnail FOR EACH STATEMENT
-  WHEN ((current_setting('rules.deletion_protection', true) IN ('on', '')) OR
-        (current_setting('rules.deletion_protection', true) IS NULL))
+  WHEN ((try_current_setting('rules.deletion_protection') IN ('on', '')) OR
+        (try_current_setting('rules.deletion_protection') IS NULL))
   EXECUTE PROCEDURE raise_deletion_protection();

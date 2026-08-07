@@ -33,9 +33,9 @@
        v)})
 
 (def default
-  {:database-uri "postgresql://postgres/penpot"
+  {:database-uri "opengauss://localhost:5432/penpot?preferQueryMode=simple"
    :database-username "penpot"
-   :database-password "penpot"
+   :database-password "Penpot@123"
 
    :default-blob-version 4
 
@@ -52,7 +52,7 @@
 
    :redis-uri "redis://redis/0"
 
-   :file-data-backend "legacy-db"
+   :file-data-backend "storage"
 
    :objects-storage-backend "fs"
    :objects-storage-fs-directory "assets"
@@ -60,8 +60,6 @@
    :auth-token-cookie-name "auth-token"
 
    :assets-path "/internal/assets/"
-   :smtp-default-reply-to "Penpot <no-reply@example.com>"
-   :smtp-default-from "Penpot <no-reply@example.com>"
 
    :profile-complaint-max-age (ct/duration {:days 7})
    :profile-complaint-threshold 2
@@ -89,12 +87,9 @@
    ;; time to avoid email sending after profile modification
    :email-verify-threshold "15m"
 
-   :quotes-upload-sessions-per-profile 5
-   :quotes-upload-chunks-per-session 20
-
-   ;; SSRF protection
-   :ssrf-allowed-hosts #{}
-   :ssrf-extra-blocked-cidrs #{}})
+   ;; disable automatic database migration on startup
+   ;; set to true when using offline migration scripts
+   :disable-auto-migration false})
 
 (def schema:config
   (do #_sm/optional-keys
@@ -168,9 +163,10 @@
     [:worker-webhook-parallelism {:optional true} ::sm/int]
 
     [:database-password {:optional true} [:maybe :string]]
-    [:database-uri {:optional true} ::sm/uri]
+    [:database-uri {:optional true} :string]
     [:database-username {:optional true} [:maybe :string]]
     [:database-readonly {:optional true} ::sm/boolean]
+    [:disable-auto-migration {:optional true} ::sm/boolean]
     [:database-min-pool-size {:optional true} ::sm/int]
     [:database-max-pool-size {:optional true} ::sm/int]
 
@@ -235,19 +231,10 @@
     [:profile-complaint-max-age {:optional true} ::ct/duration]
     [:profile-complaint-threshold {:optional true} ::sm/int]
 
-    [:redis-uri {:optional true} ::sm/uri]
+    [:redis-uri {:optional true} :string]
 
     [:email-domain-blacklist {:optional true} ::fs/path]
     [:email-domain-whitelist {:optional true} ::fs/path]
-
-    [:smtp-default-from {:optional true} :string]
-    [:smtp-default-reply-to {:optional true} :string]
-    [:smtp-host {:optional true} :string]
-    [:smtp-password {:optional true} [:maybe :string]]
-    [:smtp-port {:optional true} ::sm/int]
-    [:smtp-ssl {:optional true} ::sm/boolean]
-    [:smtp-tls {:optional true} ::sm/boolean]
-    [:smtp-username {:optional true} [:maybe :string]]
 
     [:urepl-host {:optional true} :string]
     [:urepl-port {:optional true} ::sm/int]

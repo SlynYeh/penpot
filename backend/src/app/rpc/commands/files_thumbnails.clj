@@ -226,12 +226,16 @@
     WHERE file_id = ? AND object_id = ? AND tag = ?
       FOR UPDATE")
 
-(def sql:create-file-object-thumbnail
+(def sql:insert-file-object-thumbnail
   "INSERT INTO file_tagged_object_thumbnail (file_id, object_id, tag, media_id)
    VALUES (?, ?, ?, ?)
-       ON CONFLICT (file_id, object_id, tag)
-       DO UPDATE SET updated_at=?, media_id=?, deleted_at=?
    RETURNING *")
+
+(def sql:update-file-object-thumbnail
+  "UPDATE file_tagged_object_thumbnail
+      SET updated_at = ?, media_id = ?, deleted_at = ?
+    WHERE file_id = ? AND object_id = ? AND tag = ?
+    RETURNING *")
 
 (defn- persist-thumbnail!
   [storage media created-at]
@@ -255,12 +259,16 @@
         media     (persist-thumbnail! storage media timestamp)
         [th1 th2] (db/tx-run! cfg (fn [{:keys [::db/conn]}]
                                     (let [th1 (db/exec-one! conn [sql:get-file-object-thumbnail file-id object-id tag])
-                                          th2 (db/exec-one! conn [sql:create-file-object-thumbnail
-                                                                  file-id object-id tag
-                                                                  (:id media)
-                                                                  timestamp
-                                                                  (:id media)
-                                                                  (:deleted-at file)])]
+                                          existing (some? (db/exec-one! conn [sql:get-file-object-thumbnail file-id object-id tag]))
+                                          th2 (if existing
+                                                (db/exec-one! conn [sql:update-file-object-thumbnail
+                                                                    timestamp
+                                                                    (:id media)
+                                                                    (:deleted-at file)
+                                                                    file-id object-id tag])
+                                                (db/exec-one! conn [sql:insert-file-object-thumbnail
+                                                                    file-id object-id tag
+                                                                    (:id media)]))]
                                       [th1 th2])))]
 
     (when (and (some? th1)

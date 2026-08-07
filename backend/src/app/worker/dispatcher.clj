@@ -45,7 +45,7 @@
   "SELECT id, queue, scheduled_at from task AS t
     WHERE t.scheduled_at <= ?::timestamptz
       AND (t.status = 'new' OR t.status = 'retry')
-      AND queue ~~* ?::text
+      AND LOWER(queue) LIKE LOWER(?::text)
     ORDER BY t.priority DESC, t.scheduled_at
     LIMIT ?
       FOR UPDATE

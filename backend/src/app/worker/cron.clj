@@ -26,14 +26,13 @@
 
 (def sql:upsert-cron-task
   "insert into scheduled_task (id, cron_expr)
-   values (?, ?)
-       on conflict (id)
-       do nothing")
+   select ?, ?
+   where not exists (select 1 from scheduled_task where id = ?)")
 
 (defn- synchronize-cron-entries!
   [{:keys [::db/conn ::entries]}]
   (doseq [{:keys [id cron]} entries]
-    (let [result   (db/exec-one! conn [sql:upsert-cron-task id (str cron)])
+    (let [result   (db/exec-one! conn [sql:upsert-cron-task id (str cron) id])
           updated? (pos? (db/get-update-count result))]
       (l/dbg :hint "register task" :id id :cron (str cron)
              :status (if updated? "created" "exists")))))
@@ -54,7 +53,7 @@
       (try
         (db/tx-run! cfg (fn [{:keys [::db/conn]}]
                           (db/exec-one! conn ["SET LOCAL statement_timeout=0;"])
-                          (db/exec-one! conn ["SET LOCAL idle_in_transaction_session_timeout=0;"])
+                          (db/disable-idle-timeout! conn)
                           (when (lock-scheduled-task! conn id)
                             (db/update! conn :scheduled-task
                                         {:cron-expr (str cron)

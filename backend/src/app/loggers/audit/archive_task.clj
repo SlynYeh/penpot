@@ -23,11 +23,11 @@
 (defn- decode-row
   [{:keys [props ip-addr context] :as row}]
   (cond-> row
-    (db/pgobject? props)
-    (assoc :props (db/decode-transit-pgobject props))
+    (some? props)
+    (assoc :props (db/safe-decode-jsonb props))
 
-    (db/pgobject? context)
-    (assoc :context (db/decode-transit-pgobject context))
+    (some? context)
+    (assoc :context (db/safe-decode-jsonb context))
 
     (db/pgobject? ip-addr "inet")
     (assoc :ip-addr (db/decode-inet ip-addr))))

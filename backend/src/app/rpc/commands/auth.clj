@@ -392,7 +392,7 @@
     (try
       (-> (db/insert! conn :profile params)
           (profile/decode-row))
-      (catch org.postgresql.util.PSQLException cause
+      (catch com.huawei.opengauss.jdbc.util.PSQLException cause
         (if (db/duplicate-key-error? cause)
           (ex/raise :type :validation
                     :code :email-already-exists
@@ -561,13 +561,15 @@
                 :code :email-already-exists)
 
       :else
-      (let [elapsed? (elapsed-verify-threshold? profile)
-            reports? (eml/has-reports? conn (:email profile))
-            action   (if reports?
-                       "ignore-because-complaints"
-                       (if elapsed?
-                         "resend-email-verification"
-                         "ignore"))]
+      (let [email-verification? (contains? cf/flags :email-verification)
+            elapsed?            (elapsed-verify-threshold? profile)
+            reports?            (eml/has-reports? conn (:email profile))
+            action              (cond
+                                  reports?            "ignore-because-complaints"
+                                  email-verification? (if elapsed?
+                                                        "resend-email-verification"
+                                                        "ignore")
+                                  :else               "ignore")]
 
         (l/wrn :hint "repeated registry detected"
                :profile-id (str (:id profile))
@@ -580,12 +582,23 @@
                       {:id (:id profile)})
           (send-email-verification! cfg profile))
 
-        (rph/with-meta {:email (:email profile)
-                        :id (:id profile)}
-          {::audit/replace-props (audit/profile->props profile)
-           ::audit/context {:action action}
-           ::audit/profile-id (:id profile)
-           ::audit/name "register-profile-retry"})))))
+        ;; When email verification is disabled or profile is already
+        ;; active, log the user in directly instead of showing the
+        ;; email verification page.
+        (if (or (:is-active profile)
+                (not email-verification?))
+          (-> (profile/strip-private-attrs profile)
+              (rph/with-transform (session/create-fn cfg profile claims))
+              (rph/with-meta
+                {::audit/replace-props props
+                 ::audit/context {:action "login"}
+                 ::audit/profile-id (:id profile)}))
+          (rph/with-meta {:email (:email profile)
+                          :id (:id profile)}
+            {::audit/replace-props (audit/profile->props profile)
+             ::audit/context {:action action}
+             ::audit/profile-id (:id profile)
+             ::audit/name "register-profile-retry"}))))))
 
 (def schema:register-profile
   [:map {:title "register-profile"}

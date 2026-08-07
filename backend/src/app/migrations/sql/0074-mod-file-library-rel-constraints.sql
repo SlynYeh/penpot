@@ -1,5 +1,9 @@
 ALTER TABLE file_library_rel
-ALTER CONSTRAINT file_library_rel_file_id_fkey DEFERRABLE INITIALLY IMMEDIATE;
+ DROP CONSTRAINT file_library_rel_file_id_fkey,
+  ADD CONSTRAINT file_library_rel_file_id_fkey
+      FOREIGN KEY (file_id) REFERENCES file(id) ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE file_library_rel
-ALTER CONSTRAINT file_library_rel_library_file_id_fkey DEFERRABLE INITIALLY IMMEDIATE;
+ DROP CONSTRAINT file_library_rel_library_file_id_fkey,
+  ADD CONSTRAINT file_library_rel_library_file_id_fkey
+      FOREIGN KEY (library_file_id) REFERENCES file(id) ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE;

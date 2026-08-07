@@ -26,7 +26,7 @@
   [{:keys [metadata] :as row}]
   (cond-> row
     (some? metadata)
-    (assoc :metadata (db/decode-transit-pgobject metadata))))
+    (assoc :metadata (db/safe-decode-jsonb metadata))))
 
 ;; --- API Definition
 

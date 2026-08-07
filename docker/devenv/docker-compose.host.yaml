@@ -1,0 +1,14 @@
+# Override to expose service ports to host for local development
+services:
+  opengauss:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"

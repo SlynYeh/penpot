@@ -312,23 +312,13 @@
          (first))))
 
 (defn filter-layouts-ids
-  "Returns the shape ids whose modifier may change a layout, i.e. it drops
-  shapes with no modifier and shapes that are only translated.
-
-  A pure translation never changes a layout's internal structure (track sizes,
-  cell positions, gap distribution): the container and its children move
-  together, and the children are translated rigidly by the constraints pass. So
-  their layout does not need to be re-solved. Previously only root frames were
-  skipped this way; extending it to nested shapes is what avoids re-running the
-  (expensive) grid/flex solver on every drag tick of a nested layout."
+  "Returns a list of ids without the root-frames with only move"
   [objects modif-tree]
   (->> modif-tree
        (remove (fn [[id {:keys [modifiers]}]]
                  (or (ctm/empty? modifiers)
-                    ;;  FIXME - 优化Grid表格拖动卡顿问题，如果产生其它问题，可还原代码
-                    ;;  (and (cfh/root-frame? objects id)
-                    ;;       (ctm/only-move? modifiers)))))
-                     (ctm/only-move? modifiers))))
+                     (and (cfh/root-frame? objects id)
+                          (ctm/only-move? modifiers)))))
        (map first)
        (set)))
 

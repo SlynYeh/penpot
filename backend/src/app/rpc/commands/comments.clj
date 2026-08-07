@@ -158,7 +158,7 @@
   [{:keys [participants position mentions] :as row}]
   (cond-> row
     (db/pgpoint? position) (assoc :position (db/decode-pgpoint position))
-    (db/pgobject? participants) (assoc :participants (db/decode-transit-pgobject participants))
+    (some? participants) (assoc :participants (db/safe-decode-jsonb participants))
     (db/pgarray? mentions) (assoc :mentions (db/decode-pgarray mentions #{}))))
 
 (def xf-decode-row
@@ -196,18 +196,25 @@
   (let [res (db/exec-one! conn [sql:get-next-seqn file-id])]
     (:next-seqn res)))
 
-(def sql:upsert-comment-thread-status
+(def sql:update-comment-thread-status
+  "update comment_thread_status
+      set modified_at = ?
+    where thread_id = ? and profile_id = ?
+    returning modified_at;")
+
+(def sql:insert-comment-thread-status
   "insert into comment_thread_status (thread_id, profile_id, modified_at)
    values (?, ?, ?)
-       on conflict (thread_id, profile_id)
-       do update set modified_at = ?
    returning modified_at;")
 
 (defn upsert-comment-thread-status!
   ([conn profile-id thread-id]
    (upsert-comment-thread-status! conn profile-id thread-id (ct/in-future "1s")))
   ([conn profile-id thread-id mod-at]
-   (db/exec-one! conn [sql:upsert-comment-thread-status thread-id profile-id mod-at mod-at])))
+   (let [result (db/exec-one! conn [sql:update-comment-thread-status mod-at thread-id profile-id])]
+     (if result
+       result
+       (db/exec-one! conn [sql:insert-comment-thread-status thread-id profile-id mod-at])))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; QUERY COMMANDS

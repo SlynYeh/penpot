@@ -100,10 +100,10 @@ RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
        aarch64|arm64) \
-         BINARY_URL="https://release-assets.githubusercontent.com/github-production-release-asset/29207621/79c7b224-22b7-4276-b25f-eca7b9f7228c?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-06T07%3A35%3A36Z&rscd=attachment%3B+filename%3Dcaddy_2.11.4_linux_arm64.tar.gz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-06T06%3A35%3A14Z&ske=2026-08-06T07%3A35%3A36Z&sks=b&skv=2018-11-09&sig=S5%2BacZSZmWEG4Xu6VDAhhnCwd7RD5hnO28IqvMITZdw%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NjAwMDg0NCwibmJmIjoxNzg1OTk5MDQ0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.pcZpCpKaE0dO1ZPogheVHwjASchih3gOnXAoF35hbW8&response-content-disposition=attachment%3B%20filename%3Dcaddy_2.11.4_linux_arm64.tar.gz&response-content-type=application%2Foctet-stream"; \
+         BINARY_URL="https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_arm64.tar.gz"; \
          ;; \
        amd64|x86_64) \
-         BINARY_URL="https://release-assets.githubusercontent.com/github-production-release-asset/29207621/79c7b224-22b7-4276-b25f-eca7b9f7228c?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-06T07%3A35%3A36Z&rscd=attachment%3B+filename%3Dcaddy_2.11.4_linux_arm64.tar.gz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-06T06%3A35%3A14Z&ske=2026-08-06T07%3A35%3A36Z&sks=b&skv=2018-11-09&sig=S5%2BacZSZmWEG4Xu6VDAhhnCwd7RD5hnO28IqvMITZdw%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NjAwMDg0NCwibmJmIjoxNzg1OTk5MDQ0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.pcZpCpKaE0dO1ZPogheVHwjASchih3gOnXAoF35hbW8&response-content-disposition=attachment%3B%20filename%3Dcaddy_2.11.4_linux_arm64.tar.gz&response-content-type=application%2Foctet-stream"; \
+         BINARY_URL="https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz"; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
@@ -152,8 +152,7 @@ RUN set -eux; \
     rm -rf /tmp/openjdk.tar.gz;
 
 RUN set -ex; \
-    # curl -LfsSo /tmp/clojure.sh https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh; \
-    curl -LfsSo /tmp/clojure.sh http://host.docker.internal:8080/linux-install-$CLOJURE_VERSION.sh; \
+    curl -LfsSo /tmp/clojure.sh https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh; \
     chmod +x /tmp/clojure.sh; \
     mkdir -p /opt/clojure; \
     /tmp/clojure.sh --prefix /opt/clojure; \
@@ -189,8 +188,7 @@ RUN set -eux; \
             ;; \
     *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
     esac; \
-    # wget "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${rustArch}/rustup-init"; \
-    wget "http://host.docker.internal:8080/rustup-init"; \
+    wget "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${rustArch}/rustup-init"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
     ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
@@ -329,11 +327,10 @@ RUN set -ex; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
        aarch64|arm64) \
-        #  BINARY_URL="https://dl.min.io/client/mc/release/linux-arm64/mc"; \
-         BINARY_URL="http://host.docker.internal:8080/mc.linux-amd64.RELEASE.2025-08-13T08-35-41Z"; \
+         BINARY_URL="https://dl.min.io/client/mc/release/linux-arm64/mc"; \
          ;; \
        amd64|x86_64) \
-         BINARY_URL="http://host.docker.internal:8080/mc.linux-amd64.RELEASE.2025-08-13T08-35-41Z"; \
+         BINARY_URL="https://dl.min.io/client/mc/release/linux-amd64/mc"; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
@@ -458,16 +455,6 @@ RUN set -ex; \
       libwebpdemux2 \
       libzip5 \
     ; \
-    rm -rf /var/lib/apt/lists/*;
-
-RUN set -ex; \
-    install -d /usr/share/postgresql-common/pgdg; \
-    # curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc; \
-    curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail http://host.docker.internal:8080/ACCC4CF8.asc; \
-    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" >> /etc/apt/sources.list.d/postgresql.list; \
-    apt-get -qq update; \
-    apt-get -qqy install postgresql-client-16; \
-    apt-get clean; \
     rm -rf /var/lib/apt/lists/*;
 
 

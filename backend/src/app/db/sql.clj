@@ -9,7 +9,7 @@
   (:require
    [app.db :as-alias db]
    [clojure.string :as str]
-   [next.jdbc.optional :as jdbc-opt]
+   [next.jdbc.result-set :as jdbc-rs]
    [next.jdbc.sql.builder :as sql]))
 
 (defn kebab-case [s] (str/replace s #"_" "-"))
@@ -17,7 +17,7 @@
 
 (defn as-kebab-maps
   [rs opts]
-  (jdbc-opt/as-unqualified-modified-maps rs (assoc opts :label-fn kebab-case)))
+  (jdbc-rs/as-unqualified-modified-maps rs (assoc opts :label-fn kebab-case)))
 
 (def default-opts
   {:table-fn snake-case
@@ -31,10 +31,10 @@
    (let [opts (merge default-opts opts)
          opts (cond-> opts
                 (::db/on-conflict-do-nothing? opts)
-                (assoc :suffix "ON CONFLICT DO NOTHING")
+                (assoc :suffix "")
 
                 (::on-conflict-do-nothing opts)
-                (assoc :suffix "ON CONFLICT DO NOTHING"))]
+                (assoc :suffix ""))]
      (sql/for-insert table key-map opts))))
 
 (defn insert-many
@@ -42,7 +42,7 @@
   (let [opts (merge default-opts opts)
         opts (cond-> opts
                (::on-conflict-do-nothing opts)
-               (assoc :suffix "ON CONFLICT DO NOTHING"))]
+               (assoc :suffix ""))]
     (sql/for-insert-multi table cols rows opts)))
 
 (defn select

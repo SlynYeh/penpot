@@ -33,9 +33,9 @@
        v)})
 
 (def default
-  {:database-uri "opengauss://localhost:5432/penpot?preferQueryMode=simple"
-   :database-username "penpot"
-   :database-password "Penpot@123"
+  {:database-uri "opengauss://opengauss:5432/penpot?preferQueryMode=simple"
+   :database-username "openpot"
+   :database-password "rykpav-bosde4-noQwag"
 
    :default-blob-version 4
 

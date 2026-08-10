@@ -45,6 +45,7 @@ services:
       - ${MDTS_EXTERNAL_PORT}:14179
 
     environment:
+      - PENPOT_FLAGS=enable-access-tokens disable-email-verification
       - EXTERNAL_UID=${CURRENT_USER_ID}
       - COLORTERM=truecolor
       - TERM=xterm-256color

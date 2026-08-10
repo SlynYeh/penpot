@@ -423,7 +423,7 @@
          (filter txt/is-text-node?)
          (reduce
           (fn [result {:keys [font-id font-variant-id font-weight font-style] :as node}]
-            (let [resolved-font-id (or font-id (:font-id txt/default-typography))
+            (let [resolved-font-id (resolve-font-id font-id)
                   resolved-variant-id (or font-variant-id (:font-variant-id txt/default-typography))
                   font-weight-fallback (or font-weight (:font-weight txt/default-typography) 400)
                   font-style-fallback (or font-style (:font-style txt/default-typography) "normal")

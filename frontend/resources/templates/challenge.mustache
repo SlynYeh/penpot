@@ -9,7 +9,7 @@
      var params = new URL(document.location.toString()).searchParams;
      var redirectPath = params.get("redirect");
      setTimeout(() => {
-         location.href = "/#" + redirectPath;
+         location.href = "{{{basePath}}}#" + redirectPath;
      }, 100);
     </script>
   </head>

@@ -1,0 +1,1 @@
+{"version":3,"file":"throwError.js","sourceRoot":"","sources":["../../../../src/internal/observable/throwError.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AA8F9C,MAAM,UAAU,UAAU,CAAC,YAAuB;IAChD,OAAO,IAAI,UAAU,CAAC,CAAC,UAAU,EAAE,EAAE;QACnC,UAAU,CAAC,KAAK,CAAC,YAAY,EAAE,CAAC,CAAC;IACnC,CAAC,CAAC,CAAC;AACL,CAAC"}

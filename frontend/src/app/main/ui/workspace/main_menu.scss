@@ -4,6 +4,7 @@
 //
 // Copyright (c) KALEIDOS INC Sucursal en España SL
 
+@use "refactor/common-refactor.scss" as deprecated;
 @use "ds/typography.scss" as t;
 @use "ds/z-index.scss" as *;
 @use "ds/_borders.scss" as *;
@@ -139,6 +140,14 @@
 
   &.failed {
     --menu-indicator-color: var(--color-foreground-error);
+  }
+
+  &.view-read-only {
+    top: deprecated.$s-48;
+  }
+
+  &.preferences-read-only {
+    top: deprecated.$s-76;
   }
 }
 

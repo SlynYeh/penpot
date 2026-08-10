@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8d14696f-2a2f-4bea-ab19-c0fa835d1fae" name="更改" comment="save penpot-v0605 config.js推送">
+      <change beforePath="$PROJECT_DIR$/resources/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/js/config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/js/render-wasm.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/js/render-wasm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/js/render-wasm.wasm" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/js/render-wasm.wasm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/js/worker/render.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/js/worker/render.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/rasterizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/rasterizer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/public/render.html" beforeDir="false" afterPath="$PROJECT_DIR$/resources/public/render.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/templates/index.mustache" beforeDir="false" afterPath="$PROJECT_DIR$/resources/templates/index.mustache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/proxy-server.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/proxy-server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shadow-cljs.edn" beforeDir="false" afterPath="$PROJECT_DIR$/shadow-cljs.edn" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="penpot-prefix" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3DLAVTLNuJJYtWOlLGNMN2JRUcX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JavaScript 调试.front.executor&quot;: &quot;Debug&quot;,
+    &quot;JavaScript 调试.penpot.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;uat&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/wudandan/Documents/works/penpot/penpot-2.14.4/frontend/resources/public&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;npm.build:app.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build:app:assets.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build:wasm &amp;&amp; pnpm run build:app:assets &amp;&amp; pnpm run build:app.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build:wasm.executor&quot;: &quot;Run&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/wudandan/Documents/works/penpot/penpot-2.14.4/frontend/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/wudandan/Documents/works/penpot/penpot-2.14.4/frontend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/public" />
+      <recent name="$PROJECT_DIR$/resources/public/js/worker" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.build:wasm">
+    <configuration name="front" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:3001/front/">
+      <method v="2" />
+    </configuration>
+    <configuration name="penpot" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:3001/penpot/">
+      <method v="2" />
+    </configuration>
+    <configuration name="build:app" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build:app" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build:wasm &amp;&amp; pnpm run build:app:assets &amp;&amp; pnpm run build:app" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build:wasm" />
+      </scripts>
+      <arguments value="&amp;&amp; pnpm run build:app:assets &amp;&amp; pnpm run build:app" />
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build:wasm" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build:wasm" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.build:wasm &amp;&amp; pnpm run build:app:assets &amp;&amp; pnpm run build:app" />
+        <item itemvalue="npm.build:wasm" />
+        <item itemvalue="JavaScript 调试.penpot" />
+        <item itemvalue="JavaScript 调试.front" />
+        <item itemvalue="npm.build:app" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.32098.39" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Handlebars" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="8d14696f-2a2f-4bea-ab19-c0fa835d1fae" name="更改" comment="" />
+      <created>1778050999632</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778050999632</updated>
+      <workItem from="1778051000806" duration="99219000" />
+      <workItem from="1779087222051" duration="46580000" />
+      <workItem from="1779429745365" duration="24915000" />
+      <workItem from="1779704369636" duration="104323000" />
+      <workItem from="1781169335846" duration="7874000" />
+      <workItem from="1784173568508" duration="598000" />
+      <workItem from="1784190044371" duration="1218000" />
+      <workItem from="1784530731950" duration="4961000" />
+    </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1778051410282</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778051410282</updated>
+    </task>
+    <task id="LOCAL-00002" summary="save 原始代码构建">
+      <option name="closed" value="true" />
+      <created>1779178477508</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1779178477508</updated>
+    </task>
+    <task id="LOCAL-00003" summary="save 暂存所有ts及翻译">
+      <option name="closed" value="true" />
+      <created>1779178575803</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1779178575803</updated>
+    </task>
+    <task id="LOCAL-00004" summary="save history路由">
+      <option name="closed" value="true" />
+      <created>1779334162665</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1779334162665</updated>
+    </task>
+    <task id="LOCAL-00005" summary="save history路由">
+      <option name="closed" value="true" />
+      <created>1779444029159</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779444029159</updated>
+    </task>
+    <task id="LOCAL-00006" summary="save history路由增加front前缀">
+      <option name="closed" value="true" />
+      <created>1779691938069</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1779691938069</updated>
+    </task>
+    <task id="LOCAL-00007" summary="save history路由增加front前缀">
+      <option name="closed" value="true" />
+      <created>1779694486128</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1779694486128</updated>
+    </task>
+    <task id="LOCAL-00008" summary="save 路径前缀从front改为penpot">
+      <option name="closed" value="true" />
+      <created>1779758576726</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1779758576726</updated>
+    </task>
+    <task id="LOCAL-00009" summary="save 打包体积优化-part-1">
+      <option name="closed" value="true" />
+      <created>1780151424404</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780151424404</updated>
+    </task>
+    <task id="LOCAL-00010" summary="save 打包体积优化-part-2-删除map文件，开启gzip的配置">
+      <option name="closed" value="true" />
+      <created>1780152840607</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780152840607</updated>
+    </task>
+    <task id="LOCAL-00011" summary="save penpot-v1 产物">
+      <option name="closed" value="true" />
+      <created>1780312852781</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1780312852781</updated>
+    </task>
+    <task id="LOCAL-00012" summary="save penpot-v0602 产物更新">
+      <option name="closed" value="true" />
+      <created>1780392234000</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1780392234000</updated>
+    </task>
+    <task id="LOCAL-00013" summary="save penpot-v0602 产物加时间戳">
+      <option name="closed" value="true" />
+      <created>1780558912096</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1780558912097</updated>
+    </task>
+    <task id="LOCAL-00014" summary="save penpot-v0602 产物加时间戳">
+      <option name="closed" value="true" />
+      <created>1780561157166</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1780561157166</updated>
+    </task>
+    <task id="LOCAL-00015" summary="save penpot-v0604 产物加时间戳">
+      <option name="closed" value="true" />
+      <created>1780571791463</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1780571791464</updated>
+    </task>
+    <task id="LOCAL-00016" summary="save penpot-v0604 去掉发布组件库、评论@功能、头像展示">
+      <option name="closed" value="true" />
+      <created>1780649145528</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1780649145528</updated>
+    </task>
+    <task id="LOCAL-00017" summary="save penpot-v0605 config.js推送">
+      <option name="closed" value="true" />
+      <created>1780649657574</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1780649657574</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init" />
+    <MESSAGE value="save 原始代码构建" />
+    <MESSAGE value="save 暂存所有ts及翻译" />
+    <MESSAGE value="save history路由-补充提交" />
+    <MESSAGE value="save history路由-补充提交" />
+    <MESSAGE value="save history路由增加front前缀" />
+    <MESSAGE value="save 路径前缀从front改为penpot" />
+    <MESSAGE value="save 打包体积优化-part-1" />
+    <MESSAGE value="save 打包体积优化-part-2-删除map文件，开启gzip的配置" />
+    <MESSAGE value="save penpot-v1 产物" />
+    <MESSAGE value="改public-uri" />
+    <MESSAGE value="save penpot-v0602 产物更新" />
+    <MESSAGE value="save penpot-v0602 产物加时间戳" />
+    <MESSAGE value="save penpot-v0604 产物加时间戳" />
+    <MESSAGE value="save penpot-v0604 去掉发布组件库、评论@功能、头像展示" />
+    <MESSAGE value="save penpot-v0605 config.js推送" />
+    <option name="LAST_COMMIT_MESSAGE" value="save penpot-v0605 config.js推送" />
+  </component>
+</project>

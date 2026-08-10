@@ -32,6 +32,7 @@ export const BUILD_DATE = process.env.BUILD_DATE || new Date().toString();
 export const BUILD_TS = process.env.BUILD_TS || Date.now();
 export const VERSION = process.env.VERSION || "develop";
 export const VERSION_TAG = process.env.VERSION_TAG || VERSION;
+export const BASE_PATH = process.env.PENPOT_BASE_PATH || "/penpot/";
 
 async function findFiles(basePath, predicate, options = {}) {
   predicate =
@@ -244,6 +245,7 @@ async function renderTemplate(path, context = {}, partials = {}) {
     version_tag: VERSION_TAG,
     build_date: BUILD_DATE,
     build_ts: BUILD_TS,
+    basePath: BASE_PATH,
   });
 
   return mustache.render(content, context, partials);

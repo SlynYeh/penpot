@@ -64,6 +64,14 @@ app.use(BASE_PATH + "rpc", proxy(TARGET_URL, {
 }));
 
 // Serve static files under base path
+// Disable caching for local development
+app.use((req, res, next) => {
+  res.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.header("Pragma", "no-cache");
+  res.header("Expires", "0");
+  next();
+});
+
 app.use(BASE_PATH, (req, res, next) => {
   // For SPA routes under the prefix (not matching a static file), serve index.html
   const urlPath = req.path;
@@ -77,12 +85,27 @@ app.use(BASE_PATH, (req, res, next) => {
   next();
 });
 
-app.use(BASE_PATH, express.static(staticPath));
+app.use(BASE_PATH, express.static(staticPath, {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", "0");
+  }
+}));
 
 // Root-level static serving (fallback for JS-constructed absolute URLs:
 // workers, fonts, media, etc. that use u/join cf/public-uri "path")
 app.use(express.static(staticPath, {
   index: false, // Don't serve index.html at root
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", "0");
+  }
 }));
 
 // Redirect root to base path

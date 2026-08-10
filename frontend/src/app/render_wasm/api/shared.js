@@ -1,5 +1,15 @@
-export const RawBlurType = {
-  "layer-blur": 0,
+export const GrowType = {
+  "fixed": 0,
+  "auto-width": 1,
+  "auto-height": 2,
+};
+
+export const TextEditorEvent = {
+  "none": 0,
+  "content-changed": 1,
+  "selection-changed": 2,
+  "styles-changed": 3,
+  "needs-layout": 4,
 };
 
 export const RawBlendMode = {
@@ -21,11 +31,16 @@ export const RawBlendMode = {
   "luminosity": 28,
 };
 
-export const RawBoolType = {
-  "union": 0,
-  "difference": 1,
-  "intersection": 2,
-  "exclusion": 3,
+export const RawBlurType = {
+  "layer-blur": 0,
+  "background-blur": 1,
+};
+
+export const RawFillData = {
+  "solid": 0,
+  "linear": 1,
+  "radial": 2,
+  "image": 3,
 };
 
 export const RawFontStyle = {
@@ -33,38 +48,11 @@ export const RawFontStyle = {
   "italic": 1,
 };
 
-export const RawFlexDirection = {
-  "row": 0,
-  "row-reverse": 1,
-  "column": 2,
-  "column-reverse": 3,
-};
-
-export const RawGridDirection = {
-  "row": 0,
-  "column": 1,
-};
-
-export const RawGrowType = {
-  "fixed": 0,
-  "auto-width": 1,
-  "auto-height": 2,
-};
-
 export const RawAlignItems = {
   "start": 0,
   "end": 1,
   "center": 2,
   "stretch": 3,
-};
-
-export const RawAlignSelf = {
-  "none": 0,
-  "auto": 1,
-  "start": 2,
-  "end": 3,
-  "center": 4,
-  "stretch": 5,
 };
 
 export const RawAlignContent = {
@@ -103,9 +91,52 @@ export const RawJustifySelf = {
   "stretch": 5,
 };
 
+export const RawAlignSelf = {
+  "none": 0,
+  "auto": 1,
+  "start": 2,
+  "end": 3,
+  "center": 4,
+  "stretch": 5,
+};
+
+export const RawVerticalAlign = {
+  "top": 0,
+  "center": 1,
+  "bottom": 2,
+};
+
+export const RawConstraintH = {
+  "left": 0,
+  "right": 1,
+  "leftright": 2,
+  "center": 3,
+  "scale": 4,
+};
+
+export const RawConstraintV = {
+  "top": 0,
+  "bottom": 1,
+  "topbottom": 2,
+  "center": 3,
+  "scale": 4,
+};
+
+export const RawFlexDirection = {
+  "row": 0,
+  "row-reverse": 1,
+  "column": 2,
+  "column-reverse": 3,
+};
+
 export const RawWrapType = {
   "wrap": 0,
   "nowrap": 1,
+};
+
+export const RawGridDirection = {
+  "row": 0,
+  "column": 1,
 };
 
 export const RawGridTrackType = {
@@ -115,14 +146,40 @@ export const RawGridTrackType = {
   "fixed": 3,
 };
 
+export const RawSizing = {
+  "fill": 0,
+  "fix": 1,
+  "auto": 2,
+};
+
+export const RawBoolType = {
+  "union": 0,
+  "difference": 1,
+  "intersection": 2,
+  "exclude": 3,
+};
+
+export const RawSegmentData = {
+  "move-to": 1,
+  "line-to": 2,
+  "curve-to": 3,
+  "close": 4,
+};
+
 export const RawShadowStyle = {
   "drop-shadow": 0,
   "inner-shadow": 1,
 };
 
-export const RawGuideKind = {
-  "vertical": 0,
-  "horizontal": 1,
+export const RawShapeType = {
+  "frame": 0,
+  "group": 1,
+  "bool": 2,
+  "rect": 3,
+  "path": 4,
+  "text": 5,
+  "circle": 6,
+  "svg-raw": 7,
 };
 
 export const RawStrokeStyle = {
@@ -143,50 +200,21 @@ export const RawStrokeCap = {
   "square": 7,
 };
 
-export const RawShapeType = {
-  "frame": 0,
-  "group": 1,
-  "bool": 2,
-  "rect": 3,
-  "path": 4,
-  "text": 5,
-  "circle": 6,
-  "svg-raw": 7,
+export const RawFillRule = {
+  "nonzero": 0,
+  "evenodd": 1,
 };
 
-export const RawConstraintH = {
-  "left": 0,
-  "right": 1,
-  "leftright": 2,
-  "center": 3,
-  "scale": 4,
+export const RawStrokeLineCap = {
+  "butt": 0,
+  "round": 1,
+  "square": 2,
 };
 
-export const RawConstraintV = {
-  "top": 0,
-  "bottom": 1,
-  "topbottom": 2,
-  "center": 3,
-  "scale": 4,
-};
-
-export const RawSizing = {
-  "fill": 0,
-  "fix": 1,
-  "auto": 2,
-};
-
-export const RawVerticalAlign = {
-  "top": 0,
-  "center": 1,
-  "bottom": 2,
-};
-
-export const RawFillData = {
-  "solid": 0,
-  "linear": 1,
-  "radial": 2,
-  "image": 3,
+export const RawStrokeLineJoin = {
+  "miter": 0,
+  "round": 1,
+  "bevel": 2,
 };
 
 export const RawTextAlign = {
@@ -215,31 +243,28 @@ export const RawTextTransform = {
   "capitalize": 3,
 };
 
+export const RawGrowType = {
+  "fixed": 0,
+  "auto-width": 1,
+  "auto-height": 2,
+};
+
+export const CursorDirection = {
+  "backward": 0,
+  "forward": 1,
+  "line-before": 2,
+  "line-after": 3,
+  "line-start": 4,
+  "line-end": 5,
+};
+
 export const RawTransformEntryKind = {
   "parent": 0,
   "child": 1,
 };
 
-export const RawSegmentData = {
-  "move-to": 1,
-  "line-to": 2,
-  "curve-to": 3,
-  "close": 4,
+export const RawGuideKind = {
+  "vertical": 0,
+  "horizontal": 1,
 };
 
-export const RawStrokeLineCap = {
-  "butt": 0,
-  "round": 1,
-  "square": 2,
-};
-
-export const RawStrokeLineJoin = {
-  "miter": 0,
-  "round": 1,
-  "bevel": 2,
-};
-
-export const RawFillRule = {
-  "nonzero": 0,
-  "evenodd": 1,
-};

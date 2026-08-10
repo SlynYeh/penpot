@@ -317,8 +317,9 @@
   (->> modif-tree
        (remove (fn [[id {:keys [modifiers]}]]
                  (or (ctm/empty? modifiers)
-                     (and (cfh/root-frame? objects id)
-                          (ctm/only-move? modifiers)))))
+                    ;;  (and (cfh/root-frame? objects id)
+                    ;;       (ctm/only-move? modifiers)))))
+                    (ctm/only-move? modifiers))))
        (map first)
        (set)))
 

@@ -17,6 +17,7 @@
    [app.main.data.exports.assets :as de]
    [app.main.data.exports.files :as fexp]
    [app.main.data.modal :as modal]
+   [app.main.data.notifications :as ntf]
    [app.main.data.plugins :as dp]
    [app.main.data.profile :as du]
    [app.main.data.shortcuts :as scd]
@@ -209,7 +210,23 @@
    ::mf/private true
    ::mf/wrap [mf/memo]}
   [{:keys [layout profile toggle-flag on-close]}]
-  (let [show-nudge-options (mf/use-fn #(modal/show! {:type :nudge-option}))]
+  (let [read-only?           (mf/use-ctx ctx/workspace-read-only?)
+        show-nudge-options (mf/use-fn #(modal/show! {:type :nudge-option}))
+        webgl-enabled?     (features/use-feature "render-wasm/v1")
+        toggle-webgl
+        (mf/use-fn
+         (fn [event]
+           (dom/stop-propagation event)
+           (let [enable? (not webgl-enabled?)]
+             (st/emit! (features/toggle-feature "render-wasm/v1")
+                       (ev/event {::ev/name (if enable?
+                                              "enable-webgl-rendering"
+                                              "disable-webgl-rendering")
+                                  ::ev/origin "workspace-menu"})
+                       (du/update-profile-props {:renderer (if enable? :wasm :svg)})
+                       (ntf/success (tr (if enable?
+                                         "webgl.toast.webgl-render-enabled"
+                                         "webgl.toast.webgl-render-disabled")))))))]
 
     [:> dropdown-menu* {:show true
                         ;; :id "workspace-preferences-menu"
@@ -217,6 +234,20 @@
                                             :preferences (not read-only?)
                                             :preferences-read-only read-only?)
                         :on-close on-close}
+     [:> dropdown-menu-item* {:on-click    toggle-webgl
+                              :class       (stl/css :submenu-item)
+                              :on-key-down (fn [event]
+                                             (when (kbd/enter? event)
+                                               (toggle-webgl event)))
+                              :data-testid "webgl-render"
+                              :id          "file-menu-webgl-render"}
+      [:span {:class (stl/css :item-name)}
+       (if webgl-enabled?
+         (tr "workspace.header.menu.disable-webgl")
+         (tr "workspace.header.menu.enable-webgl"))]
+      [:span {:class (stl/css-case :item-indicator true
+                                   :active webgl-enabled?)}]]
+
      [:> dropdown-menu-item* {:on-click    toggle-flag
                               :class       (stl/css :submenu-item)
                               :on-key-down (fn [event]

@@ -28,6 +28,7 @@
    [app.main.data.workspace.versions :as dwv]
    [app.main.features :as features]
    [app.main.refs :as refs]
+   [app.main.repo :as rp]
    [app.main.store :as st]
    [app.main.ui.components.dropdown-menu :refer [dropdown-menu*
                                                  dropdown-menu-item*]]
@@ -215,18 +216,21 @@
         webgl-enabled?     (features/use-feature "render-wasm/v1")
         toggle-webgl
         (mf/use-fn
+         (mf/deps webgl-enabled?)
          (fn [event]
            (dom/stop-propagation event)
-           (let [enable? (not webgl-enabled?)]
-             (st/emit! (features/toggle-feature "render-wasm/v1")
-                       (ev/event {::ev/name (if enable?
-                                              "enable-webgl-rendering"
-                                              "disable-webgl-rendering")
-                                  ::ev/origin "workspace-menu"})
-                       (du/update-profile-props {:renderer (if enable? :wasm :svg)})
-                       (ntf/success (tr (if enable?
-                                         "webgl.toast.webgl-render-enabled"
-                                         "webgl.toast.webgl-render-disabled")))))))]
+           (let [next-renderer (if webgl-enabled? :svg :wasm)
+                 ev-name (if (= next-renderer :wasm)
+                           "enable-webgl-rendering"
+                           "disable-webgl-rendering")]
+             (->> (rx/zip
+                   (rp/cmd! :update-profile-props {:props {:renderer next-renderer}})
+                   (rx/filter (ptk/type? ::ev/chunk-persisted) st/stream))
+                  (rx/timeout 2000 (rx/of :timeout))
+                  (rx/subs! (fn [_] (dom/reload-current-window true))
+                            (fn [_] (st/emit! (ntf/error (tr "errors.generic"))))))
+             (st/emit! (ev/event {::ev/name ev-name ::ev/origin "workspace-menu"})
+                       (ptk/data-event ::ev/force-persist {})))))]
 
     [:> dropdown-menu* {:show true
                         ;; :id "workspace-preferences-menu"

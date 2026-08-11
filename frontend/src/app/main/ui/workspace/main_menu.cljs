@@ -215,6 +215,7 @@
         webgl-enabled?     (features/use-feature "render-wasm/v1")
         toggle-webgl
         (mf/use-fn
+         [webgl-enabled?]
          (fn [event]
            (dom/stop-propagation event)
            (let [enable? (not webgl-enabled?)]

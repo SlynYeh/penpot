@@ -17,17 +17,26 @@ goog.scope(function() {
 
   class TokenTransformer {
     retrieveToken(pathPrefix, location) {
-      return location.pathname.substr(pathPrefix.length) + location.search;
+      const path = location.pathname + location.search;
+      if (pathPrefix !== "/" && path.startsWith(pathPrefix)) {
+        return path.slice(pathPrefix.length - 1);
+      }
+      return path;
     }
 
     createUrl(token, pathPrefix, location) {
-      return pathPrefix + token;
+      if (pathPrefix !== "/") {
+        return pathPrefix.replace(/\/$/, "") + token;
+      }
+      return token;
     }
   }
 
   self.create = function() {
+    const basePath = globalThis["penpotBasePath"] || "/";
     const instance = new Html5History(null, new TokenTransformer());
-    instance.setUseFragment(true);
+    instance.setUseFragment(false);
+    instance.setPathPrefix(basePath);
     return instance;
   };
 

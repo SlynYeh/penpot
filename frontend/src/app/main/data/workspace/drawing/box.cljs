@@ -104,7 +104,7 @@
             objects      (dsh/lookup-page-objects state page-id)
             focus        (:workspace-focus-selected state)
 
-            fid          (->> (ctst/top-nested-frame objects initial)
+            fid          (->> (ctst/top-nested-frame objects initial nil false)
                               (ctn/get-first-valid-parent objects) ;; We don't want to change the structure of component copies
                               :id)
 

@@ -31,25 +31,6 @@
 (def ^:private default-line-height 1.2)
 (def ^:private default-letter-spacing 0.0)
 
-;; DESCRIPTION - 强制 WSAM 模式使用内置字体库，避免网络原因导致渲染方框字体
-;; Force every text shape to render with the builtin Source Sans Pro,
-;; regardless of the font configured on the shape. Only the family is
-;; overridden; the shape's weight/style are preserved so bold/italic still
-;; apply via Source Sans Pro's own variants. The CJK language fallback
-;; (noto-fonts, resolved separately in app.render-wasm.api/fonts-from-text-content)
-;; is NOT affected, so non-Latin scripts still fall back to their Noto font
-;; when present in the text. Set to nil to restore the original behavior.
-(def ^:private forced-builtin-font-id "sourcesanspro")
-
-(defn- resolve-font-id
-  "Returns the font id used for rendering. When `forced-builtin-font-id` is
-  set, every shape renders with that builtin font; otherwise the shape's own
-  font id (or the default typography) is used."
-  [font-id]
-  (or forced-builtin-font-id
-      font-id
-      (:font-id txt/default-typography)))
-
 (defn- google-font-id->uuid
   "Returns the UUID for a Google Font ID. Uses uuid/zero as fallback when the
   font is not found in fontsdb. uuid/zero maps to the default font (Source
@@ -86,17 +67,6 @@
       variant
       closest-variant)))
 
-;; Stable UUIDs for localized builtin fonts so each one gets its own slot in
-;; the Skia FontStore. Source Sans Pro intentionally stays at uuid/zero to
-;; match the wasm's baked-in default font; every other builtin listed here is
-;; assigned a fixed non-zero uuid (otherwise all builtins collapse onto the
-;; default font and `_store_font` is skipped as "already uploaded").
-(def ^:private localized-font-uuids
-  {"notosanssc" #uuid "12345678-abcd-4321-9876-fedcba987654"})
-
-(defn- builtin-font-uuid [font-id]
-  (or (get localized-font-uuids font-id) uuid/zero))
-
 (defn- font-id->uuid [font-id]
   (case (font-backend font-id)
     :google
@@ -104,7 +74,7 @@
     :custom
     (custom-font-id->uuid font-id)
     :builtin
-    (builtin-font-uuid font-id)))
+    uuid/zero))
 
 (defn uuid->font-id
   [font-uuid]
@@ -278,29 +248,25 @@
 
 (defn normalize-span-font
   [span paragraph]
-  (let [font-id (resolve-font-id (:font-id span))
+  (let [font-id (:font-id span)
         font-variant-id (:font-variant-id span)
         font-weight-fallback (or (:font-weight span) (:font-weight paragraph))
         font-style-fallback (or (:font-style span) (:font-style paragraph))
         font-data (font-db-data font-id font-variant-id font-weight-fallback font-style-fallback)]
     (-> span
-        (assoc :font-id font-id
-               :font-family font-id
-               :font-variant-id (or (:id font-data) (:id font-data) font-variant-id)
+        (assoc :font-variant-id (or (:id font-data) (:id font-data) font-variant-id)
                :font-weight (or (:weight font-data) font-weight-fallback)
                :font-style (or (:style font-data) font-style-fallback)))))
 
 (defn normalize-paragraph-font
   [paragraph]
-  (let [font-id (resolve-font-id (:font-id paragraph))
+  (let [font-id (:font-id paragraph)
         font-variant-id (:font-variant-id paragraph)
         font-weight-fallback (:font-weight paragraph)
         font-style-fallback (:font-style paragraph)
         font-data (font-db-data font-id font-variant-id font-weight-fallback font-style-fallback)]
     (-> paragraph
-        (assoc :font-id font-id
-               :font-family font-id
-               :font-variant-id (or (:id font-data) (:id font-data) font-variant-id)
+        (assoc :font-variant-id (or (:id font-data) (:id font-data) font-variant-id)
                :font-weight (or (:weight font-data) font-weight-fallback)
                :font-style (or (:style font-data) font-style-fallback)))))
 
@@ -423,7 +389,7 @@
          (filter txt/is-text-node?)
          (reduce
           (fn [result {:keys [font-id font-variant-id font-weight font-style] :as node}]
-            (let [resolved-font-id (resolve-font-id font-id)
+            (let [resolved-font-id (or font-id (:font-id txt/default-typography))
                   resolved-variant-id (or font-variant-id (:font-variant-id txt/default-typography))
                   font-weight-fallback (or font-weight (:font-weight txt/default-typography) 400)
                   font-style-fallback (or font-style (:font-style txt/default-typography) "normal")
@@ -450,7 +416,7 @@
 
 (def noto-fonts
   {:japanese    {:font-id "gfont-noto-sans-jp"            :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}
-   :chinese     {:font-id "notosanssc"                    :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}
+   :chinese     {:font-id "gfont-noto-sans-sc"            :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}
    :korean      {:font-id "gfont-noto-sans-kr"            :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}
    :arabic      {:font-id "gfont-noto-sans-arabic"        :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}
    :cyrillic    {:font-id "gfont-noto-sans"               :font-variant-id "regular" :style 0 :weight 400 :is-fallback true}

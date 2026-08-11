@@ -2998,7 +2998,7 @@ msgstr "更新共享库中的一个组件"
 
 #: src/app/main/ui/static.cljs:309
 msgid "not-found.desc-message.doesnt-exist"
-msgstr "此页面不存在"
+msgstr "请刷新页面"
 
 #: src/app/main/ui/static.cljs:308
 msgid "not-found.desc-message.error"

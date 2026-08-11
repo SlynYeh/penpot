@@ -355,7 +355,7 @@
              page-id   (:current-page-id state)
              objects   (dsh/lookup-page-objects state page-id)
              frame-id  (-> (dsh/lookup-page-objects state page-id)
-                           (ctst/top-nested-frame {:x frame-x :y frame-y}))
+                           (ctst/top-nested-frame {:x frame-x :y frame-y} nil false))
 
              selected  (dsh/lookup-selected state)
              base      (cfh/get-base-shape objects selected)

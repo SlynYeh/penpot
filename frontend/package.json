@@ -128,5 +128,9 @@
     "watcher": "^2.3.1",
     "workerpool": "^10.0.3",
     "xregexp": "^5.1.2"
+  },
+  "dependencies": {
+    "express-http-proxy": "^2.1.2",
+    "ws": "^8.21.2"
   }
 }

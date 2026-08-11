@@ -309,34 +309,28 @@
   "Search for the top nested frame for positioning shapes when moving or creating.
   Looks for all the frames in a position and then goes in depth between the top-most and its
   children to find the target."
-  ([objects position]
-   (top-nested-frame objects position nil))
+  [objects position excluded read-only?]
+  (assert (or (nil? excluded) (set? excluded)))
 
-  ([objects position excluded]
-   (top-nested-frame objects position excluded false))
+  (let [frames (cond->> (get-frames-by-position objects position)
+                 (some? excluded)
+                 (remove (fn [obj]
+                           (let [id (dm/get-prop obj :id)]
+                             (contains? excluded id))))
 
-  ([objects position excluded read-only?]
-   (assert (or (nil? excluded) (set? excluded)))
+                 :always
+                 (remove #(or ^boolean (true? (:hidden %))
+                              ^boolean (and (true? (:blocked %))
+                                            (not read-only?)))))
 
-   (let [frames (cond->> (get-frames-by-position objects position)
-                  (some? excluded)
-                  (remove (fn [obj]
-                            (let [id (dm/get-prop obj :id)]
-                              (contains? excluded id))))
+        frame-set (into #{} (map #(dm/get-prop % :id)) frames)]
 
-                  :always
-                  (remove #(or ^boolean (true? (:hidden %))
-                               ^boolean (and (true? (:blocked %))
-                                             (not read-only?)))))
-
-         frame-set (into #{} (map #(dm/get-prop % :id)) frames)]
-
-     (loop [current-shape (first frames)]
-       (let [child-frame-id (d/seek #(contains? frame-set %)
-                                    (reverse (:shapes current-shape)))]
-         (if (nil? child-frame-id)
-           (or (:id current-shape) uuid/zero)
-           (recur (get objects child-frame-id))))))))
+    (loop [current-shape (first frames)]
+      (let [child-frame-id (d/seek #(contains? frame-set %)
+                                   (reverse (:shapes current-shape)))]
+        (if (nil? child-frame-id)
+          (or (:id current-shape) uuid/zero)
+          (recur (get objects child-frame-id)))))))
 
 (defn get-viewer-frames
   ([objects]

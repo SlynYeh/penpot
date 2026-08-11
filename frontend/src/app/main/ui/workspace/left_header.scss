@@ -8,9 +8,11 @@
 
 .workspace-header-left {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: deprecated.$s-12 deprecated.$s-12 deprecated.$s-8 deprecated.$s-12;
   min-height: deprecated.$s-52;
+  width: 100%;
 }
 
 .main-icon {

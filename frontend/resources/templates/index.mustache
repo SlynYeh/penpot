@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <base href="{{basePath}}" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>Penpot | Full-stack design</title>
 
@@ -30,6 +31,11 @@
       globalThis.penpotVersion = "{{& version}}";
       globalThis.penpotVersionTag = "{{& version_tag}}";
       globalThis.penpotBuildDate = "{{& build_date}}";
+    </script>
+
+    <script type="module">
+      globalThis.penpotBasePath = "{{{basePath}}}";
+      globalThis.penpotPublicURI = location.origin + "{{{basePath}}}";
     </script>
 
     {{# manifest}}

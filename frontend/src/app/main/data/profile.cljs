@@ -172,16 +172,16 @@
                                    ;; the old data on the database
                                    ;; where whe have `default` value
                                    (= current "default")
-                                   "dark"
+                                   "light"
 
                                    :else
                                    current)]
                      (case current
-                       "dark"   "light"
-                       "light"  "system"
-                       "system" "dark"
+                       "light"   "dark"
+                       "dark"  "system"
+                       "system" "light"
                        ; Failsafe for missing data
-                       "dark")))))
+                       "light")))))
 
     ptk/WatchEvent
     (watch [it state _]

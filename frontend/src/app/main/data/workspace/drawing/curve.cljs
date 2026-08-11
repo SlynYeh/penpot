@@ -35,7 +35,7 @@
             content      (dm/get-in state [:workspace-drawing :object :content])
             position     (path/get-handler-point content 0 nil)
 
-            frame-id     (->> (ctst/top-nested-frame objects position)
+            frame-id     (->> (ctst/top-nested-frame objects position nil false)
                               (ctn/get-first-valid-parent objects) ;; We don't want to change the structure of component copies
                               :id)
 

@@ -835,7 +835,7 @@
                   [frame-id delta target-index])
 
                 (empty? page-selected)
-                (let [frame-id (ctst/top-nested-frame page-objects position)
+                (let [frame-id (ctst/top-nested-frame page-objects position nil false)
                       delta    (gpt/subtract position orig-pos)]
                   [frame-id delta])
 

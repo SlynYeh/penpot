@@ -442,6 +442,26 @@
                ;; Keep comment thread positions in sync on undo/redo
                (rx/of (dwcm/watch-comment-thread-position-changes stoper-s))
 
+              (when (= "true" (:hiddenView rparams))
+                (->> stream
+                     (rx/filter (ptk/type? ::workspace-initialized))
+                     (rx/observe-on :async)
+                     (rx/take 1)
+                     (rx/map #(-> (layout/toggle-layout-flag :hide-ui)
+                                  (with-meta {::ev/origin "workspace-url-param"})))))
+
+              (when render-wasm?
+                (->> stream
+                     (rx/filter dch/commit?)
+                     (rx/map deref)
+                     (rx/mapcat
+                      (fn [{:keys [redo-changes]}]
+                        (let [added (->> redo-changes
+                                         (filter #(= (:type %) :add-obj))
+                                         (map :id))]
+                          (->> (rx/from added)
+                               (rx/map process-wasm-object)))))))
+
                ;; Resize auto-grow text shapes whose selrect does not match
                ;; the WASM text layout once their fonts finish loading.
                (->> stream

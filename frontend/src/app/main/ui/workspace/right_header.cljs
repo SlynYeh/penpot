@@ -232,14 +232,5 @@
           :on-click toggle-history}
          deprecated-icon/history]])
 
-     (when display-share-button?
-       [:a {:class (stl/css :viewer-btn)
-            :title (tr "workspace.header.share")
-            :on-click open-share-dialog}
-        deprecated-icon/share])
-
-     [:a {:class (stl/css :viewer-btn)
-          :title (tr "workspace.header.viewer" (sc/get-tooltip :open-viewer))
-          :on-click nav-to-viewer}
-      deprecated-icon/play]]))
+    ]))
 

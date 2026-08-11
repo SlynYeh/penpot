@@ -106,14 +106,7 @@
                                                  (tr "workspace.assets.local-library")])
                                        ;; Do we need to add shared info here?
                                        (mf/html [:div {:class (stl/css :special-title)}
-                                                 file-name]))}
-      (when-not ^boolean is-local
-        [:span {:title (tr "workspace.assets.open-library")}
-         [:a {:class (stl/css :file-link)
-              :href (str "#" url)
-              :target "_blank"
-              :on-click on-click}
-          deprecated-icon/open-link]])]]))
+                                                 file-name]))}]]))
 
 (defn- extend-selected
   [selected type asset-groups asset-id file-id]

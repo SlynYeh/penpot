@@ -752,7 +752,7 @@
                        (fn [[move-vector mod?]]
                          (let [position         (gpt/add from-position move-vector)
                                exclude-frames   (if mod? exclude-frames exclude-frames-siblings)
-                               target-frame     (ctst/top-nested-frame objects position exclude-frames)
+                               target-frame     (ctst/top-nested-frame objects position exclude-frames false)
                                [target-frame _] (ctn/find-valid-parent-and-frame-ids target-frame objects shapes false libraries parent-validation-cache)
                                flex-layout?     (ctl/flex-layout? objects target-frame)
                                grid-layout?     (ctl/grid-layout? objects target-frame)

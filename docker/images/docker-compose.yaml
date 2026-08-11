@@ -127,9 +127,9 @@ services:
       ## Database connection parameters. Don't touch them unless you are using custom
       ## postgresql connection parameters.
 
-      PENPOT_DATABASE_URI: opengauss://penpot-postgres:5432/penpot?preferQueryMode=simple
+      PENPOT_DATABASE_URI: opengauss://opengauss:5432/penpot?preferQueryMode=simple
       PENPOT_DATABASE_USERNAME: penpot
-      PENPOT_DATABASE_PASSWORD: penpot
+      PENPOT_DATABASE_PASSWORD: rykpav-bosde4-noQwag
 
       ## Valkey (or previously redis) is used for the websockets notifications. Don't touch
       ## unless the valkey container has different parameters or different name.

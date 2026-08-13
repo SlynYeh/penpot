@@ -16,6 +16,7 @@
    [app.common.geom.shapes.constraints :as gct]
    [app.common.geom.shapes.flex-layout :as gcfl]
    [app.common.geom.shapes.grid-layout :as gcgl]
+   [app.common.geom.shapes.grid-layout.layout-data :as glld]
    [app.common.geom.shapes.min-size-layout]
    [app.common.geom.shapes.pixel-precision :as gpp]
    [app.common.geom.shapes.points :as gpo]
@@ -338,7 +339,8 @@
           snap-precision 1
           snap-ignore-axis nil}}]
 
-   (let [;; Apply structure modifiers. Things that are not related to geometry
+   (binding [glld/*grid-layout-cache* (atom {})]
+     (let [;; Apply structure modifiers. Things that are not related to geometry
          objects
          (-> objects
              (cond-> (some? old-modif-tree)
@@ -385,7 +387,18 @@
          sizing-auto-layouts (find-auto-layouts objects shapes-tree-layout)
 
          modif-tree
-         (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints)
+         (let [result
+               #?(:cljs
+                  (let [t0 (js/performance.now)
+                        r  (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints)]
+                    (when ^boolean *assert*
+                      (.log js/console "[som]"
+                            "auto#=" (count sizing-auto-layouts)
+                            "auto=" (.toFixed (- (js/performance.now) t0) 1) "ms"))
+                    r)
+                  :clj
+                  (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints))]
+           result)
 
          modif-tree
          (if old-modif-tree
@@ -394,4 +407,4 @@
 
      ;;#?(:cljs
      ;;   (.log js/console ">result" (modif->js modif-tree objects)))
-     modif-tree)))
+     modif-tree))))

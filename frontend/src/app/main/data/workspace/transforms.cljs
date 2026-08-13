@@ -329,21 +329,27 @@
                                (dwm/create-modif-tree shape-ids %)
                                :ignore-constraints (contains? layout :scale-text)))))
 
-                      (let [emit-modifiers
+                      (let [emit-preview
+                            (fn [modifiers]
+                              (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
+                                (rx/of (dwm/set-preview-modifiers modif-tree))))
+
+                            emit-final
                             (fn [modifiers]
                               (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
                                 (rx/of (dwm/set-modifiers modif-tree (contains? layout :scale-text)))))]
-                        ;; Throttle the live preview to limit re-renders; the trailing
-                        ;; rx/last applies the exact final frame.
+                        ;; Live frames skip the layout solve (smooth drag); the
+                        ;; trailing rx/last + apply-modifiers run the exact full
+                        ;; solve so the committed result is unchanged.
                         (rx/merge
                          (->> resize-events-stream
                               (rx/sample mconst/resize-sample-time)
-                              (rx/mapcat emit-modifiers)
+                              (rx/mapcat emit-preview)
                               (rx/take-until stopper))
                          (->> resize-events-stream
                               (rx/take-until stopper)
                               (rx/last)
-                              (rx/mapcat emit-modifiers)))))]
+                              (rx/mapcat emit-final)))))]
 
                 (rx/concat
                  ;; This initial stream waits for some pixels to be move before making the resize
@@ -535,20 +541,25 @@
 
            (rx/of (finish-transform)))
 
-          (let [emit-modifiers
+          (let [emit-preview
+                (fn [angle]
+                  (dwm/set-preview-modifiers (rotation-modifiers angle shapes group-center)))
+
+                emit-final
                 (fn [angle] (dwm/set-rotation-modifiers angle shapes group-center))]
-            ;; Throttle the live preview to limit re-renders; the trailing
-            ;; rx/last applies the exact final frame.
+            ;; Live frames skip the layout solve (smooth drag); the
+            ;; trailing rx/last + apply-modifiers run the exact full
+            ;; solve so the committed result is unchanged.
             (rx/concat
              (rx/merge
               (->> angle-stream
                    (rx/sample mconst/rotation-sample-time)
-                   (rx/map emit-modifiers)
+                   (rx/map emit-preview)
                    (rx/take-until stopper))
               (->> angle-stream
                    (rx/take-until stopper)
                    (rx/last)
-                   (rx/map emit-modifiers)))
+                   (rx/map emit-final)))
              (rx/of (dwm/apply-modifiers)
                     (finish-transform)))))))))
 
@@ -845,8 +856,10 @@
                      ;; Throttle the live preview to limit re-renders.
                      (rx/sample mconst/move-sample-time)
                      (rx/map
-                      (fn [[modifiers snap-ignore-axis]]
-                        (dwm/set-modifiers modifiers false false {:snap-ignore-axis snap-ignore-axis}))))
+                      (fn [[modifiers _snap-ignore-axis]]
+                        ;; Live frames skip the layout solve (smooth drag); the
+                        ;; trailing rx/last + apply-modifiers run the exact full solve.
+                        (dwm/set-preview-modifiers modifiers))))
 
                 (->> move-stream
                      (rx/with-latest-from ms/mouse-position-alt)

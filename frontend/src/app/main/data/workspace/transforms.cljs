@@ -795,10 +795,16 @@
                                  [(assoc move-vector :x 0) :x]
 
                                  :else
-                                 [move-vector nil])]
-                           [(-> (dwm/create-modif-tree ids (ctm/move-modifiers move-vector))
-                                (dwm/build-change-frame-modifiers objects selected target-frame drop-index cell-data))
-                            snap-ignore-axis])))
+                                 [move-vector nil])
+                               ;; Preview uses a PURE-MOVE modif-tree so the frame
+                               ;; content follows the cursor via dynamic_modifiers
+                               ;; WITHOUT triggering the reparent/drop mirror (which
+                               ;; would jump the content to the drop cell while over
+                               ;; a container). The reparent (change-frame) is applied
+                               ;; only on commit (commit-modif-tree, rx/last below).
+                               preview-modif-tree (dwm/create-modif-tree ids (ctm/move-modifiers move-vector))
+                               commit-modif-tree  (dwm/build-change-frame-modifiers preview-modif-tree objects selected target-frame drop-index cell-data)]
+                           [preview-modif-tree commit-modif-tree snap-ignore-axis])))
                       (rx/share))]
 
              (if (features/active-feature? state "render-wasm/v1")
@@ -816,7 +822,7 @@
                        ;; this tends to avoid perceptible "jumps" while still capping WASM work.
                        (rx/sample mconst/move-sample-time)
                        (rx/map
-                        (fn [[modifiers snap-ignore-axis]]
+                        (fn [[_preview modifiers snap-ignore-axis]]
                           (dwm/set-wasm-modifiers modifiers
                                                   :snap-ignore-axis snap-ignore-axis
                                                   :subtree-ids-by-id subtree-ids-by-id
@@ -839,7 +845,7 @@
                        (rx/take-until duplicate-stopper)
                        (rx/with-latest-from modifiers-stream)
                        (rx/mapcat
-                        (fn [[[_ target-frame drop-index drop-cell] [modifiers snap-ignore-axis]]]
+                        (fn [[[_ target-frame drop-index drop-cell] [_preview modifiers snap-ignore-axis]]]
                           (let [undo-id (js/Symbol)]
                             (rx/of
                              (dwu/start-undo-transaction undo-id)
@@ -856,10 +862,12 @@
                      ;; Throttle the live preview to limit re-renders.
                      (rx/sample mconst/move-sample-time)
                      (rx/map
-                      (fn [[modifiers _snap-ignore-axis]]
-                        ;; Live frames skip the layout solve (smooth drag); the
-                        ;; trailing rx/last + apply-modifiers run the exact full solve.
-                        (dwm/set-preview-modifiers modifiers))))
+                      (fn [[preview-modifiers _commit _snap-ignore-axis]]
+                        ;; Preview uses a PURE-MOVE modif-tree (no reparent) so the
+                        ;; frame content follows the cursor via dynamic_modifiers
+                        ;; without jumping to the drop cell while over a container.
+                        ;; Reparent is applied on commit (rx/last) via commit-modif-tree.
+                        (dwm/set-preview-modifiers preview-modifiers))))
 
                 (->> move-stream
                      (rx/with-latest-from ms/mouse-position-alt)
@@ -872,7 +880,14 @@
                                  (dws/duplicate-selected false true))
                           (rx/empty)))))
 
+                ;; The ghost-outline (layout drop indicator) must move in
+                ;; lockstep with the content. Both are sampled at
+                ;; move-sample-time so the indicator never leads the (now
+                ;; natively-moving, via dynamic_modifiers) frame content --
+                ;; otherwise crossing a layout frame shows the indicator
+                ;; misaligned with the content it overlaps.
                 (->> move-stream
+                     (rx/sample mconst/move-sample-time)
                      (rx/map (comp set-ghost-displacement first)))
 
                 ;; Last event will write the modifiers creating the changes
@@ -880,10 +895,10 @@
                      (rx/last)
                      (rx/with-latest-from modifiers-stream)
                      (rx/mapcat
-                      (fn [[[_ target-frame drop-index drop-cell] [modifiers snap-ignore-axis]]]
+                      (fn [[[_ target-frame drop-index drop-cell] [_preview modifiers snap-ignore-axis]]]
                         (let [undo-id (js/Symbol)]
                           (rx/of (dwu/start-undo-transaction undo-id)
-                                 ;; Apply the exact final modifiers; the preview may drop the last frame.
+                                 ;; Apply the exact final modifiers (incl. reparent); the pure-move preview may drop the last frame.
                                  (dwm/set-modifiers modifiers false false {:snap-ignore-axis snap-ignore-axis})
                                  (dwm/apply-modifiers {:undo-transation? false})
                                  (move-shapes-to-frame ids target-frame drop-index drop-cell)

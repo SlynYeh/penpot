@@ -8,3 +8,4 @@ await h.compileSvgSprites();
 await h.compileTranslations();
 await h.compileTemplates();
 await h.compilePolyfills();
+await h.compileConfig({ minify: true });

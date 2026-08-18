@@ -581,6 +581,48 @@ export async function compilePolyfills() {
   log.info("done: compile polyfills", `(${ppt(end)})`);
 }
 
+export async function compileConfig(options = {}) {
+  const start = process.hrtime();
+  log.info("init: compile config");
+  let error = false;
+
+  try {
+    const content = await fs.readFile("resources/config.js", {
+      encoding: "utf8",
+    });
+
+    let result = content;
+
+    if (options.minify) {
+      const esbuild = await import("esbuild");
+      const output = await esbuild.transform(content, {
+        minifyWhitespace: true,
+        minifySyntax: true,
+        minifyIdentifiers: false,
+      });
+      result = output.code;
+    }
+
+    await fs.mkdir("./resources/public/js", { recursive: true });
+    await fs.writeFile("resources/public/js/config.js", result);
+  } catch (cause) {
+    error = cause;
+  }
+
+  const end = process.hrtime(start);
+
+  if (error) {
+    if (error.code === "ENOENT") {
+      log.warn("skip: compile config (resources/config.js not found)");
+    } else {
+      log.error("error: compile config", `(${ppt(end)})`);
+      console.error(error);
+    }
+  } else {
+    log.info("done: compile config", `(${ppt(end)})`);
+  }
+}
+
 export async function copyAssets() {
   const start = process.hrtime();
   log.info("init: copy assets");

@@ -74,12 +74,12 @@
 
    :release
    {:closure-defines {goog.DEBUG false
-                      goog.debug.LOGGING_ENABLED true
+                      goog.debug.LOGGING_ENABLED false
                       app.config/compiled-version-tag #shadow/env ["VERSION_TAG" :default "develop"]}
     :compiler-options
     {:fn-invoke-direct true
      :optimizations #shadow/env ["PENPOT_BUILD_OPTIMIZATIONS" :as :keyword :default :advanced]
-     :source-map true
+     :source-map false
      :pseudo-names true
      :elide-asserts true
      :anon-fn-naming-policy :off
@@ -119,7 +119,7 @@
      :optimizations #shadow/env ["PENPOT_BUILD_OPTIMIZATIONS" :as :keyword :default :advanced]
      :output-wrapper true
      :rename-prefix-namespace "PENPOT"
-     :source-map true
+     :source-map false
      :elide-asserts true
      :anon-fn-naming-policy :off
      :source-map-detail-level :all}}}

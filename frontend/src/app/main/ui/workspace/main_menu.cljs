@@ -238,20 +238,6 @@
                                             :preferences (not read-only?)
                                             :preferences-read-only read-only?)
                         :on-close on-close}
-     [:> dropdown-menu-item* {:on-click    toggle-webgl
-                              :class       (stl/css :submenu-item)
-                              :on-key-down (fn [event]
-                                             (when (kbd/enter? event)
-                                               (toggle-webgl event)))
-                              :data-testid "webgl-render"
-                              :id          "file-menu-webgl-render"}
-      [:span {:class (stl/css :item-name)}
-       (if webgl-enabled?
-         (tr "workspace.header.menu.disable-webgl")
-         (tr "workspace.header.menu.enable-webgl"))]
-      [:span {:class (stl/css-case :item-indicator true
-                                   :active webgl-enabled?)}]]
-
      [:> dropdown-menu-item* {:on-click    toggle-flag
                               :class       (stl/css :submenu-item)
                               :on-key-down (fn [event]
@@ -335,7 +321,21 @@
                                                (show-nudge-options event)))
                               :data-testid   "snap-pixel-grid"
                               :id          "file-menu-nudge"}
-      [:span {:class (stl/css :item-name)} (tr "modals.nudge-title")]]]))
+      [:span {:class (stl/css :item-name)} (tr "modals.nudge-title")]]
+
+     [:> dropdown-menu-item* {:on-click    toggle-webgl
+                              :class       (stl/css :submenu-item)
+                              :on-key-down (fn [event]
+                                             (when (kbd/enter? event)
+                                               (toggle-webgl event)))
+                              :data-testid "webgl-render"
+                              :id          "file-menu-webgl-render"}
+      [:span {:class (stl/css :item-name)}
+       (if webgl-enabled?
+         (tr "workspace.header.menu.disable-webgl")
+         (tr "workspace.header.menu.enable-webgl"))]
+      [:span {:class (stl/css-case :item-indicator true
+                                   :active webgl-enabled?)}]]]))
 
 (mf/defc view-menu*
   {::mf/props :obj

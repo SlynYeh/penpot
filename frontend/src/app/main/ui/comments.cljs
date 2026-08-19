@@ -684,7 +684,6 @@
              (on-submit))))]
 
     [:div {:class (stl/css :form-buttons-wrapper)}
-     [:> mentions-button*]
      (when (some? on-cancel)
        [:> button* {:variant "ghost"
                     :type "button"

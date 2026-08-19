@@ -1349,8 +1349,9 @@
 (defn finalize-view-interaction!
   "Ends the view interaction and triggers a full-quality render."
   []
-  (view-interaction-end!)
-  (internal-render 0 0))
+  (when (initialized?)
+    (view-interaction-end!)
+    (internal-render 0 0)))
 
 (def render-finish
   (letfn [(do-render []

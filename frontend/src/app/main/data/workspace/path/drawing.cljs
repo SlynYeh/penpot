@@ -285,7 +285,7 @@
                              (get :params)
                              (gpt/point))
 
-            frame-id     (->> (ctst/top-nested-frame objects position)
+            frame-id     (->> (ctst/top-nested-frame objects position nil false)
                               (ctn/get-first-valid-parent objects) ;; We don't want to change the structure of component copies
                               :id)
             flex-layout? (ctl/flex-layout? objects frame-id)

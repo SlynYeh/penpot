@@ -88,49 +88,7 @@
         (dom/select-text! (mf/ref-val input-ref))))
 
     [:header {:class (dm/str class " " (stl/css :workspace-header-left))}
-     [:a {:on-click go-back
-          :class (stl/css :main-icon)} deprecated-icon/logo-icon]
-     [:div {:alt (tr "workspace.sitemap")
-            :class (stl/css :project-tree)}
-      [:div
-       {:class (stl/css :project-name)
-        :on-click nav-to-project}
-       (:name project)]
-      (if ^boolean editing?
-        [:input
-         {:class (stl/css :file-name-input)
-          :type "text"
-          :ref input-ref
-          :on-blur handle-blur
-          :on-key-down handle-name-keydown
-          :auto-focus true
-          :default-value (:name file "")}]
-        [:div
-         {:class (stl/css :file-name)
-          :title file-name
-          :on-double-click start-editing-name}
-         ;;-- Persistende state widget
-         [:div {:class (case persistence-status
-                         :pending (stl/css :status-notification :pending-status)
-                         :saving (stl/css :status-notification :saving-status)
-                         :saved (stl/css :status-notification :saved-status)
-                         :error (stl/css :status-notification :error-status)
-                         (stl/css :status-notification))
-                :title (case persistence-status
-                         :pending (tr "workspace.header.saving")
-                         :saving (tr "workspace.header.saving")
-                         :saved (tr "workspace.header.saved")
-                         :error (tr "workspace.header.save-error")
-                         nil)}
-          (case persistence-status
-            :pending deprecated-icon/status-alert
-            :saving deprecated-icon/status-alert
-            :saved deprecated-icon/status-tick
-            :error deprecated-icon/status-wrong
-            nil)]
-         [:div {:class (stl/css :file-name-label)} file-name]])]
-     (when ^boolean shared?
-       [:span {:class (stl/css :shared-badge)} deprecated-icon/library])
+     [:div {:class (stl/css :main-icon)} deprecated-icon/logo-icon]
      [:div {:class (stl/css :menu-section)}
       [:> main-menu/menu* {:layout layout
                            :file file}]]]))

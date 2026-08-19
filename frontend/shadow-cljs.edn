@@ -8,7 +8,7 @@
  {:main
   {:target :esm
    :output-dir "resources/public/js/"
-   :asset-path "/js"
+   :asset-path "/penpot/js"
    :devtools {:watch-dir "resources/public"
               :reload-strategy :full}
 
@@ -74,12 +74,12 @@
 
    :release
    {:closure-defines {goog.DEBUG false
-                      goog.debug.LOGGING_ENABLED true
+                      goog.debug.LOGGING_ENABLED false
                       app.config/compiled-version-tag #shadow/env ["VERSION_TAG" :default "develop"]}
     :compiler-options
     {:fn-invoke-direct true
      :optimizations #shadow/env ["PENPOT_BUILD_OPTIMIZATIONS" :as :keyword :default :advanced]
-     :source-map true
+     :source-map false
      :pseudo-names true
      :elide-asserts true
      :anon-fn-naming-policy :off
@@ -89,7 +89,7 @@
   :worker
   {:target :browser
    :output-dir "resources/public/js/worker/"
-   :asset-path "/js/worker"
+   :asset-path "/penpot/js/worker"
    :devtools {:watch-dir "resources/public"
               :reload-strategy :full
               :browser-inject :main}
@@ -101,8 +101,8 @@
    {:main
     {:entries [app.worker]
      :web-worker true
-     :prepend-js "importScripts('./render.js');"
-     :depends-on #{}}}
+     :depends-on #{}
+     :prepend-js "if(typeof globalThis.WasmModule==='undefined'){globalThis.WasmModule={default:function(){return Promise.reject(new Error('WasmModule not available in worker'))}};}"}}
 
    :js-options
    {:entry-keys ["module" "browser" "main"]
@@ -119,7 +119,7 @@
      :optimizations #shadow/env ["PENPOT_BUILD_OPTIMIZATIONS" :as :keyword :default :advanced]
      :output-wrapper true
      :rename-prefix-namespace "PENPOT"
-     :source-map true
+     :source-map false
      :elide-asserts true
      :anon-fn-naming-policy :off
      :source-map-detail-level :all}}}

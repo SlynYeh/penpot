@@ -2,7 +2,7 @@ import proc from "node:child_process";
 import fs from "node:fs/promises";
 import ph from "node:path";
 import url from "node:url";
-import * as sass from "sass-embedded";
+import * as sass from "sass";
 import log from "fancy-log";
 
 import wpool from "workerpool";

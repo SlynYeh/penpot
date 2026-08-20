@@ -12,6 +12,7 @@
    [app.common.data :as d]
    [app.common.data.macros :as dm]
    [app.common.types.color :as clr]
+   [app.config :as cf]
    [app.main.data.exports.assets :as de]
    [app.main.data.modal :as modal]
    [app.main.refs :as refs]
@@ -177,10 +178,11 @@
    [:p {:class (stl/css :modal-msg)}
     (tr "dashboard.export-shapes.no-elements")]
    [:p {:class (stl/css :modal-scd-msg)} (tr "dashboard.export-shapes.how-to")]
-   [:a {:target "_blank"
-        :class (stl/css :modal-link)
-        :href "https://help.penpot.app/user-guide/exporting/ "}
-    (tr "dashboard.export-shapes.how-to-link")]])
+   (when cf/help-center-uri
+     [:a {:target "_blank"
+          :class (stl/css :modal-link)
+          :href cf/help-center-uri}
+      (tr "dashboard.export-shapes.how-to-link")])])
 
 (mf/defc export-shapes-dialog
   {::mf/register modal/components

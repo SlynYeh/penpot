@@ -7,6 +7,7 @@
 (ns app.main.ui.workspace.webgl-unavailable-modal
   (:require-macros [app.main.style :as stl])
   (:require
+   [app.config :as cf]
    [app.main.data.common :as dcm]
    [app.main.data.modal :as modal]
    [app.main.store :as st]
@@ -27,8 +28,6 @@
   []
   (st/emit! (modal/hide)
             (dcm/go-to-dashboard-recent)))
-
-(def ^:const webgl-troubleshooting-url "https://help.penpot.app/user-guide/first-steps/troubleshooting-webgl/")
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
 (mf/defc webgl-unavailable-modal*
@@ -60,19 +59,22 @@
       [:section {:class (stl/css :modal-content)}
        [:> text* {:as "p" :typography t/body-large}
         (tr "webgl.modals.webgl-unavailable.message")]
-       [:hr {:class (stl/css :modal-divider)}]
-       [:> text* {:as "p" :typography t/body-medium}
-        (tr "webgl.modals.webgl-unavailable.troubleshooting.before")
-        [:a {:href webgl-troubleshooting-url
-             :target "_blank"
-             :rel "noopener noreferrer"
-             :class (stl/css :link)}
-         (tr "webgl.modals.webgl-unavailable.troubleshooting.link")]
-        (tr "webgl.modals.webgl-unavailable.troubleshooting.after")]]
+       (when cf/help-center-uri
+         [:hr {:class (stl/css :modal-divider)}])
+       (when cf/help-center-uri
+         [:> text* {:as "p" :typography t/body-medium}
+          (tr "webgl.modals.webgl-unavailable.troubleshooting.before")
+          [:a {:href cf/help-center-uri
+               :target "_blank"
+               :rel "noopener noreferrer"
+               :class (stl/css :link)}
+           (tr "webgl.modals.webgl-unavailable.troubleshooting.link")]
+          (tr "webgl.modals.webgl-unavailable.troubleshooting.after")])]
 
       [:footer {:class (stl/css :modal-footer)}
        [:> button* {:on-click close-and-go-dashboard
                     :variant "secondary"}
         (tr "webgl.modals.webgl-unavailable.cta-dashboard")]
-       [:> button* {:to webgl-troubleshooting-url :target "_blank" :variant "primary"}
-        (tr "webgl.modals.webgl-unavailable.cta-troubleshooting")]]]]))
+       (when cf/help-center-uri
+         [:> button* {:to cf/help-center-uri :target "_blank" :variant "primary"}
+          (tr "webgl.modals.webgl-unavailable.cta-troubleshooting")])]]]))

@@ -109,6 +109,13 @@ services:
       << : [*penpot-flags, *penpot-http-body-size, *penpot-public-uri]
       # Set to "true" on hosts where IPv6 is disabled at kernel boot level.
       # PENPOT_DISABLE_IPV6_LISTEN: "true"
+      # External help links. When a variable is unset, the corresponding
+      # button or menu item is hidden in the UI.
+      # PENPOT_GRID_HELP_URI: "https://help.example.com/flex-layouts"
+      # PENPOT_PLUGINS_LIST_URI: "https://plugins.example.com"
+      # PENPOT_HELP_CENTER_URI: "https://help.example.com"
+      # PENPOT_LEARNING_CENTER_URI: "https://learn.example.com"
+      # PENPOT_HUB_URI: "https://hub.example.com"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

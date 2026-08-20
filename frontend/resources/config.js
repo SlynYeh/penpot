@@ -1,6 +1,12 @@
 // Runtime configuration for Penpot frontend
 // This file is served from the static resources and can be overridden per deployment
 // Frontend configuration
+// var penpotGridHelpURI = "";
+//var penpotPluginsListURI = "";
+//var penpotHelpCenterURI = "";
+//var penpotLearningCenterURI = "";
+//var penpotHubURI = "";
+
 (function () {
   // 直接读取 iframe 自身的完整地址（src 属性的值）
   var _iframeSrc = window.location.href;

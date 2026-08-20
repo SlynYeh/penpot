@@ -208,7 +208,8 @@
          [:div {:class (stl/css-case :info true :error error?)}
           (tr "workspace.plugins.error.manifest")])
 
-       (when-not (empty? plugins-state)
+       (when (and cfg/plugins-list-uri
+                  (seq plugins-state))
          [:> i18n/tr-html*
           {:class (stl/css :discover)
            :on-click #(st/emit! (ev/event {::ev/name "open-plugins-list"}))
@@ -220,11 +221,12 @@
          [:div {:class (stl/css :plugins-empty)}
           [:div {:class (stl/css :plugins-empty-logo)} deprecated-icon/puzzle]
           [:div {:class (stl/css :plugins-empty-text)} (tr "workspace.plugins.empty-plugins")]
-          [:a {:class (stl/css :plugins-link)
-               :href cfg/plugins-list-uri
-               :target "_blank"
-               :on-click #(st/emit! (ev/event {::ev/name "open-plugins-list"}))}
-           (tr "workspace.plugins.plugin-list-link") deprecated-icon/external-link]]
+          (when cfg/plugins-list-uri
+            [:a {:class (stl/css :plugins-link)
+                 :href cfg/plugins-list-uri
+                 :target "_blank"
+                 :on-click #(st/emit! (ev/event {::ev/name "open-plugins-list"}))}
+             (tr "workspace.plugins.plugin-list-link") deprecated-icon/external-link])]
 
          [:*
           [:> title-bar* {:collapsable false

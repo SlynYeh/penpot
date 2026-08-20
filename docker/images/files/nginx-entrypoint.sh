@@ -44,8 +44,28 @@ update_oidc_name() {
   fi
 }
 
+update_help_uris() {
+  local pair key envvar value
+  for pair in "penpotGridHelpURI:PENPOT_GRID_HELP_URI" \
+              "penpotPluginsListURI:PENPOT_PLUGINS_LIST_URI" \
+              "penpotHelpCenterURI:PENPOT_HELP_CENTER_URI" \
+              "penpotLearningCenterURI:PENPOT_LEARNING_CENTER_URI" \
+              "penpotHubURI:PENPOT_HUB_URI"; do
+    key="${pair%%:*}"
+    envvar="${pair##*:}"
+    value="${!envvar}"
+    if [ -n "$value" ]; then
+      value="${value//&/\\&}"
+      echo "$(sed \
+        -e "s|^//var $key = .*;|var $key = \"$value\";|g" \
+        "$1")" > "$1"
+    fi
+  done
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
+update_help_uris /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

@@ -29,15 +29,21 @@
        :style (if (str/empty? style) "normal" style)
        :ttf-url (get files id)})))
 
+(def ^:private display-name-mapping
+  {"Noto Sans SC" "黑体"
+   "Noto Serif SC" "宋体"
+   "Ma Shan Zheng" "楷体"})
+
 (defn- parse-gfont
   [font]
   (let [family (get font "family")
         variants (get font "variants")
-        files (get font "files")]
+        files (get font "files")
+        name (get display-name-mapping family family)]
     {:id (str "gfont-" (str/slug family))
      :uuid (uuid/random)
      :family family
-     :name family
+     :name name
      :variants (into [] (comp (map (fn [variant] (parse-gfont-variant variant files)))
                               (filter identity))
                      variants)}))

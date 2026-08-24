@@ -68,6 +68,7 @@ await h.compileTranslations();
 await h.compileSvgSprites();
 await h.compileTemplates();
 await h.compilePolyfills();
+await h.compileConfig();
 
 log.info("watch: scss src (~)");
 
@@ -109,6 +110,12 @@ log.info("watch: wasm playground (~)");
 h.watch(["resources/wasm-playground"], null, async function (path) {
   log.info("changed:", path);
   await h.copyWasmPlayground();
+});
+
+log.info("watch: config (~)");
+h.watch("resources/config.js", null, async function (path) {
+  log.info("changed:", path);
+  await h.compileConfig();
 });
 
 worker.terminate();

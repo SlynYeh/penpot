@@ -35,7 +35,8 @@
   (let [profiles     (mf/deref refs/profiles)
         presence     (mf/deref refs/workspace-presence)
 
-        sessions     (vals presence)
+        all-sessions (vals presence)
+        sessions     (filter #(get profiles (:profile-id %)) all-sessions) 
         num-sessions (count sessions)
         max-avatar-count 3
         avatar-count (if (= num-sessions max-avatar-count) max-avatar-count (- max-avatar-count 1))

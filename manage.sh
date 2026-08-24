@@ -175,9 +175,9 @@ function ensure-devenv-network {
 
 # Compose-project plumbing for the parallel-workspaces layout.
 #
-# - Shared infrastructure (postgres, minio, mailer, ldap, minio-setup) runs
+# - Shared infrastructure (opengauss, minio, mailer, ldap, minio-setup) runs
 #   under project `penpotdev-infra`.
-# - Shared infrastructure (postgres, minio, mailer, ldap, valkey, minio-setup)
+# - Shared infrastructure (opengauss, minio, mailer, ldap, valkey, minio-setup)
 #   runs under project `penpotdev-infra`.
 # - Each runtime instance (ws0, ws1, ...) runs only its own main container
 #   under project `penpotdev-wsN`. All workspaces uniformly overlay their

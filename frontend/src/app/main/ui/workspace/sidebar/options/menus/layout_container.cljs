@@ -1342,10 +1342,11 @@
                                     :justify-content justify-content
                                     :on-change set-justify-content}]
 
-           [:> icon-button* {:variant "ghost"
-                             :aria-label (tr "labels.help-center")
-                             :on-click open-flex-help
-                             :icon i/help}]]
+           (when cf/flex-help-uri
+             [:> icon-button* {:variant "ghost"
+                               :aria-label (tr "labels.help-center")
+                               :on-click open-flex-help
+                               :icon i/help}])]
           (when (= :wrap wrap-type)
             [:div {:class (stl/css :third-row)}
              [:& align-content-row {:is-column is-column
@@ -1370,10 +1371,11 @@
           (when (= 1 (count ids))
             [:div {:class (stl/css :edit-grid-wrapper)}
              [:& grid-edit-mode {:id (first ids)}]
-             [:> icon-button* {:variant "ghost"
-                               :aria-label (tr "labels.help-center")
-                               :on-click open-grid-help
-                               :icon i/help}]])
+             (when cf/grid-help-uri
+               [:> icon-button* {:variant "ghost"
+                                 :aria-label (tr "labels.help-center")
+                                 :on-click open-grid-help
+                                 :icon i/help}])])
 
           [:div {:class (stl/css :first-row)}
            [:div {:class (stl/css :direction-edit)}
@@ -1558,11 +1560,12 @@
     [:div {:class (stl/css :grid-layout-menu)}
      [:div {:class (stl/css :grid-first-row)}
       [:div {:class (stl/css :grid-layout-menu-title)} "GRID LAYOUT"]
-      [:> icon-button* {:variant "ghost"
-                        :class (stl/css :help-button)
-                        :aria-label (tr "labels.help-center")
-                        :on-click open-grid-help
-                        :icon i/help}]
+      (when cf/grid-help-uri
+        [:> icon-button* {:variant "ghost"
+                          :class (stl/css :help-button)
+                          :aria-label (tr "labels.help-center")
+                          :on-click open-grid-help
+                          :icon i/help}])
       [:button {:class (stl/css :exit-btn)
                 :on-click #(st/emit! (udw/clear-edition-mode))}
        (tr "workspace.layout-grid.editor.options.exit")]]

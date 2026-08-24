@@ -223,7 +223,7 @@
             notifier-s
             (rx/merge
              (->> local-commits-s
-                  (rx/debounce 3000)
+                  (rx/debounce 1000)
                   (rx/tap #(log/trc :hint "persistence beat")))
              (->> stream
                   (rx/filter #(= % ::force-persist))))]

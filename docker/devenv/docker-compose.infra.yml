@@ -4,8 +4,8 @@ networks:
     external: true
 
 volumes:
-  postgres_data_pg16:
-    name: ${PENPOT_POSTGRES_DATA_VOLUME}
+  opengauss_data:
+    name: ${PENPOT_OPENGAUSS_DATA_VOLUME}
   minio_data:
     name: ${PENPOT_MINIO_DATA_VOLUME}
   valkey_data:
@@ -49,24 +49,20 @@ services:
     networks:
       default:
 
-  postgres:
-    image: postgres:16.8
-    command: postgres -c config_file=/etc/postgresql.conf
+  opengauss:
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/opengauss/opengauss:5.0.0
     restart: always
     stop_signal: SIGINT
     environment:
-      - POSTGRES_INITDB_ARGS=--data-checksums
-      - POSTGRES_DB=penpot
-      - POSTGRES_USER=penpot
-      - POSTGRES_PASSWORD=penpot
+      - GS_PASSWORD=rykpav-bosde4-noQwag
+      - GS_DB=penpot
     volumes:
-      - ./files/postgresql.conf:/etc/postgresql.conf:z
-      - ./files/postgresql_init.sql:/docker-entrypoint-initdb.d/init.sql:z
-      - postgres_data_pg16:/var/lib/postgresql/data
+      - ./files/opengauss_init.sql:/docker-entrypoint-initdb.d/init.sql:z
+      - opengauss_data:/var/lib/opengauss
     networks:
       default:
         aliases:
-          - postgres
+          - opengauss
 
   valkey:
     image: valkey/valkey:8.1

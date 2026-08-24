@@ -1124,23 +1124,26 @@
                         :class (stl/css :sub-menu :help-learning)
                         :on-close on-close}
 
-     [:> dropdown-menu-item* {:class (stl/css :submenu-item)
-                              :data-url "https://help.penpot.app"
-                              :on-click handle-click-url
-                              :data-eventname "explore-help-center-click"}
-      (tr "labels.help-center")]
+     (when cf/help-center-uri
+       [:> dropdown-menu-item* {:class (stl/css :submenu-item)
+                                :data-url cf/help-center-uri
+                                :on-click handle-click-url
+                                :data-eventname "explore-help-center-click"}
+        (tr "labels.help-center")])
 
-     [:> dropdown-menu-item* {:class (stl/css :submenu-item)
-                              :data-url "https://penpot.app/learning-center"
-                              :on-click handle-click-url
-                              :data-eventname "explore-learning-center-click"}
-      (tr "labels.learning-center")]
+     (when cf/learning-center-uri
+       [:> dropdown-menu-item* {:class (stl/css :submenu-item)
+                                :data-url cf/learning-center-uri
+                                :on-click handle-click-url
+                                :data-eventname "explore-learning-center-click"}
+        (tr "labels.learning-center")])
 
-     [:> dropdown-menu-item* {:class (stl/css :submenu-item)
-                              :data-url "https://penpot.app/penpothub"
-                              :on-click handle-click-url
-                              :data-eventname "explore-penpot-hub-click"}
-      (tr "labels.penpot-hub")]
+     (when cf/penpot-hub-uri
+       [:> dropdown-menu-item* {:class (stl/css :submenu-item)
+                                :data-url cf/penpot-hub-uri
+                                :on-click handle-click-url
+                                :data-eventname "explore-penpot-hub-click"}
+        (tr "labels.penpot-hub")])
 
      (when (contains? cf/flags :user-feedback)
        [:> dropdown-menu-item* {:class (stl/css :submenu-item)
@@ -1228,6 +1231,10 @@
         sub-menu*      (mf/use-state false)
         sub-menu       (deref sub-menu*)
         version        (:base cf/version)
+        show-help-learning? (or cf/help-center-uri
+                                cf/learning-center-uri
+                                cf/penpot-hub-uri
+                                (contains? cf/flags :user-feedback))
 
         close-sub-menu
         (mf/use-fn
@@ -1360,16 +1367,17 @@
        [:li {:class (stl/css :profile-separator)}]
 
 
-       [:> dropdown-menu-item* {:class (stl/css-case :profile-dropdown-item true)
-                                :on-click    on-menu-click
-                                :on-key-down (fn [event]
-                                               (when (kbd/enter? event)
-                                                 (on-menu-click event)))
-                                :on-pointer-enter on-menu-click
-                                :data-testid "help-learning"
-                                :id          "help-learning"}
-        [:span {:class (stl/css :item-name)} (tr "labels.help-learning")]
-        [:> icon* {:icon-id i/arrow :class (stl/css :open-arrow)}]]
+       (when show-help-learning?
+         [:> dropdown-menu-item* {:class (stl/css-case :profile-dropdown-item true)
+                                  :on-click    on-menu-click
+                                  :on-key-down (fn [event]
+                                                 (when (kbd/enter? event)
+                                                   (on-menu-click event)))
+                                  :on-pointer-enter on-menu-click
+                                  :data-testid "help-learning"
+                                  :id          "help-learning"}
+          [:span {:class (stl/css :item-name)} (tr "labels.help-learning")]
+          [:> icon* {:icon-id i/arrow :class (stl/css :open-arrow)}]])
 
        [:> dropdown-menu-item* {:class (stl/css-case :profile-dropdown-item true)
                                 :on-click    on-menu-click

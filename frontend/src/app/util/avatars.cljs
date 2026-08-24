@@ -14,9 +14,7 @@
     :or {size 128}}]
 
   (let [parts   (str/words (str/upper name))
-        letters (if (= 1 (count parts))
-                  (ffirst parts)
-                  (str (ffirst parts) (first (second parts))))
+        letters (ffirst parts)
         canvas  (.createElement js/document "canvas")
         context (.getContext canvas "2d")
         text-color (if color

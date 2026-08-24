@@ -233,7 +233,4 @@
                            :text (tr "inspect.empty.select")}]
          [:> empty-state* {:icon i/help
                            :text (tr "inspect.empty.help")}]]
-        [:div {:class (stl/css :empty-button)}
-         [:> button* {:variant "secondary"
-                      :on-click navigate-to-help}
-          (tr "inspect.empty.more")]]])]))
+        ])]))

@@ -82,13 +82,11 @@
 
         on-component-double-click
         (mf/use-fn
-         (mf/deps file-id component is-local renaming?)
+         (mf/deps component-id is-local renaming?)
          (fn [event]
            (dom/stop-propagation event)
-           (when-not renaming?
-             (if is-local
-               (st/emit! (dwl/go-to-local-component :id component-id))
-               (st/emit! (dwl/go-to-component-file file-id component false))))))
+           (when (and is-local (not renaming?))
+             (st/emit! (dwl/go-to-local-component :id component-id)))))
 
         on-drop
         (mf/use-fn

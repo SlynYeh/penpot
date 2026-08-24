@@ -440,9 +440,11 @@
            (str duplicated-msg)]]))]))
 
 (mf/defc component-variant-copy*
-  [{:keys [components shapes component-file-data current-file-id]}]
+  ;; HIDDEN(show-main): current-file-id used only by hidden locate handlers
+  [{:keys [components shapes component-file-data #_current-file-id]}]
   (let [component    (first components)
-        shape        (first shapes)
+        ;; HIDDEN(show-main): shape used only by hidden locate handlers
+        ;; shape        (first shapes)
         properties   (map :variant-properties components)
         props-first  (:variant-properties component)
         variant-id   (:variant-id component)
@@ -470,25 +472,26 @@
          (fn [prop-name]
            (get-variant-options prop-name prop-vals)))
 
-        select-duplicated-comps
-        (mf/use-fn
-         (mf/deps current-file-id shape duplicated-comps)
-         #(let [ids (map :id duplicated-comps)]
-            (if (= current-file-id (:component-file shape))
-              (st/emit! (dwl/go-to-local-component {:id (first ids)
-                                                    :additional-ids (rest ids)}))
-              (st/emit! (dwl/go-to-component-file (:component-file shape)
-                                                  (first duplicated-comps)
-                                                  false)))))
+        ;; HIDDEN(show-main): locate buttons disabled, handlers kept commented for restore
+        ;; select-duplicated-comps
+        ;; (mf/use-fn
+        ;;  (mf/deps current-file-id shape duplicated-comps)
+        ;;  #(let [ids (map :id duplicated-comps)]
+        ;;     (if (= current-file-id (:component-file shape))
+        ;;       (st/emit! (dwl/go-to-local-component {:id (first ids)
+        ;;                                             :additional-ids (rest ids)}))
+        ;;       (st/emit! (dwl/go-to-component-file (:component-file shape)
+        ;;                                           (first duplicated-comps)
+        ;;                                           false)))))
 
-        select-malformed-comps
-        (mf/use-fn
-         (mf/deps current-file-id shape malformed-comps)
-         (fn []
-           (let [ids (map :id malformed-comps)]
-             (if (= current-file-id (:component-file shape))
-               (st/emit! (dwl/go-to-local-component :id (first ids) :additional-ids (rest ids)))
-               (st/emit! (dwl/go-to-component-file (:component-file shape) (first malformed-comps) false))))))
+        ;; select-malformed-comps
+        ;; (mf/use-fn
+        ;;  (mf/deps current-file-id shape malformed-comps)
+        ;;  (fn []
+        ;;    (let [ids (map :id malformed-comps)]
+        ;;      (if (= current-file-id (:component-file shape))
+        ;;        (st/emit! (dwl/go-to-local-component :id (first ids) :additional-ids (rest ids)))
+        ;;        (st/emit! (dwl/go-to-component-file (:component-file shape) (first malformed-comps) false))))))
 
         ;; Used to force a remount after an error
         key*     (mf/use-state (uuid/next))
@@ -555,9 +558,10 @@
                    :class (stl/css :variant-warning-darken)}]
         [:div {:class (stl/css :variant-warning-highlight)}
          (tr "workspace.options.component.variant.malformed.copy")]
-        [:button {:class (stl/css :variant-warning-button)
-                  :on-click select-malformed-comps}
-         (tr "workspace.options.component.variant.malformed.locate")]]
+        ;; HIDDEN(show-main): locate button jumps to main component
+        #_[:button {:class (stl/css :variant-warning-button)
+                    :on-click select-malformed-comps}
+           (tr "workspace.options.component.variant.malformed.locate")]]
 
        (when (seq duplicated-comps)
          [:div {:class (stl/css :variant-warning)}
@@ -565,9 +569,10 @@
                      :class (stl/css :variant-warning-darken)}]
           [:div {:class (stl/css :variant-warning-highlight)}
            (tr "workspace.options.component.variant.duplicated.copy.title")]
-          [:button {:class (stl/css :variant-warning-button)
-                    :on-click select-duplicated-comps}
-           (tr "workspace.options.component.variant.duplicated.copy.locate")]]))]))
+          ;; HIDDEN(show-main): locate button jumps to main component
+          #_[:button {:class (stl/css :variant-warning-button)
+                      :on-click select-duplicated-comps}
+             (tr "workspace.options.component.variant.duplicated.copy.locate")]]))]))
 
 (mf/defc component-swap-item*
   [{:keys [item loop shapes file-id root-shape container component-id is-search listing-thumbs num-variants]}]

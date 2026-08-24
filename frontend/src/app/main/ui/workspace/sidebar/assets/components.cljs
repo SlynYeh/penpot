@@ -558,15 +558,16 @@
 
              (dnd/set-allowed-effect! event "move"))))
 
-        on-show-main
-        (mf/use-fn
-         (mf/deps current-component-id file-id is-local)
-         (fn [event]
-           (dom/stop-propagation event)
-           (if is-local
-             (st/emit! (dwl/go-to-local-component :id current-component-id))
-             (let [component (d/seek #(= (:id %) current-component-id) components)]
-               (st/emit! (dwl/go-to-component-file file-id component false))))))
+        ;; HIDDEN(show-main): assets context menu entry disabled, handler kept commented for restore
+        ;; on-show-main
+        ;; (mf/use-fn
+        ;;  (mf/deps current-component-id file-id is-local)
+        ;;  (fn [event]
+        ;;    (dom/stop-propagation event)
+        ;;    (if is-local
+        ;;      (st/emit! (dwl/go-to-local-component :id current-component-id))
+        ;;      (let [component (d/seek #(= (:id %) current-component-id) components)]
+        ;;        (st/emit! (dwl/go-to-component-file file-id component false))))))
 
         on-asset-click
         (mf/use-fn (mf/deps groups on-asset-click) (partial on-asset-click groups))
@@ -653,10 +654,11 @@
                      :id     "assets-group-component"
                      :handler on-group})
 
-                  (when (not multi-assets?)
-                    {:name   (tr "workspace.shape.menu.show-main")
-                     :id     "assets-show-main-component"
-                     :handler on-show-main})
+                  ;; HIDDEN(show-main): hide "Show main component" menu entry
+                  #_(when (not multi-assets?)
+                      {:name   (tr "workspace.shape.menu.show-main")
+                       :id     "assets-show-main-component"
+                       :handler on-show-main})
                   (when (and is-local multi-components? (not any-variant?))
                     {:name   (tr "workspace.shape.menu.combine-as-variants")
                      :id     "assets-combine-as-variants"

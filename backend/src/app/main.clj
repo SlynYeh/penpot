@@ -161,6 +161,10 @@
    ::wrk/netty-io-executor
    {:threads (cf/get :netty-io-threads)}
 
+   ;; Default netty executor pool (for Lettuce Redis client)
+   ::wrk/netty-executor
+   {:threads (cf/get :netty-io-threads)}
+
    ::wrk/executor
    {}
 
@@ -178,7 +182,10 @@
     (cf/get :redis-uri)
 
     ::wrk/netty-io-executor
-    (ig/ref ::wrk/netty-io-executor)}
+    (ig/ref ::wrk/netty-io-executor)
+
+    ::wrk/netty-executor
+    (ig/ref ::wrk/netty-executor)}
 
    ::rds/pool
    {::rds/client  (ig/ref ::rds/client)

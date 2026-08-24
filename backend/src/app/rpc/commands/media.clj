@@ -289,7 +289,7 @@
   [{:keys [::db/pool] :as cfg}
    {:keys [::rpc/profile-id total-chunks]}]
 
-  (let [max-chunks (cf/get :quotes-upload-chunks-per-session)]
+  (let [max-chunks (cf/get :quotes-upload-chunks-per-session Integer/MAX_VALUE)]
     (when (> total-chunks max-chunks)
       (ex/raise :type :restriction
                 :code :max-quote-reached

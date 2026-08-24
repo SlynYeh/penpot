@@ -452,15 +452,25 @@
                                 "   AND l.deleted_at IS NULL;")]
                    (db/exec! conn [sql ids])))))
 
-(def ^:private sql:upsert-file-library-sync
+;; NOTE: OpenGauss does not support ON CONFLICT syntax, so the
+;; upsert is implemented as an update followed by an insert when
+;; the row does not exist yet.
+
+(def ^:private sql:update-file-library-sync
+  "UPDATE file_library_sync
+      SET synced_at = ?::timestamptz
+    WHERE file_id = ?::uuid
+      AND library_file_id = ?::uuid")
+
+(def ^:private sql:insert-file-library-sync
   "INSERT INTO file_library_sync (file_id, library_file_id, synced_at)
-   VALUES (?::uuid, ?::uuid, ?::timestamptz)
-   ON CONFLICT (file_id, library_file_id)
-   DO UPDATE SET synced_at = EXCLUDED.synced_at;")
+   VALUES (?::uuid, ?::uuid, ?::timestamptz)")
 
 (defn upsert-file-library-sync!
   [conn {:keys [file-id library-file-id synced-at]}]
-  (db/exec-one! conn [sql:upsert-file-library-sync file-id library-file-id synced-at]))
+  (let [result (db/exec-one! conn [sql:update-file-library-sync synced-at file-id library-file-id])]
+    (when (zero? (or (db/get-update-count result) 0))
+      (db/exec-one! conn [sql:insert-file-library-sync file-id library-file-id synced-at]))))
 
 (def ^:private sql:get-libraries
   "WITH RECURSIVE libs AS (

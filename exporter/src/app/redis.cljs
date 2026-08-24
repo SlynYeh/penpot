@@ -10,15 +10,56 @@
    [app.common.data.macros :as dm]
    [app.common.logging :as l]
    [app.common.transit :as t]
-   [app.config :as cf]))
+   [app.config :as cf]
+   [cuerdas.core :as str]))
 
 (l/set-level! :trace)
 
 (def client (atom nil))
 
+(defn- url-decode
+  [s]
+  (when s
+    ;; Equivalent to java.net.URLDecoder (application/x-www-form-urlencoded):
+    ;; decode %xx sequences and turn '+' into space.
+    (js/decodeURIComponent (.replace s "+" "%20"))))
+
+(defn- parse-sentinel-uri
+  "Parse a `redis-sentinel://` URI into an ioredis options object.
+
+  ioredis v5 removed URL-based sentinel support, so we parse it
+  manually following the same format accepted by the backend
+  (see backend/src/app/redis.clj create-redis-uri):
+
+      redis-sentinel://[password@]host1[:port],host2[:port],.../db#master"
+  [uri-str]
+  (let [body (subs uri-str (count "redis-sentinel://"))
+        [body master] (if-let [i (str/index-of body "#")]
+                        [(subs body 0 i) (subs body (inc i))]
+                        [body "mymaster"])
+        [body db] (if-let [i (str/index-of body "/")]
+                    [(subs body 0 i) (js/parseInt (subs body (inc i)) 10)]
+                    [body 0])
+        [password host-part] (if-let [i (str/index-of body "@")]
+                               [(url-decode (subs body 0 i)) (subs body (inc i))]
+                               [nil body])
+        srv (fn [s]
+              (let [[h p] (str/split s #":" 2)]
+                {:host h
+                 :port (js/parseInt (or p "26379") 10)}))]
+    (clj->js
+     (cond-> {:sentinels (mapv srv (str/split host-part #","))
+              :name      master
+              :db        db}
+       (some? password)
+       (assoc :password password)))))
+
 (defn- create-client
   [uri]
-  (let [^js client (new redis/default uri)]
+  (let [opts   (if (str/starts-with? uri "redis-sentinel")
+                 (parse-sentinel-uri uri)
+                 uri)
+        ^js client (new redis/default opts)]
     (.on client "connect"
          (fn [] (l/info :hint "redis connection established" :uri uri)))
     (.on client "error"

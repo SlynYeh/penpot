@@ -161,6 +161,10 @@
    ::wrk/netty-io-executor
    {:threads (cf/get :netty-io-threads)}
 
+   ;; Default netty executor pool (for Lettuce Redis client)
+   ::wrk/netty-executor
+   {:threads (cf/get :netty-io-threads)}
+
    ::wrk/executor
    {}
 
@@ -180,11 +184,8 @@
     ::wrk/netty-io-executor
     (ig/ref ::wrk/netty-io-executor)
 
-    ;; Lettuce's eventExecutorGroup. Reuse the NioEventLoopGroup, which is
-    ;; itself an EventExecutorGroup (this matches Lettuce's default of sharing
-    ;; one event loop group for both I/O and event execution).
     ::wrk/netty-executor
-    (ig/ref ::wrk/netty-io-executor)}
+    (ig/ref ::wrk/netty-executor)}
 
    ::rds/pool
    {::rds/client  (ig/ref ::rds/client)

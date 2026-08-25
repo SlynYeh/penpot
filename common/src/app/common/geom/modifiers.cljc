@@ -178,6 +178,8 @@
            (->> (:shapes parent)
                 (remove #(ctl/position-absolute? objects %))))]
 
+     (js/console.log "[set modifiers]" (pr-str {:modifier (mapv identity @transformed-parent-bounds) :parent-id parent-id}))
+
      (cond-> modif-tree
        (and has-modifiers? parent? (not root?))
        (set-children-modifiers children-modifiers objects bounds parent transformed-parent-bounds ignore-constraints)

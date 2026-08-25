@@ -443,9 +443,10 @@
         lacks-annotation?   (nil? (:annotation component))
         is-dangling?        (nil? component)
 
-        can-show-component? (and (not multi)
-                                 (not main-instance?)
-                                 (not is-dangling?))
+        ;; HIDDEN(show-main): "Show main component" entry disabled, kept commented for restore
+        ;; can-show-component? (and (not multi)
+        ;;                          (not main-instance?)
+        ;;                          (not is-dangling?))
 
         can-update-main?    (and (not multi)
                                  (not is-dangling?)
@@ -576,9 +577,10 @@
                            (tr "workspace.shape.menu.restore-variant")
                            (tr "workspace.shape.menu.restore-main"))
                          :action do-restore-component})
-                      (when can-show-component?
-                        {:title (tr "workspace.shape.menu.show-main")
-                         :action do-show-component})
+                      ;; HIDDEN(show-main): hide "Show main component" menu entry
+                      #_(when can-show-component?
+                          {:title (tr "workspace.shape.menu.show-main")
+                           :action do-show-component})
                       (when can-update-main?
                         {:title (tr "workspace.shape.menu.update-main")
                          :action do-update-component})

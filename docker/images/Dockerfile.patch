@@ -1,0 +1,16 @@
+# 基于现有 backend 镜像仅替换 jar 的补丁镜像
+# 用法(在 docker/images 目录下):
+#   docker build -f Dockerfile.patch \
+#     --build-arg BASE_IMAGE=<现有镜像名:tag> \
+#     -t <新镜像名:tag> .
+#
+# 说明:
+#   - 镜像内 jar 路径 /opt/penpot/backend/penpot.jar 由基础镜像的
+#     Dockerfile.backend 决定(COPY bundle-backend/ /opt/penpot/backend/)
+#   - FROM 会继承基础镜像的 USER penpot、WORKDIR、CMD(直接沿用 run.sh)
+#   - --chown=penpot:penpot 保持与原镜像文件属主一致(UID 1001)
+
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+COPY --chown=penpot:penpot bundle-backend/penpot.jar /opt/penpot/backend/penpot.jar

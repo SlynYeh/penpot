@@ -15,6 +15,8 @@
    [promesa.exec :as px])
   (:import
    io.netty.channel.nio.NioEventLoopGroup
+   io.netty.util.concurrent.DefaultEventExecutorGroup
+   io.netty.util.concurrent.EventExecutorGroup
    java.util.concurrent.ExecutorService
    java.util.concurrent.TimeUnit))
 
@@ -31,8 +33,15 @@
  {:type ::wrk/netty-io-executor
   :pred #(instance? NioEventLoopGroup %)
   :type-properties
-  {:title "executor"
+  {:title "netty-io-executor"
    :description "Instance of NioEventLoopGroup"}})
+
+(sm/register!
+ {:type ::wrk/netty-executor
+  :pred #(instance? EventExecutorGroup %)
+  :type-properties
+  {:title "netty-executor"
+   :description "Instance of EventExecutorGroup"}})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; IO Executor
@@ -54,6 +63,24 @@
 (defmethod ig/halt-key! ::wrk/netty-io-executor
   [_ instance]
   (deref (.shutdownGracefully ^NioEventLoopGroup instance
+                              (long 100)
+                              (long 1000)
+                              TimeUnit/MILLISECONDS)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Netty Executor (for Lettuce Redis client)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod ig/init-key ::wrk/netty-executor
+  [_ {:keys [threads]}]
+  (let [nthreads (or threads (mth/round (/ (px/get-available-processors) 2)))
+        nthreads (max 2 nthreads)]
+    (l/inf :hint "start netty executor" :threads nthreads)
+    (DefaultEventExecutorGroup. (int nthreads) ^java.util.concurrent.ThreadFactory (px/thread-factory :prefix "penpot/netty-exec/"))))
+
+(defmethod ig/halt-key! ::wrk/netty-executor
+  [_ instance]
+  (deref (.shutdownGracefully ^EventExecutorGroup instance
                               (long 100)
                               (long 1000)
                               TimeUnit/MILLISECONDS)))

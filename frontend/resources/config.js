@@ -51,6 +51,14 @@
 })();
 
 (function () {
+  // 右键菜单「插入表格行/列」生效的表格主组件 ID 集合(小写 uuid 字符串)。
+  // 实例根 shape 的 :component-id 命中任一 ID 即显示菜单。
+  globalThis.penpotTableComponentIds = [
+    "5140cbc1-cb3a-803f-8008-8977ae7bee03", // 1 基础组件 / Table 表格 (flex table 库)
+  ];
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

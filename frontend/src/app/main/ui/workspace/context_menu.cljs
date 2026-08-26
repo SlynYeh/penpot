@@ -28,6 +28,7 @@
    [app.main.data.workspace.shape-layout :as dwsl]
    [app.main.data.workspace.shapes :as dwsh]
    [app.main.data.workspace.shortcuts :as sc]
+   [app.main.data.workspace.table :as dwt]
    [app.main.data.workspace.variants :as dwv]
    [app.main.features :as features]
    [app.main.refs :as refs]
@@ -306,6 +307,19 @@
                       :shortcut (sc/get-tooltip :flip-horizontal)
                       :on-click do-flip-horizontal}]
      [:> menu-separator* {}]]))
+
+(mf/defc context-menu-table*
+  {::mf/private true}
+  [{:keys [shapes objects]}]
+  (when (seq shapes)
+    (when-let [shape-id (->> (d/seek #(dwt/find-table-root objects %) shapes)
+                             :id)]
+      [:*
+       [:> menu-separator* {}]
+       [:> menu-entry* {:title "插入表格行"
+                        :on-click #(st/emit! (dwt/insert-table-row shape-id))}]
+       [:> menu-entry* {:title "插入表格列"
+                        :on-click #(st/emit! (dwt/insert-table-column shape-id))}]])))
 
 (mf/defc context-menu-thumbnail*
   {::mf/private true}
@@ -690,6 +704,7 @@
        [:> context-menu-prototype* props]
        (when is-not-variant-container?
          [:> context-menu-layout* props])
+       [:> context-menu-table* props]
        [:> context-menu-component* props]
        [:> context-menu-guides* props]
        [:> context-menu-delete* props]])))

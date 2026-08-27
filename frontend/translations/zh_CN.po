@@ -6564,6 +6564,18 @@ msgstr "差集"
 msgid "workspace.shape.menu.duplicate"
 msgstr "创建副本"
 
+msgid "workspace.shape.menu.export-as-image"
+msgstr "导出为图片"
+
+msgid "workspace.export-image.exporting"
+msgstr "正在导出图片…"
+
+msgid "workspace.export-image.success"
+msgstr "图片已导出"
+
+msgid "workspace.export-image.error"
+msgstr "导出图片失败"
+
 #: src/app/main/ui/workspace/context_menu.cljs:442
 msgid "workspace.shape.menu.edit"
 msgstr "编辑"

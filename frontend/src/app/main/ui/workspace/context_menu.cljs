@@ -158,6 +158,8 @@
         do-paste          #(st/emit! (dw/paste-from-clipboard))
         do-duplicate      #(st/emit! (dwv/duplicate-or-add-variant))
 
+        do-export-image   #(st/emit! (dw/export-as-image))
+
         enabled-paste-props* (mf/use-state false)
 
         handle-copy-css
@@ -215,6 +217,10 @@
      [:> menu-entry* {:title (tr "workspace.shape.menu.duplicate")
                       :shortcut (sc/get-tooltip :duplicate)
                       :on-click do-duplicate}]
+
+     [:> menu-entry* {:title (tr "workspace.shape.menu.export-as-image")
+                       :disabled multiple?
+                       :on-click do-export-image}]
 
      [:> menu-entry* {:title (tr "workspace.shape.menu.copy-paste-as")
                       :on-pointer-enter (when (cf/check-browser? :chrome) handle-hover-copy-paste)}

@@ -5,17 +5,23 @@
 ;; Copyright (c) KALEIDOS INC Sucursal en España SL
 
 (ns app.main.data.workspace.table
-  "Context-menu actions that insert a row or a column into the flex based
-   Table component (Table -> 单列 columns -> 单元格 cells).
+  "Context-menu actions that insert or delete a row / a column in the flex
+   based Table component (Table -> 单列 columns -> 单元格 cells).
 
    A shape is considered part of such a table when the instance root that
    contains it has its :component-id configured in `app.config/table-component-ids`
-   (populated from `penpotTableComponentIds` in resources/config.js)."
+   (populated from `penpotTableComponentIds` in resources/config.js).
+
+   Deletes reuse the native deletion of shapes inside a component copy: the
+   cells / column are marked :hidden instead of removed, so they stay in the
+   :shapes vectors (keeping the index alignment with the library) and a single
+   undo restores them."
   (:require
    [app.common.data :as d]
    [app.common.files.changes-builder :as pcb]
    [app.common.files.helpers :as cfh]
    [app.common.geom.shapes :as gsh]
+   [app.common.logic.shapes :as cls]
    [app.common.types.component :as ctk]
    [app.common.types.container :as ctn]
    [app.common.types.file :as ctf]
@@ -24,6 +30,7 @@
    [app.common.uuid :as uuid]
    [app.config :as cf]
    [app.main.data.changes :as dch]
+   [app.main.data.comments :as dc]
    [app.main.data.helpers :as dsh]
    [app.main.data.workspace.selection :as dws]
    [app.main.data.workspace.undo :as dwu]
@@ -64,6 +71,16 @@
       :else
       (recur (get objects (:parent-id shape))))))
 
+(defn- visible-children
+  "Immediate children of the shape `id` without the :hidden ones. A deleted
+   table cell / column stays in the parent :shapes vector with :hidden true
+   and its stale pre-deletion geometry, and the layout ignores it, so every
+   geometry derivation (row matching, insertion indexes, clone sources)
+   must filter through this. Structure validation deliberately does NOT:
+   a hidden column is still a structurally valid table column."
+  [objects id]
+  (remove :hidden (cfh/get-immediate-children objects id)))
+
 (defn- max-by
   [f coll]
   (reduce (fn [acc shape]
@@ -99,11 +116,22 @@
         :else nil))))
 
 (defn- row-insert-index
-  "Index in the column :shapes vector where a new bottom row must be added."
-  [children]
-  (if (= :dec (order-sign children :y))
-    0
-    (count children)))
+  "Index in the column :shapes vector where a new bottom row must be added:
+   the slot adjacent to `anchor` (the visually bottom-most visible cell,
+   i.e. the clone source) on its real position on the parent. A deleted
+   cell stays in :shapes with its stale geometry, so counting the visible
+   children could place the new row in the visual middle of the column.
+   When the :shapes order runs like the visual one (:inc) the clone goes
+   right after the anchor slot; when it runs bottom->top (:dec) it takes
+   the anchor slot itself, pushing the anchor up. Caveat: with fewer than
+   two visible children the order sign is unknown and the :inc default is
+   used, which on a :dec column reduced to a single visible cell inserts
+   after it instead of at index 0."
+  [objects children anchor]
+  (let [slot (cfh/get-position-on-parent objects (:id anchor))]
+    (if (= :dec (order-sign children :y))
+      slot
+      (inc slot))))
 
 (defn- column-insert-index
   "Index in the root :shapes vector where a column cloned from `target`
@@ -216,7 +244,9 @@
 (defn insert-table-row
   "Appends a row at the bottom of the table that contains `shape-id`: every
    column gets a clone of its own visually bottom-most cell, and the table
-   root grows by the row height."
+   root grows by the row height. Refused when no visible column is left, or
+   some visible column has no visible cell left (the native
+   delete-inside-instance can hide them all)."
   [shape-id]
   (ptk/reify ::insert-table-row
     ptk/WatchEvent
@@ -225,16 +255,19 @@
             objects   (dsh/lookup-page-objects state page-id)
             file      (dsh/lookup-file state)
             libraries (dsh/lookup-libraries state)
-            root      (find-table-root objects (get objects shape-id))]
-        (if (nil? root)
+            root      (find-table-root objects (get objects shape-id))
+            columns   (when root (visible-children objects (:id root)))]
+        (if (or (nil? root)
+                (empty? columns)
+                ;; a visible column with every cell hidden has no clone
+                ;; source for the new row
+                (some #(empty? (visible-children objects (:id %))) columns))
           (rx/empty)
-          (let [columns (cfh/get-immediate-children objects (:id root))
-
-                clones
+          (let [clones
                 (mapv (fn [column]
-                        (let [children  (cfh/get-immediate-children objects (:id column))
+                        (let [children  (visible-children objects (:id column))
                               src-cell  (bottom-cell children)
-                              index     (row-insert-index children)
+                              index     (row-insert-index objects children src-cell)
                               new-id    (uuid/next)
                               head-slot (swap-slot-for-clone file libraries objects column src-cell new-id index)
                               clone     (clone-subtree src-cell (:id column) objects new-id head-slot)
@@ -245,7 +278,7 @@
                       columns)
 
                 cell-height
-                (transduce (comp (map #(cfh/get-immediate-children objects (:id %)))
+                (transduce (comp (map #(visible-children objects (:id %)))
                                  (map bottom-cell)
                                  (map :height))
                            max 0 columns)
@@ -290,7 +323,9 @@
 (defn insert-table-column
   "Inserts a column to the right of the column that contains `shape-id`
    (cloned from it; from the table root itself, cloned from the right-most
-   column), and grows the table root by the column width."
+   column), and grows the table root by the column width. Refused when no
+   visible column is left (the native delete-inside-instance can hide them
+   all)."
   [shape-id]
   (ptk/reify ::insert-table-column
     ptk/WatchEvent
@@ -299,11 +334,14 @@
             objects   (dsh/lookup-page-objects state page-id)
             file      (dsh/lookup-file state)
             libraries (dsh/lookup-libraries state)
-            root      (find-table-root objects (get objects shape-id))]
-        (if (nil? root)
+            root      (find-table-root objects (get objects shape-id))
+            columns   (when root (visible-children objects (:id root)))]
+        (if (or (nil? root)
+                ;; no visible column left: nothing to derive the right-most
+                ;; column (the clone source) from
+                (empty? columns))
           (rx/empty)
-          (let [columns    (cfh/get-immediate-children objects (:id root))
-                target     (or (find-column objects root (get objects shape-id))
+          (let [target     (or (find-column objects root (get objects shape-id))
                                (rightmost-column columns))
                 new-col-id (uuid/next)
                 index      (column-insert-index objects columns target)
@@ -341,4 +379,189 @@
                    (dws/select-shapes (d/ordered-set new-col-id))
                    (ptk/data-event :layout/update
                                    {:ids [(:id root)] :undo-group undo-id})
+                   (dwu/commit-undo-transaction undo-id))))))))
+
+(defn- find-cell
+  "Direct child of `column` that contains `shape` (or `shape` itself when it
+   is a cell). nil when `shape` is the column, the table root or lives
+   outside of them."
+  [objects column shape]
+  (loop [shape shape]
+    (cond
+      (nil? shape)
+      nil
+
+      (= (:id column) (:id shape))
+      nil
+
+      (= (:id column) (:parent-id shape))
+      shape
+
+      :else
+      (recur (get objects (:parent-id shape))))))
+
+(defn- row-rank
+  "Index of `cell` among `children` (its visible siblings) when they are
+   sorted by :y ascending: the visual row it sits in."
+  [children cell]
+  (let [sorted-ids (mapv :id (sort-by :y children))]
+    (.indexOf sorted-ids (:id cell))))
+
+(defn- row-targets
+  "Cells to hide for deleting the row `cell` sits in: for every visible
+   column of `root`, the visible cell at the same row rank, plus the height
+   to shrink the root by (the max height of the targets, mirroring how the
+   insert grows it). nil when the delete must not run: some visible column
+   would keep a single visible cell (the last row of a column is protected),
+   or has no visible cell at that rank.
+
+   Caveat: the rank matching relies on the stored geometry of the cells, so
+   when the visible cell counts of the columns disagree (e.g. after rows
+   were deleted), which cell of a column corresponds to a rank of another
+   column is an heuristic."
+  [objects root cell]
+  (let [rank    (row-rank (visible-children objects (:parent-id cell)) cell)
+        columns (mapv #(vec (sort-by :y (visible-children objects (:id %))))
+                      (visible-children objects (:id root)))
+        targets (mapv #(get % rank) columns)]
+    (when (and (every? #(>= (count %) 2) columns)
+               (every? some? targets))
+      {:cells targets
+       :row-height (transduce (map :height) max 0 targets)})))
+
+(defn can-delete-table-row?
+  "Whether the table row of `shape` can be deleted: `shape` resolves to a
+   cell of a configured table and every visible column has a visible cell
+   at its row rank. Meant for greying out the context menu entry; the event
+   rechecks the whole chain."
+  [objects shape]
+  (let [root (find-table-root objects shape)]
+    (boolean
+     (and (some? root)
+          (when-let [column (find-column objects root shape)]
+            (when-let [cell (find-cell objects column shape)]
+              (row-targets objects root cell)))))))
+
+(defn can-delete-table-column?
+  "Whether the table column of `shape` can be deleted: `shape` is inside a
+   configured table and at least one other visible column would remain."
+  [objects shape]
+  (let [root (find-table-root objects shape)]
+    (boolean
+     (and (some? root)
+          (some? (find-column objects root shape))
+          (>= (count (visible-children objects (:id root))) 2)))))
+
+(defn delete-table-row
+  "Hides the cell at the row of `shape-id` in every visible column of the
+   table that contains it (the native delete-inside-instance mechanism, so
+   the cells stay in the :shapes vectors and keep their index alignment
+   with the library) and shrinks the table root by the row height."
+  [shape-id]
+  (ptk/reify ::delete-table-row
+    ptk/WatchEvent
+    (watch [it state _]
+      (let [page-id (:current-page-id state)
+            objects (dsh/lookup-page-objects state page-id)
+            file-id (:current-file-id state)
+            fdata   (dsh/lookup-file-data state file-id)
+            page    (dsh/get-page fdata page-id)
+            shape   (get objects shape-id)
+            root    (find-table-root objects shape)
+            column  (when root (find-column objects root shape))
+            cell    (when column (find-cell objects column shape))
+            targets (when cell (row-targets objects root cell))]
+        (if (nil? targets)
+          (rx/empty)
+          (let [{:keys [cells row-height]} targets
+                ids     (set (map :id cells))
+                ;; uuid and not js/Symbol: it doubles as the changes
+                ;; :undo-group, that the append-undo schema checks as uuid.
+                undo-id (uuid/next)
+
+                ;; NB: resize the root lazily, from the shape as it exists
+                ;; at this point of the changes. Handing update-shapes a
+                ;; full precomputed shape would diff :shapes against the
+                ;; pre-delete value and revert the changes built above. The
+                ;; min of 1 keeps the size positive even for a row taller
+                ;; than the root.
+                shrink-root (fn [shape]
+                              (gsh/transform-shape
+                               shape
+                               (ctm/change-size shape nil (max 1 (- (:height shape) row-height)))))
+
+                [all-parents changes]
+                (cls/generate-delete-shapes (pcb/empty-changes it page-id)
+                                            fdata page objects ids {})
+
+                changes (-> changes
+                            (pcb/update-shapes [(:id root)] shrink-root)
+                            (pcb/set-undo-group undo-id))]
+
+            ;; the selection moves to the root: the hidden cells would
+            ;; otherwise linger in it (the selection update does not
+            ;; filter hidden shapes out).
+            (rx/of (dwu/start-undo-transaction undo-id)
+                   (dc/detach-comment-thread ids)
+                   (dch/commit-changes changes)
+                   (dws/select-shapes (d/ordered-set (:id root)))
+                   (ptk/data-event :layout/update
+                                   {:ids all-parents
+                                    :undo-group undo-id})
+                   (dwu/commit-undo-transaction undo-id))))))))
+
+(defn delete-table-column
+  "Hides the column that contains `shape-id` (the native
+   delete-inside-instance mechanism, so the column stays in the root
+   :shapes vector) and shrinks the table root by the column width. Refused
+   when `shape-id` does not resolve inside a column (e.g. from the table
+   root itself) or it is the last visible column."
+  [shape-id]
+  (ptk/reify ::delete-table-column
+    ptk/WatchEvent
+    (watch [it state _]
+      (let [page-id (:current-page-id state)
+            objects (dsh/lookup-page-objects state page-id)
+            file-id (:current-file-id state)
+            fdata   (dsh/lookup-file-data state file-id)
+            page    (dsh/get-page fdata page-id)
+            shape   (get objects shape-id)
+            root    (find-table-root objects shape)
+            column  (when root (find-column objects root shape))]
+        (if (or (nil? column)
+                (< (count (visible-children objects (:id root))) 2))
+          (rx/empty)
+          (let [ids     #{(:id column)}
+                ;; uuid and not js/Symbol: it doubles as the changes
+                ;; :undo-group, that the append-undo schema checks as uuid.
+                undo-id (uuid/next)
+
+                ;; NB: resize the root lazily, from the shape as it exists
+                ;; at this point of the changes, so the diff does not
+                ;; revert the :shapes vector of the root. The min of 1
+                ;; keeps the size positive even for a column wider than
+                ;; the root.
+                shrink-root (fn [shape]
+                              (gsh/transform-shape
+                               shape
+                               (ctm/change-size shape (max 1 (- (:width shape) (:width column))) nil)))
+
+                [all-parents changes]
+                (cls/generate-delete-shapes (pcb/empty-changes it page-id)
+                                            fdata page objects ids {})
+
+                changes (-> changes
+                            (pcb/update-shapes [(:id root)] shrink-root)
+                            (pcb/set-undo-group undo-id))]
+
+            ;; the selection moves to the root: the hidden column would
+            ;; otherwise linger in it (the selection update does not
+            ;; filter hidden shapes out).
+            (rx/of (dwu/start-undo-transaction undo-id)
+                   (dc/detach-comment-thread ids)
+                   (dch/commit-changes changes)
+                   (dws/select-shapes (d/ordered-set (:id root)))
+                   (ptk/data-event :layout/update
+                                   {:ids all-parents
+                                    :undo-group undo-id})
                    (dwu/commit-undo-transaction undo-id))))))))

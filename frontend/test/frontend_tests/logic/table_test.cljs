@@ -17,10 +17,13 @@
    [app.config :as cf]
    [app.main.data.changes :as dch]
    [app.main.data.workspace.table :as dwt]
+   [app.main.data.workspace.undo :as dwu]
+   [beicon.v2.core :as rx]
    [cljs.test :as t :include-macros true]
    [frontend-tests.helpers.mock :as mock]
    [frontend-tests.helpers.pages :as thp]
-   [frontend-tests.helpers.state :as ths]))
+   [frontend-tests.helpers.state :as ths]
+   [potok.v2.core :as ptk]))
 
 (t/use-fixtures :each
   {:before thp/reset-idmap!})
@@ -138,7 +141,7 @@
    undo id passes this test build silently and crashes the app at runtime
    (check error on [:undo-group ::sm/uuid] in append-undo)."
   [committed]
-  (t/is (= 1 (count @committed)) "exactly one commit for the insert")
+  (t/is (= 1 (count @committed)) "exactly one commit for the table action")
   (t/is (uuid? (:undo-group (first @committed))) ":undo-group must be a uuid"))
 
 (defn- assert-valid-file!
@@ -151,6 +154,26 @@
   (let [errors (cfv/validate-file file {})]
     (t/is (nil? errors)
           (pr-str (mapv #(select-keys % [:code :shape-id :args]) errors)))))
+
+(defn- wire-undo-stack!
+  "The real app turns `dch/commit` events into undo-stack entries in an
+   effect of `app.main.data.workspace/initialize-workspace`; the bare test
+   store has no such bootstrap, so this mirrors that wiring (and nothing
+   else) to make `dwu/undo` work."
+  [store]
+  (->> (ptk/input-stream store)
+       (rx/filter dch/commit?)
+       (rx/map deref)
+       (rx/mapcat (fn [{:keys [save-undo? undo-changes redo-changes undo-group tags stack-undo? selected-before]}]
+                    (if (and save-undo? (seq undo-changes))
+                      (rx/of (dwu/append-undo {:undo-changes undo-changes
+                                               :redo-changes redo-changes
+                                               :undo-group undo-group
+                                               :tags tags
+                                               :selected-before selected-before}
+                                              stack-undo?))
+                      (rx/empty))))
+       (rx/subs! (fn [event] (ptk/emit! store event)))))
 
 (t/deftest insert-row-appends-bottom-cell-per-column
   (t/testing "each column gains a clone of its own bottom cell at the visual bottom, root grows by row height"
@@ -331,4 +354,396 @@
                            (fn [new-state]
                              (let [file' (ths/get-file-from-state new-state)]
                                (t/is (= before (count (page-objects file')))))))))
+        done))))
+
+(t/deftest insert-row-with-fully-hidden-column-is-noop
+  (t/testing "a column whose cells were all hidden with the native delete (no minimum to keep) refuses the row insert instead of crashing on a missing clone source"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (-> (setup-file)
+                              ;; every cell of col-b hidden while the column
+                              ;; frame itself stays visible: what the native
+                              ;; delete-inside-instance leaves behind
+                              (cths/update-shape :copy-col-b-cell2 :hidden true)
+                              (cths/update-shape :copy-col-b-cell1 :hidden true)
+                              (cths/update-shape :copy-col-b-head :hidden true))
+                store     (ths/setup-store file)
+                shape-id  (:id (cths/get-shape file :copy-col-a-cell2))
+                events    [(dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)
+                                     col-a (get-shape' file' :copy-col-a)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (= 3 (count (:shapes col-a))) "col-a unchanged")))))))
+        done))))
+
+(t/deftest insert-column-without-visible-columns-is-noop
+  (t/testing "with every column hidden with the native delete, inserting a column from the root is refused instead of crashing on a missing rightmost column"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (-> (setup-file)
+                              (cths/update-shape :copy-col-a :hidden true)
+                              (cths/update-shape :copy-col-b :hidden true))
+                store     (ths/setup-store file)
+                root-id   (:id (cths/get-shape file :table-copy))
+                events    [(dwt/insert-table-column root-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (= 2 (count (:shapes root))) "columns stay hidden in :shapes")))))))
+        done))))
+
+(t/deftest delete-row-hides-matching-cell-per-column
+  (t/testing "each column hides the cell at the clicked row rank (rank match, not :shapes index), root shrinks by the row height"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                ;; top row (rank 0): col-b :shapes runs bottom->top, so its
+                ;; index-0 child is cell2, not the head; hiding the head in
+                ;; BOTH columns proves the match is by row rank (:y), not by
+                ;; :shapes index
+                shape-id  (:id (cths/get-shape file :copy-col-a-head))
+                events    [(dwt/delete-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'  (ths/get-file-from-state new-state)
+                                     _      (assert-valid-file! file')
+                                     root   (get-shape' file' :table-copy)
+                                     col-a  (get-shape' file :copy-col-a)
+                                     col-b  (get-shape' file :copy-col-b)
+                                     col-a' (get-shape' file' :copy-col-a)
+                                     col-b' (get-shape' file' :copy-col-b)]
+
+                                 (t/testing "matching cell hidden per column"
+                                   (t/is (true? (:hidden (get-shape' file' :copy-col-a-head))))
+                                   (t/is (true? (:hidden (get-shape' file' :copy-col-b-head)))))
+
+                                 (t/testing "other rows untouched"
+                                   (doseq [label [:copy-col-a-cell1 :copy-col-a-cell2
+                                                  :copy-col-b-cell1 :copy-col-b-cell2]]
+                                     (t/is (nil? (:hidden (get-shape' file' label))))))
+
+                                 (t/testing "hidden cells stay in :shapes at the same index"
+                                   (t/is (= (:shapes col-a) (:shapes col-a')))
+                                   (t/is (= (:shapes col-b) (:shapes col-b'))))
+
+                                 (t/testing "root shrink: height - row height, width untouched"
+                                   (t/is (= (- table-h cell-h) (:height root)))
+                                   (t/is (= table-w (:width root))))
+
+                                 (t/testing "selection moves to the table root"
+                                   (t/is (= #{(:id root)}
+                                            (set (get-in new-state [:workspace-local :selected])))))
+
+                                 (assert-undo-group-uuid! committed)))))))
+        done))))
+
+(t/deftest delete-column-hides-column-and-shrinks-width
+  (t/testing "the clicked column is hidden in place and the root shrinks by the column width"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                shape-id  (:id (cths/get-shape file :copy-col-a-cell1))
+                events    [(dwt/delete-table-column shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'       (ths/get-file-from-state new-state)
+                                     _           (assert-valid-file! file')
+                                     root        (get-shape' file' :table-copy)
+                                     root-before (:shapes (get-shape' file :table-copy))]
+
+                                 (t/testing "column hidden, stays in root :shapes"
+                                   (t/is (true? (:hidden (get-shape' file' :copy-col-a))))
+                                   (t/is (= root-before (:shapes root))))
+
+                                 (t/testing "other column untouched"
+                                   (t/is (nil? (:hidden (get-shape' file' :copy-col-b)))))
+
+                                 (t/testing "root shrink: width - column width, height untouched"
+                                   (t/is (= (- table-w cell-w) (:width root)))
+                                   (t/is (= table-h (:height root))))
+
+                                 (t/testing "selection moves to the table root"
+                                   (t/is (= #{(:id root)}
+                                            (set (get-in new-state [:workspace-local :selected])))))
+
+                                 (assert-undo-group-uuid! committed)))))))
+        done))))
+
+(t/deftest insert-row-after-delete-skips-hidden
+  (t/testing "after the bottom row was deleted, the insert clones the visible bottom cell (cell1), not the hidden one that keeps its stale geometry"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                ;; the bottom row is deleted first: cell2 stays in :shapes,
+                ;; hidden, with its stale bottom geometry
+                shape-id  (:id (cths/get-shape file :copy-col-a-cell2))
+                events    [(dwt/delete-table-row shape-id)
+                           (dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'   (ths/get-file-from-state new-state)
+                                     _       (assert-valid-file! file')
+                                     objects (page-objects file')
+                                     root    (get-shape' file' :table-copy)
+                                     col-a   (get-shape' file' :copy-col-a)
+                                     col-b   (get-shape' file' :copy-col-b)
+                                     src-a   (get-shape' file' :copy-col-a-cell1)
+                                     src-b   (get-shape' file' :copy-col-b-cell1)]
+
+                                 (t/testing "column A: clone of the visible cell1, inserted right before the hidden cell2"
+                                   (t/is (= 4 (count (:shapes col-a))))
+                                   (let [new-cell (get objects (nth (:shapes col-a) 2))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-a) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-a) (:shape-ref new-cell))
+                                           "cloned from cell1, not the hidden cell2")
+                                     ;; clone-subtree keeps the source geometry and no
+                                     ;; layout runs in the test store, so the clone sits
+                                     ;; at the :y of the cell it was cloned from
+                                     (t/is (= (:y src-a) (:y new-cell)))))
+
+                                 (t/testing "column B: clone of the visible cell1, inserted right after the hidden cell2 slot"
+                                   (t/is (= 4 (count (:shapes col-b))))
+                                   (let [new-cell (get objects (nth (:shapes col-b) 1))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-b) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-b) (:shape-ref new-cell))
+                                           "cloned from cell1, not the hidden cell2")
+                                     (t/is (= (:y src-b) (:y new-cell)))))
+
+                                 (t/testing "hidden cells stay in :shapes, shifted past the inserts"
+                                   (t/is (= 3 (.indexOf (:shapes col-a) (:id (get-shape' file' :copy-col-a-cell2)))))
+                                   (t/is (= 0 (.indexOf (:shapes col-b) (:id (get-shape' file' :copy-col-b-cell2))))))
+
+                                 (t/testing "root size: height back to the original, width untouched"
+                                   (t/is (= table-h (:height root)))
+                                   (t/is (= table-w (:width root))))
+
+                                 (t/testing "one commit per action, each with a uuid undo group"
+                                   (t/is (= 2 (count @committed)))
+                                   (t/is (uuid? (:undo-group (second @committed)))))))))))
+        done))))
+
+(t/deftest insert-column-after-delete-uses-visible-rightmost
+  (t/testing "after col-b was deleted, inserting from the root clones the visible col-a, not the hidden col-b (still rightmost by its stale x)"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                root-id   (:id (cths/get-shape file :table-copy))
+                events    [(dwt/delete-table-column (:id (cths/get-shape file :copy-col-b-head)))
+                           (dwt/insert-table-column root-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'   (ths/get-file-from-state new-state)
+                                     _       (assert-valid-file! file')
+                                     objects (page-objects file')
+                                     root    (get-shape' file' :table-copy)
+                                     col-a   (get-shape' file' :copy-col-a)
+                                     new-col (get objects (nth (:shapes root) 1))]
+
+                                 (t/testing "new column cloned from the visible col-a and inserted before the hidden col-b"
+                                   (t/is (= 3 (count (:shapes root))))
+                                   (t/is (some? new-col))
+                                   (t/is (= (:component-id col-a) (:component-id new-col))
+                                         "cloned from the visible col-a, not the hidden col-b"))
+
+                                 (t/testing "root size: width back to the original, height untouched"
+                                   (t/is (= table-w (:width root)))
+                                   (t/is (= table-h (:height root))))
+
+                                 (t/testing "one commit per action, each with a uuid undo group"
+                                   (t/is (= 2 (count @committed)))
+                                   (t/is (uuid? (:undo-group (second @committed)))))))))))
+        done))))
+
+(t/deftest delete-row-guard-blocks-last-row
+  (t/testing "a row whose deletion would leave a column with a single visible cell is refused"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file     (-> (setup-file)
+                             ;; every column keeps only its head visible
+                             (cths/update-shape :copy-col-a-cell1 :hidden true)
+                             (cths/update-shape :copy-col-a-cell2 :hidden true)
+                             (cths/update-shape :copy-col-b-cell1 :hidden true)
+                             (cths/update-shape :copy-col-b-cell2 :hidden true))
+                store    (ths/setup-store file)
+                shape-id (:id (cths/get-shape file :copy-col-a-head))
+                events   [(dwt/delete-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-a-head))))))))))
+        done))))
+
+(t/deftest delete-row-guard-blocks-missing-rank-target
+  (t/testing "a row rank that some column has no visible cell for is refused"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file     (-> (setup-file)
+                             ;; col-b keeps only 2 visible cells (head, cell1):
+                             ;; nothing sits at the rank of col-a cell2 (rank 2)
+                             (cths/update-shape :copy-col-b-cell2 :hidden true))
+                store    (ths/setup-store file)
+                shape-id (:id (cths/get-shape file :copy-col-a-cell2))
+                events   [(dwt/delete-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-a-cell2))))))))))
+        done))))
+
+(t/deftest delete-column-guard-blocks-last-column
+  (t/testing "deleting the last visible column is refused"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file     (-> (setup-file)
+                             (cths/update-shape :copy-col-b :hidden true))
+                store    (ths/setup-store file)
+                shape-id (:id (cths/get-shape file :copy-col-a-cell1))
+                events   [(dwt/delete-table-column shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-a))))))))))
+        done))))
+
+(t/deftest can-delete-predicates
+  (t/testing "can-delete-table-row? / can-delete-table-column? mirror the event guards"
+    ;; the guarded variants derive from the same `file`: a second setup-file
+    ;; would re-register the labels in the idmap with fresh ids, and the
+    ;; config set would no longer match the first file's component ids
+    (let [file         (setup-file)
+          objects      (page-objects file)
+          cell         (get-shape' file :copy-col-a-cell1)
+          root         (get-shape' file :table-copy)
+          row-guarded  (-> file
+                           ;; every column keeps only its head visible
+                           (cths/update-shape :copy-col-a-cell1 :hidden true)
+                           (cths/update-shape :copy-col-a-cell2 :hidden true)
+                           (cths/update-shape :copy-col-b-cell1 :hidden true)
+                           (cths/update-shape :copy-col-b-cell2 :hidden true))
+          col-guarded  (-> file
+                           ;; only one visible column remains
+                           (cths/update-shape :copy-col-b :hidden true))]
+      (with-redefs [cf/table-component-ids (config-with-table-comp)]
+        (t/testing "from a cell of a configured table"
+          (t/is (true? (dwt/can-delete-table-row? objects cell)))
+          (t/is (true? (dwt/can-delete-table-column? objects cell))))
+
+        (t/testing "at the guard boundary"
+          (t/is (false? (dwt/can-delete-table-row? (page-objects row-guarded)
+                                                   (get-shape' row-guarded :copy-col-a-head))))
+          (t/is (false? (dwt/can-delete-table-column? (page-objects col-guarded)
+                                                      (get-shape' col-guarded :copy-col-a-cell1)))))
+
+        (t/testing "from the table root itself"
+          (t/is (false? (dwt/can-delete-table-row? objects root)))
+          (t/is (false? (dwt/can-delete-table-column? objects root))))))))
+
+(t/deftest delete-from-root-or-column-is-noop
+  (t/testing "row deletion from the root or a column itself, and column deletion from the root, do nothing"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                root-id   (:id (cths/get-shape file :table-copy))
+                column-id (:id (cths/get-shape file :copy-col-a))
+                events    [(dwt/delete-table-row root-id)
+                           (dwt/delete-table-row column-id)
+                           (dwt/delete-table-column root-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (empty? @committed))
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-a-cell1))))))))))
+        done))))
+
+(t/deftest delete-row-undo-restores
+  (t/testing "a single undo clears the hidden flags and restores the root height"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file     (setup-file)
+                store    (ths/setup-store file)
+                shape-id (:id (cths/get-shape file :copy-col-a-cell1))
+                events   [(dwt/delete-table-row shape-id)
+                          dwu/undo]]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)]
+              (wire-undo-stack! store)
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)]
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-a-cell1))))
+                                 (t/is (nil? (:hidden (get-shape' file' :copy-col-b-cell1))))
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))))))))
         done))))

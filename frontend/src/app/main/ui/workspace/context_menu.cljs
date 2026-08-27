@@ -310,16 +310,34 @@
 
 (mf/defc context-menu-table*
   {::mf/private true}
-  [{:keys [shapes objects]}]
+  [{:keys [shapes objects hover-ids]}]
   (when (seq shapes)
-    (when-let [shape-id (->> (d/seek #(dwt/find-table-root objects %) shapes)
-                             :id)]
-      [:*
-       [:> menu-separator* {}]
-       [:> menu-entry* {:title "插入表格行"
-                        :on-click #(st/emit! (dwt/insert-table-row shape-id))}]
-       [:> menu-entry* {:title "插入表格列"
-                        :on-click #(st/emit! (dwt/insert-table-column shape-id))}]])))
+    ;; `hover-ids` is the raw hit stack at the right-click position, sorted
+    ;; outermost-first (ancestors first, deepest descendant last) — which is
+    ;; why a plain hover stops at the outermost container. Take the last
+    ;; table member of the stack: the deepest descendant of the table that
+    ;; comes last in the stack (possibly a text inside a cell; the table
+    ;; events/predicates resolve it up to the cell/column/row). The selected
+    ;; shapes are only a fallback for when the hover stack has no table
+    ;; member (e.g. when editing contents in depth).
+    (let [hover-shapes (->> hover-ids (map (d/getf objects)) (remove nil?))
+          hover-shape  (->> hover-shapes (filter #(dwt/find-table-root objects %)) (last))]
+      (when-let [shape (or hover-shape (d/seek #(dwt/find-table-root objects %) shapes))]
+        (let [shape-id        (:id shape)
+              can-delete-row? (dwt/can-delete-table-row? objects shape)
+              can-delete-col? (dwt/can-delete-table-column? objects shape)]
+          [:*
+           [:> menu-separator* {}]
+           [:> menu-entry* {:title "插入表格行"
+                            :on-click #(st/emit! (dwt/insert-table-row shape-id))}]
+           [:> menu-entry* {:title "插入表格列"
+                            :on-click #(st/emit! (dwt/insert-table-column shape-id))}]
+           [:> menu-entry* {:title "删除表格行"
+                            :disabled (not can-delete-row?)
+                            :on-click #(st/emit! (dwt/delete-table-row shape-id))}]
+           [:> menu-entry* {:title "删除表格列"
+                            :disabled (not can-delete-col?)
+                            :on-click #(st/emit! (dwt/delete-table-column shape-id))}]])))))
 
 (mf/defc context-menu-thumbnail*
   {::mf/private true}
@@ -687,6 +705,7 @@
         props  (mf/props
                 {:shapes shapes
                  :objects objects
+                 :hover-ids (:hover-ids mdata)
                  :disable-booleans disable-booleans
                  :disable-flatten disable-flatten})]
     (when-not (empty? shapes)

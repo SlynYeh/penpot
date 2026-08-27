@@ -609,6 +609,8 @@
          (rx/map #(restore-component (val %) (key %)) (rx/from components-data))
          (rx/of (dwu/commit-undo-transaction undo-id)))))))
 
+(declare detach-component)
+
 (defn instantiate-component
   "Create a new shape in the current page, from the component with the given id
   in the given file library. Then selects the newly created instance."
@@ -640,6 +642,9 @@
                                                  libraries)
              component (ctn/get-component-from-shape new-shape libraries)
 
+             detach?   (and (= origin "sidebar")
+                            (contains? cf/auto-unbind-library-ids file-id))
+
              undo-id (js/Symbol)]
 
          (when id-ref
@@ -655,6 +660,8 @@
                 (dch/commit-changes changes)
                 (ptk/data-event :layout/update {:ids [(:id new-shape)]})
                 (dws/select-shapes (d/ordered-set (:id new-shape)))
+                (when detach?
+                  (detach-component (:id new-shape)))
                 (when start-move?
                   (dwtr/start-move initial-point #{(:id new-shape)}))
                 (dwu/commit-undo-transaction undo-id)))))))

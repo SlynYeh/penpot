@@ -167,6 +167,10 @@
 (def grid-help-uri        (obj/get global "penpotGridHelpURI"))
 (def plugins-list-uri     (obj/get global "penpotPluginsListURI"))
 (def plugins-whitelist    (into #{} (obj/get global "penpotPluginsWhitelist" [])))
+(def auto-unbind-library-ids
+  "Set of library (file) ids whose component instances are auto-detached
+  when instantiated by dragging from the assets sidebar."
+  (into #{} (keep uuid/coerce) (obj/get global "penpotAutoUnbindLibraryIds" [])))
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

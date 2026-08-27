@@ -8836,6 +8836,18 @@ msgstr "Difference"
 msgid "workspace.shape.menu.duplicate"
 msgstr "Duplicate"
 
+msgid "workspace.shape.menu.export-as-image"
+msgstr "export as image"
+
+msgid "workspace.export-image.exporting"
+msgstr "Exporting image…"
+
+msgid "workspace.export-image.success"
+msgstr "Image exported"
+
+msgid "workspace.export-image.error"
+msgstr "Error exporting image"
+
 #: src/app/main/ui/workspace/context_menu.cljs:442
 msgid "workspace.shape.menu.edit"
 msgstr "Edit"

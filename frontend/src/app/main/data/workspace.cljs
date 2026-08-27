@@ -1589,6 +1589,7 @@
 (dm/export dwcp/paste-data-valid?)
 (dm/export dwcp/copy-link-to-clipboard)
 (dm/export dwcp/copy-as-image)
+(dm/export dwcp/export-as-image)
 
 ;; Drawing
 (dm/export dwd/select-for-drawing)

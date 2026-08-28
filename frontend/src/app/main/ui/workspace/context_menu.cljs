@@ -328,14 +328,14 @@
               can-delete-col? (dwt/can-delete-table-column? objects shape)]
           [:*
            [:> menu-separator* {}]
-           [:> menu-entry* {:title "插入表格行"
+           [:> menu-entry* {:title (tr "workspace.shape.menu.duplicate-table-row")
                             :on-click #(st/emit! (dwt/insert-table-row shape-id))}]
-           [:> menu-entry* {:title "插入表格列"
+           [:> menu-entry* {:title (tr "workspace.shape.menu.duplicate-table-column")
                             :on-click #(st/emit! (dwt/insert-table-column shape-id))}]
-           [:> menu-entry* {:title "删除表格行"
+           [:> menu-entry* {:title (tr "workspace.shape.menu.delete-table-row")
                             :disabled (not can-delete-row?)
                             :on-click #(st/emit! (dwt/delete-table-row shape-id))}]
-           [:> menu-entry* {:title "删除表格列"
+           [:> menu-entry* {:title (tr "workspace.shape.menu.delete-table-column")
                             :disabled (not can-delete-col?)
                             :on-click #(st/emit! (dwt/delete-table-column shape-id))}]])))))
 

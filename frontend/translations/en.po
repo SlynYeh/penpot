@@ -8820,6 +8820,14 @@ msgstr "Delete"
 msgid "workspace.shape.menu.delete-flow-start"
 msgstr "Delete flow start"
 
+#: src/app/main/ui/workspace/context_menu.cljs:338
+msgid "workspace.shape.menu.delete-table-column"
+msgstr "Delete table column"
+
+#: src/app/main/ui/workspace/context_menu.cljs:335
+msgid "workspace.shape.menu.delete-table-row"
+msgstr "Delete table row"
+
 #: src/app/main/ui/workspace/sidebar/assets/common.cljs:567
 msgid "workspace.shape.menu.detach-instance"
 msgstr "Detach instance"
@@ -8835,6 +8843,14 @@ msgstr "Difference"
 #: src/app/main/ui/workspace/context_menu.cljs:215
 msgid "workspace.shape.menu.duplicate"
 msgstr "Duplicate"
+
+#: src/app/main/ui/workspace/context_menu.cljs:333
+msgid "workspace.shape.menu.duplicate-table-column"
+msgstr "Duplicate table column"
+
+#: src/app/main/ui/workspace/context_menu.cljs:331
+msgid "workspace.shape.menu.duplicate-table-row"
+msgstr "Duplicate table row"
 
 #: src/app/main/ui/workspace/context_menu.cljs:442
 msgid "workspace.shape.menu.edit"

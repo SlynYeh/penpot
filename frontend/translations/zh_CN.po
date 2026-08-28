@@ -6548,6 +6548,14 @@ msgstr "删除"
 msgid "workspace.shape.menu.delete-flow-start"
 msgstr "删除流程起点"
 
+#: src/app/main/ui/workspace/context_menu.cljs:338
+msgid "workspace.shape.menu.delete-table-column"
+msgstr "删除表格列"
+
+#: src/app/main/ui/workspace/context_menu.cljs:335
+msgid "workspace.shape.menu.delete-table-row"
+msgstr "删除表格行"
+
 #: src/app/main/ui/workspace/sidebar/assets/common.cljs:567
 msgid "workspace.shape.menu.detach-instance"
 msgstr "解绑实例"
@@ -6563,6 +6571,14 @@ msgstr "差集"
 #: src/app/main/ui/workspace/context_menu.cljs:215
 msgid "workspace.shape.menu.duplicate"
 msgstr "创建副本"
+
+#: src/app/main/ui/workspace/context_menu.cljs:333
+msgid "workspace.shape.menu.duplicate-table-column"
+msgstr "复制表格列"
+
+#: src/app/main/ui/workspace/context_menu.cljs:331
+msgid "workspace.shape.menu.duplicate-table-row"
+msgstr "复制表格行"
 
 #: src/app/main/ui/workspace/context_menu.cljs:442
 msgid "workspace.shape.menu.edit"

@@ -466,7 +466,7 @@
            (st/emit! (dwt/selected-fit-content))))]
 
     [:section {:class (stl/css :element-set)
-               :aria-label "shape-measures-section"}
+               :aria-label (tr "workspace.options.measures.section")}
      (when (and (options :presets)
                 (or (nil? all-types) (= (count all-types) 1)))
        [:div {:class (stl/css :presets)}
@@ -565,7 +565,7 @@
            [:div {:class (stl/css-case :width true
                                        :disabled disabled-width-sizing?)
                   :title (tr "workspace.options.width")}
-            [:span {:class (stl/css :icon-text)} "W"]
+            [:span {:class (stl/css :icon-text)} (tr "workspace.options.width.icon")]
             [:> deprecated-input/numeric-input*
              {:min 0.01
               :no-validate true
@@ -577,7 +577,7 @@
            [:div {:class (stl/css-case :height true
                                        :disabled disabled-height-sizing?)
                   :title (tr "workspace.options.height")}
-            [:span {:class (stl/css :icon-text)} "H"]
+            [:span {:class (stl/css :icon-text)} (tr "workspace.options.height.icon")]
             [:> deprecated-input/numeric-input* {:min 0.01
                                                  :no-validate true
                                                  :placeholder (if (= :multiple (:height values)) (tr "settings.multiple") "--")
@@ -628,7 +628,7 @@
            [:div {:class (stl/css-case :x-position true
                                        :disabled disabled-position?)
                   :title (tr "workspace.options.x")}
-            [:span {:class (stl/css :icon-text)} "X"]
+            [:span {:class (stl/css :icon-text)} (tr "workspace.options.x.icon")]
             [:> deprecated-input/numeric-input* {:no-validate true
                                                  :placeholder (if (= :multiple (:x values)) (tr "settings.multiple") "--")
                                                  :on-change on-pos-x-change
@@ -639,7 +639,7 @@
            [:div {:class (stl/css-case :y-position true
                                        :disabled disabled-position?)
                   :title (tr "workspace.options.y")}
-            [:span {:class (stl/css :icon-text)} "Y"]
+            [:span {:class (stl/css :icon-text)} (tr "workspace.options.y.icon")]
             [:> deprecated-input/numeric-input* {:no-validate true
                                                  :placeholder (if (= :multiple (:y values)) (tr "settings.multiple") "--")
                                                  :disabled disabled-position?

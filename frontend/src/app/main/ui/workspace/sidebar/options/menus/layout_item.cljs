@@ -148,13 +148,13 @@
          :attr :m1
          :default nil
          :input-type :vertical-margin
-         :property "Vertical margin "
+         :property (tr "workspace.options.layout.margin.vertical")
          :nillable true
          :applied-token token-applied-m1
          :value m1}]
 
        [:div {:class (stl/css :vertical-margin)
-              :title "Vertical margin"}
+              :title (tr "workspace.options.layout.margin.vertical")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-top-bottom]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -179,13 +179,13 @@
          :align :right
          :default nil
          :input-type :horizontal-margin
-         :property "Horizontal margin"
+         :property (tr "workspace.options.layout.margin.horizontal")
          :nillable true
          :applied-token token-applied-m2
          :value m2}]
 
        [:div {:class (stl/css :horizontal-margin)
-              :title "Horizontal margin"}
+              :title (tr "workspace.options.layout.margin.horizontal")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-left-right]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -272,13 +272,13 @@
          :default nil
          :attr :m1
          :input-type :vertical-margin
-         :property "Top margin"
+         :property (tr "workspace.options.layout.margin.top")
          :nillable true
          :applied-token applied-token-to-m1
          :value m1}]
 
        [:div {:class (stl/css :top-margin)
-              :title "Top margin"}
+              :title (tr "workspace.options.layout.margin.top")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-top]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -301,13 +301,13 @@
          :attr :m2
          :align :right
          :input-type :horizontal-margin
-         :property "Right margin"
+         :property (tr "workspace.options.layout.margin.right")
          :nillable true
          :applied-token applied-token-to-m2
          :value m2}]
 
        [:div {:class (stl/css :right-margin)
-              :title "Right margin"}
+              :title (tr "workspace.options.layout.margin.right")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-right]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -331,13 +331,13 @@
          :default nil
          :align :right
          :input-type :vertical-margin
-         :property "Bottom margin"
+         :property (tr "workspace.options.layout.margin.bottom")
          :nillable true
          :applied-token applied-token-to-m3
          :value m3}]
 
        [:div {:class (stl/css :bottom-margin)
-              :title "Bottom margin"}
+              :title (tr "workspace.options.layout.margin.bottom")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-bottom]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -359,14 +359,14 @@
          :class (stl/css :left-margin-wrapper)
          :default nil
          :attr :m4
-         :property "Left margin"
+         :property (tr "workspace.options.layout.margin.left")
          :input-type :horizontal-margin
          :nillable true
          :applied-token applied-token-to-m4
          :value m4}]
 
        [:div {:class (stl/css :left-margin)
-              :title "Left margin"}
+              :title (tr "workspace.options.layout.margin.left")}
         [:span {:class (stl/css :icon)}
          deprecated-icon/margin-left]
         [:> deprecated-input/numeric-input* {:class (stl/css :numeric-input)
@@ -411,7 +411,7 @@
      [:button {:class (stl/css-case
                        :margin-mode true
                        :selected (= type :multiple))
-               :title "Margin - multiple"
+               :title (tr "workspace.options.layout.margin.multiple")
                :on-click on-type-change'}
       deprecated-icon/margin]]))
 
@@ -433,20 +433,20 @@
     [:& radio-button
      {:value "fix"
       :icon  i/fixed-width
-      :title "Fix width"
+      :title (tr "workspace.options.layout.sizing.fix-width")
       :id    "behaviour-h-fix"}]
 
     (when has-fill
       [:& radio-button
        {:value "fill"
         :icon  i/fill-content
-        :title "Width 100%"
+        :title (tr "workspace.options.layout.sizing.fill-width")
         :id    "behaviour-h-fill"}])
     (when is-auto
       [:& radio-button
        {:value "auto"
         :icon  i/hug-content
-        :title "Fit content (Horizontal)"
+        :title (tr "workspace.options.layout.sizing.fit-content-horizontal")
         :id    "behaviour-h-auto"}])]])
 
 (mf/defc element-behaviour-vertical
@@ -467,7 +467,7 @@
      {:value      "fix"
       :icon       i/fixed-width
       :icon-class (stl/css :rotated)
-      :title      "Fix height"
+      :title      (tr "workspace.options.layout.sizing.fix-height")
       :id         "behaviour-v-fix"}]
 
     (when has-fill
@@ -475,14 +475,14 @@
        {:value      "fill"
         :icon       i/fill-content
         :icon-class (stl/css :rotated)
-        :title      "Height 100%"
+        :title      (tr "workspace.options.layout.sizing.fill-height")
         :id         "behaviour-v-fill"}])
     (when is-auto
       [:& radio-button
        {:value      "auto"
         :icon       i/hug-content
         :icon-class (stl/css :rotated)
-        :title      "Fit content (Vertical)"
+        :title      (tr "workspace.options.layout.sizing.fit-content-vertical")
         :id         "behaviour-v-auto"}])]])
 
 (mf/defc align-self-row
@@ -495,15 +495,15 @@
                      :allow-empty true}
    [:& radio-button {:value "start"
                      :icon  (get-layout-flex-icon :align-self :start is-col)
-                     :title "Align self start"
+                     :title (tr "workspace.options.layout.align-self.start")
                      :id     "align-self-start"}]
    [:& radio-button {:value "center"
                      :icon  (get-layout-flex-icon :align-self :center is-col)
-                     :title "Align self center"
+                     :title (tr "workspace.options.layout.align-self.center")
                      :id    "align-self-center"}]
    [:& radio-button {:value "end"
                      :icon  (get-layout-flex-icon :align-self :end is-col)
-                     :title "Align self end"
+                     :title (tr "workspace.options.layout.align-self.end")
                      :id    "align-self-end"}]])
 
 (def ^:private schema:layout-item-props-schema
@@ -588,7 +588,7 @@
         (mf/use-fn (mf/deps on-size-change) #(on-size-change % :layout-item-max-h))]
 
     [:section {:class (stl/css :advanced-options)
-               :aria-label "Layout item size constraints"}
+               :aria-label (tr "workspace.options.layout.item-size-constraints")}
      (when (= (:layout-item-h-sizing values) :fill)
        [:div {:class (stl/css :horizontal-fill)}
         (if token-numeric-inputs
@@ -598,7 +598,7 @@
             :min 0
             :attr :layout-item-min-w
             :property (tr "workspace.options.layout-item.layout-item-min-w")
-            :text-icon "MIN W"
+            :text-icon (tr "workspace.options.layout.item.min-w")
             :input-type :min-width
             :nillable true
             :applied-token applied-token-to-min-w
@@ -608,7 +608,7 @@
           [:div {:class (stl/css :layout-item-min-w)
                  :title (tr "workspace.options.layout-item.layout-item-min-w")}
 
-           [:span {:class (stl/css :icon-text)} "MIN W"]
+           [:span {:class (stl/css :icon-text)} (tr "workspace.options.layout.item.min-w")]
            [:> deprecated-input/numeric-input*
             {:class (stl/css :numeric-input)
              :no-validate true
@@ -625,7 +625,7 @@
           [:> numeric-input-wrapper*
            {:on-change on-layout-item-max-w-change
             :on-detach on-detach-token
-            :text-icon "MAX W"
+            :text-icon (tr "workspace.options.layout.item.max-w")
             :min 0
             :align :right
             :input-type :max-width
@@ -638,7 +638,7 @@
 
           [:div {:class (stl/css :layout-item-max-w)
                  :title (tr "workspace.options.layout-item.layout-item-max-w")}
-           [:span {:class (stl/css :icon-text)} "MAX W"]
+           [:span {:class (stl/css :icon-text)} (tr "workspace.options.layout.item.max-w")]
            [:> deprecated-input/numeric-input*
             {:class (stl/css :numeric-input)
              :no-validate true
@@ -657,7 +657,7 @@
           [:> numeric-input-wrapper*
            {:on-change on-layout-item-min-h-change
             :on-detach on-detach-token
-            :text-icon "MIN H"
+            :text-icon (tr "workspace.options.layout.item.min-h")
             :input-type :max-height
             :min 0
             :attr :layout-item-min-h
@@ -670,7 +670,7 @@
 
           [:div {:class (stl/css :layout-item-min-h)
                  :title (tr "workspace.options.layout-item.layout-item-min-h")}
-           [:span {:class (stl/css :icon-text)} "MIN H"]
+           [:span {:class (stl/css :icon-text)} (tr "workspace.options.layout.item.min-h")]
            [:> deprecated-input/numeric-input*
             {:class (stl/css :numeric-input)
              :no-validate true
@@ -688,7 +688,7 @@
            {:on-change on-layout-item-max-h-change
             :on-detach on-detach-token
             :min 0
-            :text-icon "MAX H"
+            :text-icon (tr "workspace.options.layout.item.max-h")
             :align :right
             :input-type :max-height
             :attr :layout-item-max-h
@@ -701,7 +701,7 @@
           [:div {:class (stl/css :layout-item-max-h)
                  :title (tr "workspace.options.layout-item.layout-item-max-h")}
 
-           [:span {:class (stl/css :icon-text)} "MAX H"]
+           [:span {:class (stl/css :icon-text)} (tr "workspace.options.layout.item.max-h")]
            [:> deprecated-input/numeric-input*
             {:class (stl/css :numeric-input)
              :no-validate true
@@ -801,25 +801,25 @@
           (and is-layout-container
                is-flex-layout
                (not is-layout-child?))
-          "Flex board"
+          (tr "workspace.options.layout.title.flex-board")
 
           (and is-layout-container
                is-grid-layout
                (not is-layout-child?))
-          "Grid board"
+          (tr "workspace.options.layout.title.grid-board")
 
           (and is-layout-container
                (not is-layout-child?))
-          "Layout board"
+          (tr "workspace.options.layout.title.layout-board")
 
           is-flex-parent
-          "Flex element"
+          (tr "workspace.options.layout.title.flex-element")
 
           is-grid-parent
-          "Grid element"
+          (tr "workspace.options.layout.title.grid-element")
 
           :else
-          "Layout element")
+          (tr "workspace.options.layout.title.layout-element"))
 
         on-align-self-change
         (mf/use-fn
@@ -880,7 +880,7 @@
            (st/emit! (dwsl/update-layout-child ids {:layout-item-z-index value}))))]
 
     [:section {:class (stl/css :element-set)
-               :aria-label "Layout item section"}
+               :aria-label (tr "workspace.options.layout.item-section")}
      [:div {:class (stl/css :element-title)}
       [:> title-bar* {:collapsable  has-content?
                       :collapsed    (not open?)
@@ -899,14 +899,16 @@
                                :name "layout-style"
                                :wide true}
              [:& radio-button {:value "static"
-                               :id :static-position}]
+                               :id :static-position
+                               :title (tr "workspace.options.layout.position.static")}]
              [:& radio-button {:value "absolute"
-                               :id :absolute-position}]]]
+                               :id :absolute-position
+                               :title (tr "workspace.options.layout.position.absolute")}]]]
 
            [:div {:class (stl/css :z-index-wrapper)
-                  :title "z-index"}
+                  :title (tr "workspace.options.layout.z-index")}
 
-            [:span {:class (stl/css :icon-text)} "Z"]
+            [:span {:class (stl/css :icon-text)} (tr "workspace.options.layout.z-index.icon")]
             [:> deprecated-input/numeric-input*
              {:class (stl/css :numeric-input)
               :placeholder "--"

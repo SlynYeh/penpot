@@ -174,19 +174,19 @@
                      :name "flex-direction"}
    [:& radio-button {:value "row"
                      :id "flex-direction-row"
-                     :title "Row"
+                     :title (tr "workspace.options.layout.direction.row")
                      :icon (dir-icons-refactor :row)}]
    [:& radio-button {:value "row-reverse"
                      :id "flex-direction-row-reverse"
-                     :title "Row reverse"
+                     :title (tr "workspace.options.layout.direction.row-reverse")
                      :icon (dir-icons-refactor :row-reverse)}]
    [:& radio-button {:value "column"
                      :id "flex-direction-column"
-                     :title "Column"
+                     :title (tr "workspace.options.layout.direction.column")
                      :icon (dir-icons-refactor :column)}]
    [:& radio-button {:value "column-reverse"
                      :id "flex-direction-column-reverse"
-                     :title "Column reverse"
+                     :title (tr "workspace.options.layout.direction.column-reverse")
                      :icon (dir-icons-refactor :column-reverse)}]])
 
 (mf/defc wrap-row
@@ -195,8 +195,8 @@
   [:button {:class (stl/css-case :wrap-button true
                                  :selected (= wrap-type :wrap))
             :title (if (= :wrap wrap-type)
-                     "No wrap"
-                     "Wrap")
+                     (tr "workspace.options.layout.wrap.no-wrap")
+                     (tr "workspace.options.layout.wrap.wrap"))
             :on-click on-click}
    deprecated-icon/wrap])
 
@@ -210,15 +210,15 @@
                      :name "flex-align-items"}
    [:& radio-button {:value "start"
                      :icon  (get-layout-flex-icon :align-items :start is-column)
-                     :title "Align items start"
+                     :title (tr "workspace.options.layout.align-items.start")
                      :id     "align-items-start"}]
    [:& radio-button {:value "center"
                      :icon  (get-layout-flex-icon :align-items :center is-column)
-                     :title "Align items center"
+                     :title (tr "workspace.options.layout.align-items.center")
                      :id    "align-items-center"}]
    [:& radio-button {:value "end"
                      :icon  (get-layout-flex-icon :align-items :end is-column)
-                     :title "Align items end"
+                     :title (tr "workspace.options.layout.align-items.end")
                      :id    "align-items-end"}]])
 
 (mf/defc align-content-row
@@ -231,27 +231,27 @@
                      :name "flex-align-content"}
    [:& radio-button {:value "start"
                      :icon  (get-layout-flex-icon :align-content :start is-column)
-                     :title "Align content start"
+                     :title (tr "workspace.options.layout.align-content.start")
                      :id    "align-content-start"}]
    [:& radio-button {:value "center"
                      :icon  (get-layout-flex-icon :align-content :center is-column)
-                     :title "Align content center"
+                     :title (tr "workspace.options.layout.align-content.center")
                      :id    "align-content-center"}]
    [:& radio-button {:value "end"
                      :icon  (get-layout-flex-icon :align-content :end is-column)
-                     :title "Align content end"
+                     :title (tr "workspace.options.layout.align-content.end")
                      :id    "align-content-end"}]
    [:& radio-button {:value "space-between"
                      :icon  (get-layout-flex-icon :align-content :space-between is-column)
-                     :title "Align content space-between"
+                     :title (tr "workspace.options.layout.align-content.space-between")
                      :id    "align-content-space-between"}]
    [:& radio-button {:value "space-around"
                      :icon  (get-layout-flex-icon :align-content :space-around is-column)
-                     :title "Align content space-around"
+                     :title (tr "workspace.options.layout.align-content.space-around")
                      :id    "align-content-space-around"}]
    [:& radio-button {:value "space-evenly"
                      :icon  (get-layout-flex-icon :align-content :space-evenly is-column)
-                     :title "Align content space-evenly"
+                     :title (tr "workspace.options.layout.align-content.space-evenly")
                      :id    "align-content-space-evenly"}]])
 
 (mf/defc justify-content-row
@@ -263,27 +263,27 @@
                      :name "flex-justify"}
    [:& radio-button {:value "start"
                      :icon  (get-layout-flex-icon :justify-content :start is-column)
-                     :title "Justify content start"
+                     :title (tr "workspace.options.layout.justify-content.start")
                      :id    "justify-content-start"}]
    [:& radio-button {:value "center"
                      :icon  (get-layout-flex-icon :justify-content :center is-column)
-                     :title "Justify content center"
+                     :title (tr "workspace.options.layout.justify-content.center")
                      :id    "justify-content-center"}]
    [:& radio-button {:value "end"
                      :icon  (get-layout-flex-icon :justify-content :end is-column)
-                     :title "Justify content end"
+                     :title (tr "workspace.options.layout.justify-content.end")
                      :id    "justify-content-end"}]
    [:& radio-button {:value "space-between"
                      :icon  (get-layout-flex-icon :justify-content :space-between is-column)
-                     :title "Justify content space-between"
+                     :title (tr "workspace.options.layout.justify-content.space-between")
                      :id    "justify-content-space-between"}]
    [:& radio-button {:value "space-around"
                      :icon  (get-layout-flex-icon :justify-content :space-around is-column)
-                     :title "Justify content space-around"
+                     :title (tr "workspace.options.layout.justify-content.space-around")
                      :id    "justify-content-space-around"}]
    [:& radio-button {:value "space-evenly"
                      :icon  (get-layout-flex-icon :justify-content :space-evenly is-column)
-                     :title "Justify content space-evenly"
+                     :title (tr "workspace.options.layout.justify-content.space-evenly")
                      :id    "justify-content-space-evenly"}]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -747,7 +747,7 @@
          :nillable true
          :min 0
          :attr :row-gap
-         :property "Row gap"
+         :property (tr "workspace.options.layout.row-gap")
          :values {:row-gap (:row-gap value)}
          :disabled row-gap-disabled?
          :placeholder (if (or (= :multiple (:row-gap applied-tokens))
@@ -760,7 +760,7 @@
        [:div {:class (stl/css-case
                       :row-gap true
                       :disabled row-gap-disabled?)
-              :title "Row gap"}
+              :title (tr "workspace.options.layout.row-gap")}
         [:span {:class (stl/css :icon)} deprecated-icon/gap-vertical]
         [:> deprecated-input/numeric-input*
          {:class (stl/css :numeric-input true)
@@ -787,7 +787,7 @@
          :min 0
          :attr :column-gap
          :align :right
-         :property "Column gap"
+         :property (tr "workspace.options.layout.column-gap")
          :placeholder (if (or (= :multiple (:column-gap applied-tokens))
                               (= :multiple (:column-gap value)))
                         (tr "settings.multiple")
@@ -799,7 +799,7 @@
        [:div {:class (stl/css-case
                       :column-gap true
                       :disabled col-gap-disabled?)
-              :title "Column gap"}
+              :title (tr "workspace.options.layout.column-gap")}
         [:span {:class (stl/css :icon)} deprecated-icon/gap-horizontal]
         [:> deprecated-input/numeric-input*
          {:class (stl/css :numeric-input true)
@@ -827,11 +827,11 @@
                      :name "grid-direction"}
    [:& radio-button {:value "row"
                      :id "grid-direction-row"
-                     :title "Row"
+                     :title (tr "workspace.options.layout.direction.row")
                      :icon (dir-icons-refactor :row)}]
    [:& radio-button {:value "column"
                      :id "grid-direction-column"
-                     :title "Column"
+                     :title (tr "workspace.options.layout.direction.column")
                      :icon (dir-icons-refactor :column)}]])
 
 (mf/defc grid-edit-mode
@@ -849,7 +849,7 @@
              (st/emit! :interrupt))))]
     [:button
      {:class (stl/css :edit-mode-btn)
-      :alt  "Grid edit mode"
+      :alt (tr "workspace.options.layout.grid-edit-mode")
       :on-click toggle-edit-mode}
      (tr "workspace.layout-grid.editor.options.edit-grid")]))
 
@@ -865,15 +865,15 @@
                        :name (dm/str "flex-align-items-" type)}
      [:& radio-button {:value "start"
                        :icon  (get-layout-grid-icon :align-items :start is-column)
-                       :title "Align items start"
+                       :title (tr "workspace.options.layout.align-items.start")
                        :id     (dm/str "align-items-start-" type)}]
      [:& radio-button {:value "center"
                        :icon  (get-layout-grid-icon :align-items :center is-column)
-                       :title "Align items center"
+                       :title (tr "workspace.options.layout.align-items.center")
                        :id    (dm/str "align-items-center-" type)}]
      [:& radio-button {:value "end"
                        :icon  (get-layout-grid-icon :align-items :end is-column)
-                       :title "Align items end"
+                       :title (tr "workspace.options.layout.align-items.end")
                        :id    (dm/str "align-items-end-" type)}]]))
 
 (mf/defc justify-grid-row
@@ -890,37 +890,37 @@
      [:& radio-button {:key "justify-item-start"
                        :value "start"
                        :icon (get-layout-grid-icon :justify-items :start is-column)
-                       :title "Justify items start"
+                       :title (tr "workspace.options.layout.justify-items.start")
                        :id (dm/str "justify-items-start-" type)}]
 
      [:& radio-button {:key "justify-item-center"
                        :value "center"
                        :icon (get-layout-grid-icon :justify-items :center is-column)
-                       :title "Justify items center"
+                       :title (tr "workspace.options.layout.justify-items.center")
                        :id (dm/str "justify-items-center-" type)}]
 
      [:& radio-button {:key "justify-item-end"
                        :value "end"
                        :icon (get-layout-grid-icon :justify-items :end is-column)
-                       :title "Justify items end"
+                       :title (tr "workspace.options.layout.justify-items.end")
                        :id (dm/str "justify-items-end-" type)}]
 
      [:& radio-button {:key "justify-item-space-around"
                        :value "space-around"
                        :icon (get-layout-grid-icon :justify-items :space-around is-column)
-                       :title "Justify items space-around"
+                       :title (tr "workspace.options.layout.justify-items.space-around")
                        :id (dm/str "justify-items-space-around-" type)}]
 
      [:& radio-button {:key "justify-item-space-between"
                        :value "space-between"
                        :icon (get-layout-grid-icon :justify-items :space-between is-column)
-                       :title "Justify items space-between"
+                       :title (tr "workspace.options.layout.justify-items.space-between")
                        :id (dm/str "justify-items-space-between-" type)}]
 
      [:& radio-button {:key "justify-item-stretch"
                        :value "stretch"
                        :icon (get-layout-grid-icon :justify-items :stretch is-column)
-                       :title "Justify items stretch"
+                       :title (tr "workspace.options.layout.justify-items.stretch")
                        :id (dm/str "justify-items-stretch-" type)}]]))
 
 (defn- manage-values
@@ -1003,9 +1003,9 @@
       [:div {:class (stl/css :track-info-unit)}
        [:& select {:class (stl/css :track-info-unit-selector)
                    :default-value (:type column)
-                   :options [{:value :flex :label "FR"}
-                             {:value :auto :label "AUTO"}
-                             {:value :fixed :label "PX"}
+                   :options [{:value :flex :label (tr "workspace.options.layout.unit.fr")}
+                             {:value :auto :label (tr "workspace.options.layout.unit.auto")}
+                             {:value :fixed :label (tr "workspace.options.layout.unit.px")}
                              {:value :percent :label "%"}]
                    :on-change #(set-column-type type index %)}]]]
 
@@ -1281,7 +1281,7 @@
             (tr "labels.grid-layout")]]])]
 
     [:section {:class (stl/css :element-set)
-               :aria-label "Layout container section"
+               :aria-label (tr "workspace.options.layout.container-section")
                :data-testid "inspect-layout"}
      [:div {:class (stl/css :element-title)}
       [:> title-bar*
@@ -1559,7 +1559,7 @@
 
     [:div {:class (stl/css :grid-layout-menu)}
      [:div {:class (stl/css :grid-first-row)}
-      [:div {:class (stl/css :grid-layout-menu-title)} "GRID LAYOUT"]
+      [:div {:class (stl/css :grid-layout-menu-title)} (tr "workspace.options.layout.grid-layout-title")]
       (when cf/grid-help-uri
         [:> icon-button* {:variant "ghost"
                           :class (stl/css :help-button)

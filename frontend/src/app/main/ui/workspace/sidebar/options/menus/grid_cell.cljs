@@ -56,28 +56,28 @@
                         :icon  (if is-col?
                                  i/align-self-row-left
                                  i/align-self-column-top)
-                        :title "Align self start"
+                        :title (tr "workspace.options.layout.align-self.start")
                         :id     (dm/str "align-self-start-" type)}]
 
       [:& radio-button {:value "center"
                         :icon  (if is-col?
                                  i/align-self-row-center
                                  i/align-self-column-center)
-                        :title "Align self center"
+                        :title (tr "workspace.options.layout.align-self.center")
                         :id     (dm/str "align-self-center-" type)}]
 
       [:& radio-button {:value "end"
                         :icon  (if is-col?
                                  i/align-self-row-right
                                  i/align-self-column-bottom)
-                        :title "Align self end"
+                        :title (tr "workspace.options.layout.align-self.end")
                         :id     (dm/str "align-self-end-" type)}]
 
       [:& radio-button {:value "stretch"
                         :icon  (if is-col?
                                  i/align-self-row-stretch
                                  i/align-self-column-stretch)
-                        :title "Align self stretch"
+                        :title (tr "workspace.options.layout.align-self.stretch")
                         :id     (dm/str "align-self-stretch-" type)}]]]))
 
 
@@ -192,7 +192,7 @@
       [:> title-bar* {:collapsable  true
                       :collapsed    (not open?)
                       :on-collapsed #(swap! state* update :open not)
-                      :title        "Grid cell"}]]
+                      :title        (tr "workspace.options.layout.grid-cell.title")}]]
 
      (when open?
        [:div {:class (stl/css :grid-cell-menu-container)}
@@ -201,10 +201,11 @@
                             :on-change set-cell-mode
                             :name "cell-mode"
                             :wide true}
-          [:& radio-button {:value "auto" :id :auto}]
-          [:& radio-button {:value "manual" :id :manual}]
+          [:& radio-button {:value "auto" :id :auto :title (tr "workspace.options.layout.cell-mode.auto")}]
+          [:& radio-button {:value "manual" :id :manual :title (tr "workspace.options.layout.cell-mode.manual")}]
           [:& radio-button {:value "area"
                             :id :area
+                            :title (tr "workspace.options.layout.cell-mode.area")
                             :disabled (not valid-area-cells?)}]]]
 
         (when (= :area cell-mode)
@@ -214,8 +215,8 @@
              :key (dm/str "name-" (:id cell))
              :id "grid-area-name"
              :type "text"
-             :aria-label "grid-area-name"
-             :placeholder "Area name"
+             :aria-label (tr "workspace.options.layout.cell-mode.area-name-label")
+             :placeholder (tr "workspace.options.layout.cell-mode.area-name")
              :default-value area-name
              :auto-complete "off"
              :on-change on-area-name-change}]])
@@ -227,7 +228,7 @@
             [:div {:class (stl/css :coord-input)}
              [:> numeric-input*
               {:placeholder "--"
-               :title "Column"
+               :title (tr "workspace.options.layout.direction.column")
                :on-click #(dom/select-target %)
                :on-change (partial on-grid-coordinates :all :column)
                :integer true
@@ -238,7 +239,7 @@
             [:div {:class (stl/css :coord-input)}
              [:> numeric-input*
               {:placeholder "--"
-               :title "Row"
+               :title (tr "workspace.options.layout.direction.row")
                :on-click #(dom/select-target %)
                :on-change (partial on-grid-coordinates :all :row)
                :integer true

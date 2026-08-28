@@ -1027,7 +1027,7 @@ msgstr "取消"
 
 #: src/app/main/ui/confirm.cljs:43, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:157, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:102
 msgid "ds.confirm-ok"
-msgstr "OK"
+msgstr "确定"
 
 #: src/app/main/ui/confirm.cljs:41, src/app/main/ui/confirm.cljs:45
 msgid "ds.confirm-title"
@@ -1035,7 +1035,7 @@ msgstr "你确定？"
 
 #: src/app/main/ui/workspace/tokens/management/forms/controls/utils.cljs:24
 msgid "ds.inputs.numeric-input.no-applicable-tokens"
-msgstr "活动集合或主题中无可用token。"
+msgstr "活动集合或主题中无可用变量。"
 
 #: src/app/main/ui/workspace/tokens/management/forms/controls/utils.cljs:25
 msgid "ds.inputs.numeric-input.no-matches"
@@ -1043,7 +1043,7 @@ msgstr "无匹配项。"
 
 #: src/app/main/ui/ds/controls/numeric_input.cljs:728, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:511, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:146, src/app/main/ui/workspace/tokens/management/forms/controls/combobox.cljs:270
 msgid "ds.inputs.numeric-input.open-token-list-dropdown"
-msgstr "打开token列表"
+msgstr "打开变量列表"
 
 #: src/app/main/data/auth.cljs:346
 msgid "errors.auth-provider-not-allowed"
@@ -1323,11 +1323,11 @@ msgstr "字体粗细值无效：使用数值（100-950）或标准名称（细�
 
 #: src/app/main/data/workspace/tokens/errors.cljs:23
 msgid "errors.tokens.invalid-json"
-msgstr "导入错误：JSON 中存在无效的令牌数据。"
+msgstr "导入错误：JSON 中存在无效的变量数据。"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:27
 msgid "errors.tokens.invalid-json-token-name"
-msgstr "导入错误；JSON中存在无效的令牌名。"
+msgstr "导入错误；JSON中存在无效的变量名。"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:28
 msgid "errors.tokens.invalid-json-token-name-detail"
@@ -1337,27 +1337,27 @@ msgstr ""
 
 #: src/app/main/data/workspace/tokens/errors.cljs:95
 msgid "errors.tokens.invalid-text-case-token-value"
-msgstr "无效的token值：仅接受无、大写、小写或大写"
+msgstr "无效的变量值：仅接受无、大写、小写或大写"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:99
 msgid "errors.tokens.invalid-text-decoration-token-value"
-msgstr "无效的token值：仅接受无、下划线和删除线"
+msgstr "无效的变量值：仅接受无、下划线和删除线"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:75, src/app/main/data/workspace/tokens/errors.cljs:87, src/app/main/data/workspace/tokens/errors.cljs:91
 msgid "errors.tokens.invalid-value"
-msgstr "无效的令牌值：%s"
+msgstr "无效的变量值：%s"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:71
 msgid "errors.tokens.missing-references"
-msgstr "缺少token引用： "
+msgstr "缺少变量引用： "
 
 #: src/app/main/data/workspace/tokens/errors.cljs:19
 msgid "errors.tokens.no-token-files-found"
-msgstr "在此文件中未找到任何标记、集合或主题。"
+msgstr "在此文件中未找到任何变量、集合或主题。"
 
 #: src/app/main/data/workspace/tokens/errors.cljs:45, src/app/main/ui/workspace/tokens/management/forms/shadow.cljs:305, src/app/main/ui/workspace/tokens/management/forms/typography.cljs:235
 msgid "errors.tokens.self-reference"
-msgstr "Token存在自我引用"
+msgstr "变量存在自我引用"
 
 #: src/app/main/data/media.cljs:74
 msgid "errors.unexpected-error"
@@ -4397,7 +4397,7 @@ msgstr "%s - Penpot"
 
 #: src/app/main/ui/ds/controls/utilities/token_field.cljs:106, src/app/main/ui/workspace/sidebar/options/menus/token_typography_row.cljs:67, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:141
 msgid "token-actions.detach-token"
-msgstr "分离token"
+msgstr "分离变量"
 
 #: src/app/main/ui.cljs:138
 #, unused
@@ -6810,7 +6810,7 @@ msgstr "新增集至此编组"
 
 #: src/app/main/ui/workspace/colorpicker/color_tokens.cljs:199, src/app/main/ui/workspace/tokens/management/group.cljs:183
 msgid "workspace.tokens.add-token"
-msgstr "新增令牌：%s"
+msgstr "新增变量：%s"
 
 #: src/app/main/ui/workspace/tokens/management/token_pill.cljs:141
 msgid "workspace.tokens.applied-to"
@@ -6852,7 +6852,7 @@ msgstr "创建一个。"
 
 #: src/app/main/ui/workspace/tokens/management/context_menu.cljs:360
 msgid "workspace.tokens.delete"
-msgstr "删除 token"
+msgstr "删除变量"
 
 #: src/app/main/ui/workspace/tokens/themes/create_modal.cljs:137
 msgid "workspace.tokens.delete-theme-title"
@@ -6860,7 +6860,7 @@ msgstr "删除主题"
 
 #: src/app/main/ui/workspace/tokens/management/context_menu.cljs:354
 msgid "workspace.tokens.duplicate"
-msgstr "复制 token"
+msgstr "复制变量"
 
 #: src/app/main/data/workspace/tokens/library_edit.cljs:352
 msgid "workspace.tokens.duplicate-suffix"
@@ -6868,7 +6868,7 @@ msgstr "复制"
 
 #: src/app/main/ui/workspace/tokens/management/context_menu.cljs:340
 msgid "workspace.tokens.edit"
-msgstr "编辑 token"
+msgstr "编辑变量"
 
 #: src/app/main/ui/workspace/tokens/themes/create_modal.cljs:343
 msgid "workspace.tokens.edit-theme-title"
@@ -6884,7 +6884,7 @@ msgstr "导出"
 
 #: src/app/main/ui/workspace/tokens/export/modal.cljs:124
 msgid "workspace.tokens.export-tokens"
-msgstr "导出 tokens"
+msgstr "导出变量"
 
 #: src/app/main/ui/workspace/tokens/export/modal.cljs:34
 msgid "workspace.tokens.export.preview"
@@ -6926,11 +6926,11 @@ msgstr "ZIP 文件"
 #: src/app/main/ui/workspace/tokens/sidebar.cljs:414, src/app/main/ui/workspace/tokens/sidebar.cljs:415
 #, unused
 msgid "workspace.tokens.import-tooltip"
-msgstr "导入 JSON 文件将覆盖所有当前令牌、集合和主题"
+msgstr "导入 JSON 文件将覆盖所有当前变量、集合和主题"
 
 #: src/app/main/ui/workspace/tokens/import/modal.cljs:246, src/app/main/ui/workspace/tokens/import_from_library.cljs:81
 msgid "workspace.tokens.import-warning"
-msgstr "导入 token 将覆盖您当前的所有令牌、集合和主题。"
+msgstr "导入变量将覆盖您当前的所有变量、集合和主题。"
 
 #: src/app/main/ui/workspace/tokens/management.cljs:83
 msgid "workspace.tokens.inactive-set"
@@ -7045,12 +7045,12 @@ msgstr "输入名称（组名使用“/”）"
 
 #: src/app/main/ui/workspace/tokens/themes/create_modal.cljs:358
 msgid "workspace.tokens.set-selection-theme"
-msgstr "定义应使用哪些 token 集作为此主题选项的一部分："
+msgstr "定义应使用哪些变量集作为此主题选项的一部分："
 
 #: src/app/main/ui/workspace/tokens/token_pill.cljs:47
 #, unused
 msgid "workspace.tokens.set.not-active"
-msgstr "Token 集未激活"
+msgstr "变量集未激活"
 
 #: src/app/main/ui/workspace/tokens/management/context_menu.cljs:258
 msgid "workspace.tokens.size"
@@ -7380,3 +7380,1440 @@ msgstr "打开版本菜单"
 #, unused
 msgid "workspace.viewport.click-to-close-path"
 msgstr "单击以闭合路径"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.blur.value"
+msgstr "数值"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.jpg"
+msgstr "JPG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.pdf"
+msgstr "PDF"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.png"
+msgstr "PNG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.svg"
+msgstr "SVG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.webp"
+msgstr "WEBP"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.scale"
+msgstr "%s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.grid.params.height.icon"
+msgstr "高"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.grid.params.width.icon"
+msgstr "宽"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.height.icon"
+msgstr "高"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.interaction-animation-way-in"
+msgstr "进入"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.interaction-animation-way-out"
+msgstr "退出"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.center"
+msgstr "居中"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.end"
+msgstr "末端"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-around"
+msgstr "环绕间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-between"
+msgstr "两端对齐"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-evenly"
+msgstr "均匀间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.start"
+msgstr "起始"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.center"
+msgstr "居中"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.end"
+msgstr "末端"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.start"
+msgstr "起始"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.center"
+msgstr "居中"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.end"
+msgstr "末端"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.start"
+msgstr "起始"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.stretch"
+msgstr "拉伸"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area"
+msgstr "区域"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area-name"
+msgstr "区域名称"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area-name-label"
+msgstr "区域名称"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.auto"
+msgstr "自动"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.manual"
+msgstr "手动"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.column-gap"
+msgstr "列间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.container-section"
+msgstr "布局容器"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-cell.title"
+msgstr "网格单元格"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-edit-mode"
+msgstr "网格编辑模式"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-layout-title"
+msgstr "网格布局"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item-section"
+msgstr "布局子项"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item-size-constraints"
+msgstr "子项尺寸约束"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.max-h"
+msgstr "最大高度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.max-w"
+msgstr "最大宽度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.min-h"
+msgstr "最小高度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.min-w"
+msgstr "最小宽度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.center"
+msgstr "居中"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.end"
+msgstr "末端"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-around"
+msgstr "环绕间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-between"
+msgstr "两端对齐"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-evenly"
+msgstr "均匀间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.start"
+msgstr "起始"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.center"
+msgstr "居中"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.end"
+msgstr "末端"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.space-around"
+msgstr "环绕间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.space-between"
+msgstr "两端对齐"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.start"
+msgstr "起始"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.stretch"
+msgstr "拉伸"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.bottom"
+msgstr "下外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.horizontal"
+msgstr "水平外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.left"
+msgstr "左外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.multiple"
+msgstr "多重外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.right"
+msgstr "右外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.top"
+msgstr "上外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.vertical"
+msgstr "垂直外边距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.absolute"
+msgstr "绝对定位"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.static"
+msgstr "静态定位"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.row-gap"
+msgstr "行间距"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fill-height"
+msgstr "填充高度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fill-width"
+msgstr "填充宽度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fit-content-horizontal"
+msgstr "水平适应内容"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fit-content-vertical"
+msgstr "垂直适应内容"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fix-height"
+msgstr "固定高度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fix-width"
+msgstr "固定宽度"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.flex-board"
+msgstr "弹性布局画板"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.flex-element"
+msgstr "弹性布局元素"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.grid-board"
+msgstr "网格布局画板"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.grid-element"
+msgstr "网格布局元素"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.layout-board"
+msgstr "布局画板"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.layout-element"
+msgstr "布局元素"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.auto"
+msgstr "自动"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.fr"
+msgstr "比例"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.px"
+msgstr "像素"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.wrap.no-wrap"
+msgstr "不换行"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.wrap.wrap"
+msgstr "换行"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.z-index"
+msgstr "层级"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.z-index.icon"
+msgstr "层"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.measures.section"
+msgstr "形状测量"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.shadow.more-options"
+msgstr "更多选项"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke-dash.icon"
+msgstr "虚线"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke-gap.icon"
+msgstr "间隙"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke.section"
+msgstr "描边"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.width.icon"
+msgstr "宽"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.x.icon"
+msgstr "X"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.y.icon"
+msgstr "Y"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.blur"
+msgstr "模糊"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.blur-effects"
+msgstr "模糊效果"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.color"
+msgstr "颜色"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.flex-layout"
+msgstr "弹性布局"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.grid-layout"
+msgstr "网格布局"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.layout"
+msgstr "布局"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.open"
+msgstr "打开"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.stroke"
+msgstr "描边"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.switch"
+msgstr "开关"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "labels.variant"
+msgstr "变体"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.more-token-colors"
+msgstr "更多颜色变量"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.colorpicker.color-tokens"
+msgstr "颜色变量"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.versions.tab.actions"
+msgstr "操作"
+
+msgid "workspace.tokens.search-by-token"
+msgstr "按变量名称搜索"
+
+msgid "color-token.empty-state"
+msgstr "暂无可用颜色变量。请检查启用的集合/主题，或添加新变量。"
+
+msgid "inspect.tabs.styles.toggle-style"
+msgstr "切换面板 %s"
+
+msgid "workspace.libraries.colors.add-library-color"
+msgstr "添加颜色至库"
+
+msgid "workspace.libraries.colors.empty-recent-colors"
+msgstr "暂无最近使用的颜色"
+
+msgid "workspace.libraries.colors.toggle-color-palette"
+msgstr "切换调色板"
+
+msgid "inspect.tabs.styles.token-resolved-value"
+msgstr "解析值："
+
+msgid "ds.inputs.token-field.no-active-token-option"
+msgstr "{%s} 变量不在任何启用的集合中，或值无效。"
+
+msgid "options.deleted-token-with-name"
+msgstr "{%s} 变量不存在或已被删除。"
+
+msgid "workspace.tokens.ref-not-valid"
+msgstr "{%s} 中的引用无效，或不在任何启用的集合中。"
+
+msgid "workspace.options.pixel grid-color"
+msgstr "像素网格颜色"
+
+msgid "inspect.css-rule.width"
+msgstr "宽度"
+
+msgid "inspect.css-rule.height"
+msgstr "高度"
+
+msgid "inspect.css-rule.left"
+msgstr "X轴"
+
+msgid "inspect.css-rule.top"
+msgstr "Y轴"
+
+msgid "inspect.css-rule.border-radius"
+msgstr "圆角半径"
+
+msgid "inspect.css-rule.transform"
+msgstr "变换"
+
+msgid "inspect.css-rule.border-start-start-radius"
+msgstr "左上圆角"
+
+msgid "inspect.css-rule.border-start-end-radius"
+msgstr "右上圆角"
+
+msgid "inspect.css-rule.border-end-start-radius"
+msgstr "左下圆角"
+
+msgid "inspect.css-rule.border-end-end-radius"
+msgstr "右下圆角"
+
+msgid "inspect.css-rule.display"
+msgstr "显示方式"
+
+msgid "inspect.css-rule.flex-direction"
+msgstr "主轴方向"
+
+msgid "inspect.css-rule.flex-wrap"
+msgstr "换行方式"
+
+msgid "inspect.css-rule.grid-template-rows"
+msgstr "网格行"
+
+msgid "inspect.css-rule.grid-template-columns"
+msgstr "网格列"
+
+msgid "inspect.css-rule.align-items"
+msgstr "交叉轴对齐"
+
+msgid "inspect.css-rule.align-content"
+msgstr "多行对齐"
+
+msgid "inspect.css-rule.justify-items"
+msgstr "项主轴对齐"
+
+msgid "inspect.css-rule.justify-content"
+msgstr "主轴对齐"
+
+msgid "inspect.css-rule.row-gap"
+msgstr "行间距"
+
+msgid "inspect.css-rule.column-gap"
+msgstr "列间距"
+
+msgid "inspect.css-rule.gap"
+msgstr "间距"
+
+msgid "inspect.css-rule.padding-inline-start"
+msgstr "左内边距"
+
+msgid "inspect.css-rule.padding-inline-end"
+msgstr "右内边距"
+
+msgid "inspect.css-rule.padding-block-start"
+msgstr "上内边距"
+
+msgid "inspect.css-rule.padding-block-end"
+msgstr "下内边距"
+
+msgid "inspect.css-rule.margin"
+msgstr "外边距"
+
+msgid "inspect.css-rule.max-height"
+msgstr "最大高度"
+
+msgid "inspect.css-rule.min-height"
+msgstr "最小高度"
+
+msgid "inspect.css-rule.max-width"
+msgstr "最大宽度"
+
+msgid "inspect.css-rule.min-width"
+msgstr "最小宽度"
+
+msgid "inspect.css-rule.align-self"
+msgstr "自身对齐"
+
+msgid "inspect.css-rule.justify-self"
+msgstr "自身主轴对齐"
+
+msgid "inspect.css-rule.flex-shrink"
+msgstr "收缩比例"
+
+msgid "inspect.css-rule.flex"
+msgstr "弹性比例"
+
+msgid "inspect.css-rule.grid-column"
+msgstr "网格列位置"
+
+msgid "inspect.css-rule.grid-row"
+msgstr "网格行位置"
+
+msgid "inspect.css-rule.margin-block-start"
+msgstr "上外边距"
+
+msgid "inspect.css-rule.margin-block-end"
+msgstr "下外边距"
+
+msgid "inspect.css-rule.margin-inline-start"
+msgstr "左外边距"
+
+msgid "inspect.css-rule.margin-inline-end"
+msgstr "右外边距"
+
+msgid "inspect.css-rule.max-block-size"
+msgstr "最大块级尺寸"
+
+msgid "inspect.css-rule.min-block-size"
+msgstr "最小块级尺寸"
+
+msgid "inspect.css-rule.max-inline-size"
+msgstr "最大行内尺寸"
+
+msgid "inspect.css-rule.min-inline-size"
+msgstr "最小行内尺寸"
+
+msgid "inspect.css-rule.border-style"
+msgstr "描边样式"
+
+msgid "inspect.css-rule.border-width"
+msgstr "描边宽度"
+
+msgid "inspect.css-rule.border-color"
+msgstr "描边颜色"
+
+msgid "inspect.css-rule.opacity"
+msgstr "不透明度"
+
+msgid "inspect.css-rule.blend-mode"
+msgstr "混合模式"
+
+msgid "inspect.css-rule.visibility"
+msgstr "可见性"
+
+msgid "inspect.css-rule.background"
+msgstr "背景"
+
+msgid "inspect.css-rule.filter"
+msgstr "模糊"
+
+msgid "inspect.css-rule.backdrop-filter"
+msgstr "背景模糊"
+
+msgid "inspect.css-rule.drop-shadow"
+msgstr "外阴影"
+
+msgid "inspect.css-rule.inner-shadow"
+msgstr "内阴影"
+
+msgid "inspect.attributes.image.preview"
+msgstr "形状填充图片预览"
+
+msgid "inspect.attributes.typography.text-decoration.strikethrough"
+msgstr "删除线"
+
+msgid "inspect.color-space-label"
+msgstr "选择色彩空间"
+
+msgid "inspect.tabs-switcher-label"
+msgstr "切换检查面板标签"
+
+msgid "inspect.tabs.styles.active-sets"
+msgstr "启用的集合"
+
+msgid "inspect.tabs.styles.active-themes"
+msgstr "启用的主题"
+
+msgid "inspect.tabs.styles.copy-shorthand"
+msgstr "复制 CSS 简写到剪贴板"
+
+msgid "inspect.tabs.styles.copy-to-clipboard"
+msgstr "复制到剪贴板"
+
+msgid "inspect.tabs.styles.token-panel"
+msgstr "变量集合与主题"
+
+msgid "inspect.tabs.styles.variants-panel"
+msgstr "变体属性"
+
+msgid "labels.fill"
+msgstr "填充"
+
+msgid "labels.shadow"
+msgstr "阴影"
+
+msgid "labels.styles"
+msgstr "样式"
+
+msgid "labels.svg"
+msgstr "SVG"
+
+msgid "labels.text"
+msgstr "文本"
+
+msgid "labels.visibility"
+msgstr "可见性"
+
+msgid "inspect.tabs.code.copy-all"
+msgstr "复制全部代码"
+
+msgid "inspect.attributes.shadow.color"
+msgstr "阴影颜色"
+
+msgid "inspect.attributes.typography.font-color"
+msgstr "字体颜色"
+
+msgid "workspace.sidebar.tokens"
+msgstr "变量"
+
+msgid "workspace.pages.default-name"
+msgstr "页面"
+
+msgid "workspace.tokens.themes-description"
+msgstr "在此可以管理主题：启用或停用主题，并配置其启用的集合。"
+
+msgid "workspace.tokens.sets-hint"
+msgstr "编辑主题并管理集合"
+
+msgid "workspace.tokens.tokens-section-title"
+msgstr "变量 - %s"
+
+msgid "workspace.sidebar.layers.search-scope-canvas"
+msgstr "文本内容"
+
+msgid "workspace.sidebar.layers.search-scope-layers"
+msgstr "图层名称"
+
+msgid "workspace.sidebar.layers.filter"
+msgstr "筛选"
+
+msgid "workspace.sidebar.layers.search-and-replace"
+msgstr "查找并替换"
+
+msgid "workspace.sidebar.layers.replace"
+msgstr "替换"
+
+msgid "workspace.sidebar.layers.replace-all"
+msgstr "全部替换"
+
+msgid "workspace.sidebar.layers.replace-placeholder"
+msgstr "替换为..."
+
+msgid "workspace.sidebar.layers.no-matches"
+msgstr "无匹配结果"
+
+msgid "inspect.tabs.code.selected.ellipse"
+msgstr "椭圆"
+
+msgid "inspect.tabs.code.selected.bool"
+msgstr "布尔"
+
+msgid "errors.field-max-length"
+msgstr "最多包含 %s 个字符。"
+
+msgid "errors.token-theme-not-existing-sets"
+msgstr "该主题引用了不存在的集合：%s"
+
+msgid "errors.tokens.circular-reference"
+msgstr "变量存在循环引用"
+
+msgid "errors.tokens.composite-line-height-needs-font-size"
+msgstr "行高依赖于字号。请添加字号以得到解析值。"
+
+msgid "errors.tokens.empty-field"
+msgstr "此字段不能为空"
+
+msgid "errors.tokens.empty-input"
+msgstr "变量值不能为空"
+
+msgid "errors.tokens.invalid-font-family-token-value"
+msgstr "无效的变量值：只能引用字体系列变量"
+
+msgid "errors.tokens.invalid-shadow-type-token-value"
+msgstr "无效的阴影类型：仅接受 innerShadow 或 dropShadow"
+
+msgid "errors.tokens.invalid-token-value-shadow"
+msgstr "无效值：必须引用复合阴影变量。"
+
+msgid "errors.tokens.invalid-token-value-typography"
+msgstr "无效值：必须引用复合排版变量。"
+
+msgid "errors.tokens.name-collision"
+msgstr "%s 的编组名称与另一个已启用集合中的同名变量冲突。"
+
+msgid "errors.tokens.number-too-large"
+msgstr "无效的变量值。解析后的值过大：%s"
+
+msgid "errors.tokens.opacity-range"
+msgstr "不透明度必须介于 0 和 100% 或 0 和 1 之间（例如 50% 或 0.5）。"
+
+msgid "errors.tokens.shadow-blur-range"
+msgstr "阴影模糊必须大于或等于 0。"
+
+msgid "errors.tokens.shadow-spread-range"
+msgstr "阴影扩展必须大于或等于 0。"
+
+msgid "errors.tokens.stroke-width-range"
+msgstr "描边宽度必须大于或等于 0。"
+
+msgid "errors.tokens.value-with-percent"
+msgstr "无效值：不允许使用 %。"
+
+msgid "errors.tokens.value-with-units"
+msgstr "无效值：不允许使用单位。"
+
+msgid "inspect.attributes.typography.mixed-font-family"
+msgstr "混合字体"
+
+msgid "labels.reference"
+msgstr "引用"
+
+msgid "labels.typography"
+msgstr "排版"
+
+msgid "modals.delete-asset-group.title"
+msgstr "删除编组"
+
+msgid "modals.import-library-tokens.description"
+msgstr "该素材库包含变量和主题，组件很可能正在使用它们。"
+
+msgid "modals.import-library-tokens.import"
+msgstr "导入变量"
+
+msgid "modals.import-library-tokens.title"
+msgstr "要从素材库导入变量吗？"
+
+msgid "shortcuts.create-component-variant"
+msgstr "创建组件 / 变体"
+
+msgid "shortcuts.find"
+msgstr "查找"
+
+msgid "shortcuts.find-and-replace"
+msgstr "查找并替换"
+
+msgid "shortcuts.paste-replace"
+msgstr "粘贴并替换"
+
+msgid "subscription.workspace.versions.warning.enterprise.subtext-owner"
+msgstr "如需提高此上限，请写信至 [%s](mailto)"
+
+msgid "subscription.workspace.versions.warning.subtext-member"
+msgstr "如需提高此上限，请联系团队所有者：[%s](mailto)"
+
+msgid "subscription.workspace.versions.warning.subtext-owner"
+msgstr "如需提高此上限，请[升级方案|target:self](%s)"
+
+msgid "workspace.assets.component-group-options"
+msgstr "组件编组选项"
+
+msgid "workspace.assets.delete-group"
+msgstr "删除编组"
+
+msgid "workspace.component.swap.loop-error"
+msgstr "组件不能嵌套在自身内部。"
+
+msgid "workspace.component.switch.loop-error-multi"
+msgstr "部分副本无法切换。组件不能嵌套在自身内部。"
+
+msgid "workspace.debug.title"
+msgstr "调试工具"
+
+msgid "workspace.libraries.text.mixed-tokens"
+msgstr "混合变量"
+
+msgid "workspace.libraries.text.mixed-tokens-and-assets"
+msgstr "混合素材和变量"
+
+msgid "workspace.libraries.text.mixed-typography"
+msgstr "混合素材"
+
+msgid "workspace.libraries.text.multiple-assets-tooltip"
+msgstr "取消链接全部素材"
+
+msgid "workspace.libraries.text.multiple-token-and-asset-tooltip"
+msgstr "分离全部变量并取消链接全部排版"
+
+msgid "workspace.libraries.text.multiple-token-tooltip"
+msgstr "分离全部变量"
+
+msgid "workspace.options.blur-effects-options.title"
+msgstr "模糊效果"
+
+msgid "workspace.options.blur-effects-options.title.group"
+msgstr "编组模糊效果"
+
+msgid "workspace.options.blur-effects-options.title.multiple"
+msgstr "所选模糊效果"
+
+msgid "workspace.options.blur-options.background-blur"
+msgstr "背景模糊"
+
+msgid "workspace.options.blur-options.blur-type-select"
+msgstr "选择模糊类型"
+
+msgid "workspace.options.blur-options.disabled-blur-label"
+msgstr "背景模糊仅支持新渲染器。请在偏好设置中切换到新渲染器以使用此效果"
+
+msgid "workspace.options.blur-options.layer-blur"
+msgstr "图层模糊"
+
+msgid "workspace.options.blur-options.toggle-more-options"
+msgstr "显示/隐藏更多选项"
+
+msgid "workspace.options.component.variant.duplicated.copy.title"
+msgstr "此组件存在冲突的变体。请确保每种变体都有一组唯一的属性值。"
+
+msgid "workspace.options.component.variant.duplicated.group.title"
+msgstr "部分变体的属性和值相同"
+
+msgid "workspace.options.component.variant.duplicated.single.all"
+msgstr "这些变体的属性和值相同。请调整数值以便能够取回。"
+
+msgid "workspace.options.component.variant.duplicated.single.one"
+msgstr "此变体与另一变体的属性和值相同。请调整数值以便能够取回。"
+
+msgid "workspace.options.component.variant.duplicated.single.some"
+msgstr "其中部分变体的属性和值相同。请调整数值以便能够取回。"
+
+msgid "workspace.options.component.variant.malformed.copy"
+msgstr "此组件的部分变体名称无效。请确保每个变体都遵循正确的结构。"
+
+msgid "workspace.options.component.variant.malformed.locate"
+msgstr "定位无效的变体"
+
+msgid "workspace.options.component.variants-help-modal.intro"
+msgstr "在变体之间切换时为了保留更改，Penpot 会连接满足以下条件的图层："
+
+msgid "workspace.options.component.variants-help-modal.outro"
+msgstr "更改其中任何一项（例如重命名或编组图层）都会断开连接，撤销更改后即可恢复。"
+
+msgid "workspace.options.component.variants-help-modal.rule2.detail"
+msgstr "矩形、椭圆、路径和布尔运算视为同一类型。"
+
+msgid "workspace.options.component.variants-help-modal.rule3.detail"
+msgstr "编组、画板和布局视为等效。"
+
+msgid "workspace.options.convert-to-typography"
+msgstr "创建排版样式"
+
+msgid "workspace.options.fill.section"
+msgstr "填充"
+
+msgid "workspace.options.layer-options.layer-section"
+msgstr "图层"
+
+msgid "workspace.options.no-size-preset-results"
+msgstr "无匹配的尺寸预设"
+
+msgid "workspace.options.radius.hide-all-corners"
+msgstr "收起独立圆角"
+
+msgid "workspace.options.radius.radius-section"
+msgstr "圆角"
+
+msgid "workspace.options.search-size-preset"
+msgstr "搜索尺寸预设"
+
+msgid "workspace.options.selection-color.section"
+msgstr "颜色"
+
+msgid "workspace.options.stroke-dash"
+msgstr "虚线"
+
+msgid "workspace.options.stroke-gap"
+msgstr "间隙"
+
+msgid "workspace.options.stroke.toggle-stroke"
+msgstr "切换描边"
+
+msgid "workspace.options.text-options.text-section"
+msgstr "文本"
+
+msgid "workspace.sidebar.layers.match-count"
+msgstr "%s / %s"
+
+msgid "workspace.tokens.base-font-size.error"
+msgstr "基准字号必须是像素值或无单位数值。"
+
+msgid "workspace.tokens.copy-name"
+msgstr "复制变量路径"
+
+msgid "workspace.tokens.create-token"
+msgstr "新建%s变量"
+
+msgid "workspace.tokens.duplicate-group"
+msgstr "复制变量编组"
+
+msgid "workspace.tokens.duplicated-json-token-name"
+msgstr "导入错误：JSON 中存在重复的变量名称。"
+
+msgid "workspace.tokens.duplicated-json-token-name-detail"
+msgstr "路径「%s」或其前缀在另一个集合中已存在变量。"
+
+msgid "workspace.tokens.edit-token"
+msgstr "编辑%s变量"
+
+msgid "workspace.tokens.enter-token-name"
+msgstr "输入%s变量名称"
+
+msgid "workspace.tokens.error-text-edition"
+msgstr "正在编辑文本时无法应用变量。请改为选中文本图层。"
+
+msgid "workspace.tokens.export.multiple-files"
+msgstr "多个文件"
+
+msgid "workspace.tokens.export.no-tokens-themes-sets"
+msgstr "没有可导出的变量、主题或集合。"
+
+msgid "workspace.tokens.font-size-value-enter"
+msgstr "字号或 {alias}"
+
+msgid "workspace.tokens.font-variant-not-found"
+msgstr "无法设置字重/样式。当前字体不存在此样式"
+
+msgid "workspace.tokens.font-weight-value-enter"
+msgstr "字重（300、Bold Italic...）或 {alias}"
+
+msgid "workspace.tokens.grouping-set-alert"
+msgstr "暂不支持变量集编组。"
+
+msgid "workspace.tokens.import-multiple-files"
+msgstr "多文件导入时，文件名 / 路径即为集合名称。"
+
+msgid "workspace.tokens.import-single-file"
+msgstr "单个 JSON 文件中，第一级键应为变量集名称。"
+
+msgid "workspace.tokens.import-tokens"
+msgstr "导入变量"
+
+msgid "workspace.tokens.individual-tokens"
+msgstr "使用独立变量"
+
+msgid "workspace.tokens.letter-spacing-value-enter-composite"
+msgstr "字距或 {alias}"
+
+msgid "workspace.tokens.line-height-value-enter"
+msgstr "行高（倍数、px、%）或 {alias}"
+
+msgid "workspace.tokens.missing-reference"
+msgstr "缺少引用"
+
+msgid "workspace.tokens.no-references-found"
+msgstr "未找到引用"
+
+msgid "workspace.tokens.no-remap-needed"
+msgstr "此变量当前未在设计中使用，无需重映射。"
+
+msgid "workspace.tokens.not-remap"
+msgstr "不重映射"
+
+msgid "workspace.tokens.reference-composite"
+msgstr "输入排版变量别名"
+
+msgid "workspace.tokens.reference-composite-shadow"
+msgstr "输入阴影变量别名"
+
+msgid "workspace.tokens.remap"
+msgstr "重映射变量"
+
+msgid "workspace.tokens.remap-node-references-title"
+msgstr "将 `%s` 重命名为 `%s` 并重映射此编组中的所有变量？"
+
+msgid "workspace.tokens.remap-node-warning-effects"
+msgstr "这将更新所有使用旧变量名称的变量和引用。"
+
+msgid "workspace.tokens.remap-token-references-title"
+msgstr "将所有使用 `%s` 的变量重映射为 `%s`？"
+
+msgid "workspace.tokens.remap-token-warning-effects"
+msgstr "这将更改所有使用旧变量名称的图层和引用。"
+
+msgid "workspace.tokens.remap-warning-time"
+msgstr "此操作可能需要一些时间。"
+
+msgid "workspace.tokens.remapping-in-progress"
+msgstr "正在重映射变量引用…"
+
+msgid "workspace.tokens.rename-group"
+msgstr "重命名变量编组"
+
+msgid "workspace.tokens.rename-group-name-hint"
+msgstr "变量将自动重命名为 %s.(suffix).(tokenName)"
+
+msgid "workspace.tokens.setting-description"
+msgstr "可在此配置基准字号，它定义 1rem 的值："
+
+msgid "workspace.tokens.settings"
+msgstr "变量设置"
+
+msgid "workspace.tokens.shadow-add-shadow"
+msgstr "添加阴影"
+
+msgid "workspace.tokens.shadow-blur"
+msgstr "模糊"
+
+msgid "workspace.tokens.shadow-color"
+msgstr "颜色"
+
+msgid "workspace.tokens.shadow-inset"
+msgstr "内阴影"
+
+msgid "workspace.tokens.shadow-remove-shadow"
+msgstr "移除阴影"
+
+msgid "workspace.tokens.shadow-spread"
+msgstr "扩展"
+
+msgid "workspace.tokens.shadow-title"
+msgstr "阴影"
+
+msgid "workspace.tokens.shadow-token-blur-value-error"
+msgstr "模糊值不能为负数"
+
+msgid "workspace.tokens.shadow-token-spread-value-error"
+msgstr "扩展值不能为负数"
+
+msgid "workspace.tokens.shadow-x"
+msgstr "X"
+
+msgid "workspace.tokens.shadow-y"
+msgstr "Y"
+
+msgid "workspace.tokens.text-case-value-enter"
+msgstr "none | uppercase | lowercase | capitalize 或 {alias}"
+
+msgid "workspace.tokens.text-decoration-value-enter"
+msgstr "none | underline | strike-through 或 {alias}"
+
+msgid "workspace.tokens.theme-name-already-exists"
+msgstr "已存在同名主题"
+
+msgid "workspace.tokens.theme.disable"
+msgstr "停用"
+
+msgid "workspace.tokens.theme.enable"
+msgstr "启用"
+
+msgid "workspace.tokens.token-font-family-select"
+msgstr "选择字体系列"
+
+msgid "workspace.tokens.token-font-family-value"
+msgstr "字体系列"
+
+msgid "workspace.tokens.token-font-family-value-enter"
+msgstr "字体系列，或多个字体（用逗号分隔）"
+
+msgid "workspace.tokens.token-name-duplication-validation-error"
+msgstr "路径 %s 或其前缀上已存在变量。"
+
+msgid "workspace.tokens.token-name-length-validation-error"
+msgstr "名称至少需要 1 个字符"
+
+msgid "workspace.tokens.token-name-validation-error"
+msgstr " 不是有效的变量名称。\n变量名称只能包含字母和数字，以 . 分隔，且不能以 $ 开头。"
+
+msgid "workspace.tokens.token-not-resolved"
+msgstr "无法解析名为 %s 的引用变量"
+
+msgid "workspace.tokens.token-value"
+msgstr "值"
+
+msgid "workspace.tokens.token-value-enter"
+msgstr "输入值或使用 {alias} 引用别名"
+
+msgid "workspace.tokens.unknown-token-type-message"
+msgstr "导入成功，但部分变量因使用了不支持的 $type 而被跳过。展开详情可查看受影响的变量。"
+
+msgid "workspace.tokens.unknown-token-type-section"
+msgstr "不支持类型「%s」（%s）："
+
+msgid "workspace.tokens.use-reference"
+msgstr "使用引用"
+
+msgid "workspace.tokens.value-not-valid"
+msgstr "该值无效"
+
+msgid "workspace.tokens.warning-name-change"
+msgstr "重命名此变量将断开对其旧名称的所有引用"
+
+msgid "workspace.undo.entry.by"
+msgstr "由 %s"
+
+msgid "workspace.versions.button.preview"
+msgstr "预览版本"
+
+msgid "workspace.versions.locked-by-other"
+msgstr "此版本已被 %s 锁定，无法修改"
+
+msgid "workspace.versions.preview-banner-title"
+msgstr "正在预览版本：%s"
+
+msgid "workspace.versions.preview.unnamed"
+msgstr "未命名版本"
+
+msgid "workspace.versions.tooltip.locked-version"
+msgstr "已锁定版本 - 仅创建者可以修改"
+
+msgid "workspace.versions.warning.subtext"
+msgstr "如需提高此上限，请写信至 [support@penpot.app](%s)"
+
+msgid "workspace.versions.warning.text"
+msgstr "自动保存的版本将保留 %s 天。"
+
+msgid "dashboard.webgl-switch.beta"
+msgstr "Beta"
+
+msgid "dashboard.webgl-switch.description"
+msgstr "WebGL 渲染可以提升性能，但目前处于测试阶段，稳定性可能较差。画布、导出（SVG/PDF）和查看模式之间可能出现一些视觉差异。"
+
+msgid "dashboard.webgl-switch.disabled"
+msgstr "已关闭"
+
+msgid "dashboard.webgl-switch.enabled"
+msgstr "已开启"
+
+msgid "dashboard.webgl-switch.feedback"
+msgstr "提供反馈"
+
+msgid "dashboard.webgl-switch.status"
+msgstr "状态"
+
+msgid "dashboard.webgl-switch.title"
+msgstr "WebGL 渲染"
+
+msgid "workspace.header.menu.disable-webgl"
+msgstr "关闭 WebGL 渲染（Beta）"
+
+msgid "workspace.header.menu.enable-webgl"
+msgstr "启用 WebGL 渲染（Beta）"
+
+msgid "workspace.canvas.webgl-rendering"
+msgstr "WebGL 渲染"
+
+msgid "workspace.canvas.webgl-rendering-debug"
+msgstr "WebGL 渲染（调试）"
+
+msgid "workspace.canvas.text-editor-v3"
+msgstr "文本编辑器 v3"
+
+msgid "webgl.toast.webgl-render-disabled"
+msgstr "已关闭 WebGL 渲染"
+
+msgid "webgl.toast.webgl-render-enabled"
+msgstr "已开启 WebGL 渲染"
+
+msgid "errors.webgl-context-lost.desc-message"
+msgstr "WebGL 已停止工作。请刷新页面以重置。"
+
+msgid "errors.webgl-context-lost.main-message"
+msgstr "画布上下文已丢失"
+
+msgid "webgl.modals.webgl-unavailable.cta-dashboard"
+msgstr "前往面板"
+
+msgid "webgl.modals.webgl-unavailable.cta-troubleshooting"
+msgstr "排查指南"
+
+msgid "webgl.modals.webgl-unavailable.message"
+msgstr "当前浏览器无法使用 WebGL，而 Penpot 需要它才能运行。请检查浏览器设置，或关闭占用显卡较多的标签页。"
+
+msgid "webgl.modals.webgl-unavailable.title"
+msgstr "无法使用 WebGL"
+
+msgid "webgl.modals.webgl-unavailable.troubleshooting.after"
+msgstr "，检查浏览器设置、GPU 加速、驱动程序和常见系统问题。"
+
+msgid "webgl.modals.webgl-unavailable.troubleshooting.before"
+msgstr "请参阅"
+
+msgid "webgl.modals.webgl-unavailable.troubleshooting.link"
+msgstr "WebGL 排查指南"
+
+msgid "webgl.webgl-context-lost.toast"
+msgstr "WebGL 上下文已丢失"
+
+msgid "webgl.webgl-context-recovered.toast"
+msgstr "WebGL 上下文已恢复"
+
+msgid "workspace.top-bar.webgl-context-lost"
+msgstr "渲染不可用。刷新页面以恢复编辑。"
+
+msgid "workspace.top-bar.webgl-context-lost.reload"
+msgstr "刷新"
+
+msgid "workspace.fonts.style.hairline"
+msgstr "极细"
+
+msgid "workspace.fonts.style.thin"
+msgstr "极细"
+
+msgid "workspace.fonts.style.extra-light"
+msgstr "特细"
+
+msgid "workspace.fonts.style.light"
+msgstr "细体"
+
+msgid "workspace.fonts.style.regular"
+msgstr "常规"
+
+msgid "workspace.fonts.style.medium"
+msgstr "中等"
+
+msgid "workspace.fonts.style.semi-bold"
+msgstr "半粗体"
+
+msgid "workspace.fonts.style.bold"
+msgstr "粗体"
+
+msgid "workspace.fonts.style.extra-bold"
+msgstr "特粗"
+
+msgid "workspace.fonts.style.black"
+msgstr "超粗"
+
+msgid "workspace.fonts.style.extra-black"
+msgstr "超粗"
+
+msgid "workspace.fonts.style.italic"
+msgstr "斜体"
+
+msgid "workspace.fonts.style.bold-italic"
+msgstr "粗斜体"
+
+msgid "workspace.fonts.style.regular-italic"
+msgstr "常规斜体"
+
+msgid "workspace.clipboard.copying"
+msgstr "正在复制图片…"
+
+msgid "workspace.clipboard.image-copied"
+msgstr "图片已复制到剪贴板"
+
+msgid "workspace.clipboard.image-copy-failed"
+msgstr "复制图片失败"
+
+msgid "workspace.context-menu.grid-cells.copy-columns"
+msgstr "复制列"
+
+msgid "workspace.context-menu.grid-cells.copy-rows"
+msgstr "复制行"
+
+msgid "workspace.context-menu.grid-cells.paste-tracks"
+msgstr "粘贴"
+
+msgid "workspace.context-menu.guides.change-color"
+msgstr "参考线颜色"
+
+msgid "workspace.context-menu.guides.remove"
+msgstr "删除参考线"
+
+msgid "workspace.header.menu.find"
+msgstr "查找"
+
+msgid "workspace.header.menu.find-and-replace"
+msgstr "查找和替换"
+
+msgid "workspace.header.menu.hide-comments"
+msgstr "隐藏评论"
+
+msgid "workspace.header.menu.lock-guides"
+msgstr "锁定参考线"
+
+msgid "workspace.header.menu.mcp.plugin.status.connect"
+msgstr "连接"
+
+msgid "workspace.header.menu.mcp.plugin.status.disconnect"
+msgstr "断开连接"
+
+msgid "workspace.header.menu.mcp.server.status.disabled"
+msgstr "管理（状态：已关闭）"
+
+msgid "workspace.header.menu.mcp.server.status.enabled"
+msgstr "管理（状态：已开启）"
+
+msgid "workspace.header.menu.option.mcp"
+msgstr "MCP 服务器"
+
+msgid "workspace.header.menu.show-comments"
+msgstr "显示评论"
+
+msgid "workspace.header.menu.unlock-guides"
+msgstr "解锁参考线"
+
+msgid "workspace.libraries.colors"
+msgid_plural "workspace.libraries.colors"
+msgstr[0] "1 种颜色"
+msgstr[1] "%s 种颜色"
+
+msgid "workspace.libraries.components"
+msgid_plural "workspace.libraries.components"
+msgstr[0] "1 个组件"
+msgstr[1] "%s 个组件"
+
+msgid "workspace.libraries.connected-to"
+msgstr "已连接到"
+
+msgid "workspace.libraries.graphics"
+msgid_plural "workspace.libraries.graphics"
+msgstr[0] "1 个图形"
+msgstr[1] "%s 个图形"
+
+msgid "workspace.libraries.typography"
+msgid_plural "workspace.libraries.typography"
+msgstr[0] "1 个排版"
+msgstr[1] "%s 个排版"
+
+msgid "workspace.plugins.error.need-editor"
+msgstr "需要编辑权限才能使用此插件"
+
+msgid "workspace.plugins.error.url"
+msgstr "插件不存在或 URL 不正确。"
+
+msgid "workspace.plugins.permissions-update.warning"
+msgstr "此插件自上次打开后已更改，现在还希望访问："
+
+msgid "workspace.plugins.permissions.clipboard-read"
+msgstr "读取您的剪贴板内容。"
+
+msgid "workspace.plugins.permissions.clipboard-write"
+msgstr "读取和写入您的剪贴板。"
+
+msgid "workspace.plugins.permissions.comment-write"
+msgstr "阅读、修改您的评论，并以您的名义回复。"
+
+msgid "workspace.plugins.permissions.content-read"
+msgstr "读取用户有权访问的文件内容。"
+
+msgid "workspace.plugins.permissions.content-write"
+msgstr "读取和修改用户有权访问的文件内容。"
+
+msgid "workspace.plugins.permissions.disclaimer"
+msgstr "请注意，此插件由第三方开发，授权前请确认您信任它。我们重视您的数据隐私和安全。如有疑问，请联系支持。"
+
+msgid "workspace.plugins.permissions.user-read"
+msgstr "读取当前用户的资料信息。"
+
+msgid "workspace.plugins.try-out.message"
+msgstr "想先看看？将在当前团队中打开一个新草稿。（之后也可在任意文件的已安装插件中找到它。）"
+
+msgid "workspace.shape.menu.clear-guides"
+msgstr "清除画板参考线"
+
+msgid "workspace.shape.menu.copy-as-image"
+msgstr "复制为图片"
+
+msgid "workspace.shape.menu.stroke-to-path"
+msgstr "描边转路径"
+
+msgid "workspace.toast.comments-hidden"
+msgstr "评论已隐藏"
+
+msgid "workspace.toast.comments-visible"
+msgstr "评论已显示"
+
+msgid "workspace.toolbar.debug"
+msgstr "调试工具"
+
+msgid "workspace.toolbar.frame-first-time"
+msgstr "创建画板。点击并拖动以确定大小。（%s）"
+
+msgid "workspace.toolbar.mcp"
+msgstr "MCP"
+
+msgid "workspace.toolbar.mcp-connect-here"
+msgstr "在此连接"
+
+msgid "workspace.toolbar.mcp-connected"
+msgstr "MCP 已连接"
+
+msgid "workspace.toolbar.palette-bar"
+msgstr "调色盘"

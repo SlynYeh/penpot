@@ -16,6 +16,7 @@
    [app.common.types.path :as path]
    [app.common.types.shape :as cts]
    [app.common.types.shape.layout :as ctl]
+   [app.config :as cf]
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.transforms :as dwt]
@@ -58,6 +59,7 @@
    [app.render-wasm.api :as wasm.api]
    [app.render-wasm.rulers-state :as rs]
    [app.util.debug :as dbg]
+   [app.util.i18n :refer [tr]]
    [app.util.text-editor :as ted]
    [app.util.theme :as theme]
    [app.util.timers :as ts]
@@ -654,7 +656,16 @@
 
       (when picking-color?
         [:> pixel-overlay/pixel-overlay-wasm* {:viewport-ref viewport-ref
-                                               :canvas-ref canvas-ref}])]
+                                               :canvas-ref canvas-ref}])
+
+      (when (contains? cf/flags :render-wasm-info)
+        [:div {:class (stl/css :wasm-info-label)
+               :aria-hidden true}
+         [:span (tr (if (dbg/enabled? :wasm-viewbox)
+                      "workspace.canvas.webgl-rendering-debug"
+                      "workspace.canvas.webgl-rendering"))]
+         (when (wasm.api/text-editor-wasm?)
+           [:span (tr "workspace.canvas.text-editor-v3")])])]
 
      [:canvas {:id "render"
                :data-testid "canvas-wasm-shapes"

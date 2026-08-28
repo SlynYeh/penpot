@@ -53,7 +53,7 @@
             [:div {:class (stl/css :button-children)} property-value]]]]))
      [:& cmm/color-row
       {:color color
-       :property "Border color"
+       :property (tr "inspect.css-rule.border-color")
        :format format
        :on-change-format on-change
        :copy-data (css/get-shape-properties-css objects {:strokes [shape]} properties)}]]))
@@ -76,7 +76,7 @@
             [:div {:class (stl/css :button-children)} property-value]]]]))
      [:> cmm/color-row
       {:color color
-       :property "Border color"
+       :property (tr "inspect.css-rule.border-color")
        :format (d/nilv (keyword color-space) :hex)
        :copy-data (css/get-shape-properties-css objects {:strokes [shape]} properties {:format (keyword color-space)})}]]))
 

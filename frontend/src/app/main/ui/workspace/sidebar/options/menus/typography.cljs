@@ -33,6 +33,7 @@
    [app.main.ui.ds.foundations.assets.icon :refer [icon*] :as i]
    [app.main.ui.icons :as deprecated-icon]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
    [app.util.strings :as ust]
@@ -359,7 +360,7 @@
                                         (map (fn [variant]
                                                {:value (:id variant)
                                                 :key (pr-str variant)
-                                                :label (:name variant)})))
+                                                :label (font-style/localized-font-style (:name variant))})))
              variant-options (if (or (= font-variant-id :multiple) (= font-variant-id "mixed"))
                                (conj basic-variant-options
                                      {:value ""
@@ -482,6 +483,7 @@
         font-data      (fonts/get-font-data (:font-id typography))
         typography-id  (:id typography)
         show-actions?  (and is-asset? is-editable)
+        display-name   (font-style/localized-typography-name (:name typography))
 
         on-delete
         (mf/use-fn
@@ -525,7 +527,7 @@
             {:class (stl/css :adv-typography-name)
              :type "text"
              :ref name-input-ref
-             :default-value (:name typography)
+             :default-value display-name
              :max-length max-input-length
              :on-key-down on-key-down
              :on-blur on-name-blur}]
@@ -560,8 +562,8 @@
             (tr "workspace.assets.typography.sample")]
 
            [:div {:class (stl/css :typography-name)
-                  :title (:name typography)}
-            (:name typography)]
+                  :title (font-style/localized-typography-name (:name typography))}
+            (font-style/localized-typography-name (:name typography))]
            [:span {:class (stl/css :typography-font)}
             (:name font-data)]
            [:> icon-button* {:variant "ghost"
@@ -571,7 +573,7 @@
 
           [:div {:class (stl/css :info-row)}
            [:span {:class (stl/css :info-label)}  (tr "workspace.assets.typography.font-style")]
-           [:span {:class (stl/css :info-content)} (:font-variant-id typography)]]
+           [:span {:class (stl/css :info-content)} (font-style/localized-font-style (:font-variant-id typography))]]
 
           [:div {:class (stl/css :info-row)}
            [:span {:class (stl/css :info-label)}  (tr "workspace.assets.typography.font-size")]
@@ -604,14 +606,19 @@
         open?                (deref open*)
         font-data            (fonts/get-font-data (:font-id typography))
         name-only?           (= (:name typography) (:name font-data))
+        display-name          (font-style/localized-typography-name (:name typography))
 
         on-name-blur
         (mf/use-fn
-         (mf/deps on-change)
+         (mf/deps on-change typography)
          (fn [event]
-           (let [name (dom/get-target-val event)]
+           (let [name      (dom/get-target-val event)
+                 stored    (:name typography)
+                 localized (font-style/localized-typography-name stored)]
              (when-not (str/blank? name)
-               (on-change {:name name})
+               (on-change {:name (if (or (= name stored) (= name localized))
+                                   stored
+                                   name)})
                (st/emit! #(update % :workspace-global dissoc :rename-typography))))))
 
         on-open
@@ -670,7 +677,7 @@
           {:class (stl/css :adv-typography-name)
            :type "text"
            :ref name-input-ref
-           :default-value (:name typography)
+           :default-value display-name
            :max-length max-input-length
            :on-key-down on-key-down
            :on-blur on-name-blur}]]
@@ -688,12 +695,12 @@
 
          [:div {:class (stl/css :name-block)
                 :title (if name-only?
-                         (:name typography)
-                         (dm/str (:name typography) " (" (:name font-data) ")"))}
+                         display-name
+                         (dm/str display-name " (" (:name font-data) ")"))}
           (if name-only?
-            [:span  {:class (stl/css :typography-name)} (:name typography)]
+            [:span  {:class (stl/css :typography-name)} display-name]
             [:*
-             (:name typography)
+             display-name
              [:span  {:class (stl/css :typography-name :typography-font)} (:name font-data)]])]])
       [:div {:class (stl/css :element-set-actions)}
        (when ^boolean on-detach

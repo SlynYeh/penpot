@@ -22,12 +22,17 @@
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
 
-(defn get-css-rule-humanized [property]
-  (as-> property $
-    (d/name $)
-    (str/split $ "-")
-    (str/join " " $)
-    (str/capital $)))
+(defn get-css-rule-humanized
+  [property]
+  (let [key        (dm/str "inspect.css-rule." (d/name property))
+        translated (tr key)]
+    (if (not= translated key)
+      translated
+      (as-> property $
+        (d/name $)
+        (str/split $ "-")
+        (str/join " " $)
+        (str/capital $)))))
 
 (mf/defc color-row [{:keys [color format copy-data property on-change-format]}]
   (let [colors-library     (isc/use-colors-library color)

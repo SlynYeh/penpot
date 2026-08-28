@@ -24,6 +24,7 @@
    [app.util.dom :as dom]
    [app.util.i18n :refer [tr]]
    [app.util.shape-icon :as usi]
+   [app.util.shape-name :as usn]
    [rumext.v2 :as mf]))
 
 (defn- get-libraries
@@ -50,6 +51,7 @@
         shapes         (or shapes
                            (resolve-shapes objects selected))
         first-shape    (first shapes)
+        shape-title    (usn/localized-layer-name (:name first-shape))
         page-id        (or page-id (:id page))
         file-id        (or file-id (:id file))
 
@@ -138,26 +140,13 @@
             [:div {:class (stl/css :shape-icon)}
              ;; Use the shape icon utility to get the correct icon for the first shape
              [:> icon* {:icon-id (usi/get-shape-icon first-shape) :size "s"}]]
-            ;; Execution time translation strings:
-            ;;   (tr "inspect.tabs.code.selected.circle")
-            ;;   (tr "inspect.tabs.code.selected.component")
-            ;;   (tr "inspect.tabs.code.selected.curve")
-            ;;   (tr "inspect.tabs.code.selected.frame")
-            ;;   (tr "inspect.tabs.code.selected.group")
-            ;;   (tr "inspect.tabs.code.selected.image")
-            ;;   (tr "inspect.tabs.code.selected.mask")
-            ;;   (tr "inspect.tabs.code.selected.path")
-            ;;   (tr "inspect.tabs.code.selected.rect")
-            ;;   (tr "inspect.tabs.code.selected.svg-raw")
-            ;;   (tr "inspect.tabs.code.selected.text")
-
             [:div
              (if (some? subtitle)
                [:*
-                [:div {:class (stl/css :layer-title :layer-title-with-subtitle)} (:name first-shape)]
+                [:div {:class (stl/css :layer-title :layer-title-with-subtitle)} shape-title]
                 [:div {:class (stl/css :layer-subtitle)} subtitle]]
                [:div
-                [:div {:class (stl/css :layer-title)} (:name first-shape)]])]])]
+                [:div {:class (stl/css :layer-title)} shape-title]])]])]
 
         [:div {:class (stl/css :inspect-content)}
          (if (contains? cf/flags :inspect-styles)

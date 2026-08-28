@@ -16,6 +16,7 @@
    [app.main.ui.context :as ctx]
    [app.main.ui.icons :as deprecated-icon]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.i18n :refer [tr]]
    [app.util.object :as obj]
    [cuerdas.core :as str]
@@ -54,15 +55,15 @@
                                 :small-item (<= size 64))}
      [:div
       {:class (stl/css :typography-name)
-       :title (:name typography)
+       :title (font-style/localized-typography-name (:name typography))
        :style {:font-family (:font-family typography)
                :font-weight (:font-weight typography)
                :font-style (:font-style typography)}}
-      (:name typography)]
+      (font-style/localized-typography-name (:name typography))]
      [:div {:class (stl/css :typography-font)}
       (:name font-data)]
      [:div {:class (stl/css :typography-data)}
-      (str (:font-size typography) "px | " (or (:name variant-data) "--"))]]))
+      (str (:font-size typography) "px | " (or (font-style/localized-font-style (:name variant-data)) "--"))]]))
 
 (mf/defc palette*
   [{:keys [selected selected-ids current-file-id file-typographies libraries size width]}]

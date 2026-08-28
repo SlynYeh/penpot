@@ -1,12 +1,6 @@
 // Runtime configuration for Penpot frontend
 // This file is served from the static resources and can be overridden per deployment
 // Frontend configuration
-// var penpotGridHelpURI = "";
-//var penpotPluginsListURI = "";
-//var penpotHelpCenterURI = "";
-//var penpotLearningCenterURI = "";
-//var penpotHubURI = "";
-
 (function () {
   // 直接读取 iframe 自身的完整地址（src 属性的值）
   var _iframeSrc = window.location.href;
@@ -54,6 +48,16 @@
   window.addEventListener("popstate", function () {
     _iframeSrc = window.location.href;
   });
+})();
+
+(function () {
+  // 右键菜单「插入表格行/列」生效的表格主组件 ID 集合(小写 uuid 字符串)。
+  // 实例根 shape 的 :component-id 命中任一 ID 即显示菜单。
+  // Docker 部署: 可用环境变量 PENPOT_TABLE_COMPONENT_IDS 覆盖此默认值
+  // (逗号分隔, 由 nginx-entrypoint.sh 在启动时追加赋值, 优先级更高)。
+  globalThis.penpotTableComponentIds = [
+    "5140cbc1-cb3a-803f-8008-8977ae7bee03", // 1 基础组件 / Table 表格 (flex table 库)
+  ];
 })();
 
 (function () {

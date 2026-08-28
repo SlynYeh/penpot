@@ -54,6 +54,7 @@
    [app.util.clipboard :as clipboard]
    [app.util.code-gen.markup-svg :as svg]
    [app.util.code-gen.style-css :as css]
+   [app.util.dom :as dom]
    [app.util.globals :as ug]
    [app.util.http :as http]
    [app.util.i18n :as i18n :refer [tr]]
@@ -1138,6 +1139,24 @@
     (watch [_ _ _]
       (clipboard/to-clipboard (rt/get-current-href)))))
 
+;; Call exporter to get the image URI, then fetch it and emit the blob.
+(defn- request-export-image
+  [state export]
+  (->> (if (and (features/active-feature? state "render-wasm/v1")
+                (contains? cf/flags :wasm-export))
+         (rx/of {:uri (wasm.exports/export-image-uri export)})
+         (rp/cmd! :export
+                  {:exports [export]
+                   :profile-id (:profile-id state)
+                   :cmd :export-shapes
+                   :wait true}))
+
+       (rx/mapcat (fn [{:keys [uri]}]
+                    (http/send! {:method :get
+                                 :uri uri
+                                 :response-type :blob})))
+       (rx/map :body)))
+
 (defn copy-as-image
   []
   (ptk/reify ::copy-as-image
@@ -1171,21 +1190,7 @@
          ;; Exporting itself can take its time, better to notify that we are busy.
          (rx/of (ntf/info (tr "workspace.clipboard.copying")))
 
-         ;; Call exporter to get image URI, then fetch blob and resolve the deferred.
-         (->> (if (and (features/active-feature? state "render-wasm/v1")
-                       (contains? cf/flags :wasm-export))
-                (rx/of {:uri (wasm.exports/export-image-uri export)})
-                (rp/cmd! :export
-                         {:exports [export]
-                          :profile-id (:profile-id state)
-                          :cmd :export-shapes
-                          :wait true}))
-
-              (rx/mapcat (fn [{:keys [uri]}]
-                           (http/send! {:method :get
-                                        :uri uri
-                                        :response-type :blob})))
-              (rx/map :body)
+         (->> (request-export-image state export)
               (rx/mapcat (fn [blob]
                            ;; Resolve the deferred with the fetched blob; the browser
                            ;; will now complete the clipboard write it started earlier.
@@ -1199,3 +1204,38 @@
                           ;; blob was fetched, so the pending clipboard write is cancelled.
                           (p/reject! deferred e)
                           (rx/of (ntf/error (tr "workspace.clipboard.image-copy-failed")))))))))))
+
+(defn export-as-image
+  []
+  (ptk/reify ::export-as-image
+    ptk/WatchEvent
+    (watch [_ state _]
+      (let [file-id  (:current-file-id state)
+            page-id  (:current-page-id state)
+            selected (first (dsh/lookup-selected state))
+            shape    (dsh/lookup-shape state selected)
+
+            export {:file-id file-id
+                    :page-id page-id
+                    :object-id selected
+                    :type :png
+                    ;; Always use 2 to ensure good enough quality for wireframes.
+                    :scale 2
+                    :suffix ""
+                    :enabled true
+                    :name ""}]
+
+        (rx/concat
+         ;; Ensure current state persisted before exporting.
+         (dps/force-persist-and-wait 400)
+
+         ;; Exporting itself can take its time, better to notify that we are busy.
+         (rx/of (ntf/info (tr "workspace.export-image.exporting")))
+
+         (->> (request-export-image state export)
+              (rx/map (fn [blob]
+                        (dom/trigger-download (or (:name shape) "export") blob)
+                        (ntf/success (tr "workspace.export-image.success"))))
+              (rx/catch (fn [e]
+                          (js/console.error "export image error:" e)
+                          (rx/of (ntf/error (tr "workspace.export-image.error")))))))))))

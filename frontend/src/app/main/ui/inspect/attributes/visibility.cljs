@@ -12,6 +12,7 @@
    [app.main.ui.components.title-bar :refer [inspect-title-bar*]]
    [app.main.ui.inspect.attributes.common :as cmm]
    [app.util.code-gen.style-css :as css]
+   [app.util.i18n :refer [tr]]
    [rumext.v2 :as mf]))
 
 (def ^:private properties
@@ -50,7 +51,7 @@
     (when (seq shapes)
       [:div {:class (stl/css :attributes-block)}
        [:> inspect-title-bar*
-        {:title "Visibility"
+        {:title (tr "labels.visibility")
          :class (stl/css :title-wrapper)
          :title-class (stl/css :visibility-attr-title)}
 

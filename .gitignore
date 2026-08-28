@@ -95,3 +95,4 @@ opencode.json
 /.pnpm-store
 docker/images/penpot-backend.doc
 docker/images/penpot-backend.tar
+/.idea

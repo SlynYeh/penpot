@@ -9818,6 +9818,15 @@ msgstr "Typographies (%s)"
 msgid "workspace.toolbar.toggle-toolbar"
 msgstr "Toggle toolbar"
 
+msgid "workspace.canvas.webgl-rendering"
+msgstr "WebGL rendering"
+
+msgid "workspace.canvas.webgl-rendering-debug"
+msgstr "WebGL rendering (debug)"
+
+msgid "workspace.canvas.text-editor-v3"
+msgstr "Text Editor v3"
+
 #: src/app/main/ui/workspace/viewport/top_bar.cljs:45
 msgid "workspace.top-bar.read-only.done"
 msgstr "Done"
@@ -10106,3 +10115,594 @@ msgstr "Autosaved versions will be kept for %s days."
 #, unused
 msgid "workspace.viewport.click-to-close-path"
 msgstr "Click to close the path"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.blur.value"
+msgstr "value"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.jpg"
+msgstr "JPG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.pdf"
+msgstr "PDF"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.png"
+msgstr "PNG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.svg"
+msgstr "SVG"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.format.webp"
+msgstr "WEBP"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.export.scale"
+msgstr "%s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.grid.params.height.icon"
+msgstr "H"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.grid.params.width.icon"
+msgstr "W"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.height.icon"
+msgstr "H"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.interaction-animation-way-in"
+msgstr "in"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.interaction-animation-way-out"
+msgstr "out"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-around"
+msgstr "Space around"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-between"
+msgstr "Space between"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.space-evenly"
+msgstr "Space evenly"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-content.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-items.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.align-self.stretch"
+msgstr "Stretch"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area"
+msgstr "Area"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area-name"
+msgstr "Area name"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.area-name-label"
+msgstr "Area name"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.auto"
+msgstr "Auto"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.cell-mode.manual"
+msgstr "Manual"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.column-gap"
+msgstr "Column gap"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.container-section"
+msgstr "Layout container section"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-cell.title"
+msgstr "Grid cell"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-edit-mode"
+msgstr "Grid edit mode"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-layout-title"
+msgstr "Grid layout"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item-section"
+msgstr "Layout item section"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item-size-constraints"
+msgstr "Item size constraints"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.max-h"
+msgstr "Max H"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.max-w"
+msgstr "Max W"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.min-h"
+msgstr "Min H"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.item.min-w"
+msgstr "Min W"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-around"
+msgstr "Space around"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-between"
+msgstr "Space between"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.space-evenly"
+msgstr "Space evenly"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-content.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.space-around"
+msgstr "Space around"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.space-between"
+msgstr "Space between"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.justify-items.stretch"
+msgstr "Stretch"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.bottom"
+msgstr "Bottom margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.horizontal"
+msgstr "Horizontal margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.left"
+msgstr "Left margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.multiple"
+msgstr "Multiple margins"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.right"
+msgstr "Right margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.top"
+msgstr "Top margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.margin.vertical"
+msgstr "Vertical margin"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.absolute"
+msgstr "Absolute"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.static"
+msgstr "Static"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.row-gap"
+msgstr "Row gap"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fill-height"
+msgstr "Fill height"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fill-width"
+msgstr "Fill width"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fit-content-horizontal"
+msgstr "Fit content horizontal"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fit-content-vertical"
+msgstr "Fit content vertical"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fix-height"
+msgstr "Fix height"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.sizing.fix-width"
+msgstr "Fix width"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.flex-board"
+msgstr "Flex board"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.flex-element"
+msgstr "Flex element"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.grid-board"
+msgstr "Grid board"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.grid-element"
+msgstr "Grid element"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.layout-board"
+msgstr "Layout board"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.title.layout-element"
+msgstr "Layout element"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.auto"
+msgstr "Auto"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.fr"
+msgstr "Fr"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.unit.px"
+msgstr "Px"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.wrap.no-wrap"
+msgstr "No wrap"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.wrap.wrap"
+msgstr "Wrap"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.z-index"
+msgstr "Z-index"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.z-index.icon"
+msgstr "Z"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.measures.section"
+msgstr "Shape measures section"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.shadow.more-options"
+msgstr "open more options"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke-dash.icon"
+msgstr "DASH"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke-gap.icon"
+msgstr "GAP"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.stroke.section"
+msgstr "Stroke section"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.width.icon"
+msgstr "W"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.x.icon"
+msgstr "X"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.y.icon"
+msgstr "Y"
+
+msgid "inspect.css-rule.width"
+msgstr "Width"
+
+msgid "inspect.css-rule.height"
+msgstr "Height"
+
+msgid "inspect.css-rule.left"
+msgstr "Left"
+
+msgid "inspect.css-rule.top"
+msgstr "Top"
+
+msgid "inspect.css-rule.border-radius"
+msgstr "Border radius"
+
+msgid "inspect.css-rule.transform"
+msgstr "Transform"
+
+msgid "inspect.css-rule.border-start-start-radius"
+msgstr "Border start start radius"
+
+msgid "inspect.css-rule.border-start-end-radius"
+msgstr "Border start end radius"
+
+msgid "inspect.css-rule.border-end-start-radius"
+msgstr "Border end start radius"
+
+msgid "inspect.css-rule.border-end-end-radius"
+msgstr "Border end end radius"
+
+msgid "inspect.css-rule.display"
+msgstr "Display"
+
+msgid "inspect.css-rule.flex-direction"
+msgstr "Flex direction"
+
+msgid "inspect.css-rule.flex-wrap"
+msgstr "Flex wrap"
+
+msgid "inspect.css-rule.grid-template-rows"
+msgstr "Grid template rows"
+
+msgid "inspect.css-rule.grid-template-columns"
+msgstr "Grid template columns"
+
+msgid "inspect.css-rule.align-items"
+msgstr "Align items"
+
+msgid "inspect.css-rule.align-content"
+msgstr "Align content"
+
+msgid "inspect.css-rule.justify-items"
+msgstr "Justify items"
+
+msgid "inspect.css-rule.justify-content"
+msgstr "Justify content"
+
+msgid "inspect.css-rule.row-gap"
+msgstr "Row gap"
+
+msgid "inspect.css-rule.column-gap"
+msgstr "Column gap"
+
+msgid "inspect.css-rule.gap"
+msgstr "Gap"
+
+msgid "inspect.css-rule.padding-inline-start"
+msgstr "Padding inline start"
+
+msgid "inspect.css-rule.padding-inline-end"
+msgstr "Padding inline end"
+
+msgid "inspect.css-rule.padding-block-start"
+msgstr "Padding block start"
+
+msgid "inspect.css-rule.padding-block-end"
+msgstr "Padding block end"
+
+msgid "inspect.css-rule.margin"
+msgstr "Margin"
+
+msgid "inspect.css-rule.max-height"
+msgstr "Max height"
+
+msgid "inspect.css-rule.min-height"
+msgstr "Min height"
+
+msgid "inspect.css-rule.max-width"
+msgstr "Max width"
+
+msgid "inspect.css-rule.min-width"
+msgstr "Min width"
+
+msgid "inspect.css-rule.align-self"
+msgstr "Align self"
+
+msgid "inspect.css-rule.justify-self"
+msgstr "Justify self"
+
+msgid "inspect.css-rule.flex-shrink"
+msgstr "Flex shrink"
+
+msgid "inspect.css-rule.flex"
+msgstr "Flex"
+
+msgid "inspect.css-rule.grid-column"
+msgstr "Grid column"
+
+msgid "inspect.css-rule.grid-row"
+msgstr "Grid row"
+
+msgid "inspect.css-rule.margin-block-start"
+msgstr "Margin block start"
+
+msgid "inspect.css-rule.margin-block-end"
+msgstr "Margin block end"
+
+msgid "inspect.css-rule.margin-inline-start"
+msgstr "Margin inline start"
+
+msgid "inspect.css-rule.margin-inline-end"
+msgstr "Margin inline end"
+
+msgid "inspect.css-rule.max-block-size"
+msgstr "Max block size"
+
+msgid "inspect.css-rule.min-block-size"
+msgstr "Min block size"
+
+msgid "inspect.css-rule.max-inline-size"
+msgstr "Max inline size"
+
+msgid "inspect.css-rule.min-inline-size"
+msgstr "Min inline size"
+
+msgid "inspect.css-rule.border-style"
+msgstr "Border style"
+
+msgid "inspect.css-rule.border-width"
+msgstr "Border width"
+
+msgid "inspect.css-rule.border-color"
+msgstr "Border color"
+
+msgid "inspect.css-rule.opacity"
+msgstr "Opacity"
+
+msgid "inspect.css-rule.blend-mode"
+msgstr "Blend mode"
+
+msgid "inspect.css-rule.visibility"
+msgstr "Visibility"
+
+msgid "inspect.css-rule.background"
+msgstr "Background"
+
+msgid "inspect.css-rule.filter"
+msgstr "Filter"
+
+msgid "inspect.css-rule.backdrop-filter"
+msgstr "Backdrop filter"
+
+msgid "inspect.css-rule.drop-shadow"
+msgstr "Drop shadow"
+
+msgid "inspect.css-rule.inner-shadow"
+msgstr "Inner shadow"
+
+msgid "inspect.tabs.code.copy-all"
+msgstr "Copy all code"
+
+msgid "inspect.attributes.shadow.color"
+msgstr "Shadow color"
+
+msgid "inspect.attributes.typography.font-color"
+msgstr "Font color"
+
+msgid "workspace.sidebar.tokens"
+msgstr "Tokens"
+
+msgid "workspace.pages.default-name"
+msgstr "Page"
+
+msgid "inspect.tabs.code.selected.ellipse"
+msgstr "Ellipse"
+
+msgid "inspect.tabs.code.selected.bool"
+msgstr "Bool"
+
+msgid "workspace.fonts.style.hairline"
+msgstr "Hairline"
+
+msgid "workspace.fonts.style.thin"
+msgstr "Thin"
+
+msgid "workspace.fonts.style.extra-light"
+msgstr "Extra Light"
+
+msgid "workspace.fonts.style.light"
+msgstr "Light"
+
+msgid "workspace.fonts.style.regular"
+msgstr "Regular"
+
+msgid "workspace.fonts.style.medium"
+msgstr "Medium"
+
+msgid "workspace.fonts.style.semi-bold"
+msgstr "Semi Bold"
+
+msgid "workspace.fonts.style.bold"
+msgstr "Bold"
+
+msgid "workspace.fonts.style.extra-bold"
+msgstr "Extra Bold"
+
+msgid "workspace.fonts.style.black"
+msgstr "Black"
+
+msgid "workspace.fonts.style.extra-black"
+msgstr "Extra Black"
+
+msgid "workspace.fonts.style.italic"
+msgstr "Italic"
+
+msgid "workspace.fonts.style.bold-italic"
+msgstr "Bold Italic"
+
+msgid "workspace.fonts.style.regular-italic"
+msgstr "Regular Italic"

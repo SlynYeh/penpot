@@ -33,9 +33,9 @@
                     (tr "labels.blur"))
       :shadow     (tr "labels.shadow")
       :layout     (tr "labels.layout")
-      :flex-element "Flex Element"
-      :grid-element "Grid Element"
-      :layout-element "Layout Element"
+      :flex-element (tr "workspace.options.layout.title.flex-element")
+      :grid-element (tr "workspace.options.layout.title.grid-element")
+      :layout-element (tr "workspace.options.layout.title.layout-element")
       :visibility (tr "labels.visibility")
       :svg        (tr "labels.svg")
       nil)))

@@ -2062,9 +2062,7 @@
     (dbg/enabled? :wasm-viewbox)
     (bit-or 2r00000000000000000000000000000001)
     (text-editor-wasm?)
-    (bit-or 2r00000000000000000000000000000100)
-    (contains? cf/flags :render-wasm-info)
-    (bit-or 2r00000000000000000000000000001000)))
+    (bit-or 2r00000000000000000000000000000100)))
 
 (defn set-render-options!
   "Updates WASM render options with a new DPR value."

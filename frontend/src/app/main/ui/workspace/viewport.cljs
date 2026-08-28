@@ -205,7 +205,7 @@
         comp-inst-ref     (mf/use-ref false)
         on-drag-enter     (actions/on-drag-enter comp-inst-ref)
         on-drag-over      (actions/on-drag-over move-stream)
-        on-drag-end       (actions/on-drag-over comp-inst-ref)
+        on-drag-end       (actions/on-drag-end comp-inst-ref)
         on-drop           (actions/on-drop file comp-inst-ref)
         on-pointer-down   (actions/on-pointer-down @hover selected edition drawing-tool text-editing? path-editing? grid-editing?
                                                    path-drawing? create-comment? space? panning z? read-only?)

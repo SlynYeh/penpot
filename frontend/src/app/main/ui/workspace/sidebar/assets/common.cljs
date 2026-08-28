@@ -288,10 +288,20 @@
         num-selected (if (contains? selected id-asset)
                        (count selected)
                        1)]
-    (when (not (contains? selected id-asset))
-      (st/emit! (dw/unselect-all-assets file-id)
-                (dw/toggle-selected-assets file-id id-asset asset-type)))
+    ;; The drag-data must be set synchronously inside on-drag-start
+    ;; because the viewport's on-drag-enter reads it before the next
+    ;; animation frame. Selection state changes, however, are deferred
+    ;; to the next frame so the re-render they trigger does not
+    ;; interfere with the browser's drag-initiation that is still in
+    ;; progress during this event handler. Without this deferral the
+    ;; first drag after scrolling silently fails because the DOM
+    ;; updates cancel the in-flight dragstart.
     (on-drag-start asset event)
+    (when (not (contains? selected id-asset))
+      (ts/raf
+       (fn []
+         (st/emit! (dw/unselect-all-assets file-id)
+                   (dw/toggle-selected-assets file-id id-asset asset-type)))))
     (when (> num-selected 1)
       (set-drag-image event item-ref num-selected))))
 

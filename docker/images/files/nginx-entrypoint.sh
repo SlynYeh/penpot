@@ -63,9 +63,41 @@ update_help_uris() {
   done
 }
 
+update_table_component_ids() {
+  # Overrides the fork default table component ids from config.js with the
+  # comma separated UUID list in $PENPOT_TABLE_COMPONENT_IDS (highest
+  # priority: appended assignments run last, after the IIFE defaults).
+  # The special value "none" (case insensitive) disables the feature.
+  if [ -n "$PENPOT_TABLE_COMPONENT_IDS" ]; then
+    local raw="${PENPOT_TABLE_COMPONENT_IDS,,}"
+
+    if [ "$raw" == "none" ]; then
+      echo "globalThis.penpotTableComponentIds = [];" >> "$1";
+      return;
+    fi
+
+    local item quoted="";
+    local IFS=',';
+    read -ra _tcids <<< "$raw";
+    for item in "${_tcids[@]}"; do
+      # strip all whitespace (tolerate "id1, id2"), then keep only the uuid
+      # charset [0-9a-f-]; this guarantees the emitted line is always a
+      # valid JS string literal regardless of what ends up in the env var.
+      item="${item//[[:space:]]/}";
+      item="${item//[^0-9a-f-]/}";
+      if [ -n "$item" ]; then
+        quoted="${quoted:+$quoted, }\"$item\"";
+      fi
+    done
+
+    echo "globalThis.penpotTableComponentIds = [$quoted];" >> "$1";
+  fi
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
+update_table_component_ids /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

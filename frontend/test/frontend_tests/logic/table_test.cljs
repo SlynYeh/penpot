@@ -43,7 +43,8 @@
 ;;       └─ copy-col-b-head   (instance of :cell-b-comp, y 0)
 ;;
 ;; The two cells components differ (:cell-a-comp / :cell-b-comp) so tests can
-;; prove that each column clones its own bottom cell.
+;; prove that each column clones its own cell at the clicked row rank (and its
+;; own bottom cell for the append/fallback paths).
 
 (def ^:private cell-w 100)
 (def ^:private cell-h 40)
@@ -175,8 +176,8 @@
                       (rx/empty))))
        (rx/subs! (fn [event] (ptk/emit! store event)))))
 
-(t/deftest insert-row-appends-bottom-cell-per-column
-  (t/testing "each column gains a clone of its own bottom cell at the visual bottom, root grows by row height"
+(t/deftest insert-row-below-clicked-bottom-row
+  (t/testing "clicking the bottom row inserts the clone right below it: each column gains a clone of its own bottom cell at the visual bottom, root grows by row height"
     (t/async done
       (mock/with-mocks {uuid/next cthi/next-uuid}
         (fn [done']
@@ -198,7 +199,7 @@
                                      src-a     (get-shape' file' :copy-col-a-cell2)
                                      src-b     (get-shape' file' :copy-col-b-cell2)]
 
-                                 (t/testing "column A (:shapes top->bottom): new cell appended at END"
+                                 (t/testing "column A (:shapes top->bottom): new cell right below the clicked row (at the END)"
                                    (t/is (= 4 (count (:shapes col-a))))
                                    (let [new-cell (get objects (peek (:shapes col-a)))]
                                      (t/is (some? new-cell))
@@ -206,7 +207,7 @@
                                      (t/is (= (:shape-ref src-a) (:shape-ref new-cell)))
                                      (t/is (not= (:id src-a) (:id new-cell)))))
 
-                                 (t/testing "column B (:shapes bottom->top): new cell inserted at index 0"
+                                 (t/testing "column B (:shapes bottom->top): new cell right below the clicked row (at index 0)"
                                    (t/is (= 4 (count (:shapes col-b))))
                                    (let [new-cell (get objects (first (:shapes col-b)))]
                                      (t/is (some? new-cell))
@@ -245,6 +246,229 @@
                                    (t/is (= table-w (:width root))))
 
                                  (assert-undo-group-uuid! committed)))))))
+        done))))
+
+(t/deftest insert-row-below-middle-row
+  (t/testing "clicking a middle row clones, per column, its visible cell at the clicked row rank and inserts the new row right below it"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file  (setup-file)
+                store (ths/setup-store file)
+                ;; cell1 sits at visual row rank 1 (head y0, cell1 y40, cell2 y80)
+                shape-id (:id (cths/get-shape file :copy-col-a-cell1))
+                events [(dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'     (ths/get-file-from-state new-state)
+                                     _         (assert-valid-file! file')
+                                     objects   (page-objects file')
+                                     root      (get-shape' file' :table-copy)
+                                     col-a     (get-shape' file' :copy-col-a)
+                                     col-b     (get-shape' file' :copy-col-b)
+                                     src-a     (get-shape' file' :copy-col-a-cell1)
+                                     src-b     (get-shape' file' :copy-col-b-cell1)]
+
+                                 (t/testing "column A (:shapes top->bottom) becomes [head cell1 NEW cell2]"
+                                   (t/is (= 4 (count (:shapes col-a))))
+                                   (let [new-cell (get objects (nth (:shapes col-a) 2))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-a) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-a) (:shape-ref new-cell)))
+                                     (t/is (not= (:id src-a) (:id new-cell))))
+                                   (t/is (= (cthi/id :copy-col-a-head) (nth (:shapes col-a) 0)))
+                                   (t/is (= (cthi/id :copy-col-a-cell1) (nth (:shapes col-a) 1)))
+                                   (t/is (= (cthi/id :copy-col-a-cell2) (nth (:shapes col-a) 3))))
+
+                                 (t/testing "column B (:shapes bottom->top) becomes [cell2 NEW cell1 head]: each column clones its OWN rank-1 cell"
+                                   (t/is (= 4 (count (:shapes col-b))))
+                                   (let [new-cell (get objects (nth (:shapes col-b) 1))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-b) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-b) (:shape-ref new-cell))
+                                           "cloned from the col-b cell1, not from the clicked col-a cell1")
+                                     (t/is (not= (:id src-b) (:id new-cell))))
+                                   (t/is (= (cthi/id :copy-col-b-cell2) (nth (:shapes col-b) 0)))
+                                   (t/is (= (cthi/id :copy-col-b-cell1) (nth (:shapes col-b) 2)))
+                                   (t/is (= (cthi/id :copy-col-b-head) (nth (:shapes col-b) 3))))
+
+                                 (t/testing "cloned subtree has new ids and keeps children"
+                                   (let [new-cell (get objects (nth (:shapes col-a) 2))
+                                         new-inner (get objects (first (:shapes new-cell)))]
+                                     (t/is (some? new-inner))
+                                     (t/is (= (:shape-ref (get-shape' file' :copy-col-a-cell1-inner))
+                                              (:shape-ref new-inner)))
+                                     (t/is (not= (:id (get-shape' file' :copy-col-a-cell1-inner))
+                                                 (:id new-inner)))))
+
+                                 (t/testing "swap slots keep the file valid for the referential-integrity checker"
+                                   ;; col-a: the clone sits at the library position of cell2 while
+                                   ;; its :shape-ref points at the library cell1, so it must carry
+                                   ;; the slot of the library cell it displaces.
+                                   (let [new-a (get objects (nth (:shapes col-a) 2))]
+                                     (t/is (= (:shape-ref (get-shape' file' :copy-col-a-cell2))
+                                              (ctk/get-swap-slot new-a))))
+                                   ;; ...and the shifted cell2 falls beyond the library children,
+                                   ;; while head and cell1 stay aligned: no slot anywhere else.
+                                   (doseq [cell-id [(cthi/id :copy-col-a-head)
+                                                    (cthi/id :copy-col-a-cell1)
+                                                    (cthi/id :copy-col-a-cell2)]]
+                                     (t/is (nil? (ctk/get-swap-slot (get objects cell-id)))))
+                                   ;; col-b: the clone lands exactly on the library cell1 its
+                                   ;; :shape-ref points at, so it needs no slot of its own.
+                                   (t/is (nil? (ctk/get-swap-slot (get objects (nth (:shapes col-b) 1)))))
+                                   ;; the cells shifted past their library counterpart must point
+                                   ;; their swap slot at the library cell that now occupies their
+                                   ;; position (= the :shape-ref of the cell that previously sat
+                                   ;; there); the head falls beyond the library children.
+                                   (let [cell1 (get-shape' file' :copy-col-b-cell1)
+                                         head  (get-shape' file' :copy-col-b-head)]
+                                     (t/is (= (:shape-ref head) (ctk/get-swap-slot cell1)))
+                                     (t/is (nil? (ctk/get-swap-slot head))
+                                           "beyond the library children: no slot"))
+                                   (t/is (nil? (ctk/get-swap-slot (get-shape' file' :copy-col-b-cell2)))
+                                         "aligned with its library counterpart: no slot"))
+
+                                 (t/testing "root resize: height + cell height, width untouched"
+                                   (t/is (= (+ table-h cell-h) (:height root)))
+                                   (t/is (= table-w (:width root))))
+
+                                 (assert-undo-group-uuid! committed)))))))
+        done))))
+
+(t/deftest insert-row-below-head-row
+  (t/testing "clicking the head row clones, per column, its own head cell and inserts the new row right below it"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file  (setup-file)
+                store (ths/setup-store file)
+                shape-id (:id (cths/get-shape file :copy-col-a-head))
+                events [(dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'   (ths/get-file-from-state new-state)
+                                     _       (assert-valid-file! file')
+                                     objects (page-objects file')
+                                     root    (get-shape' file' :table-copy)
+                                     col-a   (get-shape' file' :copy-col-a)
+                                     col-b   (get-shape' file' :copy-col-b)
+                                     head-a  (get-shape' file' :copy-col-a-head)
+                                     head-b  (get-shape' file' :copy-col-b-head)]
+
+                                 (t/testing "column A (:shapes top->bottom) becomes [head NEW cell1 cell2]"
+                                   (t/is (= 4 (count (:shapes col-a))))
+                                   (let [new-cell (get objects (nth (:shapes col-a) 1))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id head-a) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref head-a) (:shape-ref new-cell)))
+                                     (t/is (not= (:id head-a) (:id new-cell))))
+                                   (t/is (= (cthi/id :copy-col-a-head) (nth (:shapes col-a) 0)))
+                                   (t/is (= (cthi/id :copy-col-a-cell1) (nth (:shapes col-a) 2)))
+                                   (t/is (= (cthi/id :copy-col-a-cell2) (nth (:shapes col-a) 3))))
+
+                                 (t/testing "column B (:shapes bottom->top) becomes [cell2 cell1 NEW head]: cloned from the col-b head, not from col-a's"
+                                   (t/is (= 4 (count (:shapes col-b))))
+                                   (let [new-cell (get objects (nth (:shapes col-b) 2))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id head-b) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref head-b) (:shape-ref new-cell)))
+                                     (t/is (not= (:id head-b) (:id new-cell))))
+                                   (t/is (= (cthi/id :copy-col-b-cell2) (nth (:shapes col-b) 0)))
+                                   (t/is (= (cthi/id :copy-col-b-cell1) (nth (:shapes col-b) 1)))
+                                   (t/is (= (cthi/id :copy-col-b-head) (nth (:shapes col-b) 3))))
+
+                                 (t/testing "root resize: height + cell height, width untouched"
+                                   (t/is (= (+ table-h cell-h) (:height root)))
+                                   (t/is (= table-w (:width root))))
+
+                                 (assert-undo-group-uuid! committed)))))))
+        done))))
+
+(t/deftest insert-row-from-root-falls-back-to-bottom-append
+  (t/testing "inserting from the table root itself (no clicked cell to resolve) keeps the bottom-append behavior"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file    (setup-file)
+                store   (ths/setup-store file)
+                root-id (:id (cths/get-shape file :table-copy))
+                events  [(dwt/insert-table-row root-id)]]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'   (ths/get-file-from-state new-state)
+                                     _       (assert-valid-file! file')
+                                     objects (page-objects file')
+                                     root    (get-shape' file' :table-copy)
+                                     col-a   (get-shape' file' :copy-col-a)
+                                     col-b   (get-shape' file' :copy-col-b)
+                                     src-a   (get-shape' file' :copy-col-a-cell2)
+                                     src-b   (get-shape' file' :copy-col-b-cell2)]
+
+                                 (t/testing "column A (:shapes top->bottom): new cell appended at the END, cloned from the bottom cell"
+                                   (t/is (= 4 (count (:shapes col-a))))
+                                   (let [new-cell (get objects (peek (:shapes col-a)))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-a) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-a) (:shape-ref new-cell)))))
+
+                                 (t/testing "column B (:shapes bottom->top): new cell inserted at index 0, cloned from the bottom cell"
+                                   (t/is (= 4 (count (:shapes col-b))))
+                                   (let [new-cell (get objects (first (:shapes col-b)))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-b) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-b) (:shape-ref new-cell)))))
+
+                                 (t/testing "root resize: height + cell height, width untouched"
+                                   (t/is (= (+ table-h cell-h) (:height root)))
+                                   (t/is (= table-w (:width root))))))))))
+        done))))
+
+(t/deftest insert-row-from-column-falls-back-to-bottom-append
+  (t/testing "inserting from a column frame itself (no clicked cell to resolve) keeps the bottom-append behavior"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file    (setup-file)
+                store   (ths/setup-store file)
+                col-id  (:id (cths/get-shape file :copy-col-a))
+                events  [(dwt/insert-table-row col-id)]]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file'   (ths/get-file-from-state new-state)
+                                     _       (assert-valid-file! file')
+                                     objects (page-objects file')
+                                     root    (get-shape' file' :table-copy)
+                                     col-a   (get-shape' file' :copy-col-a)
+                                     col-b   (get-shape' file' :copy-col-b)
+                                     src-a   (get-shape' file' :copy-col-a-cell2)
+                                     src-b   (get-shape' file' :copy-col-b-cell2)]
+
+                                 (t/testing "column A (:shapes top->bottom): new cell appended at the END, cloned from the bottom cell"
+                                   (t/is (= 4 (count (:shapes col-a))))
+                                   (let [new-cell (get objects (peek (:shapes col-a)))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-a) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-a) (:shape-ref new-cell)))))
+
+                                 (t/testing "column B (:shapes bottom->top): new cell inserted at index 0, cloned from the bottom cell"
+                                   (t/is (= 4 (count (:shapes col-b))))
+                                   (let [new-cell (get objects (first (:shapes col-b)))]
+                                     (t/is (some? new-cell))
+                                     (t/is (= (:component-id src-b) (:component-id new-cell)))
+                                     (t/is (= (:shape-ref src-b) (:shape-ref new-cell)))))
+
+                                 (t/testing "root resize: height + cell height, width untouched"
+                                   (t/is (= (+ table-h cell-h) (:height root)))
+                                   (t/is (= table-w (:width root))))))))))
         done))))
 
 (t/deftest insert-column-right-of-clicked-column
@@ -497,17 +721,18 @@
         done))))
 
 (t/deftest insert-row-after-delete-skips-hidden
-  (t/testing "after the bottom row was deleted, the insert clones the visible bottom cell (cell1), not the hidden one that keeps its stale geometry"
+  (t/testing "after the bottom row was deleted, inserting from the new visible bottom row (cell1) clones each column's visible cell1 below it, not the hidden cell2 that keeps its stale geometry"
     (t/async done
       (mock/with-mocks {uuid/next cthi/next-uuid}
         (fn [done']
           (let [file      (setup-file)
                 store     (ths/setup-store file)
                 ;; the bottom row is deleted first: cell2 stays in :shapes,
-                ;; hidden, with its stale bottom geometry
-                shape-id  (:id (cths/get-shape file :copy-col-a-cell2))
-                events    [(dwt/delete-table-row shape-id)
-                           (dwt/insert-table-row shape-id)]
+                ;; hidden, with its stale bottom geometry; the insert is then
+                ;; dispatched from cell1, now the visible bottom row
+                cell2-id  (:id (cths/get-shape file :copy-col-a-cell2))
+                events    [(dwt/delete-table-row cell2-id)
+                           (dwt/insert-table-row (:id (cths/get-shape file :copy-col-a-cell1)))]
                 committed (volatile! [])]
             (with-redefs [cf/table-component-ids (config-with-table-comp)
                           dch/commit-changes (capture-commit-fn committed)]
@@ -554,6 +779,61 @@
                                  (t/testing "one commit per action, each with a uuid undo group"
                                    (t/is (= 2 (count @committed)))
                                    (t/is (uuid? (:undo-group (second @committed)))))))))))
+        done))))
+
+(t/deftest insert-row-from-hidden-cell-is-refused
+  (t/testing "inserting from a hidden (deleted) cell is refused: no column has a visible cell at its stale row rank"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (setup-file)
+                store     (ths/setup-store file)
+                ;; the bottom row is deleted first: cell2 stays in :shapes,
+                ;; hidden, so it no longer has a row rank among the visible
+                ;; cells of its column
+                shape-id  (:id (cths/get-shape file :copy-col-a-cell2))
+                events    [(dwt/delete-table-row shape-id)
+                           (dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)
+                                     col-a (get-shape' file' :copy-col-a)]
+                                 (t/is (= 1 (count @committed))
+                                       "only the delete committed; the insert is refused")
+                                 (t/is (= (- table-h cell-h) (:height root)))
+                                 (t/is (= 3 (count (:shapes col-a))) "col-a unchanged by the insert")))))))
+        done))))
+
+(t/deftest insert-row-with-shorter-column-is-refused
+  (t/testing "a row rank that some column has no visible cell for (a shorter column after a per-cell delete) is refused with no partial commit"
+    (t/async done
+      (mock/with-mocks {uuid/next cthi/next-uuid}
+        (fn [done']
+          (let [file      (-> (setup-file)
+                              ;; col-b keeps only 2 visible cells (head, cell1):
+                              ;; nothing sits at the rank of col-a cell2 (rank 2)
+                              (cths/update-shape :copy-col-b-cell2 :hidden true))
+                store     (ths/setup-store file)
+                shape-id  (:id (cths/get-shape file :copy-col-a-cell2))
+                events    [(dwt/insert-table-row shape-id)]
+                committed (volatile! [])]
+            (with-redefs [cf/table-component-ids (config-with-table-comp)
+                          dch/commit-changes (capture-commit-fn committed)]
+              (ths/run-store store done' events
+                             (fn [new-state]
+                               (let [file' (ths/get-file-from-state new-state)
+                                     root  (get-shape' file' :table-copy)
+                                     col-a (get-shape' file' :copy-col-a)
+                                     col-b (get-shape' file' :copy-col-b)]
+                                 (t/is (empty? @committed) "guard refuses before committing")
+                                 (t/is (= table-h (:height root)))
+                                 (t/is (= table-w (:width root)))
+                                 (t/is (= 3 (count (:shapes col-a))) "col-a unchanged")
+                                 (t/is (= 3 (count (:shapes col-b))) "col-b unchanged")))))))
         done))))
 
 (t/deftest insert-column-after-delete-uses-visible-rightmost

@@ -170,6 +170,12 @@
   gap: var(--sp-xs);
 }
 
+// Author `display: grid/flex` beats the UA `[hidden]` rule, so collapse must
+// set display:none on the same node after those layout classes.
+.is-collapsed {
+  display: none;
+}
+
 .component-group-placeholder {
   width: 100%;
   height: var(--sp-xxs);

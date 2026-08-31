@@ -22,6 +22,7 @@
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.libraries :as dwl]
+   [app.main.data.workspace.thumbnails :as dwt]
    [app.main.data.workspace.thumbnails-wasm :as dwt.wasm]
    [app.main.data.workspace.undo :as dwu]
    [app.main.data.workspace.variants :as dwv]
@@ -135,16 +136,35 @@
   [section assets-count]
   (or (not (= section :tokens)) (and (< 0 assets-count) (= section :tokens))))
 
+(defn keep-mounted?
+  "Once a panel has been opened, keep it mounted across later collapses."
+  [open? already-mounted?]
+  (or ^boolean open? ^boolean already-mounted?))
+
+(defn show-asset-section-content?
+  "Components keep their grid mounted after the first open so collapse can hide
+   it with CSS instead of unmounting. Other sections still unmount on collapse."
+  [section assets-count is-open seen-open?]
+  (and (< 0 assets-count)
+       (if (= section :components)
+         (keep-mounted? is-open seen-open?)
+         is-open)))
+
 (mf/defc asset-section*
   [{:keys [children file-id title section assets-count icon is-open on-click]}]
-  (let [children    (-> (array/normalize-to-array children)
-                        (array/without-nils))
+  (let [        children      (-> (array/normalize-to-array children)
+                          (array/without-nils))
 
-        is-button?  #(as-> % $ (= :title-button (.. ^js $ -props -role)))
-        is-content? #(as-> % $ (= :content (.. ^js $ -props -role)))
+        is-button?    #(as-> % $ (= :title-button (.. ^js $ -props -role)))
+        is-content?   #(as-> % $ (= :content (.. ^js $ -props -role)))
 
-        buttons     (array/filter is-button? children)
-        content     (array/filter is-content? children)
+        buttons       (array/filter is-button? children)
+        content       (array/filter is-content? children)
+        content-seen* (mf/use-ref (and (= section :components) is-open))
+        _             (when (and (= section :components) is-open)
+                        (mf/set-ref-val! content-seen* true))
+        show-content? (show-asset-section-content?
+                       section assets-count is-open (mf/ref-val content-seen*))
 
         on-collapsed
         (mf/use-fn
@@ -178,9 +198,10 @@
        :add-icon-gap  (= 0 assets-count)
        :title         title}
       buttons]
-     (when ^boolean (and (< 0 assets-count)
-                         is-open)
-       [:div {:class (stl/css-case :title-spacing is-open)}
+     (when ^boolean show-content?
+       [:div {:class (stl/css-case :title-spacing true
+                                   :is-collapsed (and (= section :components)
+                                                      (not is-open)))}
         content])]))
 
 (mf/defc asset-section-block*
@@ -345,13 +366,11 @@
         modified-at
         (some-> (:modified-at component) (.getTime))
 
-        ;; Stale if there's no in-session render record
-        ;; or the component was modified after the last render
         stale?
-        (and (some? thumbnail-uri)
-             (or (nil? rendered-at)
-                 (and (some? modified-at)
-                      (> modified-at rendered-at))))
+        (dwt/thumbnail-stale? thumbnail-uri rendered-at modified-at)
+
+        thumbs-enabled?
+        (contains? cf/flags :component-thumbnails)
 
         on-error
         (mf/use-fn
@@ -360,24 +379,34 @@
            (when (< @retry 3)
              (inc retry))))]
 
-    ;; Lazy WASM thumbnail rendering: when the component becomes
-    ;; visible and either has no cached thumbnail or the cached one is
-    ;; stale relative to the last recorded edit, trigger a render. Ref
-    ;; is used to avoid triggering multiple renders while the previous
-    ;; render is in flight.
+    ;; When the asset becomes visible and there is no usable cached
+    ;; image, rasterize the main instance and persist it. Next visit
+    ;; reuses the stored URI without opening the canvas page.
+    ;; WASM still only auto-renders the current page so it does not
+    ;; replace the canvas object tree with another page's subtree.
     (mf/use-effect
-     (mf/deps is-hidden thumbnail-uri stale? wasm? current-page-id file-id page-id)
+     (mf/deps is-hidden thumbnail-uri stale? wasm? thumbs-enabled? current-page-id file-id page-id root-id)
      (fn []
-       (if (and (some? thumbnail-uri) (not stale?))
+       (cond
+         (and (some? thumbnail-uri) (not stale?))
          (mf/set-ref-val! thumbnail-requested? false)
-         (when (and wasm? (not is-hidden) (not (mf/ref-val thumbnail-requested?)) (= page-id current-page-id))
+
+         (or is-hidden (mf/ref-val thumbnail-requested?))
+         nil
+
+         (and wasm? (= page-id current-page-id))
+         (do
            (mf/set-ref-val! thumbnail-requested? true)
-           (st/emit! (dwt.wasm/render-thumbnail file-id page-id root-id))))))
+           (st/emit! (dwt.wasm/render-thumbnail file-id page-id root-id :persist? true)))
+
+         (or thumbs-enabled? wasm?)
+         (do
+           (mf/set-ref-val! thumbnail-requested? true)
+           (st/emit! (dwt/update-thumbnail file-id page-id root-id "component" "assets-panel"))))))
 
     (if (and (some? thumbnail-uri)
              (not stale?)
-             (or (contains? cf/flags :component-thumbnails)
-                 wasm?))
+             (or thumbs-enabled? wasm?))
       [:& component-svg-thumbnail
        {:thumbnail-uri thumbnail-uri
         :class class

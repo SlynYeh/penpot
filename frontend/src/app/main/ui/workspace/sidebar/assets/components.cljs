@@ -196,6 +196,9 @@
                          false
                          (or ^boolean is-force-open
                              ^boolean (get open-groups prefix (if (= prefix "") true false))))
+        grid-seen*     (mf/use-ref group-open?)
+        _              (when ^boolean group-open?
+                         (mf/set-ref-val! grid-seen* true))
         dragging*      (mf/use-state false)
         dragging?      (deref dragging*)
 
@@ -247,67 +250,72 @@
        :on-delete-group on-delete-group
        :on-group-combine-variants on-group-combine-variants}]
 
+     ;; Keep the grid node after the first open and hide it with CSS. A `when`
+     ;; here unmounts `.component-group-grid`, which recreates thumbnails on
+     ;; the next expand. `[hidden]` loses to `display: grid`, so use a class.
+     (when (cmm/keep-mounted? group-open? (mf/ref-val grid-seen*))
+       [:div {:class (stl/css-case :component-group-grid is-listing-thumbs
+                                   :component-group-list (not is-listing-thumbs)
+                                   :is-collapsed (not group-open?))
+              :aria-hidden (not group-open?)
+              :on-drag-enter on-drag-enter
+              :on-drag-leave on-drag-leave
+              :on-drag-over dom/prevent-default
+              :on-drop on-drop}
+
+        (when ^boolean dragging?
+          [:div {:class (stl/css :component-group-placeholder)} "\u00A0"])
+
+        (when (and (empty? components)
+                   (some? groups)
+                   is-local)
+          [:div {:class (stl/css-case :component-group-drop-space true
+                                      :component-group-drop-space-small (not dragging?))}])
+
+        ;; FIXME: This could be in the thousands. We need to think about paginate this
+        (for [component components]
+          [:> components-item*
+           {:component component
+            :key (dm/str "component-" (:id component))
+            :renaming renaming
+            :is-listing-thumbs is-listing-thumbs
+            :file-id file-id
+            :selected selected
+            :selected-full selected-full
+            :selected-paths selected-paths
+            :on-asset-click on-asset-click
+            :on-context-menu on-context-menu
+            :on-drag-start on-drag-start
+            :on-group on-group
+            :do-rename do-rename
+            :cancel-rename cancel-rename
+            :is-local is-local
+            :num-variants (count-variants (:variant-id component))}])])
+
      (when group-open?
-       [:*
-        [:div {:class (stl/css-case :component-group-grid is-listing-thumbs
-                                    :component-group-list (not is-listing-thumbs))
-               :on-drag-enter on-drag-enter
-               :on-drag-leave on-drag-leave
-               :on-drag-over dom/prevent-default
-               :on-drop on-drop}
-
-         (when ^boolean dragging?
-           [:div {:class (stl/css :component-group-placeholder)} "\u00A0"])
-
-         (when (and (empty? components)
-                    (some? groups)
-                    is-local)
-           [:div {:class (stl/css-case :component-group-drop-space true
-                                       :component-group-drop-space-small (not dragging?))}])
-
-         ;; FIXME: This could be in the thousands. We need to think about paginate this
-         (for [component components]
-           [:> components-item*
-            {:component component
-             :key (dm/str "component-" (:id component))
-             :renaming renaming
-             :is-listing-thumbs is-listing-thumbs
-             :file-id file-id
-             :selected selected
-             :selected-full selected-full
-             :selected-paths selected-paths
-             :on-asset-click on-asset-click
-             :on-context-menu on-context-menu
-             :on-drag-start on-drag-start
-             :on-group on-group
-             :do-rename do-rename
-             :cancel-rename cancel-rename
-             :is-local is-local
-             :num-variants (count-variants (:variant-id component))}])]
-
-        (for [[path-item content] groups]
-          (when-not (empty? path-item)
-            [:> components-group* {:file-id file-id
-                                   :key path-item
-                                   :prefix (cpn/merge-path-item prefix path-item)
-                                   :groups content
-                                   :open-groups open-groups
-                                   :is-force-open is-force-open
-                                   :renaming renaming
-                                   :is-listing-thumbs is-listing-thumbs
-                                   :selected selected
-                                   :on-asset-click on-asset-click
-                                   :on-drag-start on-drag-start
-                                   :do-rename do-rename
-                                   :cancel-rename cancel-rename
-                                   :on-rename-group on-rename-group
-                                   :on-ungroup on-ungroup
-                                   :on-delete-group on-delete-group
-                                   :on-context-menu on-context-menu
-                                   :on-group-combine-variants on-group-combine-variants
-                                   :selected-full selected-full
-                                   :is-local is-local
-                                   :count-variants count-variants}]))])]))
+       (for [[path-item content] groups]
+         (when-not (empty? path-item)
+           [:> components-group* {:file-id file-id
+                                  :key path-item
+                                  :prefix (cpn/merge-path-item prefix path-item)
+                                  :groups content
+                                  :open-groups open-groups
+                                  :is-force-open is-force-open
+                                  :renaming renaming
+                                  :is-listing-thumbs is-listing-thumbs
+                                  :selected selected
+                                  :on-asset-click on-asset-click
+                                  :on-drag-start on-drag-start
+                                  :do-rename do-rename
+                                  :cancel-rename cancel-rename
+                                  :on-rename-group on-rename-group
+                                  :on-ungroup on-ungroup
+                                  :on-delete-group on-delete-group
+                                  :on-context-menu on-context-menu
+                                  :on-group-combine-variants on-group-combine-variants
+                                  :selected-full selected-full
+                                  :is-local is-local
+                                  :count-variants count-variants}])))]))
 
 (mf/defc components-section*
   [{:keys [file-id components selected open-status-ref
@@ -614,28 +622,27 @@
                             :on-selected on-file-selected}]])]
 
      [:> cmm/asset-section-block* {:role :content}
-      (when ^boolean is-open
-        [:> components-group* {:file-id file-id
-                               :prefix ""
-                               :groups groups
-                               :open-groups open-groups
-                               :is-force-open is-force-open
-                               :renaming (when ^boolean renaming? current-component-id)
-                               :is-listing-thumbs is-listing-thumbs
-                               :selected selected
-                               :on-asset-click on-asset-click
-                               :on-drag-start on-drag-start
-                               :do-rename do-rename
-                               :cancel-rename cancel-rename
-                               :on-rename-group on-rename-group
-                               :on-group on-group
-                               :on-ungroup on-ungroup
-                               :on-delete-group on-delete-group
-                               :on-group-combine-variants on-group-combine-variants
-                               :on-context-menu on-context-menu
-                               :selected-full selected-full
-                               :is-local ^boolean is-local
-                               :count-variants count-variants}])
+      [:> components-group* {:file-id file-id
+                             :prefix ""
+                             :groups groups
+                             :open-groups open-groups
+                             :is-force-open is-force-open
+                             :renaming (when ^boolean renaming? current-component-id)
+                             :is-listing-thumbs is-listing-thumbs
+                             :selected selected
+                             :on-asset-click on-asset-click
+                             :on-drag-start on-drag-start
+                             :do-rename do-rename
+                             :cancel-rename cancel-rename
+                             :on-rename-group on-rename-group
+                             :on-group on-group
+                             :on-ungroup on-ungroup
+                             :on-delete-group on-delete-group
+                             :on-group-combine-variants on-group-combine-variants
+                             :on-context-menu on-context-menu
+                             :selected-full selected-full
+                             :is-local ^boolean is-local
+                             :count-variants count-variants}]
 
       [:> cmm/assets-context-menu*
        {:on-close on-close-menu

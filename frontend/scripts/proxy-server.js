@@ -63,6 +63,17 @@ app.use(BASE_PATH + "rpc", proxy(TARGET_URL, {
   proxyReqPathResolver: (req) => "/rpc" + req.url,
 }));
 
+// Storage objects (component thumbnails, file media, fonts). Must be
+// registered before the SPA fallback: object ids have no file extension,
+// so they would otherwise receive index.html.
+app.use("/assets", proxy(TARGET_URL, {
+  proxyReqPathResolver: (req) => req.originalUrl,
+}));
+
+app.use(BASE_PATH + "assets", proxy(TARGET_URL, {
+  proxyReqPathResolver: (req) => "/assets" + req.url,
+}));
+
 // Serve static files under base path
 // Disable caching for local development
 app.use((req, res, next) => {

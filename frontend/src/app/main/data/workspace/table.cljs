@@ -106,15 +106,31 @@
             (if (> (f shape) (f acc)) shape acc))
           coll))
 
+(defn- min-by
+  [f coll]
+  (reduce (fn [acc shape]
+            (if (< (f shape) (f acc)) shape acc))
+          coll))
+
 (defn- bottom-cell
   "Visually bottom-most child of a column (by stored geometry)."
   [children]
   (max-by (fn [shape] (+ (or (:y shape) 0) (or (:height shape) 0))) children))
 
+(defn- top-cell
+  "Visually top-most child of a column (by stored geometry)."
+  [children]
+  (min-by (fn [shape] (+ (or (:y shape) 0) (or (:height shape) 0))) children))
+
 (defn- rightmost-column
   "Visually right-most column (by stored geometry)."
   [columns]
   (max-by :x columns))
+
+(defn- leftmost-column
+  "Visually left-most column (by stored geometry)."
+  [columns]
+  (min-by :x columns))
 
 (defn- order-sign
   "Whether the `:shapes` vector of a container runs in the same direction as
@@ -137,20 +153,25 @@
 (defn- row-insert-index
   "Index in the column :shapes vector where the new row must be added: the
    slot adjacent to `anchor` (the clone source: the clicked row's cell, or
-   the visually bottom-most visible cell on the bottom-append fallback) on
-   its real position on the parent. A deleted cell stays in :shapes with
-   its stale geometry, so counting the visible children could place the
-   new row in the visual middle of the column. When the :shapes order
-   runs like the visual one (:inc) the clone goes right after the anchor
-   slot; when it runs bottom->top (:dec) it takes the anchor slot itself,
-   pushing the anchor up. Caveat: with fewer than two visible children
-   the order sign is unknown and the :inc default is used, which on a
-   :dec column reduced to a single visible cell inserts after it instead
-   of at index 0."
-  [objects children anchor]
+   the visually bottom-most / top-most visible cell on the append
+   fallback) on the side given by `direction` (:below / :above), based on
+   its real position on the parent. A deleted cell stays in :shapes
+   with its stale geometry, so counting the visible children could place
+   the new row in the visual middle of the column. When the :shapes order
+   runs like the visual one (:inc) a :below clone goes right after the
+   anchor slot and an :above clone takes the anchor slot itself, pushing
+   the anchor down; when it runs bottom->top (:dec) the two directions
+   swap slots (a :below clone takes the anchor slot itself, pushing the
+   anchor up). Caveat: with fewer than two visible children the order
+   sign is unknown and the :inc default is used, which on a :dec column
+   reduced to a single visible cell inserts :below after it instead of
+   at index 0, and :above before it instead of after it."
+  [objects children anchor direction]
   (let [slot (cfh/get-position-on-parent objects (:id anchor))]
-    (if (= :dec (order-sign children :y))
-      slot
+    (case [direction (order-sign children :y)]
+      [:below :dec] slot
+      [:above :inc] slot
+      [:above nil] slot
       (inc slot))))
 
 (defn- row-rank
@@ -162,11 +183,14 @@
 
 (defn- column-insert-index
   "Index in the root :shapes vector where a column cloned from `target`
-   must be added so it renders immediately to its right."
-  [objects columns target]
+   must be added so it renders immediately to the side given by
+   `direction` (:left / :right)."
+  [objects columns target direction]
   (let [index (cfh/get-position-on-parent objects (:id target))]
-    (if (= :dec (order-sign columns :x))
-      index
+    (case [direction (order-sign columns :x)]
+      [:right :dec] index
+      [:left :inc] index
+      [:left nil] index
       (inc index))))
 
 (defn- apply-swap-slot
@@ -269,178 +293,192 @@
     [head' (assoc new-shapes 0 head')]))
 
 (defn insert-table-row
-  "Inserts a row below the one the cell `shape-id` sits in: every visible
-   column gets a clone of its own visible cell at the clicked cell's row
-   rank (its visible siblings sorted by :y ascending, the same rank
-   matching as the row delete) and the table root grows by the row height
-   (the max height of the cloned cells). From the table root or a column
-   frame itself — no cell to resolve — it falls back to appending a row at
-   the visual bottom: every column clones its own visually bottom-most
-   visible cell. Refused when no visible column is left, some visible
-   column has no visible cell left (the native delete-inside-instance can
-   hide them all), or — for a clicked cell — some visible column has no
-   visible cell at that row rank: the clicked cell itself hidden (a hidden
-   cell no longer has a rank among its visible siblings) or a rank beyond
-   the visible count of a shorter column.
+  "Inserts a row on the side of the one the cell `shape-id` sits in given
+   by `direction` (:below, the default of the single-argument arity, or
+   :above): every visible column gets a clone of its own visible cell at
+   the clicked cell's row rank (its visible siblings sorted by :y
+   ascending, the same rank matching as the row delete) and the table
+   root grows by the row height (the max height of the cloned cells).
+   From the table root or a column frame itself — no cell to resolve — it
+   falls back to adding a row at the visual edge the direction points
+   to: every column clones its own visually bottom-most visible cell
+   (:below) or top-most visible cell (:above). Refused when no visible
+   column is left, some visible column has no visible cell left (the
+   native delete-inside-instance can hide them all), or — for a clicked
+   cell — some visible column has no visible cell at that row rank: the
+   clicked cell itself hidden (a hidden cell no longer has a rank among
+   its visible siblings) or a rank beyond the visible count of a shorter
+   column.
 
    Caveat: like `row-targets`, the rank matching relies on the stored
    geometry of the cells, so when the visible cell counts of the columns
    disagree (e.g. after rows were deleted), which cell of a column
    corresponds to a rank of another column is an heuristic."
-  [shape-id]
-  (ptk/reify ::insert-table-row
-    ptk/WatchEvent
-    (watch [it state _]
-      (let [page-id   (:current-page-id state)
-            objects   (dsh/lookup-page-objects state page-id)
-            file      (dsh/lookup-file state)
-            libraries (dsh/lookup-libraries state)
-            shape     (get objects shape-id)
-            root      (find-table-root objects shape)
-            column    (when root (find-column objects root shape))
-            cell      (when column (find-cell objects column shape))
-            rank      (when cell (row-rank (visible-children objects (:parent-id cell)) cell))
-            columns   (when root (visible-children objects (:id root)))]
-        (if (or (nil? root)
-                (empty? columns)
-                ;; a visible column with every cell hidden has no clone
-                ;; source for the new row; on the fallback path below it
-                ;; would also make bottom-cell throw on empty children
-                (some #(empty? (visible-children objects (:id %))) columns))
-          (rx/empty)
-          (let [;; per column, the cell its new row is cloned from: its own
-                ;; visible cell at the clicked row rank (`get` on the sorted
-                ;; vector answers nil beyond the visible count and for the
-                ;; -1 of a hidden clicked cell; the `vec` is load-bearing:
-                ;; `get` on the seq `sort-by` returns would answer nil
-                ;; unconditionally, silently turning every clicked-cell
-                ;; insert into a no-op), or its visually bottom-most visible cell
-                ;; when no cell was resolved (root / column dispatch, rank
-                ;; nil)
-                sources
-                (mapv (fn [col]
-                        (let [children (visible-children objects (:id col))]
-                          (if (nil? rank)
-                            (bottom-cell children)
-                            (get (vec (sort-by :y children)) rank))))
-                      columns)]
-            ;; some visible column has no visible cell at the clicked rank
-            ;; (hidden clicked cell or a shorter column): no clone source,
-            ;; refuse
-            (if (some nil? sources)
-              (rx/empty)
-              (let [clones
-                    (mapv (fn [col src-cell]
-                            (let [children  (visible-children objects (:id col))
-                                  index     (row-insert-index objects children src-cell)
-                                  new-id    (uuid/next)
-                                  head-slot (swap-slot-for-clone file libraries objects col src-cell new-id index)
-                                  clone     (clone-subtree src-cell (:id col) objects new-id head-slot)
-                                  slots     (swap-slot-fixes file libraries objects col new-id index)]
-                              {:index index
-                               :clone clone
-                               :slots slots}))
-                          columns sources)
+  ([shape-id]
+   (insert-table-row shape-id :below))
+  ([shape-id direction]
+   (ptk/reify ::insert-table-row
+     ptk/WatchEvent
+     (watch [it state _]
+       (let [page-id   (:current-page-id state)
+             objects   (dsh/lookup-page-objects state page-id)
+             file      (dsh/lookup-file state)
+             libraries (dsh/lookup-libraries state)
+             shape     (get objects shape-id)
+             root      (find-table-root objects shape)
+             column    (when root (find-column objects root shape))
+             cell      (when column (find-cell objects column shape))
+             rank      (when cell (row-rank (visible-children objects (:parent-id cell)) cell))
+             columns   (when root (visible-children objects (:id root)))]
+         (if (or (nil? root)
+                 (empty? columns)
+                 ;; a visible column with every cell hidden has no clone
+                 ;; source for the new row; on the fallback path below it
+                 ;; would also make bottom-cell / top-cell throw on empty
+                 ;; children
+                 (some #(empty? (visible-children objects (:id %))) columns))
+           (rx/empty)
+           (let [;; per column, the cell its new row is cloned from: its own
+                 ;; visible cell at the clicked row rank (`get` on the sorted
+                 ;; vector answers nil beyond the visible count and for the
+                 ;; -1 of a hidden clicked cell; the `vec` is load-bearing:
+                 ;; `get` on the seq `sort-by` returns would answer nil
+                 ;; unconditionally, silently turning every clicked-cell
+                 ;; insert into a no-op), or its visually bottom-most
+                 ;; (:below) / top-most (:above) visible cell when no cell
+                 ;; was resolved (root / column dispatch, rank nil)
+                 sources
+                 (mapv (fn [col]
+                         (let [children (visible-children objects (:id col))]
+                           (if (nil? rank)
+                             (case direction
+                               :above (top-cell children)
+                               (bottom-cell children))
+                             (get (vec (sort-by :y children)) rank))))
+                       columns)]
+             ;; some visible column has no visible cell at the clicked rank
+             ;; (hidden clicked cell or a shorter column): no clone source,
+             ;; refuse
+             (if (some nil? sources)
+               (rx/empty)
+               (let [clones
+                     (mapv (fn [col src-cell]
+                             (let [children  (visible-children objects (:id col))
+                                   index     (row-insert-index objects children src-cell direction)
+                                   new-id    (uuid/next)
+                                   head-slot (swap-slot-for-clone file libraries objects col src-cell new-id index)
+                                   clone     (clone-subtree src-cell (:id col) objects new-id head-slot)
+                                   slots     (swap-slot-fixes file libraries objects col new-id index)]
+                               {:index index
+                                :clone clone
+                                :slots slots}))
+                           columns sources)
 
-                    row-height (transduce (map :height) max 0 sources)
+                     row-height (transduce (map :height) max 0 sources)
 
-                    undo-id (uuid/next)
+                     undo-id (uuid/next)
 
-                    ;; NB: resize the root lazily, from the shape as it exists at
-                    ;; this point of the changes (i.e. already including the new
-                    ;; cells). Handing update-shapes a full precomputed shape would
-                    ;; diff :shapes against the pre-insert value and revert the
-                    ;; inserts done by the add-obj changes above.
-                    grow-root (fn [shape]
-                                (gsh/transform-shape
-                                 shape
-                                 (ctm/change-size shape nil (+ (:height shape) row-height))))
+                     ;; NB: resize the root lazily, from the shape as it exists at
+                     ;; this point of the changes (i.e. already including the new
+                     ;; cells). Handing update-shapes a full precomputed shape would
+                     ;; diff :shapes against the pre-insert value and revert the
+                     ;; inserts done by the add-obj changes above.
+                     grow-root (fn [shape]
+                                 (gsh/transform-shape
+                                  shape
+                                  (ctm/change-size shape nil (+ (:height shape) row-height))))
 
-                    changes (as-> (pcb/empty-changes it page-id) $
-                              (pcb/with-objects $ objects)
-                              (reduce (fn [$ {:keys [index clone slots]}]
-                                        (let [[head new-shapes] clone]
-                                          (-> $
-                                              (pcb/add-object head {:index index})
-                                              (pcb/add-objects new-shapes)
-                                              ;; cells shifted past their library
-                                              ;; counterpart: point their swap slot
-                                              ;; at the library shape that now
-                                              ;; occupies their position.
-                                              (cond-> (seq slots)
-                                                (pcb/update-shapes (vec (keys slots))
-                                                                   #(apply-swap-slot % (get slots (:id %))))))))
-                                      $ clones)
-                              (pcb/update-shapes $ [(:id root)] grow-root)
-                              (pcb/set-undo-group $ undo-id))]
+                     changes (as-> (pcb/empty-changes it page-id) $
+                               (pcb/with-objects $ objects)
+                               (reduce (fn [$ {:keys [index clone slots]}]
+                                         (let [[head new-shapes] clone]
+                                           (-> $
+                                               (pcb/add-object head {:index index})
+                                               (pcb/add-objects new-shapes)
+                                               ;; cells shifted past their library
+                                               ;; counterpart: point their swap slot
+                                               ;; at the library shape that now
+                                               ;; occupies their position.
+                                               (cond-> (seq slots)
+                                                 (pcb/update-shapes (vec (keys slots))
+                                                                    #(apply-swap-slot % (get slots (:id %))))))))
+                                       $ clones)
+                               (pcb/update-shapes $ [(:id root)] grow-root)
+                               (pcb/set-undo-group $ undo-id))]
 
-                (rx/of (dwu/start-undo-transaction undo-id)
-                       (dch/commit-changes changes)
-                       (ptk/data-event :layout/update
-                                       {:ids (into [(:id root)] (map :id) columns)
-                                        :undo-group undo-id})
-                       (dwu/commit-undo-transaction undo-id))))))))))
+                 (rx/of (dwu/start-undo-transaction undo-id)
+                        (dch/commit-changes changes)
+                        (ptk/data-event :layout/update
+                                        {:ids (into [(:id root)] (map :id) columns)
+                                         :undo-group undo-id})
+                        (dwu/commit-undo-transaction undo-id)))))))))))
 
 (defn insert-table-column
-  "Inserts a column to the right of the column that contains `shape-id`
-   (cloned from it; from the table root itself, cloned from the right-most
-   column), and grows the table root by the column width. Refused when no
-   visible column is left (the native delete-inside-instance can hide them
+  "Inserts a column on the side of the column that contains `shape-id`
+   given by `direction` (:right, the default of the single-argument
+   arity, or :left), cloned from it — from the table root itself, cloned
+   from the visually right-most (:right) or left-most (:left) column —
+   and grows the table root by the column width. Refused when no visible
+   column is left (the native delete-inside-instance can hide them
    all)."
-  [shape-id]
-  (ptk/reify ::insert-table-column
-    ptk/WatchEvent
-    (watch [it state _]
-      (let [page-id   (:current-page-id state)
-            objects   (dsh/lookup-page-objects state page-id)
-            file      (dsh/lookup-file state)
-            libraries (dsh/lookup-libraries state)
-            root      (find-table-root objects (get objects shape-id))
-            columns   (when root (visible-children objects (:id root)))]
-        (if (or (nil? root)
-                ;; no visible column left: nothing to derive the right-most
-                ;; column (the clone source) from
-                (empty? columns))
-          (rx/empty)
-          (let [target     (or (find-column objects root (get objects shape-id))
-                               (rightmost-column columns))
-                new-col-id (uuid/next)
-                index      (column-insert-index objects columns target)
-                head-slot  (swap-slot-for-clone file libraries objects root target new-col-id index)
-                clone      (clone-subtree target (:id root) objects new-col-id head-slot)
-                slots      (swap-slot-fixes file libraries objects root new-col-id index)
-                new-shapes (second clone)
-                undo-id    (uuid/next)
+  ([shape-id]
+   (insert-table-column shape-id :right))
+  ([shape-id direction]
+   (ptk/reify ::insert-table-column
+     ptk/WatchEvent
+     (watch [it state _]
+       (let [page-id   (:current-page-id state)
+             objects   (dsh/lookup-page-objects state page-id)
+             file      (dsh/lookup-file state)
+             libraries (dsh/lookup-libraries state)
+             root      (find-table-root objects (get objects shape-id))
+             columns   (when root (visible-children objects (:id root)))]
+         (if (or (nil? root)
+                 ;; no visible column left: nothing to derive the left-most /
+                 ;; right-most column (the clone source) from
+                 (empty? columns))
+           (rx/empty)
+           (let [target     (or (find-column objects root (get objects shape-id))
+                                (case direction
+                                  :left (leftmost-column columns)
+                                  (rightmost-column columns)))
+                 new-col-id (uuid/next)
+                 index      (column-insert-index objects columns target direction)
+                 head-slot  (swap-slot-for-clone file libraries objects root target new-col-id index)
+                 clone      (clone-subtree target (:id root) objects new-col-id head-slot)
+                 slots      (swap-slot-fixes file libraries objects root new-col-id index)
+                 new-shapes (second clone)
+                 undo-id    (uuid/next)
 
-                ;; NB: resize lazily from the post-insert shape, so the diff
-                ;; does not revert the :shapes vector of the root.
-                grow-root (fn [shape]
-                            (gsh/transform-shape
-                             shape
-                             (ctm/change-size shape
-                                              (+ (:width shape) (:width target))
-                                              nil)))
+                 ;; NB: resize lazily from the post-insert shape, so the diff
+                 ;; does not revert the :shapes vector of the root.
+                 grow-root (fn [shape]
+                             (gsh/transform-shape
+                              shape
+                              (ctm/change-size shape
+                                               (+ (:width shape) (:width target))
+                                               nil)))
 
-                changes (as-> (pcb/empty-changes it page-id) $
-                          (pcb/with-objects $ objects)
-                          (pcb/add-object $ (first new-shapes) {:index index})
-                          (pcb/add-objects $ (rest new-shapes))
-                          ;; columns shifted past their library counterpart
-                          ;; (insert not at the end): give them the swap slot
-                          ;; of the library column that now occupies their
-                          ;; position.
-                          (cond-> $ (seq slots)
-                                  (pcb/update-shapes (vec (keys slots))
-                                                     #(apply-swap-slot % (get slots (:id %)))))
-                          (pcb/update-shapes $ [(:id root)] grow-root)
-                          (pcb/set-undo-group $ undo-id))]
+                 changes (as-> (pcb/empty-changes it page-id) $
+                           (pcb/with-objects $ objects)
+                           (pcb/add-object $ (first new-shapes) {:index index})
+                           (pcb/add-objects $ (rest new-shapes))
+                           ;; columns shifted past their library counterpart
+                           ;; (insert not at the end): give them the swap slot
+                           ;; of the library column that now occupies their
+                           ;; position.
+                           (cond-> $ (seq slots)
+                                   (pcb/update-shapes (vec (keys slots))
+                                                      #(apply-swap-slot % (get slots (:id %)))))
+                           (pcb/update-shapes $ [(:id root)] grow-root)
+                           (pcb/set-undo-group $ undo-id))]
 
-            (rx/of (dwu/start-undo-transaction undo-id)
-                   (dch/commit-changes changes)
-                   (dws/select-shapes (d/ordered-set new-col-id))
-                   (ptk/data-event :layout/update
-                                   {:ids [(:id root)] :undo-group undo-id})
-                   (dwu/commit-undo-transaction undo-id))))))))
+             (rx/of (dwu/start-undo-transaction undo-id)
+                    (dch/commit-changes changes)
+                    (dws/select-shapes (d/ordered-set new-col-id))
+                    (ptk/data-event :layout/update
+                                    {:ids [(:id root)] :undo-group undo-id})
+                    (dwu/commit-undo-transaction undo-id)))))))))
 
 (defn- row-targets
   "Cells to hide for deleting the row `cell` sits in: for every visible

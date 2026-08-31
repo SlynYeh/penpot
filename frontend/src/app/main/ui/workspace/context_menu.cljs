@@ -334,10 +334,15 @@
               can-delete-col? (dwt/can-delete-table-column? objects shape)]
           [:*
            [:> menu-separator* {}]
-           [:> menu-entry* {:title (tr "workspace.shape.menu.duplicate-table-row")
-                            :on-click #(st/emit! (dwt/insert-table-row shape-id))}]
-           [:> menu-entry* {:title (tr "workspace.shape.menu.duplicate-table-column")
-                            :on-click #(st/emit! (dwt/insert-table-column shape-id))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-row-above")
+                            :on-click #(st/emit! (dwt/insert-table-row shape-id :above))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-row-below")
+                            :on-click #(st/emit! (dwt/insert-table-row shape-id :below))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-column-left")
+                            :on-click #(st/emit! (dwt/insert-table-column shape-id :left))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-column-right")
+                            :on-click #(st/emit! (dwt/insert-table-column shape-id :right))}]
+           [:> menu-separator* {}]
            [:> menu-entry* {:title (tr "workspace.shape.menu.delete-table-row")
                             :disabled (not can-delete-row?)
                             :on-click #(st/emit! (dwt/delete-table-row shape-id))}]

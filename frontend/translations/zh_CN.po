@@ -6548,11 +6548,11 @@ msgstr "删除"
 msgid "workspace.shape.menu.delete-flow-start"
 msgstr "删除流程起点"
 
-#: src/app/main/ui/workspace/context_menu.cljs:338
+#: src/app/main/ui/workspace/context_menu.cljs:349
 msgid "workspace.shape.menu.delete-table-column"
 msgstr "删除表格列"
 
-#: src/app/main/ui/workspace/context_menu.cljs:335
+#: src/app/main/ui/workspace/context_menu.cljs:346
 msgid "workspace.shape.menu.delete-table-row"
 msgstr "删除表格行"
 
@@ -6571,14 +6571,6 @@ msgstr "差集"
 #: src/app/main/ui/workspace/context_menu.cljs:215
 msgid "workspace.shape.menu.duplicate"
 msgstr "创建副本"
-
-#: src/app/main/ui/workspace/context_menu.cljs:333
-msgid "workspace.shape.menu.duplicate-table-column"
-msgstr "复制表格列"
-
-#: src/app/main/ui/workspace/context_menu.cljs:331
-msgid "workspace.shape.menu.duplicate-table-row"
-msgstr "复制表格行"
 
 msgid "workspace.shape.menu.export-as-image"
 msgstr "导出为图片"
@@ -6640,6 +6632,22 @@ msgstr "隐藏"
 #: src/app/main/ui/workspace/context_menu.cljs:737, src/app/main/ui/workspace/main_menu.cljs:484
 msgid "workspace.shape.menu.hide-ui"
 msgstr "显示/隐藏界面"
+
+#: src/app/main/ui/workspace/context_menu.cljs:341
+msgid "workspace.shape.menu.insert-table-column-left"
+msgstr "在左侧插入一列"
+
+#: src/app/main/ui/workspace/context_menu.cljs:343
+msgid "workspace.shape.menu.insert-table-column-right"
+msgstr "在右侧插入一列"
+
+#: src/app/main/ui/workspace/context_menu.cljs:337
+msgid "workspace.shape.menu.insert-table-row-above"
+msgstr "在上方插入一行"
+
+#: src/app/main/ui/workspace/context_menu.cljs:339
+msgid "workspace.shape.menu.insert-table-row-below"
+msgstr "在下方插入一行"
 
 #: src/app/main/ui/workspace/context_menu.cljs:466, src/app/main/ui/workspace/sidebar/options/menus/bool.cljs:95
 msgid "workspace.shape.menu.intersection"

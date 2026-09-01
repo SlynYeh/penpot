@@ -19,7 +19,7 @@
 
 (mf/defc radio-button
   {::mf/props :obj}
-  [{:keys [icon id value disabled title icon-class type]}]
+  [{:keys [icon id value disabled title icon-class type label]}]
   (let [context     (mf/use-ctx context)
         allow-empty (unchecked-get context "allow-empty")
         type        (if ^boolean type
@@ -48,7 +48,7 @@
 
      (if (some? icon)
        [:> icon* {:icon-id icon :class icon-class :aria-hidden true}]
-       [:span {:class (stl/css :title-name)} value])
+       [:span {:class (stl/css :title-name)} (or label value)])
 
      [:input {:id id
               :on-change on-change

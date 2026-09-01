@@ -160,6 +160,7 @@
 
 .advanced-options {
   display: grid;
+  grid-column: 1 / -1;
   grid-template-columns:
     var(--grid-exception-input-width) /* first input block */
     var(--grid-exception-input-width) /* second input block */
@@ -173,6 +174,12 @@
   display: grid;
   grid-template-columns: subgrid;
   grid-column: 1 / -1;
+
+  // Token numeric-input prefix: same reserved width as deprecated .icon-text
+  :global([class*="text-icon"]) {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }
 
 .layout-item-min-w,
@@ -186,6 +193,7 @@
     justify-content: flex-start;
     inline-size: px2rem(80);
     padding-block-start: var(--sp-xxs);
+    white-space: nowrap;
   }
 }
 

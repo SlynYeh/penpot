@@ -7638,8 +7638,16 @@ msgid "workspace.options.layout.position.absolute"
 msgstr "绝对定位"
 
 #: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.absolute.short"
+msgstr "绝对"
+
+#: src/app/main/ui/workspace/sidebar
 msgid "workspace.options.layout.position.static"
 msgstr "静态定位"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.static.short"
+msgstr "静态"
 
 #: src/app/main/ui/workspace/sidebar
 msgid "workspace.options.layout.row-gap"

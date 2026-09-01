@@ -104,27 +104,29 @@
 
 (mf/defc font-selector*
   [{:keys [on-select on-close current-font show-recent full-size]}]
-  (let [selected     (mf/use-state current-font)
-        state*       (mf/use-state
-                      #(do {:term "" :backends #{}}))
-        state        (deref state*)
+  (let [selected      (mf/use-state current-font)
+        state*        (mf/use-state
+                       #(do {:term "" :backends #{}}))
+        state         (deref state*)
 
-        flist        (mf/use-ref)
-        input        (mf/use-ref)
+        flist         (mf/use-ref)
+        input         (mf/use-ref)
+        wrapper-ref   (mf/use-ref)
+        listening-ref (mf/use-ref false)
 
-        fonts        (mf/deref fonts/fonts)
-        fonts        (mf/with-memo [state fonts]
-                       (filter-fonts state fonts))
+        fonts         (mf/deref fonts/fonts)
+        fonts         (mf/with-memo [state fonts]
+                        (filter-fonts state fonts))
 
-        recent-fonts (mf/deref refs/recent-fonts)
-        recent-fonts (mf/with-memo [state recent-fonts]
-                       ;; FORK(字体列表只保留 Noto Sans SC): 历史 localStorage 里的
-                       ;; sourcesanspro / google 字体不在「最近使用」中显示。
-                       (->> (filter-fonts state recent-fonts)
-                            (filter fonts/font-visible?)))
+        recent-fonts  (mf/deref refs/recent-fonts)
+        recent-fonts  (mf/with-memo [state recent-fonts]
+                        ;; FORK(字体列表只保留 Noto Sans SC): 历史 localStorage 里的
+                        ;; sourcesanspro / google 字体不在「最近使用」中显示。
+                        (->> (filter-fonts state recent-fonts)
+                             (filter fonts/font-visible?)))
 
 
-        full-size?   (boolean (and full-size show-recent))
+        full-size?    (boolean (and full-size show-recent))
 
         select-next
         (mf/use-fn
@@ -163,10 +165,25 @@
          (mf/deps on-select on-close)
          (fn [font]
            (on-select font)
-           (on-close)))]
+           (on-close)))
+
+        on-click-outside
+        (mf/use-fn
+         (mf/deps on-close)
+         (fn [event]
+           (when (mf/ref-val listening-ref)
+             (let [wrapper (mf/ref-val wrapper-ref)]
+               (when (and (some? wrapper)
+                          (not (dom/child? (dom/get-target event) wrapper)))
+                 (on-close))))))]
 
     (mf/with-effect [fonts]
       (let [key (events/listen js/document "keydown" on-key-down)]
+        #(events/unlistenByKey key)))
+
+    (mf/with-effect []
+      (let [key (events/listen js/document "click" on-click-outside)]
+        (tm/schedule #(mf/set-ref-val! listening-ref true))
         #(events/unlistenByKey key)))
 
     (mf/with-effect [@selected]
@@ -190,7 +207,8 @@
             (.scrollToPosition ^js inst offset)))))
 
     [:div {:class [(stl/css-case :font-selector true
-                                 :fonts-on-modal (not full-size?))]}
+                                 :fonts-on-modal (not full-size?))]
+           :ref wrapper-ref}
      [:div {:class (stl/css-case :font-selector-dropdown true
                                  :font-selector-dropdown-full-size full-size?)}
       [:div {:class (stl/css :header)}
@@ -321,7 +339,7 @@
 
      [:div {:class (stl/css :font-option)
             :title (tr "inspect.attributes.typography.font-family")
-            :on-click #(reset! open-selector? true)}
+            :on-click #(swap! open-selector? not)}
       (cond
         (or (= :multiple font-id) (= "mixed" font-id))
         [:*

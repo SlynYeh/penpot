@@ -331,12 +331,15 @@
   [{:keys [shape zoom color on-move-selected on-context-menu disabled]}]
   (let [selrect-transform (mf/deref refs/workspace-selrect)
         transform-type    (mf/deref refs/current-transform)
-        [selrect transform] (dsh/get-selrect selrect-transform shape)]
+        [selrect transform] (dsh/get-selrect selrect-transform shape)
+        moving?             (= transform-type :move)
+        rotating?           (= transform-type :rotate)]
 
     (when (and (some? selrect)
-               (not (or (= transform-type :move)
-                        (= transform-type :rotate))))
-      [:g.controls {:pointer-events (if ^boolean disabled "none" "visible")}
+               (dsh/show-selection-overlay? transform-type (some? selrect-transform)))
+      [:g.controls {:pointer-events (if (or ^boolean disabled moving? rotating?)
+                                      "none"
+                                      "visible")}
        ;; Selection rect
        [:& selection-rect {:rect selrect
                            :transform transform

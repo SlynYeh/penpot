@@ -341,3 +341,9 @@
 (def ^:const resize-sample-time default-sample-time)
 (def ^:const rotation-sample-time default-sample-time)
 (def ^:const move-sample-time default-sample-time)
+
+(def ^:const nudge-commit-time
+  "Minimum ms between keyboard-nudge commits while a key is held.
+   Nudge writes the file tree instead of using a live modifier preview,
+   so this keeps OS key-repeat (~30Hz) from committing on every tick."
+  50)

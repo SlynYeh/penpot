@@ -10361,7 +10361,15 @@ msgid "workspace.options.layout.position.absolute"
 msgstr "Absolute"
 
 #: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.absolute.short"
+msgstr "Absolute"
+
+#: src/app/main/ui/workspace/sidebar
 msgid "workspace.options.layout.position.static"
+msgstr "Static"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.position.static.short"
 msgstr "Static"
 
 #: src/app/main/ui/workspace/sidebar

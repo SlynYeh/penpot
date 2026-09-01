@@ -6,7 +6,6 @@
 
 (ns app.main.fonts
   "Fonts management and loading logic."
-  (:require-macros [app.main.fonts :refer [preload-gfonts]])
   (:require
    [app.common.data :as d]
    [app.common.data.macros :as dm]
@@ -25,8 +24,12 @@
 
 (log/set-level! :warn)
 
-(def google-fonts
-  (preload-gfonts "fonts/gfonts.2025.11.28.json"))
+;; FORK(字体列表只保留 Noto Sans SC): 停用 Google 字体目录（~1900 个，且 nginx 已对
+;; /internal/gfonts/* 返回 404，无法加载）。恢复方法：取消下面 def 与底部 register! 的注释，
+;; 并在 ns 头部加回 (:require-macros [app.main.fonts :refer [preload-gfonts]])。
+;; 宏 preload-gfonts 与 resources/fonts/gfonts.2025.11.28.json 均保留未动。
+;; (def google-fonts
+;;   (preload-gfonts "fonts/gfonts.2025.11.28.json"))
 
 (def local-fonts
   [{:id "sourcesanspro"
@@ -52,9 +55,26 @@
 (defonce fontsdb (l/atom {}))
 (defonce fonts (l/atom []))
 
+(def fallback-font-id
+  ;; FORK: 字体匹配不到时（如旧文件引用已停用的 google 字体）默认显示的字体。
+  "notosanssc")
+
+(def ^:private visible-font-ids
+  ;; FORK(字体列表只保留 Noto Sans SC): fonts 向量（即字体选择列表）只包含这些字体，
+  ;; 外加团队上传的自定义字体（backend :custom）。fontsdb 仍注册全部字体——旧文件渲染、
+  ;; 当前字体名解析、wasm forced font 等引擎路径都依赖 fontsdb 的完整性。
+  #{fallback-font-id})
+
+(defn font-visible?
+  "FORK: 字体是否出现在字体选择列表中。"
+  [{:keys [id backend]}]
+  (boolean (or (contains? visible-font-ids id)
+               (= backend :custom))))
+
 (add-watch fontsdb "main"
            (fn [_ _ _ db]
              (->> (vals db)
+                  (filter font-visible?)
                   (sort-by :name)
                   (map-indexed #(assoc %2 :index %1))
                   (vec)
@@ -70,8 +90,9 @@
 
 (register! :builtin local-fonts)
 
-(when (contains? cf/flags :google-fonts-provider)
-  (register! :google google-fonts))
+;; FORK(字体列表只保留 Noto Sans SC): Google 字体不注册，见文件顶部注释。
+;; (when (contains? cf/flags :google-fonts-provider)
+;;   (register! :google google-fonts))
 
 (defn get-font-data [id]
   (get @fontsdb id))

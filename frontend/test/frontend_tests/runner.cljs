@@ -20,6 +20,7 @@
    [frontend-tests.data.workspace-texts-test]
    [frontend-tests.data.workspace-thumbnails-test]
    [frontend-tests.errors-test]
+   [frontend-tests.fonts-test]
    [frontend-tests.helpers-shapes-test]
    [frontend-tests.logic.comp-remove-swap-slots-test]
    [frontend-tests.logic.components-and-tokens]
@@ -83,6 +84,7 @@
    'frontend-tests.data.nitrate-test
    'frontend-tests.data.repo-test
    'frontend-tests.errors-test
+   'frontend-tests.fonts-test
    'frontend-tests.main-errors-test
    'frontend-tests.data.uploads-test
    'frontend-tests.data.viewer-test

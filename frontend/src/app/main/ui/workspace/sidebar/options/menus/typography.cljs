@@ -118,7 +118,10 @@
 
         recent-fonts (mf/deref refs/recent-fonts)
         recent-fonts (mf/with-memo [state recent-fonts]
-                       (filter-fonts state recent-fonts))
+                       ;; FORK(字体列表只保留 Noto Sans SC): 历史 localStorage 里的
+                       ;; sourcesanspro / google 字体不在「最近使用」中显示。
+                       (->> (filter-fonts state recent-fonts)
+                            (filter fonts/font-visible?)))
 
 
         full-size?   (boolean (and full-size show-recent))
@@ -243,6 +246,9 @@
 
         fonts           (mf/deref fonts/fontsdb)
         font            (get fonts font-id)
+        ;; FORK: 匹配不到字体（如旧文件引用已停用的 google 字体）时默认显示
+        ;; Noto Sans SC，不再显示「字体已删除」占位符。
+        font            (or font (get fonts fonts/fallback-font-id))
 
         last-font       (mf/use-ref nil)
 

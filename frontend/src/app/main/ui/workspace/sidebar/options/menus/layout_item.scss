@@ -58,7 +58,7 @@
 .align-row,
 .margin-row {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
 }
 
@@ -95,7 +95,7 @@
 .margin-simple {
   display: grid;
   gap: var(--sp-xs);
-  grid-template-columns: subgrid;
+  grid-template-columns: var(--grid-exception-input-width) var(--grid-exception-input-width);
 
   .vertical-margin,
   .horizontal-margin {
@@ -122,7 +122,7 @@
 
 .margin-multiple {
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: var(--grid-exception-input-width) var(--grid-exception-input-width);
   gap: var(--sp-xs);
 }
 
@@ -171,7 +171,12 @@
 .horizontal-fill,
 .vertical-fill {
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns:
+    var(--grid-exception-input-width) /* first input block */
+    var(--grid-exception-input-width) /* second input block */
+    var(--sp-xxxl); /* action button */
+
+  gap: var(--sp-xs);
   grid-column: 1 / -1;
 }
 

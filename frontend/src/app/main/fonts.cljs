@@ -50,7 +50,18 @@
     :name "Noto Sans SC"
     :family "notosanssc"
     :variants
-    [{:id "regular" :name "400" :weight "400" :style "normal" :ttf-url "notosanssc-regular.ttf"}]}])
+    ;; FORK(放开字重): 注册全部 100–900 字重供字重下拉选择；400 保留 id "regular"
+    ;; 兼容既有文件与 default-text-attrs。渲染仍走系统兜底字体，无 italic 字体文件
+    ;; 故不提供斜体；ttf-url 仅 wasm/导出嵌入使用（wasm 模式有 forced-font）。
+    [{:id "100" :name "100" :weight "100" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "200" :name "200" :weight "200" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "300" :name "300" :weight "300" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "regular" :name "400" :weight "400" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "500" :name "500" :weight "500" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "600" :name "600" :weight "600" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "700" :name "700" :weight "700" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "800" :name "800" :weight "800" :style "normal" :ttf-url "notosanssc-regular.ttf"}
+     {:id "900" :name "900" :weight "900" :style "normal" :ttf-url "notosanssc-regular.ttf"}]}])
 
 (defonce fontsdb (l/atom {}))
 (defonce fonts (l/atom []))

@@ -178,7 +178,8 @@
            (->> (:shapes parent)
                 (remove #(ctl/position-absolute? objects %))))]
 
-     (js/console.log "[set modifiers]" (pr-str {:modifier (mapv identity @transformed-parent-bounds) :parent-id parent-id}))
+     ;; NOTE: 调试日志保留在 CLJS 端；裸的 js/console.log 会让 JVM 编译失败（No such namespace: js）。
+     #?(:cljs (js/console.log "[set modifiers]" (pr-str {:modifier (mapv identity @transformed-parent-bounds) :parent-id parent-id})))
 
      (cond-> modif-tree
        (and has-modifiers? parent? (not root?))

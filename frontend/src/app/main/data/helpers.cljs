@@ -11,6 +11,7 @@
    [app.common.files.helpers :as cfh]
    [app.common.geom.matrix :as gmt]
    [app.common.geom.point :as gpt]
+   [app.common.geom.rect :as grc]
    [app.common.geom.shapes :as gsh]
    [app.common.types.path :as path]))
 
@@ -217,3 +218,42 @@
        (gmt/transform-in center transform)])
     [(dm/get-prop shape :selrect)
      (gsh/transform-matrix shape)]))
+
+(defn show-selection-overlay?
+  "Keep the overlay visible during a live :move preview (keyboard nudge /
+   mouse drag) once `workspace-selrect` has been pushed. Hide while
+   rotating, and hide a stale box at the start of a move."
+  [transform-type has-live-selrect?]
+  (and (not= transform-type :rotate)
+       (or (not= transform-type :move)
+           ^boolean has-live-selrect?)))
+
+(defn show-move-frame-outline?
+  "Frame/ghost outlines during :move are for mouse-drag drop-into-layout.
+   Keyboard nudge also sets :move, but must not keep the committed ghost."
+  [transform-type keyboard-nudge?]
+  (and (= transform-type :move)
+       (not keyboard-nudge?)))
+
+(defn modifiers->selrect-preview
+  "Build the `workspace-selrect` payload from committed shapes plus a
+   modifier tree, matching the format `get-selrect` reads."
+  [objects ids modif-tree]
+  (let [shapes (into []
+                     (keep (fn [id]
+                             (when-let [shape (get objects id)]
+                               (gsh/transform-shape shape (dm/get-in modif-tree [id :modifiers])))))
+                     ids)]
+    (when (seq shapes)
+      (if (= 1 (count shapes))
+        (let [shape   (first shapes)
+              selrect (dm/get-prop shape :selrect)]
+          {:center    (gsh/shape->center shape)
+           :width     (dm/get-prop selrect :width)
+           :height    (dm/get-prop selrect :height)
+           :transform (gsh/transform-matrix shape)})
+        (let [rect (gsh/shapes->rect shapes)]
+          {:center    (grc/rect->center rect)
+           :width     (dm/get-prop rect :width)
+           :height    (dm/get-prop rect :height)
+           :transform (gmt/matrix)})))))

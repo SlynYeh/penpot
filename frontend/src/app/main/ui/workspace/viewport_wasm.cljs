@@ -17,6 +17,7 @@
    [app.common.types.shape :as cts]
    [app.common.types.shape.layout :as ctl]
    [app.config :as cf]
+   [app.main.data.helpers :as dsh]
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.transforms :as dwt]
@@ -170,7 +171,8 @@
                 vbox
                 vport
                 zoom
-                edition]}
+                edition
+                keyboard-nudge?]}
         (mf/deref refs/workspace-local)
 
         {:keys [options-mode
@@ -343,7 +345,9 @@
         show-gradient-handlers?  (= (count selected) 1)
         show-grids?              (and (contains? layout :display-guides) (not page-transition?))
 
-        show-frame-outline?      (and (= transform :move) (not panning) (not page-transition?))
+        show-frame-outline?      (and (dsh/show-move-frame-outline? transform keyboard-nudge?)
+                                      (not panning)
+                                      (not page-transition?))
         show-outlines?           (and (nil? transform)
                                       (not panning)
                                       (not edition)

@@ -2345,7 +2345,18 @@
               updated-sync-groups (into #{}
                                         (keep #(ctk/resolve-sync-group (:type previous-shape) %))
                                         updated-attrs)
-              new-touched (set/union (or (:touched current-shape) #{}) updated-sync-groups)
+              ;; The granular text groups (e.g. :text-content-text) cannot be
+              ;; resolved from the copied attrs, so we recalculate them from
+              ;; the final content against the clean copy, the same way
+              ;; `set-shape-attr` does; otherwise a letters-only override
+              ;; loses its granularity on the first switch and is reset on
+              ;; the next one.
+              text-granular-groups (into #{}
+                                         (comp (filter #(= :content (:attr %)))
+                                               (mapcat #(txt/get-diff-type (:content current-shape) (:val %))))
+                                         roperations)
+              new-touched (-> (set/union (or (:touched current-shape) #{}) updated-sync-groups)
+                              (into text-granular-groups))
               roperations (into [{:type :set-touched :touched new-touched}] roperations)
               uoperations (into (list {:type :set-touched :touched (:touched current-shape)}) uoperations)]
           (cond-> changes

@@ -1046,7 +1046,7 @@
              (t/is (= (:font-size style-text-blocks) "24"))
              (t/is (= (:font-weight style-text-blocks) "700"))
              (t/is (= (:line-height style-text-blocks) 1))
-             (t/is (= (:font-family style-text-blocks) "sourcesanspro"))
+             (t/is (= (:font-family style-text-blocks) "notosanssc"))
              (t/is (= (:letter-spacing style-text-blocks) "2"))
              (t/is (= (:text-transform style-text-blocks) "uppercase"))
              (t/is (= (:text-decoration style-text-blocks) "underline"))

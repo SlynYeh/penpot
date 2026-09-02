@@ -7558,6 +7558,30 @@ msgid "workspace.options.layout.grid-layout-title"
 msgstr "网格布局"
 
 #: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.column"
+msgstr "列 %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.column-empty"
+msgstr "列 - 空"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.columns"
+msgstr "列 %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.row"
+msgstr "行 %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.row-empty"
+msgstr "行 - 空"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.rows"
+msgstr "行 %s"
+
+#: src/app/main/ui/workspace/sidebar
 msgid "workspace.options.layout.item-section"
 msgstr "布局子项"
 

@@ -10281,6 +10281,30 @@ msgid "workspace.options.layout.grid-layout-title"
 msgstr "Grid layout"
 
 #: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.column"
+msgstr "Column %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.column-empty"
+msgstr "Column - empty"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.columns"
+msgstr "Columns %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.row"
+msgstr "Row %s"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.row-empty"
+msgstr "Row - empty"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.options.layout.grid-track.rows"
+msgstr "Rows %s"
+
+#: src/app/main/ui/workspace/sidebar
 msgid "workspace.options.layout.item-section"
 msgstr "Layout item section"
 

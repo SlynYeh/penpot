@@ -19,7 +19,7 @@
 
 (mf/defc radio-button
   {::mf/props :obj}
-  [{:keys [icon id value disabled title icon-class type label]}]
+  [{:keys [icon id value disabled title icon-class type label children]}]
   (let [context     (mf/use-ctx context)
         allow-empty (unchecked-get context "allow-empty")
         type        (if ^boolean type
@@ -35,7 +35,8 @@
         encode-fn   (unchecked-get context "encode-fn")
         checked?    (= selected value)
 
-        value       (encode-fn value)]
+        value       (encode-fn value)
+        text        (or label children title)]
 
 
     [:label {:html-for id
@@ -48,7 +49,7 @@
 
      (if (some? icon)
        [:> icon* {:icon-id icon :class icon-class :aria-hidden true}]
-       [:span {:class (stl/css :title-name)} (or label value)])
+       [:span {:class (stl/css :title-name)} (or text value)])
 
      [:input {:id id
               :on-change on-change

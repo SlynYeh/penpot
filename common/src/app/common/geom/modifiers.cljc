@@ -179,7 +179,7 @@
                 (remove #(ctl/position-absolute? objects %))))]
 
      ;; NOTE: 调试日志保留在 CLJS 端；裸的 js/console.log 会让 JVM 编译失败（No such namespace: js）。
-     #?(:cljs (js/console.log "[set modifiers]" (pr-str {:modifier (mapv identity @transformed-parent-bounds) :parent-id parent-id})))
+     ;; #?(:cljs (js/console.log "[set modifiers]" (pr-str {:modifier (mapv identity @transformed-parent-bounds) :parent-id parent-id})))
 
      (cond-> modif-tree
        (and has-modifiers? parent? (not root?))
@@ -390,18 +390,19 @@
          sizing-auto-layouts (find-auto-layouts objects shapes-tree-layout)
 
          modif-tree
-         (let [result
-               #?(:cljs
-                  (let [t0 (js/performance.now)
-                        r  (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints)]
-                    (when ^boolean *assert*
-                      (.log js/console "[som]"
-                            "auto#=" (count sizing-auto-layouts)
-                            "auto=" (.toFixed (- (js/performance.now) t0) 1) "ms"))
-                    r)
-                  :clj
-                  (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints))]
-           result)
+         ;; (let [result
+         ;;       #?(:cljs
+         ;;          (let [t0 (js/performance.now)
+         ;;                r  (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints)]
+         ;;            (when ^boolean *assert*
+         ;;              (.log js/console "[som]"
+         ;;                    "auto#=" (count sizing-auto-layouts)
+         ;;                    "auto=" (.toFixed (- (js/performance.now) t0) 1) "ms"))
+         ;;            r)
+         ;;          :clj
+         ;;          (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints))]
+         ;;   result)
+         (sizing-auto-modifiers modif-tree sizing-auto-layouts objects bounds-map ignore-constraints)
 
          modif-tree
          (if old-modif-tree

@@ -8820,6 +8820,14 @@ msgstr "Delete"
 msgid "workspace.shape.menu.delete-flow-start"
 msgstr "Delete flow start"
 
+#: src/app/main/ui/workspace/context_menu.cljs:349
+msgid "workspace.shape.menu.delete-table-column"
+msgstr "Delete table column"
+
+#: src/app/main/ui/workspace/context_menu.cljs:346
+msgid "workspace.shape.menu.delete-table-row"
+msgstr "Delete table row"
+
 #: src/app/main/ui/workspace/sidebar/assets/common.cljs:567
 msgid "workspace.shape.menu.detach-instance"
 msgstr "Detach instance"
@@ -8896,6 +8904,22 @@ msgstr "Hide"
 #: src/app/main/ui/workspace/context_menu.cljs:737, src/app/main/ui/workspace/main_menu.cljs:484
 msgid "workspace.shape.menu.hide-ui"
 msgstr "Show / Hide UI"
+
+#: src/app/main/ui/workspace/context_menu.cljs:341
+msgid "workspace.shape.menu.insert-table-column-left"
+msgstr "Insert column left"
+
+#: src/app/main/ui/workspace/context_menu.cljs:343
+msgid "workspace.shape.menu.insert-table-column-right"
+msgstr "Insert column right"
+
+#: src/app/main/ui/workspace/context_menu.cljs:337
+msgid "workspace.shape.menu.insert-table-row-above"
+msgstr "Insert row above"
+
+#: src/app/main/ui/workspace/context_menu.cljs:339
+msgid "workspace.shape.menu.insert-table-row-below"
+msgstr "Insert row below"
 
 #: src/app/main/ui/workspace/context_menu.cljs:466, src/app/main/ui/workspace/sidebar/options/menus/bool.cljs:95
 msgid "workspace.shape.menu.intersection"

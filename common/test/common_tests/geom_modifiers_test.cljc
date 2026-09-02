@@ -6,12 +6,20 @@
 
 (ns common-tests.geom-modifiers-test
   (:require
+   [app.common.data :as d]
+   [app.common.files.helpers :as cfh]
    [app.common.geom.modifiers :as gm]
    [app.common.geom.point :as gpt]
+   [app.common.geom.rect :as grc]
+   [app.common.geom.shapes.common :as gco]
+   [app.common.geom.shapes.grid-layout.layout-data :as glld]
+   [app.common.geom.shapes.points :as gpo]
+   [app.common.math :as mth]
    [app.common.test-helpers.files :as thf]
    [app.common.test-helpers.ids-map :as thi]
    [app.common.test-helpers.shapes :as ths]
    [app.common.types.modifiers :as ctm]
+   [app.common.types.shape :as cts]
    [clojure.test :as t]))
 
 (t/use-fixtures :each thi/test-fixture)
@@ -185,3 +193,144 @@
 
       (t/is (some? result))
       (t/is (contains? result rect-id)))))
+
+;; ---- calc-layout-data cache tests (direct, meaningful)
+;;
+;; The cache wrapper (`glld/calc-layout-data`) delegates to `calc-layout-data*`
+;; when `*grid-layout-cache*` is nil (truly uncached) and otherwise keys on a
+;; fingerprint of its inputs. These tests call `glld/calc-layout-data` directly
+;; (NOT via `gm/set-objects-modifiers`, which binds the cache internally) so we
+;; control precisely whether the cache is bound.
+;;
+;; Inputs are built the same way the grid editor does
+;; (frontend/.../grid_layout_editor.cljs:1032-1041): the bounds map is keyed by
+;; ALL descendants (not just immediate children) because `child-min-*` strict
+;; derefs `@(get bounds <grandchild-id>)` for fill-width layout-frame children.
+
+;; Fixed ids so the objects map can be rebuilt with a resized grandchild while
+;; keeping parent/child identities (and thus the fingerprint) stable.
+(def ^:private cache-p-id #uuid "00000000-0000-0000-0000-0000000000a1")
+(def ^:private cache-c-id #uuid "00000000-0000-0000-0000-0000000000a2")
+(def ^:private cache-g-id #uuid "00000000-0000-0000-0000-0000000000a3")
+
+(defn- calc-layout-inputs
+  "Build `[parent transformed-parent-bounds children bounds objects]` for
+  `glld/calc-layout-data`, mirroring the grid editor call site. The bounds map
+  is keyed by every descendant so grandchild derefs resolve."
+  [objects frame-id]
+  (let [parent   (get objects frame-id)
+        tp-bounds (:points parent)
+        children  (->> (cfh/get-immediate-children objects frame-id {:remove-hidden true})
+                       (map #(vector (gpo/parent-coords-bounds (:points %) (:points parent)) %)))
+        desc-ids  (cfh/get-children-ids objects frame-id)
+        bounds    (d/lazy-map desc-ids #(gco/shape->points (get objects %)))]
+    [parent tp-bounds children bounds objects]))
+
+(defn- grid-auto-parent-frame
+  "Grid frame with one AUTO column (so `set-auto-base-size` grows it to the
+  child's min-width) and one fixed row. `child-ids` become single-span cells
+  in column 1 / row 1."
+  [id child-ids]
+  (assoc (cts/setup-shape
+          {:type :frame
+           :name "GridParent"
+           :layout :grid
+           :layout-grid-dir :row
+           :layout-grid-columns [{:type :auto :value 1}]
+           :layout-grid-rows [{:type :fixed :value 100.0}]
+           :layout-grid-cells (into {}
+                                    (map-indexed (fn [i cid]
+                                                   [(str "cell-" i)
+                                                    {:shapes [cid]
+                                                     :column 1 :row 1
+                                                     :column-span 1 :row-span 1}])
+                                                 child-ids))
+           :layout-padding-type :multiple
+           :layout-padding {:p1 0 :p2 0 :p3 0 :p4 0}
+           :layout-gap {:row-gap 0 :column-gap 0}
+           :x 0 :y 0 :width 300 :height 100})
+         :id id
+         :shapes (vec child-ids)))
+
+(t/deftest calc-layout-data-cache-basic-equivalence
+  (t/testing "calc-layout-data: cached miss+hit == truly-uncached, and the cache dedups to one entry"
+    (let [r-id (random-uuid)
+          objects {cache-p-id (grid-auto-parent-frame cache-p-id [r-id])
+                   r-id       (assoc (cts/setup-shape
+                                      {:type :rect
+                                       :name "Rect"
+                                       :x 0 :y 0 :width 60 :height 40})
+                                     :id r-id :parent-id cache-p-id)}
+          [parent tp-bounds children bounds objs] (calc-layout-inputs objects cache-p-id)
+          uncached (glld/calc-layout-data parent tp-bounds children bounds objs)
+          cache    (atom {})
+          miss     (binding [glld/*grid-layout-cache* cache]
+                     (glld/calc-layout-data parent tp-bounds children bounds objs))
+          hit      (binding [glld/*grid-layout-cache* cache]
+                     (glld/calc-layout-data parent tp-bounds children bounds objs))]
+      (t/is (= uncached miss) "first cached call (miss) equals the uncached result")
+      (t/is (= uncached hit)  "second cached call (hit) equals the uncached result")
+      ;; Value equality alone can't distinguish "returned the stored object"
+      ;; from "re-solved to an equal value" — assert identity on the hit path.
+      (t/is (identical? miss hit) "hit returns the exact stored object, not a re-solve")
+      ;; Two calls with identical inputs must store exactly one entry (dedup).
+      (t/is (= 1 (count @cache)) "two identical calls produce exactly one cache entry")
+      ;; Sanity: the auto column actually grew to the child width (60), proving
+      ;; the result is meaningful and child-min-width was exercised.
+      (t/is (mth/close? 60.0 (-> uncached :column-tracks first :size) 0.001)
+            "auto column track grew to the child's width"))))
+
+(t/deftest calc-layout-data-cache-nested-frame-grandchild-resize
+  (t/testing "resizing a grandchild inside a fill-width layout-frame child invalidates the parent cache (no stale hit)"
+    ;; Grid parent P -> flex frame C (fill-width, has its own layout) -> rect G.
+    ;; `child-min-width(C)` (strict, flex branch) derefs `@(get bounds g-id)`
+    ;; via `layout-content-bounds`, so G's size affects P's result. But C is a
+    ;; fixed-size frame, so its OWN bounds (the only thing P's plain fingerprint
+    ;; hashes for C) do not change when G is resized. If the fingerprint does not
+    ;; capture the grandchild, the second call under the same atom is a stale hit.
+    (let [build (fn [g-width]
+                  {cache-p-id (grid-auto-parent-frame cache-p-id [cache-c-id])
+                   cache-c-id (assoc (cts/setup-shape
+                                      {:type :frame
+                                       :name "FlexChild"
+                                       :layout :flex
+                                       :layout-flex-dir :row
+                                       :layout-item-h-sizing :fill
+                                       :layout-padding-type :multiple
+                                       :layout-padding {:p1 0 :p2 0 :p3 0 :p4 0}
+                                       :layout-gap {:row-gap 0 :column-gap 0}
+                                       :x 0 :y 0 :width 100 :height 80})
+                                     :id cache-c-id :parent-id cache-p-id :shapes [cache-g-id])
+                   cache-g-id (assoc (cts/setup-shape
+                                      {:type :rect
+                                       :name "Grandchild"
+                                       :x 0 :y 0 :width g-width :height 40})
+                                     :id cache-g-id :parent-id cache-c-id)})
+          objects1 (build 50)
+          [parent tp-bounds children bounds objs] (calc-layout-inputs objects1 cache-p-id)
+
+          r1    (glld/calc-layout-data parent tp-bounds children bounds objs)
+          cache (atom {})
+          miss  (binding [glld/*grid-layout-cache* cache]
+                  (glld/calc-layout-data parent tp-bounds children bounds objs))
+          hit   (binding [glld/*grid-layout-cache* cache]
+                  (glld/calc-layout-data parent tp-bounds children bounds objs))]
+
+      (t/is (= r1 miss hit) "cached miss+hit equals uncached for the nested-frame case")
+      (t/is (= 1 (count @cache)) "one cache entry after the initial pair of calls")
+
+      ;; Now resize the grandchild. C's own points (and thus P's direct-child
+      ;; fingerprint slice for C) are unchanged -- only a grandchild bound moves.
+      (let [objects2 (build 200)
+            inputs2  (calc-layout-inputs objects2 cache-p-id)
+            r2-uncached (apply glld/calc-layout-data inputs2)
+            ;; DECISIVE: same cache atom (already holds fp(r1)). A complete
+            ;; fingerprint misses here and returns the fresh result; an
+            ;; incomplete one hits and returns the stale r1.
+            r2-cached (binding [glld/*grid-layout-cache* cache]
+                        (apply glld/calc-layout-data inputs2))]
+        (t/is (not= r1 r2-uncached)
+              "resizing the grandchild changes the uncached result (input change matters)")
+        (t/is (= r2-uncached r2-cached)
+              "cached result after grandchild resize equals fresh uncached (no stale hit)")))))
+

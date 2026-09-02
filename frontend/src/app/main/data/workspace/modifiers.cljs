@@ -567,6 +567,24 @@
              (when (some? preview)
                (rx/push! ms/workspace-selrect preview)))))))))
 
+(defn set-preview-modifiers
+  "Lightweight live-preview for wasm=false: writes the raw modif-tree straight
+  to :workspace-modifiers WITHOUT running gm/set-objects-modifiers (no
+  layout/constraint/auto-sizing propagation). Only the explicitly-modified
+  shapes render their new transform; descendants are NOT re-laid-out until
+  pointer-up. The trailing rx/last frame and apply-modifiers still run the
+  full solve, so the committed result is exact.
+
+  Only valid for transform modifiers (resize/move/rotate). Do NOT use for
+  grid track/cell change-property modifiers — those only render via the solve."
+  ([modif-tree]
+   (set-preview-modifiers modif-tree false))
+  ([modif-tree _ignore-snap-pixel]
+   (ptk/reify ::set-preview-modifiers
+     ptk/UpdateEvent
+     (update [_ state]
+       (assoc state :workspace-modifiers modif-tree)))))
+
 (defn- parse-structure-modifiers
   [modif-tree]
   (into

@@ -167,6 +167,12 @@
 (def grid-help-uri        (obj/get global "penpotGridHelpURI"))
 (def plugins-list-uri     (obj/get global "penpotPluginsListURI"))
 (def plugins-whitelist    (into #{} (obj/get global "penpotPluginsWhitelist" [])))
+
+;; Component ids (lowercase uuid strings) that enable the table
+;; insert-row/insert-column context menu actions. Configured via
+;; `penpotTableComponentIds` in resources/config.js.
+(def table-component-ids
+  (into #{} (map str) (obj/get global "penpotTableComponentIds" [])))
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

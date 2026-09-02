@@ -18,6 +18,7 @@
     "start:plugin:colors-to-tokens": "pnpm --filter colors-to-tokens-plugin run init",
     "start:plugin:poc-tokens": "pnpm --filter poc-tokens-plugin run init",
     "start:plugin:api-test-suite": "pnpm --filter plugin-api-test-suite run init",
+    "start:plugin:smart-table-plugin": "pnpm --filter penpot-smart-table-plugin run init",
     "build:runtime": "pnpm --filter @penpot/plugins-runtime build",
     "build:plugins": "pnpm --parallel --filter './apps/*-plugin' --filter plugin-api-test-suite --filter '!poc-state-plugin' build",
     "build:styles-example": "pnpm --filter example-styles build",

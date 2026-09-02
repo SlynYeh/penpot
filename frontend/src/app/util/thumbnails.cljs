@@ -54,3 +54,20 @@
     (if (or (< aspect-ratio min-aspect-ratio) (> aspect-ratio max-aspect-ratio))
       (get-proportional-size width height min-size max-absolute-size)
       (get-proportional-size width height min-size max-recommended-size))))
+
+(def ^:const frame-raster-scale 2)
+
+(defn get-frame-raster-size
+  "Pixel size used when rasterizing a canvas frame thumbnail.
+
+  2x the recommended preview size; paired with high-quality resampling
+  so 100% zoom stays sharp on retina.
+  Extreme aspect ratios already at `max-absolute-size` stay clamped."
+  [width height]
+  (let [[rel-width rel-height] (get-relative-size width height)
+        scaled-width           (* rel-width frame-raster-scale)
+        scaled-height          (* rel-height frame-raster-scale)]
+    (if (or (> scaled-width max-absolute-size)
+            (> scaled-height max-absolute-size))
+      (get-proportional-size scaled-width scaled-height min-size max-absolute-size)
+      [scaled-width scaled-height])))

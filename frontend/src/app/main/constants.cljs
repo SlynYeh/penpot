@@ -346,5 +346,6 @@
   "Live (per-frame) layout solves during resize/rotate previews are allowed
   only when the affected tree is pure-plain AND below this node count. Above
   it the preview freezes even without layouts: a 2000-child plain frame
-  costs ~8-16ms/frame in-browser (mem:frontend/drag-resize-vertex-perf)."
+  costs ~8-16ms/frame in-browser (mem:frontend/drag-resize-vertex-perf);
+  800 ≈ 4-8ms/frame in-browser, interpolated from that bench."
   800)

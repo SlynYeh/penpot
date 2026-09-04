@@ -327,6 +327,29 @@
        (map first)
        (set)))
 
+(defn skip-live-solve?
+  "Decides whether a live (per-frame) layout solve should be SKIPPED for a
+  transform preview drag over `ids`.
+
+  Returns true when the affected tree -- the resolve-tree closure of `ids`,
+  which walks up to layout ancestors -- contains any flex/grid frame, or when
+  the tree exceeds `max-nodes` (giant plain subtrees stay affordable only
+  below that size).
+
+  Measured rationale (mem:frontend/drag-resize-vertex-perf,
+  tools/analysis/solve_resize_bench*.clj): per-frame cost tracks the NUMBER
+  of layout frames in the affected tree (~0.1ms each on JVM), with
+  auto-sized nested layouts amplifying up to 17x; pure plain subtrees are
+  linear and cheap. The boundary MUST be the resolve-tree closure, not the
+  dragged roots' own subtrees: resizing a direct child of a grid re-solves
+  the whole grid (get-reflow-root walks up through layouts/groups; a
+  plain-frame ancestor cuts the walk). Compute ONCE per gesture."
+  [ids objects max-nodes]
+  (let [tree (vec (cgst/resolve-tree (set ids) objects))]
+    (boolean
+     (or (some ctl/any-layout? tree)
+         (> (count tree) max-nodes)))))
+
 (defn set-objects-modifiers
   "Applies recursively the modifiers and calculate the layouts and constraints for all the items to be placed correctly"
   ([modif-tree objects]

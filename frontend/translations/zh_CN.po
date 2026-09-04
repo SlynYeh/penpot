@@ -1750,6 +1750,38 @@ msgstr "SVG"
 msgid "inspect.tabs.code.selected.text"
 msgstr "文本"
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:95
+msgid "keymap.tab.arrange"
+msgstr "排列"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:94
+msgid "keymap.tab.edit"
+msgstr "编辑"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:88
+msgid "keymap.tab.important"
+msgstr "重要快捷键"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:93
+msgid "keymap.tab.layers"
+msgstr "图层"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:91
+msgid "keymap.tab.selection"
+msgstr "选择"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:90
+msgid "keymap.tab.text"
+msgstr "文本"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:89
+msgid "keymap.tab.tools-view"
+msgstr "工具&视图"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:92
+msgid "keymap.tab.zoom"
+msgstr "缩放"
+
 #: src/app/main/ui/dashboard/comments.cljs:94
 msgid "label.mark-all-as-read"
 msgstr "标记全部为已读"

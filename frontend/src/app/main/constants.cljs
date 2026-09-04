@@ -342,6 +342,13 @@
 (def ^:const rotation-sample-time default-sample-time)
 (def ^:const move-sample-time default-sample-time)
 
+(def ^:const preview-solve-max-affected-nodes
+  "Live (per-frame) layout solves during resize/rotate previews are allowed
+  only when the affected tree is pure-plain AND below this node count. Above
+  it the preview freezes even without layouts: a 2000-child plain frame
+  costs ~8-16ms/frame in-browser (mem:frontend/drag-resize-vertex-perf);
+  800 ≈ 4-8ms/frame in-browser, interpolated from that bench."
+  800)
 (def ^:const nudge-commit-time
   "Minimum ms between keyboard-nudge commits while a key is held.
    Nudge writes the file tree instead of using a live modifier preview,

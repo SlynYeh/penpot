@@ -328,18 +328,26 @@
                                (dwm/create-modif-tree shape-ids %)
                                :ignore-constraints (contains? layout :scale-text)))))
 
-                      (let [emit-preview
+                      (let [skip-solve? (gm/skip-live-solve? shape-ids objects
+                                                             mconst/preview-solve-max-affected-nodes)
+
+                            emit-preview
                             (fn [modifiers]
                               (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
-                                (rx/of (dwm/set-preview-modifiers modif-tree))))
+                                (rx/of (if skip-solve?
+                                         (dwm/set-preview-modifiers modif-tree)
+                                         ;; Pure-plain affected tree: cheap linear solve, children
+                                         ;; follow live via constraints (upstream behavior pre-fork).
+                                         (dwm/set-modifiers modif-tree (contains? layout :scale-text))))))
 
                             emit-final
                             (fn [modifiers]
                               (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
                                 (rx/of (dwm/set-modifiers modif-tree (contains? layout :scale-text)))))]
-                        ;; Live frames skip the layout solve (smooth drag); the
-                        ;; trailing rx/last + apply-modifiers run the exact full
-                        ;; solve so the committed result is unchanged.
+                        ;; Layout-affected or oversized trees freeze the preview
+                        ;; (smooth drag); pure-plain trees solve live. The trailing
+                        ;; rx/last + apply-modifiers run the exact full solve so the
+                        ;; committed result is unchanged either way.
                         (rx/merge
                          (->> resize-events-stream
                               (rx/sample mconst/resize-sample-time)
@@ -540,15 +548,23 @@
 
            (rx/of (finish-transform)))
 
-          (let [emit-preview
+          (let [objects     (dsh/lookup-page-objects state)
+                skip-solve? (gm/skip-live-solve? (mapv :id shapes) objects
+                                                 mconst/preview-solve-max-affected-nodes)
+
+                emit-preview
                 (fn [angle]
-                  (dwm/set-preview-modifiers (rotation-modifiers angle shapes group-center)))
+                  (if skip-solve?
+                    (dwm/set-preview-modifiers (rotation-modifiers angle shapes group-center))
+                    ;; Pure-plain affected tree: full rotation solve per frame.
+                    (dwm/set-rotation-modifiers angle shapes group-center)))
 
                 emit-final
                 (fn [angle] (dwm/set-rotation-modifiers angle shapes group-center))]
-            ;; Live frames skip the layout solve (smooth drag); the
-            ;; trailing rx/last + apply-modifiers run the exact full
-            ;; solve so the committed result is unchanged.
+            ;; Layout-affected or oversized trees freeze the preview
+            ;; (smooth drag); pure-plain trees solve live. The trailing
+            ;; rx/last + apply-modifiers run the exact full solve so the
+            ;; committed result is unchanged either way.
             (rx/concat
              (rx/merge
               (->> angle-stream

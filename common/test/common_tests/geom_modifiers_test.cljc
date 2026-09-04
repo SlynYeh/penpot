@@ -20,6 +20,7 @@
    [app.common.test-helpers.shapes :as ths]
    [app.common.types.modifiers :as ctm]
    [app.common.types.shape :as cts]
+   [app.common.uuid :as uuid]
    [clojure.test :as t]))
 
 (t/use-fixtures :each thi/test-fixture)
@@ -333,4 +334,58 @@
               "resizing the grandchild changes the uncached result (input change matters)")
         (t/is (= r2-uncached r2-cached)
               "cached result after grandchild resize equals fresh uncached (no stale hit)")))))
+
+;; ---- skip-live-solve? --------------------------------------------------
+
+(defn- sm-shape
+  ([id type parent-id] (sm-shape id type parent-id [] nil))
+  ([id type parent-id shapes] (sm-shape id type parent-id shapes nil))
+  ([id type parent-id shapes layout]
+   (cond-> {:id id :type type :parent-id parent-id :shapes (vec shapes)}
+     (some? layout) (assoc :layout layout))))
+
+(t/deftest skip-live-solve-test
+  (t/testing "pure plain subtree, no layouts anywhere -> solve allowed"
+    (let [root (uuid/next) r1 (uuid/next) r2 (uuid/next)
+          objects {root (sm-shape root :frame uuid/zero [r1 r2])
+                   r1   (sm-shape r1 :rect root)
+                   r2   (sm-shape r2 :rect root)}]
+      (t/is (false? (gm/skip-live-solve? [root] objects 100)))))
+
+  (t/testing "subtree containing a grid descendant -> skip"
+    (let [root (uuid/next) grid (uuid/next) c1 (uuid/next)
+          objects {root (sm-shape root :frame uuid/zero [grid])
+                   grid (sm-shape grid :frame root [c1] :grid)
+                   c1   (sm-shape c1 :rect grid)}]
+      (t/is (true? (gm/skip-live-solve? [root] objects 100)))))
+
+  (t/testing "dragged shape is a DIRECT child of a grid (ancestor closure) -> skip"
+    (let [grid (uuid/next) cell (uuid/next)
+          objects {grid (sm-shape grid :frame uuid/zero [cell] :grid)
+                   cell (sm-shape cell :rect grid)}]
+      (t/is (true? (gm/skip-live-solve? [cell] objects 100)))))
+
+  (t/testing "plain frame between shape and grid cuts the reflow walk -> solve allowed"
+    (let [grid (uuid/next) plain (uuid/next) deep (uuid/next)
+          objects {grid  (sm-shape grid :frame uuid/zero [plain] :grid)
+                   plain (sm-shape plain :frame grid [deep])
+                   deep  (sm-shape deep :rect plain)}]
+      (t/is (false? (gm/skip-live-solve? [deep] objects 100)))))
+
+  (t/testing "tree larger than max-nodes -> skip even without layouts"
+    (let [root (uuid/next)
+          kids (repeatedly 5 uuid/next)
+          objects (into {root (sm-shape root :frame uuid/zero kids)}
+                        (map (fn [id] [id (sm-shape id :rect root)]) kids))]
+      (t/is (true?  (gm/skip-live-solve? [root] objects 5)))
+      (t/is (false? (gm/skip-live-solve? [root] objects 100)))))
+
+  (t/testing "multi-root: one root whose closure hits a layout flips the gesture"
+    (let [proot (uuid/next) r1 (uuid/next)
+          gparent (uuid/next) gchild (uuid/next)
+          objects {proot  (sm-shape proot :frame uuid/zero [r1])
+                   r1     (sm-shape r1 :rect proot)
+                   gparent (sm-shape gparent :frame uuid/zero [gchild] :grid)
+                   gchild (sm-shape gchild :rect gparent)}]
+      (t/is (true? (gm/skip-live-solve? [proot gchild] objects 100))))))
 

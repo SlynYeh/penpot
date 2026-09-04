@@ -1,0 +1,124 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "ds/spacing.scss" as *;
+@use "ds/typography.scss" as *;
+@use "ds/z-index.scss" as *;
+@use "ds/_sizes.scss" as *;
+@use "refactor/common-refactor.scss" as deprecated;
+
+.keymap-wrapper {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: deprecated.$z-index-10;
+  display: flex;
+  justify-content: center;
+  padding-inline: deprecated.$s-16;
+  pointer-events: none; // 非模态：wrapper 不拦截画布交互
+}
+
+.keymap-panel {
+  pointer-events: auto;
+  width: min(100%, 1200px);
+  max-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--panel-background-color);
+  border: deprecated.$s-1 solid var(--panel-border-color);
+  border-radius: deprecated.$br-8 deprecated.$br-8 0 0;
+}
+
+.keymap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-8;
+  padding-inline-end: deprecated.$s-8;
+}
+
+.keymap-tabs {
+  display: flex;
+  gap: deprecated.$s-16;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  align-self: stretch;
+  border-bottom: deprecated.$s-1 solid var(--panel-border-color);
+}
+
+.keymap-tab {
+  @include use-typography("body-medium");
+
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: deprecated.$s-8 deprecated.$s-4;
+  color: var(--color-foreground-secondary);
+  border-bottom: deprecated.$s-2 solid transparent;
+
+  &.selected {
+    color: var(--color-foreground-primary);
+    font-weight: 600;
+    border-bottom-color: var(--color-accent-primary);
+  }
+}
+
+.keymap-content {
+  display: flex;
+  gap: deprecated.$s-24;
+  padding: deprecated.$s-12 deprecated.$s-16;
+  overflow-x: auto;
+}
+
+.keymap-column {
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-4;
+  flex-shrink: 0;
+  width: deprecated.$s-192;
+}
+
+.keymap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-16;
+  min-height: deprecated.$s-24;
+}
+
+.keymap-item-label {
+  @include use-typography("body-small");
+
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keymap-keys {
+  display: flex;
+  gap: deprecated.$s-2;
+  flex-shrink: 0;
+}
+
+.keymap-key {
+  @include use-typography("body-small");
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: deprecated.$s-20;
+  min-height: deprecated.$s-20;
+  padding: 0 deprecated.$s-4;
+  border-radius: deprecated.$br-4;
+  background-color: var(--menu-shortcut-background-color);
+  border: deprecated.$s-1 solid var(--panel-border-color);
+}

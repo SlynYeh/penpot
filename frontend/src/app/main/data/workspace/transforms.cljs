@@ -329,10 +329,17 @@
                                (dwm/create-modif-tree shape-ids %)
                                :ignore-constraints (contains? layout :scale-text)))))
 
-                      (let [emit-preview
+                      (let [skip-solve? (gm/skip-live-solve? shape-ids objects
+                                                             mconst/preview-solve-max-affected-nodes)
+
+                            emit-preview
                             (fn [modifiers]
                               (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
-                                (rx/of (dwm/set-preview-modifiers modif-tree))))
+                                (rx/of (if skip-solve?
+                                         (dwm/set-preview-modifiers modif-tree)
+                                         ;; Pure-plain affected tree: cheap linear solve, children
+                                         ;; follow live via constraints (upstream behavior pre-fork).
+                                         (dwm/set-modifiers modif-tree (contains? layout :scale-text))))))
 
                             emit-final
                             (fn [modifiers]

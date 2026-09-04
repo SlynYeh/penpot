@@ -157,7 +157,12 @@
 .position,
 .rotation-radius {
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns:
+    var(--grid-exception-input-width) /* first input block */
+    var(--grid-exception-input-width) /* second input block */
+    var(--sp-xxxl); /* action button */
+
+  gap: var(--sp-xs);
   grid-column: 1/-1;
 }
 

@@ -37,7 +37,7 @@
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
 
-(def scale-per-pixel -0.0057)
+(def zoom-per-spin 0.1)
 
 (defn on-pointer-down
   [{:keys [id blocked hidden type]} selected edition drawing-tool text-editing?
@@ -450,9 +450,11 @@
 
              delta-y    (.-pixelY norm-event)
              delta-x    (.-pixelX norm-event)
-             delta-zoom (+ delta-y delta-x)
+             spin-y     (.-spinY norm-event)
+             spin-x     (.-spinX norm-event)
+             delta-zoom (+ spin-y spin-x)
 
-             scale      (+ 1 (mth/abs (* scale-per-pixel delta-zoom)))
+             scale      (+ 1 (mth/abs (* zoom-per-spin delta-zoom)))
              scale      (if (pos? delta-zoom) (/ 1 scale) scale)]
 
          (when (or (uwvv/inside-viewport? target) picking-color?)

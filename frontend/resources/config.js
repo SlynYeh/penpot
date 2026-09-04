@@ -1,6 +1,10 @@
 // Runtime configuration for Penpot frontend
 // This file is served from the static resources and can be overridden per deployment
 // Frontend configuration
+
+// 从指定共享库拖入组件时，自动解绑实例（列表为库文件 file-id）
+window.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"];
+
 (function () {
   // 直接读取 iframe 自身的完整地址（src 属性的值）
   var _iframeSrc = window.location.href;

@@ -201,12 +201,19 @@
                             :on-change set-cell-mode
                             :name "cell-mode"
                             :wide true}
-          [:& radio-button {:value "auto" :id :auto :title (tr "workspace.options.layout.cell-mode.auto")}]
-          [:& radio-button {:value "manual" :id :manual :title (tr "workspace.options.layout.cell-mode.manual")}]
+          [:& radio-button {:value "auto"
+                            :id "cell-mode-auto"
+                            :title (tr "workspace.options.layout.cell-mode.auto")}
+           (tr "workspace.options.layout.cell-mode.auto")]
+          [:& radio-button {:value "manual"
+                            :id "cell-mode-manual"
+                            :title (tr "workspace.options.layout.cell-mode.manual")}
+           (tr "workspace.options.layout.cell-mode.manual")]
           [:& radio-button {:value "area"
-                            :id :area
+                            :id "cell-mode-area"
                             :title (tr "workspace.options.layout.cell-mode.area")
-                            :disabled (not valid-area-cells?)}]]]
+                            :disabled (not valid-area-cells?)}
+           (tr "workspace.options.layout.cell-mode.area")]]]
 
         (when (= :area cell-mode)
           [:div {:class (stl/css :row)}

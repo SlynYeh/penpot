@@ -10,7 +10,7 @@
 
 .radius {
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: var(--grid-exception-input-width) var(--sp-xxxl);
   gap: var(--sp-xs);
 }
 

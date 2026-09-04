@@ -728,7 +728,7 @@
 
            viewbox        (str/ffmt "% % % %" x y width height)
 
-           [fixed-width fixed-height] (th/get-relative-size width height)
+           [frame-width frame-height]         (th/get-frame-raster-size width height)
            [component-width component-height] (th/get-proportional-size width height 140 140)
 
            data           (with-redefs [cfg/public-uri cfg/rasterizer-uri]
@@ -750,11 +750,12 @@
                                :cause cause)
                         (rx/empty)))
             (rx/map (fn [styles]
-                      {:id object-id
-                       :data data
-                       :width (if component? component-width fixed-width)
-                       :height (if component? component-height fixed-height)
-                       :styles styles}))))
+                      {:id      object-id
+                       :data    data
+                       :width   (if component? component-width frame-width)
+                       :height  (if component? component-height frame-height)
+                       :quality (when-not component? "high")
+                       :styles  styles}))))
 
      (do
        (l/warn :msg "imposter shape is nil")

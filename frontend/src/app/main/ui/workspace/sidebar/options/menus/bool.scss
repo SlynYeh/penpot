@@ -15,7 +15,7 @@
 
 .bool-group {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(4);
   grid-column: 1 / span 4;
 }
 

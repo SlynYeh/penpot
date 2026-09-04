@@ -900,9 +900,11 @@
                                :wide true}
              [:& radio-button {:value "static"
                                :id :static-position
+                               :label (tr "workspace.options.layout.position.static.short")
                                :title (tr "workspace.options.layout.position.static")}]
              [:& radio-button {:value "absolute"
                                :id :absolute-position
+                               :label (tr "workspace.options.layout.position.absolute.short")
                                :title (tr "workspace.options.layout.position.absolute")}]]]
 
            [:div {:class (stl/css :z-index-wrapper)

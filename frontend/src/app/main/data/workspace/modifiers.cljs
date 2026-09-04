@@ -551,7 +551,21 @@
      (update [_ state]
        (let [page-id   (:current-page-id state)
              modifiers (calculate-modifiers state ignore-constraints ignore-snap-pixel modif-tree page-id params)]
-         (assoc state :workspace-modifiers modifiers))))))
+         (assoc state :workspace-modifiers modifiers)))
+
+     ;; SVG keyboard nudge (and mouse drag) only wrote :workspace-modifiers.
+     ;; Push the same live selrect the WASM path already streams so the
+     ;; overlay can follow without waiting for apply-modifiers.
+     ptk/EffectEvent
+     (effect [_ state _]
+       (let [modifiers (:workspace-modifiers state)]
+         (when (and (seq modifiers)
+                    (every? #(ctm/only-move? (:modifiers %)) (vals modifiers)))
+           (let [selected (dsh/lookup-selected state {:omit-blocked? true})
+                 objects  (dsh/lookup-page-objects state)
+                 preview  (dsh/modifiers->selrect-preview objects selected modifiers)]
+             (when (some? preview)
+               (rx/push! ms/workspace-selrect preview)))))))))
 
 (defn set-preview-modifiers
   "Lightweight live-preview for wasm=false: writes the raw modif-tree straight
@@ -722,6 +736,9 @@
         (let [geometry-entries (parse-geometry-modifiers modif-tree)
               root-modifiers   (into [] (map (fn [[id data]] [id (:transform data)])) geometry-entries)
               modifiers
+              ;; Pure translation: root-only. WASM `set_modifiers` copies
+              ;; that matrix onto descendants for display. Mouse drag uses
+              ;; this path; keyboard nudge commits instead of previewing.
               (if (and translation? (not snap-pixel?))
                 root-modifiers
                 (wasm.api/propagate-modifiers geometry-entries snap-pixel?))]
@@ -756,11 +773,37 @@
           (recur pending modif-tree))
         modif-tree))))
 
+(defn- copy-translation-matrix
+  [t]
+  (gmt/matrix (dm/get-prop t :a)
+              (dm/get-prop t :b)
+              (dm/get-prop t :c)
+              (dm/get-prop t :d)
+              (dm/get-prop t :e)
+              (dm/get-prop t :f)))
+
+(defn- spread-translation-transforms
+  "Copy the root translation onto every descendant. Each id gets its own
+   matrix so later `multiply!` during apply cannot compound siblings."
+  [geometry-entries objects subtree-ids-by-id]
+  (reduce
+   (fn [acc [id data]]
+     (let [t           (:transform data)
+           subtree-ids (or (get subtree-ids-by-id id)
+                           (cfh/get-children-ids-with-self objects id))]
+       (reduce (fn [a sid]
+                 (assoc a sid (copy-translation-matrix t)))
+               acc
+               subtree-ids)))
+   {}
+   geometry-entries))
+
 #_:clj-kondo/ignore
 (defn apply-wasm-modifiers
   [modif-tree & {:keys [ignore-constraints ignore-snap-pixel snap-ignore-axis undo-transation?
-                        subtree-ids-by-id]
-                 :or {ignore-constraints false ignore-snap-pixel false snap-ignore-axis nil undo-transation? true}
+                        subtree-ids-by-id after]
+                 :or {ignore-constraints false ignore-snap-pixel false snap-ignore-axis nil
+                      undo-transation? true}
                  :as params}]
   (ptk/reify ::apply-wasm-modifiesr
     ptk/WatchEvent
@@ -798,15 +841,7 @@
                 ;; per-shape pixel correction (different scale/translate
                 ;; per descendant) which we can't replicate cheaply on
                 ;; the CLJS side.
-                (reduce
-                 (fn [acc [id data]]
-                   (let [t (:transform data)
-                         subtree-ids
-                         (or (get subtree-ids-by-id id)
-                             (cfh/get-children-ids-with-self objects id))]
-                     (reduce (fn [a sid] (assoc a sid t)) acc subtree-ids)))
-                 {}
-                 geometry-entries)
+                (spread-translation-transforms geometry-entries objects subtree-ids-by-id)
                 (into {} (wasm.api/propagate-modifiers geometry-entries snap-pixel?)))
 
               ignore-tree
@@ -814,6 +849,7 @@
 
               options
               (-> params
+                  (dissoc :after)
                   (assoc :reg-objects? true)
                   (assoc :ignore-tree ignore-tree)
                   (assoc :translation? translation?)
@@ -866,6 +902,9 @@
 
            (if undo-transation?
              (rx/of (dwu/commit-undo-transaction undo-id))
+             (rx/empty))
+           (if (some? after)
+             (rx/of after)
              (rx/empty))))))))
 
 (def ^:private

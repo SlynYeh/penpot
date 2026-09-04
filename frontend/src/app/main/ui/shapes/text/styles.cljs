@@ -79,7 +79,8 @@
 
          font-variant-id (:font-variant-id data)
 
-         font-size       (:font-size data)
+         font-size       (or (:font-size data)
+                             (:font-size txt/default-typography))
 
          fill-color      (or (-> data :fills first :fill-color) (:fill-color data))
          fill-opacity    (or (-> data :fills first :fill-opacity) (:fill-opacity data))

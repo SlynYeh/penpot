@@ -349,3 +349,8 @@
   costs ~8-16ms/frame in-browser (mem:frontend/drag-resize-vertex-perf);
   800 ≈ 4-8ms/frame in-browser, interpolated from that bench."
   800)
+(def ^:const nudge-commit-time
+  "Minimum ms between keyboard-nudge commits while a key is held.
+   Nudge writes the file tree instead of using a live modifier preview,
+   so this keeps OS key-repeat (~30Hz) from committing on every tick."
+  50)

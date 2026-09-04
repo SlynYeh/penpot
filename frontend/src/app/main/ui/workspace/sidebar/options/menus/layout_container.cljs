@@ -1020,16 +1020,25 @@
   {::mf/props :obj}
   [{:keys [is-column expanded? column-values toggle add-new-element set-column-value set-column-type
            remove-element reorder-track hover-track on-select-track]}]
-  (let [column-num (count column-values)
-        direction (if (> column-num 1)
-                    (if ^boolean is-column "Columns " "Rows ")
-                    (if ^boolean is-column "Column " "Row "))
+  (let [column-num   (count column-values)
+        track-name   (cond
+                       (zero? column-num)
+                       (if ^boolean is-column
+                         (tr "workspace.options.layout.grid-track.column-empty")
+                         (tr "workspace.options.layout.grid-track.row-empty"))
 
-        track-name (dm/str direction  (if (= column-num 0) " - empty" column-num))
+                       (= column-num 1)
+                       (if ^boolean is-column
+                         (tr "workspace.options.layout.grid-track.column" column-num)
+                         (tr "workspace.options.layout.grid-track.row" column-num))
+
+                       :else
+                       (if ^boolean is-column
+                         (tr "workspace.options.layout.grid-track.columns" column-num)
+                         (tr "workspace.options.layout.grid-track.rows" column-num)))
         track-detail (str/join ", " (map manage-values column-values))
-
-        type (if is-column :column :row)
-        testid (when (not is-column) "inspect-layout-rows")
+        type         (if is-column :column :row)
+        testid       (when (not is-column) "inspect-layout-rows")
 
         add-track
         #(do

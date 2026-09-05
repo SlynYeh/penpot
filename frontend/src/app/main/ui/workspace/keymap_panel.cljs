@@ -94,9 +94,10 @@
               {:id "edit" :label (tr "keymap.tab.edit")}
               {:id "arrange" :label (tr "keymap.tab.arrange")}]
         on-close (mf/use-callback #(reset! open? false))
-        on-change (mf/use-callback #(reset! selected %))]
+        on-change (mf/use-callback #(reset! selected %))
+        wrapper-props (mf/spread-props props {:class [class (stl/css :keymap-wrapper)]})]
     (when @open?
-      [:div (mf/spread-props props {:class [class (stl/css :keymap-wrapper)]})
+      [:> :div wrapper-props
        [:div {:class (stl/css :keymap-panel)
               :role "region"
               :aria-label (tr "shortcuts.title")}

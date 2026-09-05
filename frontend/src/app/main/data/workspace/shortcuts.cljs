@@ -463,6 +463,7 @@
                              :subsections [:main-menu]
                              :fn #(st/emit! (toggle-layout-flag :snap-guides))}
 
+   ;; NOTE(keymap): :shortcuts layout flag is no longer rendered (old sidebar panel removed); new keymap-panel entry point TBD
    :show-shortcuts       {:tooltip "?"
                           :command "?"
                           :subsections [:main-menu]

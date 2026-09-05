@@ -110,8 +110,8 @@
         [:> keymap-content* {:selected @selected}]]])))
 ;; Execution time translation strings: the keymap panel resolves
 ;; shortcuts.* msgids dynamically in keymap-item*, so they are listed
-;; here to stay visible to the translations extractor. Verbatim port
-;; from the legacy sidebar shortcuts panel.
+;; here to stay visible to the translations extractor.
+;; Ported from the legacy sidebar shortcuts panel (pruned of old-panel-only strings; copy-props/paste-props added).
 (comment
   (tr "shortcut-subsection.alignment")
   (tr "shortcut-subsection.edit")

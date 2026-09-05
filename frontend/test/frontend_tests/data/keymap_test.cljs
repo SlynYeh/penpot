@@ -37,10 +37,12 @@
     (t/is (= "⌘" (km/convert-char "command")))
     (t/is (= "⇧" (km/convert-char "shift")))
     (t/is (= "⌥" (km/convert-char "alt")))
+    (t/is (= "⎋" (km/convert-char "escape")))
     (t/is (= "z" (km/convert-char "z"))))
   (with-redefs [cf/check-platform? (constantly false)]
     (t/is (= "command" (km/convert-char "command")))
-    (t/is (= "ctrl" (km/convert-char "ctrl"))))
+    (t/is (= "ctrl" (km/convert-char "ctrl")))
+    (t/is (= "escape" (km/convert-char "escape"))))
   ;; 方向键/加号替换与平台无关
   (t/is (= ds/up-arrow (km/convert-char "up")))
   (t/is (= "+" (km/convert-char "plus"))))

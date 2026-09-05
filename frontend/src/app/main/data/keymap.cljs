@@ -87,6 +87,7 @@
    :shift "⇧"
    :control "⌃"
    :esc "⎋"
+   :escape "⎋"
    :enter "⏎"})
 
 (defn convert-char

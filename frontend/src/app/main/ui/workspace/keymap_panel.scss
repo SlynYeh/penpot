@@ -73,8 +73,14 @@
   color: var(--color-foreground-secondary);
   border-bottom: deprecated.$s-2 solid transparent;
 
-  &.selected {
+  // 非选中态 hover 时文字提亮，选中态不受影响
+  &:hover:not(.selected) {
     color: var(--color-foreground-primary);
+  }
+
+  &.selected {
+    // 文字与 border-bottom 同色，保持选中态视觉一致
+    color: var(--color-accent-primary);
     font-weight: 600;
     border-bottom-color: var(--color-accent-primary);
   }
@@ -86,7 +92,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: deprecated.$s-24;
+  padding: 0 1.5rem;
   overflow-x: auto;
 }
 
@@ -96,7 +102,7 @@
   flex-shrink: 0;
   width: 232px; // 固定列宽，无对应 DS token
   // 左右 padding 撑出列间距（相邻两列 padding 相加 = 24px），替代容器 gap
-  padding: 0 deprecated.$s-12;
+  padding: 1.5rem 1rem;
 
   // 相邻列之间的分割线（首列前/末列后不画）
   & + & {

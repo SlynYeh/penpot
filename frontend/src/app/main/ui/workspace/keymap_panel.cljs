@@ -106,6 +106,7 @@
          [:> icon-button* {:variant "ghost"
                            :icon i/close
                            :aria-label (tr "labels.close")
+                           :tooltip-class (stl/css :keymap-close-trigger)
                            :on-click on-close}]]
         [:> keymap-content* {:selected @selected}]]])))
 ;; Execution time translation strings: the keymap panel resolves

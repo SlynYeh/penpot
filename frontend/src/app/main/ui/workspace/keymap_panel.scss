@@ -17,14 +17,13 @@
   z-index: deprecated.$z-index-10;
   display: flex;
   justify-content: center;
-  padding-inline: deprecated.$s-16;
   pointer-events: none; // 非模态：wrapper 不拦截画布交互
 }
 
 .keymap-panel {
   pointer-events: auto;
-  width: min(100%, 1200px);
-  max-height: 40vh;
+  width: 100%;
+  height: 264px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -34,15 +33,25 @@
 }
 
 .keymap-header {
+  position: relative; // 作为关闭按钮绝对定位的锚点
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: deprecated.$s-8;
-  padding-inline-end: deprecated.$s-8;
+}
+
+// 关闭按钮的 tooltip 包裹层（ds tooltip-trigger）脱离文档流，
+// tabs 才能以整个 header 宽度为基准居中
+.keymap-close-trigger {
+  position: absolute;
+  inset-inline-end: deprecated.$s-12;
 }
 
 .keymap-tabs {
+  width: 100%;
   display: flex;
+  justify-content: center;
   gap: deprecated.$s-16;
   margin: 0;
   padding: 0;
@@ -72,18 +81,27 @@
 }
 
 .keymap-content {
+  flex: 1; // 自动撑满 panel 剩余高度
+  min-height: 0;
+  width: 100%;
   display: flex;
-  gap: deprecated.$s-24;
-  padding: deprecated.$s-12 deprecated.$s-16;
+  justify-content: center;
+  padding: deprecated.$s-24;
   overflow-x: auto;
 }
 
 .keymap-column {
   display: flex;
   flex-direction: column;
-  gap: deprecated.$s-4;
   flex-shrink: 0;
-  width: deprecated.$s-192;
+  width: 232px; // 固定列宽，无对应 DS token
+  // 左右 padding 撑出列间距（相邻两列 padding 相加 = 24px），替代容器 gap
+  padding: 0 deprecated.$s-12;
+
+  // 相邻列之间的分割线（首列前/末列后不画）
+  & + & {
+    border-inline-start: deprecated.$s-1 solid #e8eaee;
+  }
 }
 
 .keymap-item {
@@ -92,6 +110,11 @@
   justify-content: space-between;
   gap: deprecated.$s-16;
   min-height: deprecated.$s-24;
+  margin-bottom: 20px; // 列内条目间距，替代 column 的 gap
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .keymap-item-label {

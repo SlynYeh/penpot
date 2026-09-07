@@ -2927,35 +2927,35 @@ msgstr "The token will expire on %s"
 msgid "integrations.token.will-not-expire"
 msgstr "The token has no expiration date"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:98
 msgid "keymap.tab.arrange"
 msgstr "Arrange"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:97
 msgid "keymap.tab.edit"
 msgstr "Edit"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:91
 msgid "keymap.tab.important"
 msgstr "Important"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:96
 msgid "keymap.tab.layers"
 msgstr "Layers"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:94
 msgid "keymap.tab.selection"
 msgstr "Selection"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:93
 msgid "keymap.tab.text"
 msgstr "Text"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:92
 msgid "keymap.tab.tools-view"
 msgstr "Tools & view"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:95
 msgid "keymap.tab.zoom"
 msgstr "Zoom"
 
@@ -3043,7 +3043,7 @@ msgstr "Cancel"
 msgid "labels.canva"
 msgstr "Canva"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:107, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:262, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:111, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:257, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "Close"
 
@@ -5330,467 +5330,489 @@ msgstr "Select items using this style"
 
 # SECTIONS
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:412
+#, unused
 msgid "shortcut-section.basics"
 msgstr "Basics"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:418
+#, unused
 msgid "shortcut-section.dashboard"
 msgstr "Dashboard"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:421
+#, unused
 msgid "shortcut-section.viewer"
 msgstr "Viewer"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:415
+#, unused
 msgid "shortcut-section.workspace"
 msgstr "Workspace"
 
 # SUBSECTIONS
-#: src/app/main/ui/workspace/keymap_panel.cljs:115, src/app/main/ui/workspace/sidebar/shortcuts.cljs:58
+#: src/app/main/ui/workspace/keymap_panel.cljs:120
 msgid "shortcut-subsection.alignment"
 msgstr "Alignment"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:116, src/app/main/ui/workspace/sidebar/shortcuts.cljs:59
+#: src/app/main/ui/workspace/keymap_panel.cljs:121
 msgid "shortcut-subsection.edit"
 msgstr "Edit"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:117, src/app/main/ui/workspace/sidebar/shortcuts.cljs:60
+#: src/app/main/ui/workspace/keymap_panel.cljs:122
 msgid "shortcut-subsection.general-dashboard"
 msgstr "Generic"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:118, src/app/main/ui/workspace/sidebar/shortcuts.cljs:61
+#: src/app/main/ui/workspace/keymap_panel.cljs:123
 msgid "shortcut-subsection.general-viewer"
 msgstr "Generic"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:119, src/app/main/ui/workspace/main_menu.cljs:789, src/app/main/ui/workspace/sidebar/shortcuts.cljs:62
+#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/main_menu.cljs:789
 msgid "shortcut-subsection.main-menu"
 msgstr "Main menu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:120, src/app/main/ui/workspace/sidebar/shortcuts.cljs:63
+#: src/app/main/ui/workspace/keymap_panel.cljs:125
 msgid "shortcut-subsection.modify-layers"
 msgstr "Modify layers"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:121, src/app/main/ui/workspace/sidebar/shortcuts.cljs:64
+#: src/app/main/ui/workspace/keymap_panel.cljs:126
 msgid "shortcut-subsection.navigation-dashboard"
 msgstr "Navigation"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:122, src/app/main/ui/workspace/sidebar/shortcuts.cljs:65
+#: src/app/main/ui/workspace/keymap_panel.cljs:127
 msgid "shortcut-subsection.navigation-viewer"
 msgstr "Navigation"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:123, src/app/main/ui/workspace/sidebar/shortcuts.cljs:66
+#: src/app/main/ui/workspace/keymap_panel.cljs:128
 msgid "shortcut-subsection.navigation-workspace"
 msgstr "Navigation"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/sidebar/shortcuts.cljs:67
+#: src/app/main/ui/workspace/keymap_panel.cljs:129
 msgid "shortcut-subsection.panels"
 msgstr "Panels"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:125, src/app/main/ui/workspace/sidebar/shortcuts.cljs:68
+#: src/app/main/ui/workspace/keymap_panel.cljs:130
 msgid "shortcut-subsection.path-editor"
 msgstr "Paths"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:126, src/app/main/ui/workspace/sidebar/shortcuts.cljs:69
+#: src/app/main/ui/workspace/keymap_panel.cljs:131
 msgid "shortcut-subsection.shape"
 msgstr "Shapes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:127, src/app/main/ui/workspace/sidebar/shortcuts.cljs:70
+#: src/app/main/ui/workspace/keymap_panel.cljs:132
 msgid "shortcut-subsection.text-editor"
 msgstr "Texts"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:128, src/app/main/ui/workspace/sidebar/shortcuts.cljs:71
+#: src/app/main/ui/workspace/keymap_panel.cljs:133
 msgid "shortcut-subsection.tools"
 msgstr "Tools"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:129, src/app/main/ui/workspace/sidebar/shortcuts.cljs:72
+#: src/app/main/ui/workspace/keymap_panel.cljs:134
 msgid "shortcut-subsection.zoom-viewer"
 msgstr "Zoom"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:130, src/app/main/ui/workspace/sidebar/shortcuts.cljs:73
+#: src/app/main/ui/workspace/keymap_panel.cljs:135
 msgid "shortcut-subsection.zoom-workspace"
 msgstr "Zoom"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
+#: src/app/main/ui/workspace/keymap_panel.cljs:136
 msgid "shortcuts.add-comment"
 msgstr "Comments"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
+#: src/app/main/ui/workspace/keymap_panel.cljs:137
 msgid "shortcuts.add-node"
 msgstr "Add node"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
+#: src/app/main/ui/workspace/keymap_panel.cljs:138
 msgid "shortcuts.align-bottom"
 msgstr "Align bottom"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
+#: src/app/main/ui/workspace/keymap_panel.cljs:139
 msgid "shortcuts.align-center"
 msgstr "Align center"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:135, src/app/main/ui/workspace/sidebar/shortcuts.cljs:78
+#: src/app/main/ui/workspace/keymap_panel.cljs:140
 msgid "shortcuts.align-hcenter"
 msgstr "Align center horizontally"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:136, src/app/main/ui/workspace/sidebar/shortcuts.cljs:79
+#: src/app/main/ui/workspace/keymap_panel.cljs:141
 msgid "shortcuts.align-justify"
 msgstr "Align justify"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
+#: src/app/main/ui/workspace/keymap_panel.cljs:142
 msgid "shortcuts.align-left"
 msgstr "Align left"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
+#: src/app/main/ui/workspace/keymap_panel.cljs:143
 msgid "shortcuts.align-right"
 msgstr "Align right"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
+#: src/app/main/ui/workspace/keymap_panel.cljs:144
 msgid "shortcuts.align-top"
 msgstr "Align top"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
+#: src/app/main/ui/workspace/keymap_panel.cljs:145
 msgid "shortcuts.align-vcenter"
 msgstr "Align center vertically"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
+#: src/app/main/ui/workspace/keymap_panel.cljs:146
 msgid "shortcuts.artboard-selection"
 msgstr "Create board from selection"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
+#: src/app/main/ui/workspace/keymap_panel.cljs:147
 msgid "shortcuts.bold"
 msgstr "Toggle bold"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
+#: src/app/main/ui/workspace/keymap_panel.cljs:148
 msgid "shortcuts.bool-difference"
 msgstr "Boolean difference"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:144, src/app/main/ui/workspace/sidebar/shortcuts.cljs:87
+#: src/app/main/ui/workspace/keymap_panel.cljs:149
 msgid "shortcuts.bool-exclude"
 msgstr "Boolean exclude"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:145, src/app/main/ui/workspace/sidebar/shortcuts.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:150
 msgid "shortcuts.bool-intersection"
 msgstr "Boolean intersection"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/sidebar/shortcuts.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
 msgid "shortcuts.bool-union"
 msgstr "Boolean union"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:152
 msgid "shortcuts.bring-back"
 msgstr "Send to the back"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:153
 msgid "shortcuts.bring-backward"
 msgstr "Send backward"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:154
 msgid "shortcuts.bring-forward"
 msgstr "Bring forward"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:155
 msgid "shortcuts.bring-front"
 msgstr "Bring to the front"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:156
 msgid "shortcuts.clear-undo"
 msgstr "Clear undo"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:157
+msgid "shortcuts.click-through"
+msgstr "Click-through"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:158
 msgid "shortcuts.copy"
 msgstr "Copy"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153, src/app/main/ui/workspace/sidebar/shortcuts.cljs:96
+#: src/app/main/ui/workspace/keymap_panel.cljs:159
 msgid "shortcuts.copy-link"
 msgstr "Copy link"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:160
 msgid "shortcuts.copy-props"
 msgstr "Copy properties"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155, src/app/main/ui/workspace/sidebar/shortcuts.cljs:97
+#: src/app/main/ui/workspace/keymap_panel.cljs:161
 msgid "shortcuts.create-component-variant"
 msgstr "Create component / variant"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156, src/app/main/ui/workspace/sidebar/shortcuts.cljs:98
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "shortcuts.create-new-project"
 msgstr "Create new"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157, src/app/main/ui/workspace/sidebar/shortcuts.cljs:99
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "shortcuts.cut"
 msgstr "Cut"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158, src/app/main/ui/workspace/right_header.cljs:85, src/app/main/ui/workspace/sidebar/shortcuts.cljs:100
+#: src/app/main/ui/workspace/keymap_panel.cljs:164, src/app/main/ui/workspace/right_header.cljs:85
 msgid "shortcuts.decrease-zoom"
 msgstr "Zoom out"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159, src/app/main/ui/workspace/sidebar/shortcuts.cljs:101
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "shortcuts.delete"
 msgstr "Delete"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160, src/app/main/ui/workspace/sidebar/shortcuts.cljs:102
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "shortcuts.delete-node"
 msgstr "Delete node"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "shortcuts.detach-component"
 msgstr "Detach component"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
+msgid "shortcuts.drag-canvas"
+msgstr "Drag canvas"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "shortcuts.draw-curve"
 msgstr "Curve"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "shortcuts.draw-ellipse"
 msgstr "Ellipse"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164, src/app/main/ui/workspace/sidebar/shortcuts.cljs:106
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "shortcuts.draw-frame"
 msgstr "Board"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:165, src/app/main/ui/workspace/sidebar/shortcuts.cljs:107
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "shortcuts.draw-nodes"
 msgstr "Draw path"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "shortcuts.draw-path"
 msgstr "Path"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "shortcuts.draw-rect"
 msgstr "Rectangle"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "shortcuts.draw-text"
 msgstr "Text"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "shortcuts.duplicate"
 msgstr "Duplicate"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:170, src/app/main/ui/workspace/sidebar/shortcuts.cljs:112
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "shortcuts.escape"
 msgstr "Cancel"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:171, src/app/main/ui/workspace/sidebar/shortcuts.cljs:113
+#: src/app/main/ui/workspace/keymap_panel.cljs:178
 msgid "shortcuts.export-shapes"
 msgstr "Export shapes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:172, src/app/main/ui/workspace/sidebar/shortcuts.cljs:114
+#: src/app/main/ui/workspace/keymap_panel.cljs:179
 msgid "shortcuts.find"
 msgstr "Find"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:173, src/app/main/ui/workspace/sidebar/shortcuts.cljs:115
+#: src/app/main/ui/workspace/keymap_panel.cljs:180
 msgid "shortcuts.find-and-replace"
 msgstr "Find and replace"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
+#: src/app/main/ui/workspace/keymap_panel.cljs:181
 msgid "shortcuts.fit-all"
 msgstr "Zoom to fit all"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
+#: src/app/main/ui/workspace/keymap_panel.cljs:182
 msgid "shortcuts.flip-horizontal"
 msgstr "Flip horizontally"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:176, src/app/main/ui/workspace/sidebar/shortcuts.cljs:118
+#: src/app/main/ui/workspace/keymap_panel.cljs:183
 msgid "shortcuts.flip-vertical"
 msgstr "Flip vertically"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
+#: src/app/main/ui/workspace/keymap_panel.cljs:184
 msgid "shortcuts.font-size-dec"
 msgstr "Decrement font size"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
+#: src/app/main/ui/workspace/keymap_panel.cljs:185
 msgid "shortcuts.font-size-inc"
 msgstr "Increment font size"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
+#: src/app/main/ui/workspace/keymap_panel.cljs:186
 msgid "shortcuts.go-to-drafts"
 msgstr "Go to drafts"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:180, src/app/main/ui/workspace/sidebar/shortcuts.cljs:122
+#: src/app/main/ui/workspace/keymap_panel.cljs:187
 msgid "shortcuts.go-to-libs"
 msgstr "Go to shared libraries"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:181, src/app/main/ui/workspace/sidebar/shortcuts.cljs:123
+#: src/app/main/ui/workspace/keymap_panel.cljs:188
 msgid "shortcuts.go-to-search"
 msgstr "Search"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
+#: src/app/main/ui/workspace/keymap_panel.cljs:189
 msgid "shortcuts.group"
 msgstr "Group"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
+#: src/app/main/ui/workspace/keymap_panel.cljs:190
 msgid "shortcuts.h-distribute"
 msgstr "Distribute horizontally"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
+#: src/app/main/ui/workspace/keymap_panel.cljs:191
 msgid "shortcuts.hide-ui"
 msgstr "Show / Hide UI"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
+#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/right_header.cljs:90
 msgid "shortcuts.increase-zoom"
 msgstr "Zoom in"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:186, src/app/main/ui/workspace/sidebar/shortcuts.cljs:128
+#: src/app/main/ui/workspace/keymap_panel.cljs:193
 msgid "shortcuts.insert-image"
 msgstr "Insert image"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:187, src/app/main/ui/workspace/sidebar/shortcuts.cljs:129
+#: src/app/main/ui/workspace/keymap_panel.cljs:194
 msgid "shortcuts.italic"
 msgstr "Toggle italic"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:188, src/app/main/ui/workspace/sidebar/shortcuts.cljs:130
+#: src/app/main/ui/workspace/keymap_panel.cljs:195
 msgid "shortcuts.join-nodes"
 msgstr "Join nodes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:189, src/app/main/ui/workspace/sidebar/shortcuts.cljs:131
+#: src/app/main/ui/workspace/keymap_panel.cljs:196
 msgid "shortcuts.line-through"
 msgstr "Toggle line through"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:190, src/app/main/ui/workspace/sidebar/shortcuts.cljs:132
+#: src/app/main/ui/workspace/keymap_panel.cljs:197
 msgid "shortcuts.make-corner"
 msgstr "Make corner"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:191, src/app/main/ui/workspace/sidebar/shortcuts.cljs:133
+#: src/app/main/ui/workspace/keymap_panel.cljs:198
 msgid "shortcuts.make-curve"
 msgstr "Make curve"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/sidebar/shortcuts.cljs:134
+#: src/app/main/ui/workspace/keymap_panel.cljs:199
 msgid "shortcuts.mask"
 msgstr "Mask"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:193, src/app/main/ui/workspace/sidebar/shortcuts.cljs:135
+#: src/app/main/ui/workspace/keymap_panel.cljs:200
+msgid "shortcuts.measure-distance"
+msgstr "Measure distance"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:201
 msgid "shortcuts.merge-nodes"
 msgstr "Merge nodes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:194, src/app/main/ui/workspace/sidebar/shortcuts.cljs:136
+#: src/app/main/ui/workspace/keymap_panel.cljs:202
 msgid "shortcuts.move"
 msgstr "Move"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:195, src/app/main/ui/workspace/sidebar/shortcuts.cljs:137
+#: src/app/main/ui/workspace/keymap_panel.cljs:203
 msgid "shortcuts.move-fast-down"
 msgstr "Move down fast"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:196, src/app/main/ui/workspace/sidebar/shortcuts.cljs:138
+#: src/app/main/ui/workspace/keymap_panel.cljs:204
 msgid "shortcuts.move-fast-left"
 msgstr "Move left fast"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:197, src/app/main/ui/workspace/sidebar/shortcuts.cljs:139
+#: src/app/main/ui/workspace/keymap_panel.cljs:205
 msgid "shortcuts.move-fast-right"
 msgstr "Move right fast"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:198, src/app/main/ui/workspace/sidebar/shortcuts.cljs:140
+#: src/app/main/ui/workspace/keymap_panel.cljs:206
 msgid "shortcuts.move-fast-up"
 msgstr "Move up fast"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:199, src/app/main/ui/workspace/sidebar/shortcuts.cljs:141
+#: src/app/main/ui/workspace/keymap_panel.cljs:207
 msgid "shortcuts.move-nodes"
 msgstr "Move node"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:200, src/app/main/ui/workspace/sidebar/shortcuts.cljs:142
+#: src/app/main/ui/workspace/keymap_panel.cljs:208
 msgid "shortcuts.move-unit-down"
 msgstr "Move down"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:201, src/app/main/ui/workspace/sidebar/shortcuts.cljs:143
+#: src/app/main/ui/workspace/keymap_panel.cljs:209
 msgid "shortcuts.move-unit-left"
 msgstr "Move left"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:202, src/app/main/ui/workspace/sidebar/shortcuts.cljs:144
+#: src/app/main/ui/workspace/keymap_panel.cljs:210
 msgid "shortcuts.move-unit-right"
 msgstr "Move right"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:203, src/app/main/ui/workspace/sidebar/shortcuts.cljs:145
+#: src/app/main/ui/workspace/keymap_panel.cljs:211
 msgid "shortcuts.move-unit-up"
 msgstr "Move up"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:204, src/app/main/ui/workspace/sidebar/shortcuts.cljs:146
+#: src/app/main/ui/workspace/keymap_panel.cljs:212
+msgid "shortcuts.multi-select"
+msgstr "Multi-select"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:213
 msgid "shortcuts.next-frame"
 msgstr "Next board"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:510
+#, unused
 msgid "shortcuts.not-found"
 msgstr "No shortcuts found"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:205, src/app/main/ui/workspace/sidebar/shortcuts.cljs:147
+#: src/app/main/ui/workspace/keymap_panel.cljs:214
 msgid "shortcuts.opacity-0"
 msgstr "Set opacity to 100%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:206, src/app/main/ui/workspace/sidebar/shortcuts.cljs:148
+#: src/app/main/ui/workspace/keymap_panel.cljs:215
 msgid "shortcuts.opacity-1"
 msgstr "Set opacity to 10%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:207, src/app/main/ui/workspace/sidebar/shortcuts.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:216
 msgid "shortcuts.opacity-2"
 msgstr "Set opacity to 20%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:208, src/app/main/ui/workspace/sidebar/shortcuts.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:217
 msgid "shortcuts.opacity-3"
 msgstr "Set opacity to 30%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:209, src/app/main/ui/workspace/sidebar/shortcuts.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:218
 msgid "shortcuts.opacity-4"
 msgstr "Set opacity to 40%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:210, src/app/main/ui/workspace/sidebar/shortcuts.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:219
 msgid "shortcuts.opacity-5"
 msgstr "Set opacity to 50%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:211, src/app/main/ui/workspace/sidebar/shortcuts.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:220
 msgid "shortcuts.opacity-6"
 msgstr "Set opacity to 60%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:212, src/app/main/ui/workspace/sidebar/shortcuts.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:221
 msgid "shortcuts.opacity-7"
 msgstr "Set opacity to 70%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:213, src/app/main/ui/workspace/sidebar/shortcuts.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:222
 msgid "shortcuts.opacity-8"
 msgstr "Set opacity to 80%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:214, src/app/main/ui/workspace/sidebar/shortcuts.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:223
 msgid "shortcuts.opacity-9"
 msgstr "Set opacity to 90%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:215, src/app/main/ui/workspace/sidebar/shortcuts.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:224
 msgid "shortcuts.open-color-picker"
 msgstr "Color picker"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:216, src/app/main/ui/workspace/sidebar/shortcuts.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:225
 msgid "shortcuts.open-comments"
 msgstr "Go to viewer comment section"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:217, src/app/main/ui/workspace/sidebar/shortcuts.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:226
 msgid "shortcuts.open-dashboard"
 msgstr "Go to dashboard"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:218, src/app/main/ui/workspace/sidebar/shortcuts.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:227
 msgid "shortcuts.open-inspect"
 msgstr "Go to viewer inspect section"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:219, src/app/main/ui/workspace/sidebar/shortcuts.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:228
 msgid "shortcuts.open-interactions"
 msgstr "Go to viewer interactions section"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:220, src/app/main/ui/workspace/sidebar/shortcuts.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:229
 msgid "shortcuts.open-viewer"
 msgstr "Go to viewer interactions section"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:221, src/app/main/ui/workspace/sidebar/shortcuts.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:230
 msgid "shortcuts.open-workspace"
 msgstr "Go to workspace"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:258
+#, unused
 msgid "shortcuts.or"
 msgstr " or "
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:222, src/app/main/ui/workspace/sidebar/shortcuts.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:231
 msgid "shortcuts.paste"
 msgstr "Paste"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:223
+#: src/app/main/ui/workspace/keymap_panel.cljs:232
 msgid "shortcuts.paste-props"
 msgstr "Paste properties"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:224, src/app/main/ui/workspace/sidebar/shortcuts.cljs:165
+#: src/app/main/ui/workspace/keymap_panel.cljs:233
 msgid "shortcuts.paste-replace"
 msgstr "Paste and replace"
 
@@ -5799,191 +5821,196 @@ msgstr "Paste and replace"
 msgid "shortcuts.plugins"
 msgstr "Plugins manager"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/sidebar/shortcuts.cljs:166
+#: src/app/main/ui/workspace/keymap_panel.cljs:234
 msgid "shortcuts.prev-frame"
 msgstr "Previous board"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:226, src/app/main/ui/workspace/sidebar/shortcuts.cljs:167
+#: src/app/main/ui/workspace/keymap_panel.cljs:235
 msgid "shortcuts.redo"
 msgstr "Redo"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:227, src/app/main/ui/workspace/sidebar/shortcuts.cljs:168
+#: src/app/main/ui/workspace/keymap_panel.cljs:236
 msgid "shortcuts.rename"
 msgstr "Rename"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:228, src/app/main/ui/workspace/sidebar/shortcuts.cljs:169
+#: src/app/main/ui/workspace/keymap_panel.cljs:237
 msgid "shortcuts.reset-zoom"
 msgstr "Reset zoom"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:229, src/app/main/ui/workspace/sidebar/shortcuts.cljs:170
+#: src/app/main/ui/workspace/keymap_panel.cljs:238
 msgid "shortcuts.scale"
 msgstr "Scale"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:230, src/app/main/ui/workspace/sidebar/shortcuts.cljs:171
+#: src/app/main/ui/workspace/keymap_panel.cljs:239
 msgid "shortcuts.search-placeholder"
 msgstr "Search shortcuts"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:231, src/app/main/ui/workspace/sidebar/shortcuts.cljs:172
+#: src/app/main/ui/workspace/keymap_panel.cljs:240
 msgid "shortcuts.select-all"
 msgstr "Select all"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:232, src/app/main/ui/workspace/sidebar/shortcuts.cljs:173
+#: src/app/main/ui/workspace/keymap_panel.cljs:241
 msgid "shortcuts.select-next"
 msgstr "Select next layer"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:233, src/app/main/ui/workspace/sidebar/shortcuts.cljs:174
+#: src/app/main/ui/workspace/keymap_panel.cljs:242
 msgid "shortcuts.select-parent-layer"
 msgstr "Select parent layer"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:234, src/app/main/ui/workspace/sidebar/shortcuts.cljs:175
+#: src/app/main/ui/workspace/keymap_panel.cljs:243
 msgid "shortcuts.select-prev"
 msgstr "Select previous layer"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:235, src/app/main/ui/workspace/sidebar/shortcuts.cljs:176
+#: src/app/main/ui/workspace/keymap_panel.cljs:244
 msgid "shortcuts.separate-nodes"
 msgstr "Separate nodes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:236, src/app/main/ui/workspace/sidebar/shortcuts.cljs:177
+#: src/app/main/ui/workspace/keymap_panel.cljs:245
 msgid "shortcuts.show-pixel-grid"
 msgstr "Show / Hide pixel grid"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:237, src/app/main/ui/workspace/sidebar/shortcuts.cljs:178
+#: src/app/main/ui/workspace/keymap_panel.cljs:246
 msgid "shortcuts.show-shortcuts"
 msgstr "Show / Hide shortcuts"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:238, src/app/main/ui/workspace/sidebar/shortcuts.cljs:179
+#: src/app/main/ui/workspace/keymap_panel.cljs:247
 msgid "shortcuts.snap-nodes"
 msgstr "Snap to nodes"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:239, src/app/main/ui/workspace/sidebar/shortcuts.cljs:180
+#: src/app/main/ui/workspace/keymap_panel.cljs:248
 msgid "shortcuts.snap-pixel-grid"
 msgstr "Snap to pixel grid"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:240, src/app/main/ui/workspace/sidebar/shortcuts.cljs:181
+#: src/app/main/ui/workspace/keymap_panel.cljs:249
 msgid "shortcuts.start-editing"
 msgstr "Start editing"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:241, src/app/main/ui/workspace/sidebar/shortcuts.cljs:182
+#: src/app/main/ui/workspace/keymap_panel.cljs:250
 msgid "shortcuts.start-measure"
 msgstr "Start measurement"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:242, src/app/main/ui/workspace/sidebar/shortcuts.cljs:183
+#: src/app/main/ui/workspace/keymap_panel.cljs:251
 msgid "shortcuts.stop-measure"
 msgstr "Stop measurement"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:243, src/app/main/ui/workspace/sidebar/shortcuts.cljs:184
+#: src/app/main/ui/workspace/keymap_panel.cljs:252
 msgid "shortcuts.thumbnail-set"
 msgstr "Set thumbnails"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:102, src/app/main/ui/workspace/sidebar/shortcuts.cljs:491, src/app/main/ui/workspace/sidebar/shortcuts.cljs:498
+#: src/app/main/ui/workspace/keymap_panel.cljs:106
 msgid "shortcuts.title"
 msgstr "Keyboard shortcuts"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:244, src/app/main/ui/workspace/sidebar/shortcuts.cljs:185
+#: src/app/main/ui/workspace/keymap_panel.cljs:253
 msgid "shortcuts.toggle-alignment"
 msgstr "Toggle dynamic alignment"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:245, src/app/main/ui/workspace/sidebar/shortcuts.cljs:186
+#: src/app/main/ui/workspace/keymap_panel.cljs:254
 msgid "shortcuts.toggle-assets"
 msgstr "Toggle assets"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:246, src/app/main/ui/workspace/sidebar/shortcuts.cljs:187
+#: src/app/main/ui/workspace/keymap_panel.cljs:255
 msgid "shortcuts.toggle-colorpalette"
 msgstr "Toggle color palette"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:247, src/app/main/ui/workspace/sidebar/shortcuts.cljs:188
+#: src/app/main/ui/workspace/keymap_panel.cljs:256
 msgid "shortcuts.toggle-focus-mode"
 msgstr "Toggle focus mode"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:248, src/app/main/ui/workspace/sidebar/shortcuts.cljs:189
+#: src/app/main/ui/workspace/keymap_panel.cljs:257
 msgid "shortcuts.toggle-fullscreen"
 msgstr "Toggle fullscreen"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:249, src/app/main/ui/workspace/sidebar/shortcuts.cljs:190
+#: src/app/main/ui/workspace/keymap_panel.cljs:258
 msgid "shortcuts.toggle-guides"
 msgstr "Show / Hide guides"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:250, src/app/main/ui/workspace/sidebar/shortcuts.cljs:191
+#: src/app/main/ui/workspace/keymap_panel.cljs:259
 msgid "shortcuts.toggle-history"
 msgstr "Toggle history"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:251, src/app/main/ui/workspace/sidebar/shortcuts.cljs:192
+#: src/app/main/ui/workspace/keymap_panel.cljs:260
 msgid "shortcuts.toggle-layers"
 msgstr "Toggle layers"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:252, src/app/main/ui/workspace/sidebar/shortcuts.cljs:193
+#: src/app/main/ui/workspace/keymap_panel.cljs:261
 msgid "shortcuts.toggle-layout-flex"
 msgstr "Add / Remove flex layout"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/sidebar/shortcuts.cljs:194
+#: src/app/main/ui/workspace/keymap_panel.cljs:262
 msgid "shortcuts.toggle-layout-grid"
 msgstr "Add/remove grid layout"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:254, src/app/main/ui/workspace/sidebar/shortcuts.cljs:195
+#: src/app/main/ui/workspace/keymap_panel.cljs:263
 msgid "shortcuts.toggle-lock"
 msgstr "Lock / Unlock"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:255, src/app/main/ui/workspace/sidebar/shortcuts.cljs:196
+#: src/app/main/ui/workspace/keymap_panel.cljs:264
 msgid "shortcuts.toggle-lock-size"
 msgstr "Lock proportions"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:256, src/app/main/ui/workspace/sidebar/shortcuts.cljs:197
+#: src/app/main/ui/workspace/keymap_panel.cljs:265
 msgid "shortcuts.toggle-rulers"
 msgstr "Show / Hide rulers"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:257, src/app/main/ui/workspace/sidebar/shortcuts.cljs:198
+#: src/app/main/ui/workspace/keymap_panel.cljs:266
 msgid "shortcuts.toggle-snap-guides"
 msgstr "Snap to guides"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:258, src/app/main/ui/workspace/sidebar/shortcuts.cljs:199
+#: src/app/main/ui/workspace/keymap_panel.cljs:267
 msgid "shortcuts.toggle-snap-ruler-guide"
 msgstr "Snap to ruler guides"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:259, src/app/main/ui/workspace/sidebar/shortcuts.cljs:200
+#: src/app/main/ui/workspace/keymap_panel.cljs:268
 msgid "shortcuts.toggle-textpalette"
 msgstr "Toggle text palette"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:260, src/app/main/ui/workspace/sidebar/shortcuts.cljs:201
+#: src/app/main/ui/workspace/keymap_panel.cljs:269
 msgid "shortcuts.toggle-theme"
 msgstr "Change theme"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:261, src/app/main/ui/workspace/sidebar/shortcuts.cljs:202
+#: src/app/main/ui/workspace/keymap_panel.cljs:270
 msgid "shortcuts.toggle-visibility"
 msgstr "Show / Hide"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:262, src/app/main/ui/workspace/sidebar/shortcuts.cljs:203
+#: src/app/main/ui/workspace/keymap_panel.cljs:271
 msgid "shortcuts.toggle-zoom-style"
 msgstr "Toggle zoom style"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:263, src/app/main/ui/workspace/sidebar/shortcuts.cljs:204
+#: src/app/main/ui/workspace/keymap_panel.cljs:272
 msgid "shortcuts.underline"
 msgstr "Toggle underline"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:264, src/app/main/ui/workspace/sidebar/shortcuts.cljs:205
+#: src/app/main/ui/workspace/keymap_panel.cljs:273
 msgid "shortcuts.undo"
 msgstr "Undo"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:265, src/app/main/ui/workspace/sidebar/shortcuts.cljs:206
+#: src/app/main/ui/workspace/keymap_panel.cljs:274
 msgid "shortcuts.ungroup"
 msgstr "Ungroup"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:266, src/app/main/ui/workspace/sidebar/shortcuts.cljs:207
+#: src/app/main/ui/workspace/keymap_panel.cljs:275
 msgid "shortcuts.unmask"
 msgstr "Unmask"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:267, src/app/main/ui/workspace/sidebar/shortcuts.cljs:208
+#: src/app/main/ui/workspace/keymap_panel.cljs:276
 msgid "shortcuts.v-distribute"
 msgstr "Distribute vertically"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
+#: src/app/main/ui/workspace/keymap_panel.cljs:277
+msgid "shortcuts.zoom-canvas"
+msgstr "Zoom in/out canvas"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:278
 msgid "shortcuts.zoom-lense-decrease"
 msgstr "Zoom lense decrease"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:269, src/app/main/ui/workspace/sidebar/shortcuts.cljs:210
+#: src/app/main/ui/workspace/keymap_panel.cljs:279
 msgid "shortcuts.zoom-lense-increase"
 msgstr "Zoom lense increase"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:270, src/app/main/ui/workspace/sidebar/shortcuts.cljs:211
+#, unused
 msgid "shortcuts.zoom-selected"
 msgstr "Zoom to selected"
 
@@ -9805,11 +9832,11 @@ msgstr "Update main components"
 msgid "workspace.shape.menu.update-main"
 msgstr "Update main component"
 
-#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:62
+#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:61
 msgid "workspace.sidebar.collapse"
 msgstr "Collapse sidebar"
 
-#: src/app/main/ui/workspace/sidebar.cljs:73, src/app/main/ui/workspace/sidebar.cljs:77
+#: src/app/main/ui/workspace/sidebar.cljs:72, src/app/main/ui/workspace/sidebar.cljs:76
 msgid "workspace.sidebar.expand"
 msgstr "Expand sidebar"
 
@@ -9817,7 +9844,7 @@ msgstr "Expand sidebar"
 msgid "workspace.sidebar.history"
 msgstr "History"
 
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:163
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:152, src/app/main/ui/workspace/sidebar.cljs:155, src/app/main/ui/workspace/sidebar.cljs:161
 msgid "workspace.sidebar.layers"
 msgstr "Layers"
 
@@ -9902,7 +9929,7 @@ msgstr "Pages"
 msgid "workspace.sidebar.sitemap.add-page"
 msgstr "Add page"
 
-#: src/app/main/ui/workspace/sidebar.cljs:161
+#: src/app/main/ui/workspace/sidebar.cljs:159
 msgid "workspace.sidebar.tokens"
 msgstr "Tokens"
 
@@ -10527,7 +10554,7 @@ msgstr "The value is not valid"
 msgid "workspace.tokens.warning-name-change"
 msgstr "Renaming this token will break any reference to its old name"
 
-#: src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:165
+#: src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:163
 msgid "workspace.toolbar.assets"
 msgstr "Assets"
 
@@ -10872,11 +10899,11 @@ msgstr "Do you want to restore this version?"
 msgid "workspace.versions.snapshot-menu"
 msgstr "Open snapshot menu"
 
-#: src/app/main/ui/workspace/sidebar.cljs:255
+#: src/app/main/ui/workspace/sidebar.cljs:250
 msgid "workspace.versions.tab.actions"
 msgstr "Actions"
 
-#: src/app/main/ui/workspace/sidebar.cljs:253
+#: src/app/main/ui/workspace/sidebar.cljs:248
 msgid "workspace.versions.tab.history"
 msgstr "History"
 

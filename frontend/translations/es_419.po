@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.6.dev0\n"
 
-#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:180, src/app/main/ui/viewer/login.cljs:100
+#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:169, src/app/main/ui/viewer/login.cljs:100
 msgid "auth.already-have-account"
 msgstr "¿Ya tienes una cuenta?"
 
@@ -49,7 +49,7 @@ msgstr "¿Has olvidado tu contraseña?"
 msgid "auth.fullname"
 msgstr "Nombre completo"
 
-#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:183, src/app/main/ui/viewer/login.cljs:103
+#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:172, src/app/main/ui/viewer/login.cljs:103
 msgid "auth.login-here"
 msgstr "Inicie sesión aquí"
 
@@ -128,11 +128,11 @@ msgstr "¿Has olvidado tu contraseña?"
 msgid "auth.recovery-submit"
 msgstr "cambia tu contraseña"
 
-#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:166, src/app/main/ui/viewer/login.cljs:89
+#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:155, src/app/main/ui/viewer/login.cljs:89
 msgid "auth.register"
 msgstr "¿No tienes cuenta aún?"
 
-#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:170, src/app/main/ui/viewer/login.cljs:93
+#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:159, src/app/main/ui/viewer/login.cljs:93
 msgid "auth.register-submit"
 msgstr "Crea una cuenta"
 
@@ -145,7 +145,7 @@ msgstr "Crea una cuenta"
 msgid "auth.sidebar-tagline"
 msgstr "La solución de código abierto para diseño y creación de prototipos."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1221, src/app/main/ui/workspace/main_menu.cljs:205
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
 msgid "auth.terms-of-service"
 msgstr "Términos de servicio"
 
@@ -165,7 +165,7 @@ msgstr "Hemos enviado un correo electrónico de verificación"
 msgid "branding-illustrations-marketing-pieces"
 msgstr "...marca, ilustraciones, piezas de marketing, etc."
 
-#: src/app/main/ui/workspace/libraries.cljs:349
+#: src/app/main/ui/workspace/libraries.cljs:350
 msgid "common.publish"
 msgstr "Publicar"
 
@@ -237,7 +237,7 @@ msgstr "Compartir prototipos"
 msgid "common.share-link.view-all"
 msgstr "Seleccionar todo"
 
-#: src/app/main/ui/workspace/libraries.cljs:344
+#: src/app/main/ui/workspace/libraries.cljs:345
 msgid "common.unpublish"
 msgstr "Despublicar"
 
@@ -287,7 +287,7 @@ msgstr "Iniciar el recorrido"
 msgid "dasboard.walkthrough-hero.title"
 msgstr "Tutorial de la interfaz"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:323, src/app/main/ui/workspace/main_menu.cljs:695
+#: src/app/main/ui/dashboard/file_menu.cljs:323
 msgid "dashboard.add-shared"
 msgstr "Agregar como biblioteca compartida"
 
@@ -311,7 +311,7 @@ msgstr "Tu Penpot"
 msgid "dashboard.delete-team"
 msgstr "Eliminar equipo"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:329, src/app/main/ui/workspace/main_menu.cljs:732
+#: src/app/main/ui/dashboard/file_menu.cljs:329
 msgid "dashboard.download-binary-file"
 msgstr "Descargar el archivo Penpot (.penpot)"
 
@@ -333,10 +333,11 @@ msgid "dashboard.export-binary-multi"
 msgstr "Descargar %s archivos Penpot (.penpot)"
 
 #: src/app/main/ui/workspace/main_menu.cljs:740
+#, unused
 msgid "dashboard.export-frames"
 msgstr "Exportar tableros como PDF"
 
-#: src/app/main/ui/exports/assets.cljs:202
+#: src/app/main/ui/exports/assets.cljs:204
 msgid "dashboard.export-frames.title"
 msgstr "Exportar como PDF"
 
@@ -344,29 +345,30 @@ msgstr "Exportar como PDF"
 msgid "dashboard.export-multi"
 msgstr "Exportar %s archivos de Penpot"
 
-#: src/app/main/ui/exports/assets.cljs:108
+#: src/app/main/ui/exports/assets.cljs:109
 msgid "dashboard.export-multiple.selected"
 msgstr "%s de %s elementos seleccionados"
 
 #: src/app/main/ui/workspace/main_menu.cljs:723
+#, unused
 msgid "dashboard.export-shapes"
 msgstr "Exportar"
 
-#: src/app/main/ui/exports/assets.cljs:179
+#: src/app/main/ui/exports/assets.cljs:180
 msgid "dashboard.export-shapes.how-to"
 msgstr ""
 "Puede agregar configuraciones de exportación a elementos desde las "
 "propiedades de diseño (en la parte inferior de la barra lateral derecha)."
 
-#: src/app/main/ui/exports/assets.cljs:183
+#: src/app/main/ui/exports/assets.cljs:185
 msgid "dashboard.export-shapes.how-to-link"
 msgstr "Información sobre cómo configurar las exportaciones en Penpot."
 
-#: src/app/main/ui/exports/assets.cljs:178
+#: src/app/main/ui/exports/assets.cljs:179
 msgid "dashboard.export-shapes.no-elements"
 msgstr "No hay elementos con configuración de exportación."
 
-#: src/app/main/ui/exports/assets.cljs:189
+#: src/app/main/ui/exports/assets.cljs:191
 msgid "dashboard.export-shapes.title"
 msgstr "Selección de exportación"
 
@@ -374,12 +376,6 @@ msgstr "Selección de exportación"
 #, unused
 msgid "dashboard.export-standard-multi"
 msgstr "Descargar %s archivos estándar (.svg + .json)"
-
-#: src/app/main/ui/exports/files.cljs:132
-msgid "files-download-modal.description-1"
-msgstr ""
-"Uno o más archivos que desea exportar utilizan bibliotecas compartidas. "
-"¿Qué quiere hacer con sus activos*?"
 
 #: src/app/main/ui/dashboard/import.cljs:128
 msgid "dashboard.import.progress.process-typographies"
@@ -393,11 +389,11 @@ msgstr "Subiendo datos al servidor (%s/%s)"
 msgid "dashboard.import.progress.upload-media"
 msgstr "Subiendo archivo: %s"
 
-#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:829
+#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:833
 msgid "dashboard.invite-profile"
 msgstr "Invitar a la gente"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:433
+#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:436
 msgid "dashboard.leave-team"
 msgstr "dejar el equipo"
 
@@ -409,7 +405,7 @@ msgstr "Bibliotecas y plantillas"
 msgid "dashboard.libraries-and-templates.explore"
 msgstr "Explore más de ellos y sepa cómo contribuir"
 
-#: src/app/main/ui/dashboard/import.cljs:364, src/app/main/ui/workspace/libraries.cljs:146
+#: src/app/main/ui/dashboard/import.cljs:364, src/app/main/ui/workspace/libraries.cljs:147
 msgid "dashboard.libraries-and-templates.import-error"
 msgstr "Hubo un problema al importar la plantilla. La plantilla no fue importada."
 
@@ -421,7 +417,7 @@ msgstr "Bibliotecas"
 msgid "dashboard.loading-files"
 msgstr "cargando tus archivos…"
 
-#: src/app/main/ui/dashboard/fonts.cljs:489
+#: src/app/main/ui/dashboard/fonts.cljs:491
 msgid "dashboard.loading-fonts"
 msgstr "cargando tus fuentes…"
 
@@ -477,6 +473,12 @@ msgstr "El nombre debe contener algún carácter distinto al del espacio."
 #: src/app/main/ui/auth/recovery.cljs:32
 msgid "errors.invalid-recovery-token"
 msgstr "El token de recuperación no es válido."
+
+#: src/app/main/ui/exports/files.cljs:131
+msgid "files-download-modal.description-1"
+msgstr ""
+"Uno o más archivos que desea exportar utilizan bibliotecas compartidas. "
+"¿Qué quiere hacer con sus activos*?"
 
 #: src/app/main/ui/exports/files.cljs:132
 msgid "files-download-modal.description-2"

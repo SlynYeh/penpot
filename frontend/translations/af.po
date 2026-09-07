@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.6.dev0\n"
 
-#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:180, src/app/main/ui/viewer/login.cljs:100
+#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:169, src/app/main/ui/viewer/login.cljs:100
 msgid "auth.already-have-account"
 msgstr "Reeds 'n rekening?"
 
@@ -49,7 +49,7 @@ msgstr "Wagwoord vergeet?"
 msgid "auth.fullname"
 msgstr "Volle naam"
 
-#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:183, src/app/main/ui/viewer/login.cljs:103
+#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:172, src/app/main/ui/viewer/login.cljs:103
 msgid "auth.login-here"
 msgstr "Meld hier aan"
 
@@ -128,11 +128,11 @@ msgstr "Wagwoord vergeet?"
 msgid "auth.recovery-submit"
 msgstr "Verander jou wagwoord"
 
-#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:166, src/app/main/ui/viewer/login.cljs:89
+#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:155, src/app/main/ui/viewer/login.cljs:89
 msgid "auth.register"
 msgstr "Nog nie 'n rekening nie?"
 
-#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:170, src/app/main/ui/viewer/login.cljs:93
+#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:159, src/app/main/ui/viewer/login.cljs:93
 msgid "auth.register-submit"
 msgstr "Skep 'n rekening"
 
@@ -145,7 +145,7 @@ msgstr "Skep 'n rekening"
 msgid "auth.sidebar-tagline"
 msgstr "Die oopbron-oplossing vir ontwerp en prototipering."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1221, src/app/main/ui/workspace/main_menu.cljs:205
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
 msgid "auth.terms-of-service"
 msgstr "Diensbepalings"
 
@@ -165,7 +165,7 @@ msgstr "Ons het 'n verifikasie-e-pos aan gestuur"
 msgid "branding-illustrations-marketing-pieces"
 msgstr "...handelsmerk, illustrasies, bemarkingsstukke, ens."
 
-#: src/app/main/ui/workspace/libraries.cljs:349
+#: src/app/main/ui/workspace/libraries.cljs:350
 msgid "common.publish"
 msgstr "Publiseer"
 
@@ -237,7 +237,7 @@ msgstr "Deel prototipes"
 msgid "common.share-link.view-all"
 msgstr "Kies Alles"
 
-#: src/app/main/ui/workspace/libraries.cljs:344
+#: src/app/main/ui/workspace/libraries.cljs:345
 msgid "common.unpublish"
 msgstr "Depubliseer"
 
@@ -280,7 +280,7 @@ msgstr "Begin die toer"
 msgid "dasboard.walkthrough-hero.title"
 msgstr "Koppelvlak Deurloop"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:323, src/app/main/ui/workspace/main_menu.cljs:695
+#: src/app/main/ui/dashboard/file_menu.cljs:323
 msgid "dashboard.add-shared"
 msgstr "Voeg by as Gedeelde Biblioteek"
 
@@ -304,7 +304,7 @@ msgstr "Jou Penpot"
 msgid "dashboard.delete-team"
 msgstr "Verwyder span"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:329, src/app/main/ui/workspace/main_menu.cljs:732
+#: src/app/main/ui/dashboard/file_menu.cljs:329
 msgid "dashboard.download-binary-file"
 msgstr "Laai Penpot-lêer (.penpot) af"
 
@@ -326,10 +326,11 @@ msgid "dashboard.export-binary-multi"
 msgstr "Laai %s Penpot lêers (.penpot) af"
 
 #: src/app/main/ui/workspace/main_menu.cljs:740
+#, unused
 msgid "dashboard.export-frames"
 msgstr "Voer borde as PDF uit"
 
-#: src/app/main/ui/exports/assets.cljs:202
+#: src/app/main/ui/exports/assets.cljs:204
 msgid "dashboard.export-frames.title"
 msgstr "Voer as PDF uit"
 

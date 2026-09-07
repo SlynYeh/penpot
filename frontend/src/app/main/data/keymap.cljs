@@ -19,43 +19,61 @@
 (def all-shortcuts
   (d/deep-merge psc/shortcuts tsc/shortcuts wsc/shortcuts))
 
-;; keymap 面板配置：tab → 快捷键 keyword 列表（引用上面 shortcuts map 的键，
-;; 按键与文案渲染时实时解析，保持与真实绑定一致；跨 tab 重复是有意的精选）
+(def ^:private gesture-shortcuts
+  {:click-through    {:windows "Ctrl 点击"        :macos "⌘ 点击"}
+   :multi-select     {:windows "Shift 点击"       :macos "⇧ 点击"}
+   :drag-canvas      {:windows "空格 拖动"        :macos "空格 拖动"}
+   :zoom-canvas      {:windows "Ctrl 滚轮"        :macos "⌘ 滚轮"}
+   :measure-distance {:windows "Alt 悬停目标图层" :macos "⌥ 悬停目标图层"}})
+
+(defn gesture?
+  [kw]
+  (contains? gesture-shortcuts kw))
+
+(defn gesture-text
+  [kw]
+  (when-let [entry (get gesture-shortcuts kw)]
+    (if (cf/check-platform? :macos)
+      (:macos entry)
+      (:windows entry))))
+
+;; keymap 面板配置：tab → 快捷键 keyword 列表（关键字既可来自上面
+;; shortcuts map，也可来自 gesture-shortcuts；按键与文案渲染时实时解析，
+;; 保持与真实绑定/手势描述一致；跨 tab 重复是有意的精选）
+;; 分组依据：docs/UI/new-keymap-group.md
 (def tabs
+  ;; 分组依据：docs/UI/new-keymap-group.md
+  ;; 每个 tab 下的 :shortcuts 列表按视觉"列优先"读取 doc 表格内容，
+  ;; partition-all max-items-per-column 切出的列组成视觉布局，
+  ;; 用户从左到右、从上到下逐行阅读时，所遇项顺序恰好等于 doc 的逐行顺序。
   [{:id :important
-    :shortcuts [:undo :redo :copy :cut :paste :delete :duplicate
-                :group :ungroup :select-all :escape :hide-ui]}
+    :shortcuts [:click-through :drag-canvas :escape :draw-frame
+                :multi-select :draw-text :zoom-canvas :group]}
    {:id :tools-view
-    :shortcuts [:move :draw-frame :draw-rect :draw-ellipse :draw-text
-                :draw-path :draw-curve :add-comment :insert-image :scale
-                :open-color-picker :toggle-focus-mode :toggle-rulers
-                :show-pixel-grid :snap-pixel-grid :toggle-guides]}
+    :shortcuts [:move :draw-frame :draw-text :draw-rect
+                :draw-path :draw-curve :draw-ellipse :open-color-picker
+                :add-comment :hide-ui :toggle-colorpalette :toggle-textpalette]}
    {:id :text
-    :shortcuts [:draw-text :start-editing :bold :italic :underline
-                :line-through :font-size-inc :font-size-dec]}
+    :shortcuts [:bold :underline :font-size-dec :escape
+                :font-size-inc]}
    {:id :selection
-    :shortcuts [:select-all :select-next :select-prev :select-parent-layer
-                :escape :find :find-and-replace :delete]}
+    :shortcuts [:click-through :select-all :escape :measure-distance
+                :start-editing :select-parent-layer :select-next :select-prev]}
    {:id :zoom
-    :shortcuts [:increase-zoom :decrease-zoom :reset-zoom :fit-all
-                :zoom-selected :zoom-lense-increase :zoom-lense-decrease]}
+    :shortcuts [:drag-canvas :increase-zoom :decrease-zoom :reset-zoom
+                :fit-all :zoom-selected :zoom-lense-increase :zoom-lense-decrease]}
    {:id :layers
-    :shortcuts [:toggle-layers :toggle-assets :toggle-history :toggle-lock
-                :toggle-visibility :toggle-lock-size :rename :group :ungroup
-                :mask :unmask :create-component-variant :detach-component
-                :artboard-selection :toggle-layout-flex :toggle-layout-grid]}
+    :shortcuts [:undo :find :group :ungroup
+                :artboard-selection :flip-horizontal :flip-vertical :rename
+                :toggle-visibility :toggle-lock :bring-forward :bring-backward
+                :bring-front :bring-back]}
    {:id :edit
-    :shortcuts [:undo :redo :copy-props :paste-props :paste-replace :delete
-                :duplicate :start-editing :find :find-and-replace
-                :export-shapes :bool-union :bool-difference :bool-intersection
-                :bool-exclude :join-nodes :make-corner :make-curve]}
+    :shortcuts [:copy :cut :paste :paste-replace
+                :copy-props :paste-props :start-editing :detach-component
+                :opacity-0 :opacity-5 :opacity-1]}
    {:id :arrange
     :shortcuts [:align-left :align-right :align-top :align-bottom
-                :align-hcenter :align-vcenter :h-distribute :v-distribute
-                :flip-vertical :flip-horizontal :bring-front :bring-forward
-                :bring-backward :bring-back :move-unit-up :move-unit-down
-                :move-unit-left :move-unit-right :move-fast-up :move-fast-down
-                :move-fast-left :move-fast-right]}])
+                :align-hcenter :align-vcenter :toggle-layout-flex]}])
 
 (defn get-entry
   [kw]
@@ -112,5 +130,6 @@
 (when *assert*
   (doseq [tab tabs
           kw (:shortcuts tab)]
-    (assert (contains? all-shortcuts kw)
+    (assert (or (contains? all-shortcuts kw)
+                (contains? gesture-shortcuts kw))
             (str "keymap: unknown shortcut " (d/name kw)))))

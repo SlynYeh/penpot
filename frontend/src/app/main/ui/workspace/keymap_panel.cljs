@@ -58,10 +58,13 @@
    [:span {:class (stl/css :keymap-item-label)}
     (tr (str "shortcuts." (d/name kw)))]
    [:span {:class (stl/css :keymap-keys)}
-    (for [char (km/display-chars kw)]
-      [:span {:class (stl/css :keymap-key)
-              :key (dm/str (d/name kw) "-" char)}
-       (km/convert-char char)])]])
+    (if (km/gesture? kw)
+      [:span {:class (stl/css :keymap-gesture)}
+       (km/gesture-text kw)]
+      (for [char (km/display-chars kw)]
+        [:span {:class (stl/css :keymap-key)
+                :key (dm/str (d/name kw) "-" char)}
+         (km/convert-char char)]))]])
 
 (mf/defc keymap-content*
   {::mf/private true}
@@ -151,6 +154,7 @@
   (tr "shortcuts.bring-forward")
   (tr "shortcuts.bring-front")
   (tr "shortcuts.clear-undo")
+  (tr "shortcuts.click-through")
   (tr "shortcuts.copy")
   (tr "shortcuts.copy-link")
   (tr "shortcuts.copy-props")
@@ -161,6 +165,7 @@
   (tr "shortcuts.delete")
   (tr "shortcuts.delete-node")
   (tr "shortcuts.detach-component")
+  (tr "shortcuts.drag-canvas")
   (tr "shortcuts.draw-curve")
   (tr "shortcuts.draw-ellipse")
   (tr "shortcuts.draw-frame")
@@ -192,6 +197,7 @@
   (tr "shortcuts.make-corner")
   (tr "shortcuts.make-curve")
   (tr "shortcuts.mask")
+  (tr "shortcuts.measure-distance")
   (tr "shortcuts.merge-nodes")
   (tr "shortcuts.move")
   (tr "shortcuts.move-fast-down")
@@ -203,6 +209,7 @@
   (tr "shortcuts.move-unit-left")
   (tr "shortcuts.move-unit-right")
   (tr "shortcuts.move-unit-up")
+  (tr "shortcuts.multi-select")
   (tr "shortcuts.next-frame")
   (tr "shortcuts.opacity-0")
   (tr "shortcuts.opacity-1")
@@ -267,7 +274,8 @@
   (tr "shortcuts.ungroup")
   (tr "shortcuts.unmask")
   (tr "shortcuts.v-distribute")
+  (tr "shortcuts.zoom-canvas")
   (tr "shortcuts.zoom-lense-decrease")
   (tr "shortcuts.zoom-lense-increase")
-  (tr "shortcuts.zoom-selected"))
+)
 

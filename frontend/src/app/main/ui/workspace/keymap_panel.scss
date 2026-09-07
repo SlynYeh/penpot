@@ -146,3 +146,17 @@
   border: deprecated.$s-1 solid var(--panel-border-color);
   color: var(--color-foreground-primary);
 }
+
+.keymap-gesture {
+  @include use-typography("body-small");
+
+  display: inline-flex;
+  align-items: center;
+  padding: 0 deprecated.$s-4;
+  border-radius: deprecated.$br-4;
+  background-color: var(--menu-shortcut-background-color);
+  border: deprecated.$s-1 solid var(--panel-border-color);
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+}
+

@@ -143,6 +143,31 @@
         on-menu-close
         (mf/use-fn #(swap! filters* assoc :open-menu false))
 
+        ;; Ref to the actions container so we can measure the filter button's
+        ;; left edge and left-align the dropdown panel with it.
+        actions-ref (mf/use-ref nil)
+
+        ;; Dropdown panel position, computed when the menu opens.
+        menu-pos* (mf/use-state {:left 0 :top 46})
+
+        ;; Recompute panel position whenever the menu opens so it stays
+        ;; left-aligned with the filter button even after layout changes.
+        _ (mf/use-effect
+           (mf/deps menu-open?)
+           (fn []
+             (when menu-open?
+               (let [el (mf/ref-val actions-ref)]
+                 (when (some? el)
+                   (let [rect (dom/get-bounding-rect el)]
+                     ;; The filter button is the first child of .actions, so the
+                     ;; container's `left` edge is the filter button's `left`
+                     ;; edge — align the panel to that. The filter button sits
+                     ;; flush with the bottom of `.actions`, so use that as the
+                     ;; anchor and leave a small 2px gap above the panel.
+                     (swap! menu-pos* assoc
+                            :left (get rect :left)
+                            :top  (+ (get rect :bottom) 2))))))))
+
         ;; Memoize options to prevent infinite re-render loops when dev-tools are open.
         ;;
         ;; Problem: When dev-tools are open, they constantly monitor the application state,
@@ -179,7 +204,8 @@
                         :placeholder (tr "workspace.assets.search")}]]
 
       (when-not ^boolean read-only?
-        [:div {:class (stl/css :actions)}
+        [:div {:class (stl/css :actions)
+               :ref actions-ref}
          [:> icon-button* {:variant (if menu-open? "secondary" "ghost")
                            :icon i/filter
                            :aria-label (tr "workspace.assets.filter")
@@ -198,10 +224,10 @@
         :selected section
         :show menu-open?
         :fixed true
-        :min-width true
-        :width size
-        :top 158
-        :left 18
+        :min-width false
+        :width 120
+        :top (:top @menu-pos*)
+        :left (:left @menu-pos*)
         :options options}]]
 
 

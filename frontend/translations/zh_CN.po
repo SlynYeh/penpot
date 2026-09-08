@@ -4552,7 +4552,7 @@ msgstr "编辑"
 
 #: src/app/main/ui/workspace/sidebar/assets.cljs:195
 msgid "workspace.assets.filter"
-msgstr "过滤器"
+msgstr "筛选"
 
 #: src/app/main/ui/workspace/sidebar/assets/graphics.cljs:386, src/app/main/ui/workspace/sidebar/assets.cljs:152
 #, unused
@@ -4581,7 +4581,7 @@ msgstr "本地库"
 
 #: src/app/main/ui/workspace/sidebar/assets.cljs:186
 msgid "workspace.assets.manage-library"
-msgstr "管理库"
+msgstr "管理组件库"
 
 #: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:305
 msgid "workspace.assets.not-found"
@@ -4601,7 +4601,7 @@ msgstr "重命名组"
 
 #: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
 msgid "workspace.assets.search"
-msgstr "搜索素材"
+msgstr "搜索组件/颜色/排版"
 
 #: src/app/main/ui/workspace/sidebar/assets.cljs
 #, unused

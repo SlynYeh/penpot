@@ -28,7 +28,7 @@
    [app.main.ui.components.file-uploader :refer [file-uploader]]
    [app.main.ui.components.radio-buttons :refer [radio-buttons radio-button]]
    [app.main.ui.components.select :refer [select]]
-   [app.main.ui.ds.foundations.assets.icon :as i]
+   [app.main.ui.ds.foundations.assets.icon :as i :refer [icon*]]
    [app.main.ui.ds.layout.tab-switcher :refer [tab-switcher*]]
    [app.main.ui.hooks :as hooks]
    [app.main.ui.icons :as deprecated-icon]
@@ -38,6 +38,7 @@
    [app.main.ui.workspace.colorpicker.harmony :refer [harmony-selector*]]
    [app.main.ui.workspace.colorpicker.hsva :refer [hsva-selector*]]
    [app.main.ui.workspace.colorpicker.libraries :refer [libraries*]]
+   [app.main.ui.workspace.colorpicker.palette :refer [palette-panel*]]
    [app.main.ui.workspace.colorpicker.ramp :refer [ramp-selector*]]
    [app.main.ui.workspace.colorpicker.shortcuts :as sc]
    [app.util.dom :as dom]
@@ -781,10 +782,47 @@
                   (filter-active-sets active-sets-names)
                   (filter-non-empty-sets)
                   (group-sets)
-                  (combine-groups-with-resolved  color-tokens)))]
+                  (combine-groups-with-resolved  color-tokens)))
+
+        ;; Top-level tab between 色板 (palette, default) and 自定义
+        ;; (customize, the original colorpicker* body). Always opens
+        ;; on :palette per 颜色选择器变更.md.
+        top-tab*
+        (mf/use-state :palette)
+        top-tab (deref top-tab*)
+        on-top-tab-change
+        (mf/use-fn
+         (fn [id]
+           (reset! top-tab* (keyword id))))
+        top-tabs
+        (mf/with-memo []
+          [{:id "palette"
+            :label (tr "workspace.colorpicker.tabs.palette")
+            :aria-label (tr "workspace.colorpicker.tabs.palette")}
+           {:id "customize"
+            :label (tr "workspace.colorpicker.tabs.customize")
+            :aria-label (tr "workspace.colorpicker.tabs.customize")}])
+        colorpicker-state (mf/deref refs/colorpicker)
+        current-color (:current-color colorpicker-state)
+
+        modal-node-ref (mf/use-ref nil)
+        on-start-drag
+        (mf/use-fn
+         (mf/deps modal-node-ref)
+         (fn []
+           (st/emit! (dwu/start-undo-transaction (mf/ref-val modal-node-ref)))))
+        on-finish-drag
+        (mf/use-fn
+         (mf/deps modal-node-ref)
+         (fn []
+           (st/emit! (dwu/commit-undo-transaction (mf/ref-val modal-node-ref)))))
+        on-close-c
+        (mf/use-fn
+         (fn [_]
+           (modal/hide!)))]
 
     (mf/with-effect []
-      (st/emit! (st/emit! (dsc/push-shortcuts ::colorpicker sc/shortcuts)))
+      (st/emit! (dsc/push-shortcuts ::colorpicker sc/shortcuts))
       (fn []
         (st/emit! (dsc/pop-shortcuts ::colorpicker))
         (when (and @dirty? @last-change on-close)
@@ -792,17 +830,38 @@
 
     [:div {:class (stl/css :colorpicker-tooltip)
            :data-testid "colorpicker"
-           :style style}
+           :style style
+           :ref modal-node-ref}
 
-     [:> colorpicker* {:data data
-                       :combined-tokens grouped-tokens-by-set
-                       :disable-gradient disable-gradient
-                       :disable-opacity disable-opacity
-                       :disable-image disable-image
-                       :on-token-change on-token-change
-                       :applied-token applied-token
-                       :on-change on-change'
-                       :origin origin
-                       :tab tab
-                       :color-origin color-origin
-                       :on-accept on-accept}]]))
+     [:div {:class (stl/css :colorpicker-modal-tabs)}
+      [:> tab-switcher* {:tabs top-tabs
+                         :selected (name top-tab)
+                         :on-change on-top-tab-change}]
+      [:button {:class (stl/css :colorpicker-modal-close)
+                :title (tr "labels.close")
+                :aria-label (tr "labels.close")
+                :on-click on-close-c}
+       [:> icon* {:icon-id i/close
+                  :size "s"}]]]
+
+     (case top-tab
+       :palette
+       [:> palette-panel* {:state colorpicker-state
+                           :current-color current-color
+                           :on-change on-change'
+                           :on-start-drag on-start-drag
+                           :on-finish-drag on-finish-drag}]
+
+       :customize
+       [:> colorpicker* {:data data
+                         :combined-tokens grouped-tokens-by-set
+                         :disable-gradient disable-gradient
+                         :disable-opacity disable-opacity
+                         :disable-image disable-image
+                         :on-token-change on-token-change
+                         :applied-token applied-token
+                         :on-change on-change'
+                         :origin origin
+                         :tab tab
+                         :color-origin color-origin
+                         :on-accept on-accept}])]))

@@ -19,6 +19,7 @@
   left: calc(10 * px2rem(140));
   padding: var(--sp-m);
   width: var(--colorpicker-width);
+  block-size: 480.5px;
   overflow: auto;
   display: flex;
   flex-direction: column;

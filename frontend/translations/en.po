@@ -6586,6 +6586,22 @@ msgstr "Error copying image"
 msgid "workspace.colorpicker.color-tokens"
 msgstr "Color tokens"
 
+#: src/app/main/ui/workspace/colorpicker.cljs
+msgid "workspace.colorpicker.tabs.palette"
+msgstr "Palette"
+
+#: src/app/main/ui/workspace/colorpicker.cljs
+msgid "workspace.colorpicker.tabs.customize"
+msgstr "Customize"
+
+#: src/app/main/ui/workspace/colorpicker/palette.cljs
+msgid "workspace.colorpicker.palette.grid"
+msgstr "Color palette"
+
+#: src/app/main/ui/workspace/colorpicker/palette.cljs
+msgid "workspace.colorpicker.picker.tooltip"
+msgstr "Eyedropper"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/component.cljs:506
 msgid "workspace.component.swap.loop-error"
 msgstr "Components can't be nested inside themselves."

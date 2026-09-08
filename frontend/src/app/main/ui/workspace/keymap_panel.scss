@@ -17,6 +17,7 @@
   z-index: deprecated.$z-index-10;
   overflow-x: auto;
   pointer-events: none; // 非模态：wrapper 不拦截画布交互
+  box-shadow: 0 -12px 24px 0 rgba(40, 47, 53, 0.04);
 }
 
 .keymap-panel {
@@ -28,8 +29,7 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--panel-background-color);
-  border: deprecated.$s-1 solid var(--panel-border-color);
-  border-radius: deprecated.$br-8 deprecated.$br-8 0 0;
+  border-top: deprecated.$s-1 solid var(--panel-border-color);
 }
 
 .keymap-header {

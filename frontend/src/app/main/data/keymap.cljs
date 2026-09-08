@@ -11,7 +11,8 @@
    [app.main.data.shortcuts :as ds]
    [app.main.data.workspace.path.shortcuts :as psc]
    [app.main.data.workspace.shortcuts :as wsc]
-   [app.main.data.workspace.text.shortcuts :as tsc]))
+   [app.main.data.workspace.text.shortcuts :as tsc]
+   [cuerdas.core :as str]))
 
 (def max-items-per-column 4)
 
@@ -47,8 +48,13 @@
   ;; partition-all max-items-per-column 切出的列组成视觉布局，
   ;; 用户从左到右、从上到下逐行阅读时，所遇项顺序恰好等于 doc 的逐行顺序。
   [{:id :important
-    :shortcuts [:click-through :drag-canvas :escape :draw-frame
-                :multi-select :draw-text :zoom-canvas :group]}
+    ;; 两行四列：partition 2 → 4 列 × 2 行；行优先阅读顺序等于
+    ;; docs/UI/important-keymap-tab-tabcontent.md 的表格行序
+    :max-items 2
+    :shortcuts [:click-through :escape
+                :multi-select :zoom-canvas
+                :drag-canvas :draw-frame
+                :draw-text :group]}
    {:id :tools-view
     :shortcuts [:move :draw-frame :draw-text :draw-rect
                 :draw-path :draw-curve :draw-ellipse :open-color-picker
@@ -85,16 +91,18 @@
     (or (:show-command entry) (:command entry))))
 
 (defn tab-columns
-  "把一个 tab 的条目切成最多 max-items-per-column 条的列（列优先填充）"
+  "把一个 tab 的条目切成最多 max-items-per-column 条的列（列优先填充）；
+   tab 未指定 :max-items 时用 max-items-per-column"
   [tab]
-  (partition-all max-items-per-column (:shortcuts tab)))
+  (partition-all (:max-items tab max-items-per-column) (:shortcuts tab)))
 
 (def ^:private modified-keys
   {:up ds/up-arrow
    :down ds/down-arrow
    :left ds/left-arrow
    :right ds/right-arrow
-   :plus "+"})
+   :plus "+"
+   :escape "Esc"})
 
 (def ^:private macos-keys
   {:command "⌘"
@@ -109,16 +117,15 @@
    :enter "⏎"})
 
 (defn convert-char
-  "单个按键 token 的显示转换：方向键/加号始终替换；mac 下修饰键转符号"
+  "单个按键 token 的显示转换：方向键/Esc/加号始终替换；mac 下修饰键转符号；
+   单个小写字母键帽显示大写（docs/UI/new-keymap-group.md 全部 tab 的约定）"
   [char]
-  (let [char (if (contains? modified-keys (keyword char))
-               (get modified-keys (keyword char))
-               char)
+  (let [char (or (get modified-keys (keyword (str/lower char))) char)
         char (if (and (cf/check-platform? :macos)
-                      (contains? macos-keys (keyword char)))
-               (get macos-keys (keyword char))
+                      (contains? macos-keys (keyword (str/lower char))))
+               (get macos-keys (keyword (str/lower char)))
                char)]
-    char))
+    (if (re-matches #"[a-z]" char) (str/upper char) char)))
 
 (defn display-chars
   "条目的键帽字符序列；多候选 command 只取第一个候选"
@@ -126,6 +133,16 @@
   (let [command (get-display-command kw)
         command (if (vector? command) (first command) command)]
     (ds/split-sc command)))
+
+(defn display-alternatives
+  "条目全部候选键位的字符序列（每候选一个 split-sc 组，字母序），
+   供重要 tab 的 'A / B' 多键帽展示；多候选 command 目前仅 :draw-frame。
+   仅对手势之外的条目调用（手势走 gesture-text）"
+  [kw]
+  (let [command (get-display-command kw)]
+    (cond
+      (vector? command) (map ds/split-sc (sort command))
+      (string? command) [(ds/split-sc command)])))
 
 (when *assert*
   (doseq [tab tabs

@@ -2980,8 +2980,7 @@ msgstr "All"
 msgid "labels.and"
 msgstr "and"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:279
 msgid "labels.back"
 msgstr "Back"
 
@@ -3011,7 +3010,7 @@ msgstr "Cancel"
 msgid "labels.canva"
 msgstr "Canva"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:271, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:305, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "Close"
 
@@ -5284,7 +5283,7 @@ msgstr "Go to login"
 msgid "settings.detach"
 msgstr "Detach"
 
-#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:549, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:572, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:583, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:611, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:624, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:644, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:665, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
+#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:590, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:601, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:629, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:651, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:662, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:683, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:694, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
 msgid "settings.multiple"
 msgstr "Mixed"
 
@@ -7620,7 +7619,7 @@ msgstr "value"
 msgid "workspace.options.canvas-background"
 msgstr "Canvas background"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:699
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:717
 msgid "workspace.options.clip-content"
 msgstr "Clip content"
 
@@ -7901,7 +7900,7 @@ msgstr "Remove fill"
 msgid "workspace.options.fill.section"
 msgstr "Fill section"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:530
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:548
 msgid "workspace.options.fit-content"
 msgstr "Resize board to fit content"
 
@@ -8051,11 +8050,11 @@ msgstr "Guides"
 msgid "workspace.options.guides.toggle-guide"
 msgstr "Toggle guide"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:560, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:579
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:578, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:597
 msgid "workspace.options.height"
 msgstr "Height"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:580
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:598
 msgid "workspace.options.height.icon"
 msgstr "H"
 
@@ -8824,7 +8823,7 @@ msgstr "Z-index"
 msgid "workspace.options.layout.z-index.icon"
 msgstr "Z"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:469
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:484
 msgid "workspace.options.measures.section"
 msgstr "Shape measures section"
 
@@ -8840,7 +8839,7 @@ msgstr "More library colors"
 msgid "workspace.options.more-token-colors"
 msgstr "More color tokens"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:117, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:495
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:512
 msgid "workspace.options.no-size-preset-results"
 msgstr "No matching size preset"
 
@@ -8902,7 +8901,7 @@ msgstr "Recent"
 msgid "workspace.options.retry"
 msgstr "Retry"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:661, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:669
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:679, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:687
 msgid "workspace.options.rotation"
 msgstr "Rotation"
 
@@ -8910,7 +8909,7 @@ msgstr "Rotation"
 msgid "workspace.options.search-font"
 msgstr "Search font"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:111, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:489
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:117, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:506
 msgid "workspace.options.search-size-preset"
 msgstr "Search size preset"
 
@@ -8994,7 +8993,7 @@ msgstr "open more options"
 msgid "workspace.options.show-fill-on-export"
 msgstr "Show in exports"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:714
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:732
 msgid "workspace.options.show-in-viewer"
 msgstr "Show in view mode"
 
@@ -9002,15 +9001,28 @@ msgstr "Show in view mode"
 msgid "workspace.options.size"
 msgstr "Size"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:100, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:477
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:128
+msgid "workspace.options.size-preset.category.phone"
+msgstr "Phone"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:131
+#, unused
+msgid "workspace.options.size-preset.category.print"
+msgstr "Print"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:125
+msgid "workspace.options.size-preset.category.web"
+msgstr "Web"
+
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:105, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:493
 msgid "workspace.options.size-presets"
 msgstr "Size presets"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:612
 msgid "workspace.options.size.lock"
 msgstr "Lock ratio"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:612
 msgid "workspace.options.size.unlock"
 msgstr "Unlock ratio"
 
@@ -9248,27 +9260,27 @@ msgstr "Uppercase"
 msgid "workspace.options.use-play-button"
 msgstr "Use the play button at the header to run the prototype view."
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:545, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:563, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:585
 msgid "workspace.options.width"
 msgstr "Width"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:568
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:586
 msgid "workspace.options.width.icon"
 msgstr "W"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:607, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:630
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:625, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:648
 msgid "workspace.options.x"
 msgstr "X axis"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:631
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:649
 msgid "workspace.options.x.icon"
 msgstr "X"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:641
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:638, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:659
 msgid "workspace.options.y"
 msgstr "Y axis"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:660
 msgid "workspace.options.y.icon"
 msgstr "Y"
 
@@ -9775,11 +9787,11 @@ msgstr "Update main components"
 msgid "workspace.shape.menu.update-main"
 msgstr "Update main component"
 
-#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:63
+#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:64
 msgid "workspace.sidebar.collapse"
 msgstr "Collapse sidebar"
 
-#: src/app/main/ui/workspace/sidebar.cljs:74, src/app/main/ui/workspace/sidebar.cljs:78
+#: src/app/main/ui/workspace/sidebar.cljs:75, src/app/main/ui/workspace/sidebar.cljs:79
 msgid "workspace.sidebar.expand"
 msgstr "Expand sidebar"
 
@@ -9787,32 +9799,29 @@ msgstr "Expand sidebar"
 msgid "workspace.sidebar.history"
 msgstr "History"
 
-#: src/app/main/ui/workspace/sidebar.cljs:163, src/app/main/ui/workspace/sidebar.cljs:171
+#: src/app/main/ui/workspace/sidebar.cljs:172, src/app/main/ui/workspace/sidebar.cljs:180
 msgid "workspace.sidebar.icons"
 msgstr "Icons"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:127
-msgid "workspace.sidebar.icons.category.all"
-msgstr "All"
-
-#: src/app/main/ui/workspace/sidebar/icons.cljs
+#: src/app/main/ui/workspace/sidebar/icons.cljs:241
 msgid "workspace.sidebar.icons.category-count"
 msgstr " (%s)"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs
-msgid "workspace.sidebar.icons.view-all"
-msgstr "View all"
+#: src/app/main/ui/workspace/sidebar/icons.cljs:127
+#, unused
+msgid "workspace.sidebar.icons.category.all"
+msgstr "All"
 
 #: src/app/main/ui/workspace/sidebar
 #, unused
 msgid "workspace.sidebar.icons.drag-hint"
 msgstr "Drag onto the canvas"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:247
+#: src/app/main/ui/workspace/sidebar/icons.cljs:294, src/app/main/ui/workspace/sidebar/icons.cljs:313
 msgid "workspace.sidebar.icons.empty"
 msgstr "No matching results"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:221
+#: src/app/main/ui/workspace/sidebar/icons.cljs:420
 msgid "workspace.sidebar.icons.search"
 msgstr "Search icons"
 
@@ -9821,23 +9830,27 @@ msgstr "Search icons"
 msgid "workspace.sidebar.icons.size"
 msgstr "Size"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:118
+#: src/app/main/ui/workspace/sidebar/icons.cljs:339
 msgid "workspace.sidebar.icons.size.custom"
 msgstr "Custom"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:156
+#: src/app/main/ui/workspace/sidebar/icons.cljs:358
 msgid "workspace.sidebar.icons.theme"
 msgstr "Icon style"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:144
+#: src/app/main/ui/workspace/sidebar/icons.cljs:346
 msgid "workspace.sidebar.icons.theme.filled"
 msgstr "Filled"
 
-#: src/app/main/ui/workspace/sidebar/icons.cljs:143
+#: src/app/main/ui/workspace/sidebar/icons.cljs:345
 msgid "workspace.sidebar.icons.theme.outline"
 msgstr "Outline"
 
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:156, src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:167
+#: src/app/main/ui/workspace/sidebar/icons.cljs:263
+msgid "workspace.sidebar.icons.view-all"
+msgstr "View all"
+
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:165, src/app/main/ui/workspace/sidebar.cljs:168, src/app/main/ui/workspace/sidebar.cljs:176
 msgid "workspace.sidebar.layers"
 msgstr "Layers"
 
@@ -9922,7 +9935,7 @@ msgstr "Pages"
 msgid "workspace.sidebar.sitemap.add-page"
 msgstr "Add page"
 
-#: src/app/main/ui/workspace/sidebar.cljs:165
+#: src/app/main/ui/workspace/sidebar.cljs:174
 msgid "workspace.sidebar.tokens"
 msgstr "Tokens"
 
@@ -10547,7 +10560,7 @@ msgstr "The value is not valid"
 msgid "workspace.tokens.warning-name-change"
 msgstr "Renaming this token will break any reference to its old name"
 
-#: src/app/main/ui/workspace/sidebar.cljs:161, src/app/main/ui/workspace/sidebar.cljs:169
+#: src/app/main/ui/workspace/sidebar.cljs:170, src/app/main/ui/workspace/sidebar.cljs:178
 msgid "workspace.toolbar.assets"
 msgstr "Assets"
 
@@ -10892,11 +10905,11 @@ msgstr "Do you want to restore this version?"
 msgid "workspace.versions.snapshot-menu"
 msgstr "Open snapshot menu"
 
-#: src/app/main/ui/workspace/sidebar.cljs:264
+#: src/app/main/ui/workspace/sidebar.cljs:298
 msgid "workspace.versions.tab.actions"
 msgstr "Actions"
 
-#: src/app/main/ui/workspace/sidebar.cljs:262
+#: src/app/main/ui/workspace/sidebar.cljs:296
 msgid "workspace.versions.tab.history"
 msgstr "History"
 

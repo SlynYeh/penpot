@@ -6093,6 +6093,15 @@ msgstr "尺寸"
 msgid "workspace.options.size-presets"
 msgstr "尺寸预设"
 
+msgid "workspace.options.size-preset.category.web"
+msgstr "网页"
+
+msgid "workspace.options.size-preset.category.phone"
+msgstr "手机"
+
+msgid "workspace.options.size-preset.category.print"
+msgstr "印刷品"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:587
 msgid "workspace.options.size.lock"
 msgstr "锁定比率"

@@ -10,6 +10,8 @@
    [app.common.data :as d]
    [app.common.data.macros :as dm]
    [app.main.data.keymap :as km]
+   [app.main.data.workspace :as dw]
+   [app.main.store :as st]
    [app.main.ui.ds.buttons.icon-button :refer [icon-button*]]
    [app.main.ui.ds.foundations.assets.icon :as i]
    [app.util.dom :as dom]
@@ -116,8 +118,7 @@
 (mf/defc keymap-panel*
   {::mf/memo true}
   [{:keys [class] :rest props}]
-  (let [open? (mf/use-state true)
-        selected (mf/use-state "important")
+  (let [selected (mf/use-state "important")
         tabs [{:id "important" :label (tr "keymap.tab.important")}
               {:id "tools-view" :label (tr "keymap.tab.tools-view")}
               {:id "text" :label (tr "keymap.tab.text")}
@@ -126,22 +127,21 @@
               {:id "layers" :label (tr "keymap.tab.layers")}
               {:id "edit" :label (tr "keymap.tab.edit")}
               {:id "arrange" :label (tr "keymap.tab.arrange")}]
-        on-close (mf/use-callback #(reset! open? false))
-        on-change (mf/use-callback #(reset! selected %))
+        on-close (mf/use-fn #(st/emit! (dw/remove-layout-flag :shortcuts)))
+        on-change (mf/use-fn #(reset! selected %))
         wrapper-props (mf/spread-props props {:class [class (stl/css :keymap-wrapper)]})]
-    (when @open?
-      [:> :div wrapper-props
-       [:div {:class (stl/css :keymap-panel)
-              :role "region"
-              :aria-label (tr "shortcuts.title")}
-        [:div {:class (stl/css :keymap-header)}
-         [:> keymap-tab-bar* {:tabs tabs :selected @selected :on-change on-change}]
-         [:> icon-button* {:variant "ghost"
-                           :icon i/close
-                           :aria-label (tr "labels.close")
-                           :tooltip-class (stl/css :keymap-close-trigger)
-                           :on-click on-close}]]
-        [:> keymap-content* {:selected @selected}]]])))
+    [:> :div wrapper-props
+     [:div {:class (stl/css :keymap-panel)
+            :role "region"
+            :aria-label (tr "shortcuts.title")}
+      [:div {:class (stl/css :keymap-header)}
+       [:> keymap-tab-bar* {:tabs tabs :selected @selected :on-change on-change}]
+       [:> icon-button* {:variant "ghost"
+                         :icon i/close
+                         :aria-label (tr "labels.close")
+                         :tooltip-class (stl/css :keymap-close-trigger)
+                         :on-click on-close}]]
+      [:> keymap-content* {:selected @selected}]]]))
 ;; Execution time translation strings: the keymap panel resolves
 ;; shortcuts.* msgids dynamically in keymap-item* and keymap.important.*
 ;; msgids in important-item*, so they are listed here to stay visible

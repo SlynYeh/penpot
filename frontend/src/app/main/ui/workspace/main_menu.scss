@@ -5,11 +5,42 @@
 // Copyright (c) KALEIDOS INC Sucursal en España SL
 
 @use "refactor/common-refactor.scss" as deprecated;
+@use "ds/colors.scss" as *;
 @use "ds/typography.scss" as t;
 @use "ds/z-index.scss" as *;
 @use "ds/_borders.scss" as *;
 @use "ds/_sizes.scss" as *;
 @use "ds/_utils.scss" as *;
+
+// Foreground hexes are per fork design spec; intentionally not tokenized.
+// Hover/focus background is the design-system $gray-50.
+.menu-trigger {
+  @include deprecated.flex-center;
+
+  width: deprecated.$s-32;
+  height: deprecated.$s-32;
+  padding: 0;
+  border: 0;
+  border-radius: deprecated.$br-4;
+  background: transparent;
+  color: #495e74;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+
+  &:focus-visible {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+
+  svg {
+    width: deprecated.$s-32;
+    height: deprecated.$s-32;
+  }
+}
 
 .base-menu {
   position: absolute;
@@ -27,14 +58,15 @@
 .menu {
   @extend .base-menu;
   top: $sz-48;
-  left: calc(var(--right-sidebar-width, 318px) - $sz-40);
+  left: deprecated.$s-12;
   inline-size: $sz-192;
 }
 
 .sub-menu {
   @extend .base-menu;
   top: $sz-48;
-  left: calc(var(--right-sidebar-width, 318px) + $sz-154);
+  // $sz-192 must stay in sync with .menu's inline-size so submenus track its right edge.
+  left: calc(deprecated.$s-12 + $sz-192 + deprecated.$s-2);
   min-width: $sz-284;
   width: 115%;
 

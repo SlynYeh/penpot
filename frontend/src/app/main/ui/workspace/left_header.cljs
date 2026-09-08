@@ -15,7 +15,7 @@
    [app.main.refs :as refs]
    [app.main.router :as rt]
    [app.main.store :as st]
-   [app.main.ui.icons :as deprecated-icon]
+   [app.main.ui.workspace.help-center-menu :as help-center-menu]
    [app.main.ui.workspace.main-menu :as main-menu]
    [app.util.dom :as dom]
    [app.util.i18n :as i18n :refer [tr]]
@@ -88,7 +88,6 @@
         (dom/select-text! (mf/ref-val input-ref))))
 
     [:header {:class (dm/str class " " (stl/css :workspace-header-left))}
-     [:div {:class (stl/css :main-icon)} deprecated-icon/logo-icon]
-     [:div {:class (stl/css :menu-section)}
-      [:> main-menu/menu* {:layout layout
-                           :file file}]]]))
+     [:> main-menu/menu* {:layout layout
+                          :file file}]
+     [:> help-center-menu/help-center-menu*]]))

@@ -7147,6 +7147,18 @@ msgstr "Linear gradient"
 msgid "workspace.gradients.radial"
 msgstr "Radial gradient"
 
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.faq"
+msgstr "FAQ"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.shortcuts"
+msgstr "Shortcuts"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.tutorials"
+msgstr "Tutorials"
+
 #: src/app/main/ui/workspace/main_menu.cljs:296
 msgid "workspace.header.menu.disable-dynamic-alignment"
 msgstr "Disable dynamic alignment"

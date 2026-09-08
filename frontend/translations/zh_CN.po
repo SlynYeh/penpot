@@ -5582,6 +5582,18 @@ msgstr "线性渐变"
 msgid "workspace.gradients.radial"
 msgstr "放射渐变"
 
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.faq"
+msgstr "常见问题"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.shortcuts"
+msgstr "快捷键指南"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.tutorials"
+msgstr "新手教程"
+
 #: src/app/main/ui/workspace/main_menu.cljs:296
 msgid "workspace.header.menu.disable-dynamic-alignment"
 msgstr "禁用动态对齐"

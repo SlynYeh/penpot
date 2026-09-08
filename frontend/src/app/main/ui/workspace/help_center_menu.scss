@@ -1,0 +1,114 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "refactor/common-refactor.scss" as deprecated;
+@use "ds/colors.scss" as *;
+@use "ds/typography.scss" as t;
+@use "ds/z-index.scss" as *;
+@use "ds/_borders.scss" as *;
+@use "ds/_sizes.scss" as *;
+
+// Foreground hexes are per fork design spec; intentionally not tokenized.
+// Hover/focus background is the design-system $gray-50 (spec typo #f2f3f6 unified).
+.help-trigger {
+  @include deprecated.flex-center;
+
+  gap: deprecated.$s-4;
+  height: deprecated.$s-32;
+  padding: deprecated.$s-6 deprecated.$s-12;
+  border: 0;
+  border-radius: deprecated.$br-4;
+  background: transparent;
+  color: #495e74;
+  cursor: pointer;
+  font: inherit;
+
+  svg {
+    width: deprecated.$s-16;
+    height: deprecated.$s-16;
+
+    // help.svg ships without stroke/fill attributes; tie it to the button color.
+    stroke: currentcolor;
+    fill: none;
+  }
+
+  &:hover {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+
+  &:focus-visible {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+}
+
+.trigger-label {
+  white-space: nowrap;
+}
+
+// Visual block intentionally duplicated from main-menu's .base-menu:
+// css-modules cannot @extend across files.
+.help-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+  padding: var(--sp-xs);
+  top: $sz-48;
+  right: deprecated.$s-12;
+  inline-size: $sz-192;
+  border-radius: $br-8;
+  z-index: var(--z-index-dropdown);
+  background-color: var(--menu-background-color);
+  border: $b-2 solid var(--panel-border-color);
+  box-shadow: 0 0 $sz-12 0 var(--menu-shadow-color);
+}
+
+// Visual block intentionally duplicated from main-menu's .base-menu-item:
+// css-modules cannot @extend across files.
+.help-menu-item {
+  @include t.use-typography("body-small");
+
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto $sz-16 $sz-16;
+  grid-template-areas: "name indicator arrow";
+  block-size: $sz-28;
+  inline-size: 100%;
+  padding: $sz-6;
+  border-radius: $br-8;
+  color: var(--menu-foreground-color);
+  background-color: var(--menu-background-color);
+
+  &:hover {
+    --menu-foreground-color: var(--menu-foreground-color-hover);
+    --menu-background-color: var(--menu-background-color-hover);
+    --menu-shortcut-foreground-color: var(--menu-shortcut-foreground-color-hover);
+    --menu-icon-foreground-color: var(--menu-foreground-color-hover);
+  }
+}
+
+.item-name {
+  grid-area: name;
+}
+
+.item-icon {
+  grid-area: arrow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--menu-icon-foreground-color);
+
+  svg {
+    width: $sz-16;
+    height: $sz-16;
+
+    // external-link.svg ships without stroke/fill attributes; tie it to the item color.
+    stroke: currentcolor;
+    fill: none;
+  }
+}

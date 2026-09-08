@@ -72,6 +72,7 @@
         colorpalette?  (:colorpalette layout)
         textpalette?   (:textpalette layout)
         hide-ui?       (:hide-ui layout)
+        shortcuts?     (:shortcuts layout)
 
         on-resize
         (mf/use-fn
@@ -92,7 +93,8 @@
        [:> palette* {:layout layout
                      :on-change-size on-resize-palette}])
 
-     (when (not ^boolean hide-ui?)
+     (when (and (not ^boolean hide-ui?)
+                ^boolean shortcuts?)
        [:> keymap-panel* {}])
 
      [:section

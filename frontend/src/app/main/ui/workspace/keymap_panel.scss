@@ -15,14 +15,14 @@
   inset-inline: 0;
   bottom: 0;
   z-index: deprecated.$z-index-10;
-  display: flex;
-  justify-content: center;
+  overflow-x: auto;
   pointer-events: none; // 非模态：wrapper 不拦截画布交互
 }
 
 .keymap-panel {
   pointer-events: auto;
   width: 100%;
+  min-width: 1200px;
   height: 264px;
   display: flex;
   flex-direction: column;
@@ -134,7 +134,7 @@
 
 .keymap-keys {
   display: flex;
-  gap: deprecated.$s-2;
+  gap: deprecated.$s-4;
   flex-shrink: 0;
 }
 
@@ -146,7 +146,7 @@
   justify-content: center;
   min-width: deprecated.$s-20;
   min-height: deprecated.$s-20;
-  padding: 0 deprecated.$s-4;
+  padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
   background-color: var(--menu-shortcut-background-color);
   border: deprecated.$s-1 solid var(--panel-border-color);
@@ -158,7 +158,7 @@
 
   display: inline-flex;
   align-items: center;
-  padding: 0 deprecated.$s-4;
+  padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
   background-color: var(--menu-shortcut-background-color);
   border: deprecated.$s-1 solid var(--panel-border-color);
@@ -168,6 +168,17 @@
 
 .keymap-content-important {
   align-items: center; // 两行条目在 264px 面板内垂直居中
+
+  // 重要快捷键 tab 专属列宽（其余 tab 维持 .keymap-column 的 232px）
+  .keymap-column {
+    width: 256px;
+  }
+
+  // 重要 tab 不画列间分割线（不能写成 `& + &`：嵌套里 & 是完整父链，
+  // 会编译成 .keymap-column + .keymap-content-important .keymap-column，永不匹配）
+  .keymap-column + .keymap-column {
+    border-inline-start: none;
+  }
 }
 
 .keymap-key-group {

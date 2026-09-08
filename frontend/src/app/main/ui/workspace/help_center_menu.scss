@@ -47,6 +47,8 @@
 }
 
 .trigger-label {
+  @include t.use-typography("body-small");
+
   white-space: nowrap;
 }
 
@@ -94,21 +96,4 @@
 
 .item-name {
   grid-area: name;
-}
-
-.item-icon {
-  grid-area: arrow;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--menu-icon-foreground-color);
-
-  svg {
-    width: $sz-16;
-    height: $sz-16;
-
-    // external-link.svg ships without stroke/fill attributes; tie it to the item color.
-    stroke: currentcolor;
-    fill: none;
-  }
 }

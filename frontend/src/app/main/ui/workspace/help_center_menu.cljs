@@ -96,8 +96,7 @@
                                                 (when (kbd/enter? event)
                                                   (open-tutorials event)))
                                  :id          "help-menu-tutorials"}
-         [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.tutorials")]
-         [:span {:class (stl/css :item-icon)} deprecated-icon/external-link]])
+         [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.tutorials")]])
 
       (when cf/learning-center-uri
         [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
@@ -106,5 +105,4 @@
                                                 (when (kbd/enter? event)
                                                   (open-faq event)))
                                  :id          "help-menu-faq"}
-         [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.faq")]
-         [:span {:class (stl/css :item-icon)} deprecated-icon/external-link]])]]))
+         [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.faq")]])]]))

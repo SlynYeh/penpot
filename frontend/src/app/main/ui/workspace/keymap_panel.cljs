@@ -56,8 +56,10 @@
   [{:keys [kw alternatives]}]
   [:span {:class (stl/css :keymap-keys)}
    (if (km/gesture? kw)
-     [:span {:class (stl/css :keymap-gesture)}
-      (km/gesture-text kw)]
+     (let [[gkey gesture] (km/gesture-parts kw)]
+       [:*
+        [:span {:class (stl/css :keymap-key)} gkey]
+        [:span {:class (stl/css :keymap-gesture)} gesture]])
      (let [groups (if alternatives
                     (or (km/display-alternatives kw) [])
                     [(km/display-chars kw)])]

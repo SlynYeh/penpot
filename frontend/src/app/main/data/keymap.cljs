@@ -21,17 +21,19 @@
   (d/deep-merge psc/shortcuts tsc/shortcuts wsc/shortcuts))
 
 (def ^:private gesture-shortcuts
-  {:click-through    {:windows "Ctrl 点击"        :macos "⌘ 点击"}
-   :multi-select     {:windows "Shift 点击"       :macos "⇧ 点击"}
-   :drag-canvas      {:windows "空格 拖动"        :macos "空格 拖动"}
-   :zoom-canvas      {:windows "Ctrl 滚轮"        :macos "⌘ 滚轮"}
-   :measure-distance {:windows "Alt 悬停目标图层" :macos "⌥ 悬停目标图层"}})
+  {:click-through    {:windows ["Ctrl" "点击"]       :macos ["⌘" "点击"]}
+   :multi-select     {:windows ["Shift" "点击"]      :macos ["⇧" "点击"]}
+   :drag-canvas      {:windows ["空格" "拖动"]       :macos ["空格" "拖动"]}
+   :zoom-canvas      {:windows ["Ctrl" "滚轮"]       :macos ["⌘" "滚轮"]}
+   :measure-distance {:windows ["Alt" "悬停目标图层"] :macos ["⌥" "悬停目标图层"]}})
 
 (defn gesture?
   [kw]
   (contains? gesture-shortcuts kw))
 
-(defn gesture-text
+(defn gesture-parts
+  "手势条目的 [按键 手势词] 显示文本（按当前平台取值）；
+   两段均为可直接渲染的显示文本，不再过 convert-char"
   [kw]
   (when-let [entry (get gesture-shortcuts kw)]
     (if (cf/check-platform? :macos)
@@ -137,7 +139,7 @@
 (defn display-alternatives
   "条目全部候选键位的字符序列（每候选一个 split-sc 组，字母序），
    供重要 tab 的 'A / B' 多键帽展示；多候选 command 目前仅 :draw-frame。
-   仅对手势之外的条目调用（手势走 gesture-text）"
+   仅对手势之外的条目调用（手势走 gesture-parts）"
   [kw]
   (let [command (get-display-command kw)]
     (cond

@@ -32,6 +32,7 @@
    [app.main.data.event :as ev]
    [app.main.data.helpers :as dsh]
    [app.main.data.workspace.collapse :as dwc]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.data.workspace.modifiers :as dwm]
    [app.main.data.workspace.selection :as dws]
    [app.main.data.workspace.shapes :as dwsh]
@@ -280,12 +281,15 @@
           (rx/empty)
           (let [initial-position @ms/mouse-position
 
-                stopper (mse/drag-stopper stream)
-                layout  (:workspace-layout state)
-                page-id (:current-page-id state)
-                focus   (:workspace-focus-selected state)
-                zoom    (dm/get-in state [:workspace-local :zoom] 1)
-                objects (dsh/lookup-page-objects state page-id)
+                stopper   (mse/drag-stopper stream)
+                libraries (dsh/lookup-libraries state)
+                layout    (cond-> (:workspace-layout state)
+                            (dwi/iconpark-instance-root? shape libraries)
+                            (conj :scale-text))
+                page-id   (:current-page-id state)
+                focus     (:workspace-focus-selected state)
+                zoom      (dm/get-in state [:workspace-local :zoom] 1)
+                objects   (dsh/lookup-page-objects state page-id)
                 shape-ids (filterv (comp not :blocked (d/getf objects)) ids)]
 
             (if (empty? shape-ids)
@@ -410,20 +414,30 @@
              objects
              (dwsh/lookup-changed-objects state page-id)
 
+             libraries
+             (dsh/lookup-libraries state)
+
              get-modifier
              (fn [shape]
                (let [modifiers (ctm/change-dimensions-modifiers shape attr value)]
-                 ;; For text shapes, also update grow-type based on the resize
-                 (if (cfh/text-shape? shape)
+                 (cond
+                   (cfh/text-shape? shape)
                    (let [{sr-width :width sr-height :height} (:selrect shape)
-                         new-width (if (= attr :width) value sr-width)
+                         new-width  (if (= attr :width) value sr-width)
                          new-height (if (= attr :height) value sr-height)
-                         scalev (gpt/point (/ new-width sr-width) (/ new-height sr-height))
+                         scalev     (gpt/point (/ new-width sr-width) (/ new-height sr-height))
                          current-grow-type (dm/get-prop shape :grow-type)
-                         new-grow-type (dwm/next-grow-type current-grow-type scalev)]
+                         new-grow-type     (dwm/next-grow-type current-grow-type scalev)]
                      (cond-> modifiers
                        (not= new-grow-type current-grow-type)
                        (ctm/change-property :grow-type new-grow-type)))
+
+                   (dwi/iconpark-instance-root? shape libraries)
+                   (let [{sr-width :width sr-height :height} (:selrect shape)
+                         native (if (= attr :width) sr-width sr-height)]
+                     (ctm/scale-content modifiers (dwi/icon-stroke-scale native value)))
+
+                   :else
                    modifiers)))
 
              modif-tree (dwm/build-modif-tree ids objects get-modifier)]

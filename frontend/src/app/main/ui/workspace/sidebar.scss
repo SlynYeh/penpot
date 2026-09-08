@@ -99,6 +99,20 @@
   --tabs-nav-padding-inline-end: var(--sp-m);
 }
 
+.sidebar-tab-panels {
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar-tab-panel {
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar-tab-panel-hidden {
+  display: none;
+}
+
 .collapse-sidebar-button {
   --collapse-icon-color: var(--color-foreground-secondary);
 

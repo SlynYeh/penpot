@@ -1,0 +1,346 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "ds/_borders.scss" as *;
+@use "ds/_sizes.scss" as *;
+@use "ds/_utils.scss" as *;
+@use "ds/colors.scss" as *;
+@use "ds/typography.scss" as t;
+@use "refactor/common-refactor.scss" as deprecated;
+
+.icons-bar {
+  --icon-tile-bg: #{$white};
+  --icon-tile-bg-hover: #{$gray-50};
+  --icon-tile-glyph: #{$blue-teal-700};
+  --icon-theme-fill: #8694a3;
+  --icon-theme-active: #000;
+  --icon-theme-slider-bg: #{$white};
+  --icon-theme-slider-inset: #{px2rem(2)};
+  --icon-empty-fg: #8b8c8f;
+  --icon-category-fg: #19191a;
+  --icon-meta-fg: #{$blue-teal-700};
+  --icons-radius: #{$br-4};
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: calc(100vh - deprecated.$s-92);
+  overflow: hidden;
+  padding-block: var(--sp-s);
+  padding-inline: var(--tabs-nav-padding-inline-start, var(--sp-m)) var(--tabs-nav-padding-inline-end, var(--sp-m));
+
+  .search,
+  .size-combobox,
+  .theme-toggle,
+  .theme-slider,
+  .icon-tile,
+  :global([class$="__search-box"]),
+  :global([class$="__search-input-wrapper"]),
+  :global([class$="__search-input"]),
+  :global([class$="__option-list"]),
+  :global([class$="__option-list"]) > * {
+    border-radius: var(--icons-radius);
+  }
+}
+
+.search {
+  flex: 0 0 auto;
+}
+
+.filter-row {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--sp-m);
+  height: $sz-28;
+  margin-block: var(--sp-xl) var(--sp-m);
+}
+
+.size-control {
+  flex: 0 0 auto;
+  width: px2rem(80);
+  height: $sz-28;
+
+  :global([class$="__wrapper"]) {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.size-combobox {
+  width: 100%;
+  height: $sz-28;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-block: 0;
+}
+
+.theme-toggle {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: px2rem(70);
+  height: $sz-28;
+  border-radius: var(--icons-radius);
+  background-color: var(--color-background-tertiary);
+  overflow: hidden;
+}
+
+.theme-buttons {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+
+  :global([class*="tooltip-trigger"]) {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.theme-slider {
+  position: absolute;
+  inset-block: var(--icon-theme-slider-inset);
+  inset-inline-start: var(--icon-theme-slider-inset);
+  width: calc(50% - var(--icon-theme-slider-inset));
+  border-radius: var(--icons-radius);
+  background-color: var(--icon-theme-slider-bg);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+.theme-toggle-filled .theme-slider {
+  transform: translateX(100%);
+}
+
+.theme-button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: $sz-28;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-swatch {
+  display: block;
+  width: $sz-14;
+  height: $sz-14;
+  border-radius: px2rem(2);
+  box-sizing: border-box;
+}
+
+.theme-swatch-outline {
+  border: $b-1 solid var(--icon-theme-fill);
+  background: transparent;
+}
+
+.theme-swatch-filled {
+  background: var(--icon-theme-fill);
+}
+
+.theme-button:hover .theme-swatch-outline,
+.theme-button[aria-pressed="true"] .theme-swatch-outline {
+  border-color: var(--icon-theme-active);
+}
+
+.theme-button:hover .theme-swatch-filled,
+.theme-button[aria-pressed="true"] .theme-swatch-filled {
+  background: var(--icon-theme-active);
+}
+
+.icon-stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.icon-groups {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: deprecated.$s-12;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.view-all {
+  @include t.use-typography("body-small");
+
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--icon-meta-fg);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--icon-category-fg);
+  }
+}
+
+.icon-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-s);
+  min-height: $sz-32;
+}
+
+.icon-category-title {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.icon-category-name {
+  @include t.use-typography("body-small");
+
+  overflow: hidden;
+  color: var(--icon-category-fg);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon-category-count {
+  @include t.use-typography("body-small");
+
+  flex: 0 0 auto;
+  color: var(--icon-meta-fg);
+  white-space: nowrap;
+}
+
+.icon-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-8;
+  background-color: var(--panel-background-color);
+}
+
+.icon-detail-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-xs);
+  min-height: $sz-32;
+}
+
+.icon-detail-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.icon-group {
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-8;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--sp-m);
+  max-width: 100%;
+}
+
+.icon-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+.icon-face {
+  position: absolute;
+  inset: 0;
+}
+
+.icon-face-filled {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.icons-bar[data-theme="filled"] .icon-face-outline {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.icons-bar[data-theme="filled"] .icon-face-filled {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.icons-bar[data-theme="filled"] .icon-cell:not(:has(.icon-face-filled)) .icon-face-outline,
+.icons-bar:not([data-theme="filled"]) .icon-cell:not(:has(.icon-face-outline)) .icon-face-filled {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.icon-tile-tooltip {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  inline-size: 100% !important;
+  block-size: 100% !important;
+}
+
+.icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border: 0;
+  background-color: var(--icon-tile-bg);
+  overflow: hidden;
+  cursor: grab;
+
+  &:hover {
+    background-color: var(--icon-tile-bg-hover);
+  }
+}
+
+.icon-glyph {
+  width: 50%;
+  height: 50%;
+  pointer-events: none;
+}
+
+.empty {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+
+  :global([class$="__icon"]),
+  :global([class$="__text"]) {
+    color: var(--icon-empty-fg);
+  }
+}

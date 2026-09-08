@@ -12,6 +12,7 @@
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.assets :as dwa]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.refs :as refs]
    [app.main.store :as st]
    [app.main.ui.components.context-menu-a11y :refer [context-menu*]]
@@ -37,6 +38,7 @@
                     (->> (refs/select-libraries files file-id)
                          (vals)
                          (remove #(= file-id (:id %)))
+                         (dwi/assets-libraries)
                          (map (fn [file]
                                 (update file :data dissoc :pages-index)))
                          (sort-by #(str/lower (:name %)))))]
@@ -58,11 +60,12 @@
   {::mf/private true}
   [{:keys [filters]}]
   (let [file (mf/deref ref:local-library)]
-    [:> file-library*
-     {:file file
-      :is-local true
-      :is-default-open true
-      :filters filters}]))
+    (when-not (dwi/iconpark-library? file)
+      [:> file-library*
+       {:file file
+        :is-local true
+        :is-default-open true
+        :filters filters}])))
 
 (defn- toggle-values
   [v a b]

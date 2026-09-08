@@ -82,6 +82,7 @@ opencode.json
 /vendor/svgclean/bundle*.js
 /web
 /library/target/
+/library/.shadow-cljs
 /library/*.zip
 /external
 /penpot-nitrate

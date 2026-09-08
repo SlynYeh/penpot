@@ -6775,6 +6775,54 @@ msgstr "展开侧边栏"
 msgid "workspace.sidebar.history"
 msgstr "历史"
 
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons"
+msgstr "图标"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.category.all"
+msgstr "全部"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.category-count"
+msgstr "（%s）"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.view-all"
+msgstr "查看全部"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.drag-hint"
+msgstr "拖到画布中使用"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.empty"
+msgstr "暂时没有找到相关结果"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.search"
+msgstr "搜索图标"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.size"
+msgstr "尺寸"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.size.custom"
+msgstr "自定义"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme"
+msgstr "图标样式"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme.filled"
+msgstr "填充"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme.outline"
+msgstr "线性"
+
 #: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:164
 msgid "workspace.sidebar.layers"
 msgstr "图层"

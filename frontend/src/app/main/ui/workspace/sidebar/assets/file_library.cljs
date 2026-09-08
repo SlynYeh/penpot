@@ -14,6 +14,7 @@
    [app.common.types.components-list :as ctkl]
    [app.main.data.event :as ev]
    [app.main.data.workspace :as dw]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.data.workspace.libraries :as dwl]
    [app.main.data.workspace.shapes :as dwsh]
    [app.main.data.workspace.undo :as dwu]
@@ -319,6 +320,7 @@
         filtered-components
         (mf/with-memo [filters library]
           (as-> (into [] (ctkl/components-seq library)) $
+            (remove dwi/iconpark-component? $)
             (cmm/apply-filters $ filters)
             (remove #(cfv/is-secondary-variant? % library) $)))
 

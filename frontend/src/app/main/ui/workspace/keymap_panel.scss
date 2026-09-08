@@ -166,3 +166,50 @@
   white-space: nowrap;
 }
 
+.keymap-content-important {
+  align-items: center; // 两行条目在 264px 面板内垂直居中
+}
+
+.keymap-key-group {
+  display: flex;
+  gap: deprecated.$s-2; // 镜像 .keymap-keys 的 gap，包裹层不改变间距
+}
+
+.keymap-key-sep {
+  color: var(--color-foreground-secondary);
+}
+
+.keymap-important-item {
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-4;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.keymap-important-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-8; // 比 .keymap-item 的 $s-16 窄，容纳 16px label + 键位
+  min-height: deprecated.$s-24;
+}
+
+.keymap-important-label {
+  @include use-typography("body-large"); // 16px/400
+
+  font-weight: 700; // → 16px/700
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; // en 长文案防护
+}
+
+.keymap-important-desc {
+  @include use-typography("body-small"); // 12px/400，正合需求
+
+  color: #495e74; // 需求指定色；硬编码先例：.keymap-column 的 #e8eaee
+}

@@ -51,28 +51,56 @@
                     :on-click #(on-change id)}
            (:label tab)]]))]))
 
+(mf/defc shortcut-keys*
+  {::mf/private true}
+  [{:keys [kw alternatives]}]
+  [:span {:class (stl/css :keymap-keys)}
+   (if (km/gesture? kw)
+     [:span {:class (stl/css :keymap-gesture)}
+      (km/gesture-text kw)]
+     (let [groups (if alternatives
+                    (or (km/display-alternatives kw) [])
+                    [(km/display-chars kw)])]
+       (for [[gidx group] (map-indexed vector groups)]
+         [:span {:class (stl/css :keymap-key-group)
+                 :key (dm/str (d/name kw) "-" gidx)}
+          (for [[cidx char] (map-indexed vector group)]
+            [:span {:class (stl/css :keymap-key)
+                    :key (dm/str (d/name kw) "-" gidx "-" cidx)}
+             (km/convert-char char)])
+          (when (< (inc gidx) (count groups))
+            [:span {:class (stl/css :keymap-key-sep)} "/"])])))])
+
 (mf/defc keymap-item*
   {::mf/private true}
   [{:keys [kw]}]
   [:div {:class (stl/css :keymap-item)}
    [:span {:class (stl/css :keymap-item-label)}
     (tr (str "shortcuts." (d/name kw)))]
-   [:span {:class (stl/css :keymap-keys)}
-    (if (km/gesture? kw)
-      [:span {:class (stl/css :keymap-gesture)}
-       (km/gesture-text kw)]
-      (for [char (km/display-chars kw)]
-        [:span {:class (stl/css :keymap-key)
-                :key (dm/str (d/name kw) "-" char)}
-         (km/convert-char char)]))]])
+   [:> shortcut-keys* {:kw kw}]])
+
+(mf/defc important-item*
+  {::mf/private true}
+  [{:keys [kw]}]
+  [:div {:class (stl/css :keymap-important-item)}
+   [:div {:class (stl/css :keymap-important-row)}
+    [:span {:class (stl/css :keymap-important-label)}
+     (tr (str "keymap.important." (d/name kw)))]
+    [:> shortcut-keys* {:kw kw :alternatives true}]]
+   [:span {:class (stl/css :keymap-important-desc)}
+    (tr (str "keymap.important." (d/name kw) ".desc"))]])
 
 (mf/defc keymap-content*
   {::mf/private true}
   [{:keys [selected]}]
   ;; 用 (keyword selected) 直接查 km/tabs（其 :id 是 keyword）；
-  ;; UI tabs 向量的 id 是字符串，仅用于 tab bar
-  (let [tab (some #(when (= (keyword selected) (:id %)) %) km/tabs)]
-    [:div {:class (stl/css :keymap-content)
+  ;; UI tabs 向量的 id 是字符串，仅用于 tab bar。
+  ;; important tab 用双行条目组件，其余 tab 沿用单行 keymap-item*
+  (let [tab        (some #(when (= (keyword selected) (:id %)) %) km/tabs)
+        important? (= :important (:id tab))
+        item       (if important? important-item* keymap-item*)]
+    [:div {:class (stl/css-case :keymap-content true
+                                :keymap-content-important important?)
            :role "tabpanel"
            :tab-index 0
            :aria-labelledby (str "keymap-tab-" selected)}
@@ -81,7 +109,7 @@
          [:div {:class (stl/css :keymap-column)
                 :key idx}
           (for [kw column]
-            [:> keymap-item* {:key (d/name kw) :kw kw}])]))]))
+            [:> item {:key (d/name kw) :kw kw}])]))]))
 
 (mf/defc keymap-panel*
   {::mf/memo true}
@@ -113,10 +141,27 @@
                            :on-click on-close}]]
         [:> keymap-content* {:selected @selected}]]])))
 ;; Execution time translation strings: the keymap panel resolves
-;; shortcuts.* msgids dynamically in keymap-item*, so they are listed
-;; here to stay visible to the translations extractor.
+;; shortcuts.* msgids dynamically in keymap-item* and keymap.important.*
+;; msgids in important-item*, so they are listed here to stay visible
+;; to the translations extractor.
 ;; Ported from the legacy sidebar shortcuts panel (pruned of old-panel-only strings; copy-props/paste-props added).
 (comment
+  (tr "keymap.important.click-through")
+  (tr "keymap.important.click-through.desc")
+  (tr "keymap.important.drag-canvas")
+  (tr "keymap.important.drag-canvas.desc")
+  (tr "keymap.important.draw-frame")
+  (tr "keymap.important.draw-frame.desc")
+  (tr "keymap.important.draw-text")
+  (tr "keymap.important.draw-text.desc")
+  (tr "keymap.important.escape")
+  (tr "keymap.important.escape.desc")
+  (tr "keymap.important.group")
+  (tr "keymap.important.group.desc")
+  (tr "keymap.important.multi-select")
+  (tr "keymap.important.multi-select.desc")
+  (tr "keymap.important.zoom-canvas")
+  (tr "keymap.important.zoom-canvas.desc")
   (tr "shortcut-subsection.alignment")
   (tr "shortcut-subsection.edit")
   (tr "shortcut-subsection.general-dashboard")
@@ -276,6 +321,5 @@
   (tr "shortcuts.v-distribute")
   (tr "shortcuts.zoom-canvas")
   (tr "shortcuts.zoom-lense-decrease")
-  (tr "shortcuts.zoom-lense-increase")
-)
+  (tr "shortcuts.zoom-lense-increase"))
 

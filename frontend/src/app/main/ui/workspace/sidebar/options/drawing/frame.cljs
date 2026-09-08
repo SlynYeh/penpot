@@ -10,6 +10,8 @@
    [app.common.data :as d]
    [app.main.constants :refer [size-presets]]
    [app.main.data.workspace.drawing :as dwd]
+   [app.main.data.workspace.drawing.common :as dwdc]
+   [app.main.data.workspace.shapes :as dwsh]
    [app.main.store :as st]
    [app.main.ui.components.dropdown :refer [dropdown]]
    [app.main.ui.components.radio-buttons :refer [radio-button radio-buttons]]
@@ -24,7 +26,7 @@
 (mf/defc options*
   [{:keys [drawing-state]}]
 
-  (let [show* (mf/use-state false)
+  (let [show* (mf/use-state true)
         show? (deref show*)
 
         selected-preset-name*
@@ -61,7 +63,9 @@
 
         filtered-presets
         (mf/with-memo [search-term]
-          (measures/filter-size-presets search-term size-presets))
+          (if measures/size-preset-search-enabled?
+            (measures/filter-size-presets search-term size-presets)
+            size-presets))
 
         on-preset-selected
         (mf/use-fn
@@ -74,8 +78,8 @@
                             (d/read-string))]
 
              (reset! selected-preset-name* name)
-             (st/emit! (dwd/set-default-size width height))
-             (reset! show* false)
+             (st/emit! (dwsh/add-board-from-size-preset width height)
+                       (dwdc/clear-drawing))
              (reset! search-term* ""))))
 
         orientation
@@ -92,7 +96,8 @@
 
     [:div {:class (stl/css :presets)}
      [:div {:class (stl/css-case  :presets-wrapper true
-                                  :opened show?)
+                                  :opened show?
+                                  :with-orientation measures/frame-orientation-enabled?)
             :ref container-ref
             :on-click on-toggle}
       [:span {:class (stl/css :select-name)}
@@ -104,11 +109,12 @@
                     :container container-ref}
        [:div {:class (stl/css :custom-select-dropdown)
               :on-click dom/stop-propagation}
-        [:div {:class (stl/css :preset-search)}
-         [:> search-bar* {:on-change on-search-change
-                          :value search-term
-                          :auto-focus true
-                          :placeholder (tr "workspace.options.search-size-preset")}]]
+        (when measures/size-preset-search-enabled?
+          [:div {:class (stl/css :preset-search)}
+           [:> search-bar* {:on-change on-search-change
+                            :value search-term
+                            :auto-focus true
+                            :placeholder (tr "workspace.options.search-size-preset")}]])
         [:ul {:class (stl/css :preset-list)}
          (if (empty? filtered-presets)
            [:li {:class (stl/css-case :dropdown-element true
@@ -120,7 +126,7 @@
                [:li {:key (:name preset)
                      :class (stl/css-case :dropdown-element true
                                           :disabled true)}
-                [:span {:class (stl/css :preset-name)} (:name preset)]]
+                [:span {:class (stl/css :preset-name)} (measures/size-preset-header-label preset)]]
 
                (let [preset-match (and (= (:width preset) (:width drawing-state))
                                        (= (:height preset) (:height drawing-state)))]
@@ -137,15 +143,16 @@
                   (when preset-match
                     [:span {:class (stl/css :check-icon)} deprecated-icon/tick])]))))]]]]
 
-     [:& radio-buttons {:selected (or (d/name orientation) "")
-                        :on-change on-orientation-change
-                        :name "frame-orientation"
-                        :wide true
-                        :class (stl/css :radio-buttons)}
-      [:& radio-button {:icon i/size-vertical
-                        :value "vertical"
-                        :id "size-vertical"}]
-      [:& radio-button {:icon i/size-horizontal
-                        :value "horizontal"
-                        :id "size-horizontal"}]]]))
+     (when measures/frame-orientation-enabled?
+       [:& radio-buttons {:selected (or (d/name orientation) "")
+                          :on-change on-orientation-change
+                          :name "frame-orientation"
+                          :wide true
+                          :class (stl/css :radio-buttons)}
+        [:& radio-button {:icon i/size-vertical
+                          :value "vertical"
+                          :id "size-vertical"}]
+        [:& radio-button {:icon i/size-horizontal
+                          :value "horizontal"
+                          :id "size-horizontal"}]])]))
 

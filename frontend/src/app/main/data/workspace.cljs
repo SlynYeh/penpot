@@ -450,6 +450,13 @@
                      (rx/map #(-> (layout/toggle-layout-flag :hide-ui)
                                   (with-meta {::ev/origin "workspace-url-param"})))))
 
+              (when (seq cf/default-expanded-asset-groups)
+                (->> stream
+                     (rx/filter (ptk/type? ::workspace-initialized))
+                     (rx/observe-on :async)
+                     (rx/take 1)
+                     (rx/map (fn [_] (apply-default-asset-expansions)))))
+
               (when render-wasm?
                 (->> stream
                      (rx/filter dch/commit?)
@@ -1095,6 +1102,15 @@
 ;; Navigation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn- group-ancestor-paths
+  "Expands \"a/b/c\" into (\"a\" \"a/b\" \"a/b/c\"). Nested asset groups
+  default to collapsed, so opening a deep group requires marking every
+  ancestor prefix as open too."
+  [path]
+  (let [parts (cpn/split-path (or path ""))]
+    (mapv #(cpn/join-path (take (inc %) parts))
+          (range (count parts)))))
+
 (defn set-assets-section-open
   [file-id section open?]
   (ptk/reify ::set-assets-section-open
@@ -1164,10 +1180,7 @@
       (let [file-id   (:current-file-id state)
             fdata     (dsh/lookup-file-data state file-id)
             component (cfv/get-primary-component fdata component-id)
-            cpath     (:path component)
-            cpath     (cpn/split-path cpath)
-            paths     (map (fn [i] (cpn/join-path (take (inc i) cpath)))
-                           (range (count cpath)))]
+            paths     (group-ancestor-paths (:path component))]
         (rx/concat
          (rx/from (map #(set-assets-group-open file-id :components % true) paths))
          (rx/of (dcm/go-to-workspace :layout :assets)
@@ -1182,6 +1195,37 @@
             component (cfv/get-primary-component fdata component-id)
             wrapper-id (str "component-shape-id-" (:id component))]
         (tm/schedule-on-idle #(dom/scroll-into-view-if-needed! (dom/get-element wrapper-id)))))))
+
+(defn apply-default-asset-expansions
+  "Pre-seeds the assets sidebar open-state for shared libraries listed in
+  `app.config/default-expanded-asset-groups`. For every configured entry,
+  marks the library header, the components section and every ancestor
+  prefix of every configured group path as open. Does NOT switch the
+  sidebar tab. If the open-status map already has an entry for the
+  file-id (because the user has manually interacted with it this
+  session), the pre-seed for that library is skipped."
+  []
+  (ptk/reify ::apply-default-asset-expansions
+    ptk/UpdateEvent
+    (update [_ state]
+      (reduce
+       (fn [state {:keys [library-id groups]}]
+         (if (seq (get-in state [:workspace-assets :open-status library-id]))
+           state
+           (-> (reduce (fn [state path]
+                         (assoc-in state [:workspace-assets
+                                          :open-status
+                                          library-id
+                                          :groups
+                                          :components
+                                          path]
+                                    true))
+                       state
+                       (mapcat group-ancestor-paths groups))
+               (assoc-in [:workspace-assets :open-status library-id :library] true)
+               (assoc-in [:workspace-assets :open-status library-id :components] true))))
+       state
+       cf/default-expanded-asset-groups))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Context Menu

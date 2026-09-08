@@ -65,6 +65,18 @@ window.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"];
 })();
 
 (function () {
+  // 进入 workspace 时, 「素材」侧边栏默认展开的共享库及其二级分类。
+  // libraryId 为库文件 file-id; groups 为组件 path 前缀 (与组件的 :path 一致,
+  // 用 " / " 分隔, 支持中文)。仅预置展开状态, 不会把左侧栏切到「素材」。
+  // 同一会话内用户手动收起后不再重置, 刷新页面会重新预置(open-status 在内存)。
+  // Docker 部署: 可用环境变量 PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS 覆盖
+  // (必须是合法 JSON 数组, 由 nginx-entrypoint.sh 追加赋值, 优先级更高)。
+  globalThis.penpotDefaultExpandedAssetGroups = [
+    { "libraryId": "caf3ed7a-ac34-8165-8008-1fb0a074f9a9", "groups": ["按钮 / 主要"] },
+  ];
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

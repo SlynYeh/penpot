@@ -177,6 +177,24 @@
   "Set of library (file) ids whose component instances are auto-detached
   when instantiated by dragging from the assets sidebar."
   (into #{} (keep uuid/coerce) (obj/get global "penpotAutoUnbindLibraryIds" [])))
+
+(def default-expanded-asset-groups
+  "Library/group paths pre-expanded on the assets sidebar when a workspace
+  is opened. Configured via `penpotDefaultExpandedAssetGroups` in
+  resources/config.js. Each entry is `{:library-id <uuid> :groups [<path>]}`
+  where `<path>` is a slash separated component `:path` prefix. Malformed
+  entries are silently dropped."
+  (->> (obj/get global "penpotDefaultExpandedAssetGroups" [])
+       (into [] (keep (fn [entry]
+                        (let [library-id (some-> (obj/get entry "libraryId") uuid/coerce)
+                              groups     (->> (obj/get entry "groups" [])
+                                              (into [] (keep (fn [path]
+                                                               (when (and (string? path)
+                                                                          (not (str/blank? path)))
+                                                                 path)))))]
+                          (when (and (some? library-id) (seq groups))
+                            {:library-id library-id :groups groups})))))))
+
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

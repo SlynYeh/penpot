@@ -19,7 +19,9 @@
   left: calc(10 * px2rem(140));
   padding: var(--sp-m);
   width: var(--colorpicker-width);
-  block-size: 480.5px;
+  // 高度由内容决定（以「自定义」tab 的高度为准），最大高度由
+  // colorpicker.cljs 的 calculate-position 传入的 max-height 兜底，
+  // 避免「自定义」tab 底部的「最近使用颜色」被裁切到可视区域外。
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -44,6 +46,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding-block-end: 12px;
   margin-block-end: 16px;
@@ -54,10 +57,11 @@
   // scoped separately, so we reach them with `:global(...)` and strip the pill
   // down to flat text — matching img_5.png.
 
-  // Let the tab bar take the remaining width so the close button (flex: 0)
-  // is pushed to the far right.
+  // Keep the tab group fit-content (compact) on the left; `justify-content:
+  // space-between` on the row pushes the close button (flex: 0) to the far
+  // right.
   :global(.main_ui_ds_layout_tab_switcher__tabs) {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-inline-size: 0;
   }
 
@@ -249,30 +253,6 @@
   width: 100%;
   height: var(--sp-xxxl);
   margin-top: var(--sp-s);
-}
-
-.picker-detail-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  margin: var(--sp-m) 0 var(--sp-s) 0;
-}
-
-.center-circle {
-  width: var(--sp-xxl);
-  height: var(--sp-xxl);
-  border: $b-2 solid var(--colorpicker-details-color);
-  border-radius: $br-circle;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(calc(-1 * var(--sp-m)), calc(-1 * var(--sp-m)));
-}
-
-.picker-detail {
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
 }
 
 .select {

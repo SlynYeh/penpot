@@ -72,7 +72,10 @@ window.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"];
   // Docker 部署: 可用环境变量 PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS 覆盖
   // (必须是合法 JSON 数组, 由 nginx-entrypoint.sh 追加赋值, 优先级更高)。
   globalThis.penpotDefaultExpandedAssetGroups = [
-    { "libraryId": "caf3ed7a-ac34-8165-8008-1fb0a074f9a9", "groups": ["按钮 / 主要"] },
+    {
+      libraryId: "40e06342-8830-80d6-8008-9b0e302c3f65",
+      groups: ["_Utilities"],
+    },
   ];
 })();
 

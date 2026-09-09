@@ -511,13 +511,7 @@
              [:> tab-switcher* {:tabs tabs
                                 :selected active-color-tab
                                 :on-change on-change-tab}
-              (if picking-color?
-                [:div {:class (stl/css :picker-detail-wrapper)}
-                 [:div {:class (stl/css :center-circle)}]
-                 [:canvas#picker-detail {:class (stl/css :picker-detail) :width 256 :height 140}]]
-
-
-                (case active-color-tab
+              (case active-color-tab
                   "ramp"
                   [:> ramp-selector*
                    {:color current-color
@@ -541,7 +535,7 @@
                     :mode hsb-mode
                     :on-change handle-change-color
                     :on-start-drag on-start-drag
-                    :on-finish-drag on-finish-drag}]))]]
+                    :on-finish-drag on-finish-drag}])]]
 
             [:> color-inputs*
              {:type type

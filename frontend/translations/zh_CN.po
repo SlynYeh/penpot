@@ -5582,6 +5582,18 @@ msgstr "线性渐变"
 msgid "workspace.gradients.radial"
 msgstr "放射渐变"
 
+#: src/app/main/ui/workspace/help_center_menu.cljs:108
+msgid "workspace.header.help.guide.body"
+msgstr "查看常用快捷键，获取新手教程，快速掌握penpot使用方法"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:113
+msgid "workspace.header.help.guide.got-it"
+msgstr "知道了"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:106
+msgid "workspace.header.help.guide.title"
+msgstr "帮助中心"
+
 #: src/app/main/ui/workspace/help_center_menu.cljs:30
 msgid "workspace.header.help.option.faq"
 msgstr "常见问题"

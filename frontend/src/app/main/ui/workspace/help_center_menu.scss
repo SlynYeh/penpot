@@ -10,6 +10,7 @@
 @use "ds/z-index.scss" as *;
 @use "ds/_borders.scss" as *;
 @use "ds/_sizes.scss" as *;
+@use "ds/_utils.scss" as *;
 
 // Foreground hexes are per fork design spec; intentionally not tokenized.
 // Hover/focus background is the design-system $gray-50 (spec typo #f2f3f6 unified).
@@ -96,4 +97,102 @@
 
 .item-name {
   grid-area: name;
+}
+
+// --- One-time onboarding guide popover (fork feature)
+
+// Anchored to the aside.left-settings-bar, same containing block and anchor
+// offsets as .help-menu above. Fork-spec colors (#296afd) intentionally not
+// tokenized, same policy as .help-trigger.
+.guide-popover {
+  position: absolute;
+  top: $sz-48;
+  right: deprecated.$s-12;
+  z-index: var(--z-index-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-8;
+  inline-size: px2rem(240);
+  padding: deprecated.$s-12;
+  border-radius: $br-6;
+  background-color: #296afd;
+  box-shadow: 0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
+    0 px2rem(9) px2rem(28) 0 rgb(2 22 61 / 0.05),
+    0 px2rem(12) px2rem(48) px2rem(16) rgb(2 22 61 / 0.03);
+}
+
+// 8px rotated square poking out of the popover's top edge toward the trigger;
+// horizontal offset tuned in browser (trigger center sits ~44-52px from the
+// sidebar's right edge depending on the locale label width).
+.guide-arrow {
+  position: absolute;
+  top: px2rem(-4);
+  right: deprecated.$s-48;
+  inline-size: px2rem(8);
+  block-size: px2rem(8);
+  border-radius: px2rem(1);
+  background-color: #296afd;
+  transform: rotate(45deg);
+}
+
+.guide-title {
+  @include t.use-typography("body-medium");
+
+  padding-inline-end: deprecated.$s-24; // keep clear of the ✕ button
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.guide-body {
+  @include t.use-typography("body-medium");
+
+  color: #ffffff;
+}
+
+.guide-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.guide-got-it {
+  @include t.use-typography("body-small");
+
+  height: deprecated.$s-24;
+  padding: deprecated.$s-2 deprecated.$s-8;
+  border: 0;
+  border-radius: px2rem(3);
+  background-color: #ffffff;
+  color: #296afd;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f2f5ff;
+  }
+}
+
+.guide-close {
+  @include deprecated.flex-center;
+
+  position: absolute;
+  top: deprecated.$s-12;
+  right: deprecated.$s-12;
+  inline-size: deprecated.$s-20;
+  block-size: deprecated.$s-20;
+  padding: 0;
+  border: 0;
+  border-radius: px2rem(3);
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+
+  // close.svg (not close-small: its X spans only ~4.8/16 of the viewBox)
+  // fills the whole 20x20 hit area, so the X scales to ~10px. The svg ships
+  // without stroke/fill attributes, same as help.svg.
+  svg {
+    inline-size: 100%;
+    block-size: 100%;
+
+    stroke: currentcolor;
+    fill: none;
+  }
 }

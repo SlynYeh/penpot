@@ -17,6 +17,7 @@
    [app.util.dom :as dom]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
+   [app.util.storage :as storage]
    [potok.v2.core :as ptk]
    [rumext.v2 :as mf]))
 
@@ -27,10 +28,25 @@
   (let [show-menu* (mf/use-state false)
         show-menu? (deref show-menu*)
 
+        ;; One-time onboarding popover; persisted in storage/global so it is
+        ;; shared across accounts on this browser (storage/user is wiped on
+        ;; logout). Lazy init evaluated once on mount.
+        show-guide* (mf/use-state #(not (get storage/global ::help-guide-dismissed)))
+        show-guide? (deref show-guide*)
+
+        dismiss-guide!
+        (mf/use-fn
+         (fn []
+           (swap! storage/global assoc ::help-guide-dismissed true)
+           (reset! show-guide* false)))
+
         open-menu
         (mf/use-fn
          (fn [event]
            (dom/stop-propagation event)
+           ;; Opening the menu also counts as "seen": the user found the
+           ;; feature, so retire the guide popover for good.
+           (dismiss-guide!)
            (reset! show-menu* true)))
 
         close-menu
@@ -76,6 +92,25 @@
                :on-click open-menu}
       deprecated-icon/help
       [:span {:class (stl/css :trigger-label)} (tr "labels.help-center")]]
+
+     (when ^boolean show-guide?
+       [:div {:class (stl/css :guide-popover)
+              :role "status"}
+        [:span {:class (stl/css :guide-arrow)}]
+        [:button {:class (stl/css :guide-close)
+                  :type "button"
+                  :aria-label (tr "labels.close")
+                  :on-click dismiss-guide!}
+         deprecated-icon/close]
+        [:div {:class (stl/css :guide-title)}
+         (tr "workspace.header.help.guide.title")]
+        [:div {:class (stl/css :guide-body)}
+         (tr "workspace.header.help.guide.body")]
+        [:div {:class (stl/css :guide-footer)}
+         [:button {:class (stl/css :guide-got-it)
+                   :type "button"
+                   :on-click dismiss-guide!}
+          (tr "workspace.header.help.guide.got-it")]]])
 
      [:> dropdown-menu* {:show show-menu?
                          :id "workspace-help-center-menu"

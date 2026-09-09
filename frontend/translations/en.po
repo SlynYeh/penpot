@@ -7147,6 +7147,18 @@ msgstr "Linear gradient"
 msgid "workspace.gradients.radial"
 msgstr "Radial gradient"
 
+#: src/app/main/ui/workspace/help_center_menu.cljs:108
+msgid "workspace.header.help.guide.body"
+msgstr "Find common shortcuts and beginner tutorials to quickly get up to speed with Penpot."
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:113
+msgid "workspace.header.help.guide.got-it"
+msgstr "Got it"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:106
+msgid "workspace.header.help.guide.title"
+msgstr "Help center"
+
 #: src/app/main/ui/workspace/help_center_menu.cljs:30
 msgid "workspace.header.help.option.faq"
 msgstr "FAQ"

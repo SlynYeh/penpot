@@ -199,13 +199,30 @@
 
     [:> hrs/right-sidebar* props]))
 
-(def ^:private options-tabs
-  [{:label (tr "workspace.options.design")
-    :id "design"}
-   {:label (tr "workspace.options.prototype")
-    :id "prototype"}
-   {:label (tr "workspace.options.inspect")
-    :id "inspect"}])
+(def prototype-tab-enabled? false)
+
+(defn visible-options-tab-ids
+  []
+  (cond-> ["design"]
+    prototype-tab-enabled? (conj "prototype")
+    :always (conj "inspect")))
+
+(defn effective-options-mode
+  [mode]
+  (if (and (not prototype-tab-enabled?) (= mode :prototype))
+    :design
+    mode))
+
+(defn- options-tabs
+  []
+  (cond-> [{:label (tr "workspace.options.design")
+            :id "design"}]
+    prototype-tab-enabled?
+    (conj {:label (tr "workspace.options.prototype")
+           :id "prototype"})
+    :always
+    (conj {:label (tr "workspace.options.inspect")
+           :id "inspect"})))
 
 (defn- on-option-tab-change
   [mode]
@@ -227,15 +244,23 @@
 
         shapes
         (mf/with-memo [selected objects]
-          (sequence (keep (d/getf objects)) selected))]
+          (sequence (keep (d/getf objects)) selected))
+
+        effective-mode
+        (effective-options-mode options-mode)]
+
+    (mf/with-effect [options-mode]
+      (when (and (not prototype-tab-enabled?)
+                 (= options-mode :prototype))
+        (st/emit! (udw/set-options-mode :design))))
 
     [:div {:class (stl/css :tool-window)}
      (if (and (:can-edit permissions) (not render-context-lost?))
-       [:> tab-switcher* {:tabs options-tabs
+       [:> tab-switcher* {:tabs (options-tabs)
                           :on-change on-option-tab-change
-                          :selected (name options-mode)
+                          :selected (name effective-mode)
                           :class (stl/css :options-tab-switcher)}
-        (case options-mode
+        (case effective-mode
           :prototype
           [:div {:class (stl/css :element-options :interaction-options)}
            [:> interactions-menu* {:shape (first shapes)}]]

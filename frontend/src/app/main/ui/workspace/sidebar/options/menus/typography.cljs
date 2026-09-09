@@ -403,17 +403,19 @@
            :on-blur on-blur}])]]]))
 
 (mf/defc spacing-options*
-  [{:keys [values on-change on-blur]}]
+  [{:keys [values on-change on-blur fill]}]
   (let [{:keys [line-height
                 letter-spacing]} values
-        line-height (or line-height "1.2")
+        line-height    (or line-height "1.2")
         letter-spacing (or letter-spacing "0")
         handle-change
         (fn [value attr]
           (on-change {attr (ust/format-precision value 2)}))]
 
-    [:div {:class (stl/css :spacing-options)}
-     [:div {:class (stl/css :line-height)
+    [:div {:class (stl/css-case :spacing-options true
+                                :spacing-options-fill fill)}
+     [:div {:class (stl/css-case :line-height true
+                                 :line-height-in-grid fill)
             :title (tr "inspect.attributes.typography.line-height")}
       [:span {:class (stl/css :icon)
               :alt (tr "workspace.options.text-options.line-height")}
@@ -431,7 +433,8 @@
         :on-change #(handle-change % :line-height)
         :on-blur on-blur}]]
 
-     [:div {:class (stl/css :letter-spacing)
+     [:div {:class (stl/css-case :letter-spacing true
+                                 :letter-spacing-in-grid fill)
             :title (tr "inspect.attributes.typography.letter-spacing")}
       [:span
        {:class (stl/css :icon)
@@ -481,10 +484,15 @@
                         :value "lowercase"
                         :id "text-transform-lowercase"}]]]))
 
+(def text-transform-enabled?
+  "When false, uppercase/capitalize/lowercase controls are omitted."
+  false)
+
 (mf/defc text-options*
-  [{:keys [ids editor values on-change on-blur show-recent]}]
-  (let [full-size-selector? (and show-recent (= (mf/use-ctx ctx/sidebar) :right))
-        opts (mf/props
+  [{:keys [ids editor values on-change on-blur show-recent show-spacing]}]
+  (let [show-spacing        (if (nil? show-spacing) true show-spacing)
+        full-size-selector? (and show-recent (= (mf/use-ctx ctx/sidebar) :right))
+        opts                (mf/props
               {:editor editor
                :ids ids
                :values values
@@ -495,9 +503,11 @@
     [:div {:class (stl/css-case :text-options true
                                 :text-options-full-size full-size-selector?)}
      [:> font-options* opts]
-     [:div {:class (stl/css :typography-variations)}
-      [:> spacing-options* opts]
-      [:> text-transform-options* opts]]]))
+     (when show-spacing
+       [:div {:class (stl/css :typography-variations)}
+        [:> spacing-options* opts]
+        (when text-transform-enabled?
+          [:> text-transform-options* opts])])]))
 
 (mf/defc typography-advanced-options*
   {::mf/wrap [mf/memo]}

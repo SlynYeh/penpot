@@ -10,6 +10,7 @@
    [app.common.data :as d]
    [app.common.data.macros :as dm]
    [app.common.uuid :as uuid]
+   [app.config :as cf]
    [app.main.constants :refer [left-sidebar-default-width]]
    [app.main.data.event :as ev]
    [app.main.data.workspace :as dw]
@@ -49,6 +50,18 @@
     #js {"paddingLeft" (dm/str calculate-padding-left "px")
          "paddingRight" "322px"}))
 
+(defn default-palette-library
+  "Shared library id to pre-select in the 调色盘 colour palette, or nil.
+  Returns `cf/default-palette-library-id` only when it resolves to a
+  library present in `libraries` that is not the current `file-id`;
+  otherwise nil so the palette falls back to 最近颜色."
+  [libraries file-id]
+  (let [configured cf/default-palette-library-id]
+    (when (and configured
+               (not= configured file-id)
+               (contains? libraries configured))
+      configured)))
+
 (mf/defc palette*
   [{:keys [layout on-change-size]}]
   (let [color-palette? (:colorpalette layout)
@@ -63,6 +76,10 @@
         show-menu?     (:show-menu state)
 
         selected       (h/use-shared-state mdc/colorpalette-selected-broadcast-key :recent)
+
+        file-id          (mf/use-ctx ctx/current-file-id)
+        libraries        (mf/deref refs/libraries)
+        default-applied* (mf/use-var false)
 
         selected-text* (mf/use-state :file)
         selected-text  (deref selected-text*)
@@ -154,6 +171,17 @@
     (mf/with-effect []
       (let [key1 (events/listen js/window "resize" on-resize)]
         #(events/unlistenByKey key1)))
+
+    ;; Pre-select the configured shared library once per session as soon as
+    ;; the libraries are loaded. Guarded by `default-applied*` so a manual
+    ;; library change made later in the same session is never reset; a page
+    ;; refresh re-applies the default (this mirrors the assets sidebar's
+    ;; `apply-default-asset-expansions` behaviour).
+    (mf/with-effect [libraries]
+      (let [default-lib (default-palette-library libraries file-id)]
+        (when (and (not @default-applied*) default-lib)
+          (reset! default-applied* true)
+          (reset! selected default-lib))))
 
     (mf/with-layout-effect []
       (let [dom     (mf/ref-val parent-ref)

@@ -57,50 +57,46 @@
 (defn process-pointer-move
   [viewport-node canvas canvas-image-data zoom-view-context last-picked-color client-x client-y]
   (when-let [image-data (mf/ref-val canvas-image-data)]
-    (when-let [zoom-view-node (dom/get-element "picker-detail")]
-      (when-not (mf/ref-val zoom-view-context)
-        (mf/set-ref-val! zoom-view-context (.getContext zoom-view-node "2d")))
-      (let [canvas-width  260
-            canvas-height 140
-            {brx :left bry :top} (dom/get-bounding-rect viewport-node)
+    (let [{brx :left bry :top} (dom/get-bounding-rect viewport-node)
+          x (mth/floor (- client-x brx))
+          y (mth/floor (- client-y bry))
+          img-width  (unchecked-get image-data "width")
+          img-height (unchecked-get image-data "height")]
 
-            x (mth/floor (- client-x brx))
-            y (mth/floor (- client-y bry))
+      ;; Read + store the pixel unconditionally, so a pointer-down always sees a
+      ;; fresh colour even when no loupe (#picker-detail) is mounted — e.g. the
+      ;; 色板 palette panel renders no loupe, so the eyedropper must still pick.
+      (when (and (>= x 0) (< x img-width) (>= y 0) (< y img-height))
+        (let [offset (* (+ (* y img-width) x) 4)
+              rgba   (unchecked-get image-data "data")
+              r      (d/check-num (obj/get rgba (+ 0 offset)) 255)
+              g      (d/check-num (obj/get rgba (+ 1 offset)) 255)
+              b      (d/check-num (obj/get rgba (+ 2 offset)) 255)
+              a      (d/check-num (obj/get rgba (+ 3 offset)) 255)
+              color  [r g b a]]
+          ;; Store latest color synchronously so the click handler always reads
+          ;; the correct pixel even before the rAF fires (fixes race condition)
+          (mf/set-ref-val! last-picked-color color)
+          (timers/raf
+           (fn []
+             (st/emit! (dwc/pick-color color))))))
 
-            img-width  (unchecked-get image-data "width")
-            img-height (unchecked-get image-data "height")
-
-            zoom-context (mf/ref-val zoom-view-context)
-
-            sx (- x 32)
-            sy (if (cfg/check-browser? :safari) y (- y 17))
-            sw 65
-            sh 35
-            dx 0
-            dy 0
-            dw canvas-width
-            dh canvas-height]
-
-        (when (obj/get zoom-context "imageSmoothingEnabled")
-          (obj/set! zoom-context "imageSmoothingEnabled" false))
-        (.clearRect zoom-context 0 0 canvas-width canvas-height)
-        (.drawImage zoom-context canvas sx sy sw sh dx dy dw dh)
-
-        ;; Only pick color when cursor is within canvas bounds to avoid garbage pixels
-        (when (and (>= x 0) (< x img-width) (>= y 0) (< y img-height))
-          (let [offset (* (+ (* y img-width) x) 4)
-                rgba   (unchecked-get image-data "data")
-                r      (d/check-num (obj/get rgba (+ 0 offset)) 255)
-                g      (d/check-num (obj/get rgba (+ 1 offset)) 255)
-                b      (d/check-num (obj/get rgba (+ 2 offset)) 255)
-                a      (d/check-num (obj/get rgba (+ 3 offset)) 255)
-                color  [r g b a]]
-            ;; Store latest color synchronously so the click handler always reads
-            ;; the correct pixel even before the rAF fires (fixes race condition)
-            (mf/set-ref-val! last-picked-color color)
-            (timers/raf
-             (fn []
-               (st/emit! (dwc/pick-color color))))))))))
+      ;; Draw the magnifier loupe only when it is mounted (the 自定义 tab renders
+      ;; it; the 色板 panel does not).
+      (when-let [zoom-view-node (dom/get-element "picker-detail")]
+        (when-not (mf/ref-val zoom-view-context)
+          (mf/set-ref-val! zoom-view-context (.getContext zoom-view-node "2d")))
+        (let [canvas-width  260
+              canvas-height 140
+              zoom-context (mf/ref-val zoom-view-context)
+              sx (- x 32)
+              sy (if (cfg/check-browser? :safari) y (- y 17))
+              sw 65
+              sh 35]
+          (when (obj/get zoom-context "imageSmoothingEnabled")
+            (obj/set! zoom-context "imageSmoothingEnabled" false))
+          (.clearRect zoom-context 0 0 canvas-width canvas-height)
+          (.drawImage zoom-context canvas sx sy sw sh 0 0 canvas-width canvas-height))))))
 
 
 (mf/defc pixel-overlay*

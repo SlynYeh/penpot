@@ -110,6 +110,7 @@
         node-ref               (mf/use-ref)
 
         should-update?         (mf/use-var true)
+        last-synced-data       (mf/use-ref data)
         token-color            (contains? cfg/flags :token-color)
         color-style*           (mf/use-state (d/nilv tab :direct-color))
         color-style            (deref color-style*)
@@ -384,10 +385,20 @@
         (st/emit! (dc/stop-picker)
                   (dc/finalize-colorpicker))))
 
-    ;; Update colorpicker with external color changes
+    ;; Update colorpicker with external color changes. We only re-sync when
+    ;; `data` has actually changed since the last time we observed it. This
+    ;; skips the mount-time sync when the 自定义 tab is (re)mounted after the
+    ;; user edited a color on the 色板 tab — otherwise `update-colorpicker`
+    ;; would reset the just-selected color back to the shape's original fill.
+    ;; The initial seed on open is already handled by the modal's own `[data]`
+    ;; effect (colorpicker* is not mounted while the 色板 tab is shown).
     (mf/with-effect [data]
-      (when @should-update?
-        (st/emit! (dc/update-colorpicker data))))
+      (let [previous (mf/ref-val last-synced-data)]
+        (mf/set-ref-val! last-synced-data data)
+        (when (and @should-update?
+                   (some? data)
+                   (not= previous data))
+          (st/emit! (dc/update-colorpicker data)))))
 
     ;; Updates the CSS color variable when there is a change in the color
     (use-color-picker-css-variables! node-ref current-color)
@@ -567,7 +578,7 @@
   [{vh :height} position x y gradient?]
   (let [;; picker size in pixels
         h (if gradient? 820 510)
-        w 284
+        w 308
         ;; Checks for overflow outside the viewport height
         max-y   (- vh h)
         rulers? (mf/deref refs/rulers?)
@@ -820,6 +831,17 @@
         (mf/use-fn
          (fn [_]
            (modal/hide!)))]
+
+    ;; Seed the colorpicker's :current-color from the shape's fill (data) on
+    ;; open so the default 色板 tab has a hex to drive the opacity slider. The
+    ;; 自定义 tab seeds this in `colorpicker*`'s own `data` effect, but that
+    ;; component is not mounted while the palette tab is shown, so without this
+    ;; `:current-color` stays nil and `on-opacity-change` short-circuits (no
+    ;; hex) — the opacity bar appears to do nothing when dragged.
+    (mf/with-effect [data]
+      (when (and (some? data)
+                 (or (:color data) (:gradient data)))
+        (st/emit! (dc/update-colorpicker data))))
 
     (mf/with-effect []
       (st/emit! (dsc/push-shortcuts ::colorpicker sc/shortcuts))

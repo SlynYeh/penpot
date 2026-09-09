@@ -195,6 +195,14 @@
                           (when (and (some? library-id) (seq groups))
                             {:library-id library-id :groups groups})))))))
 
+(def default-palette-library-id
+  "Shared library (file) id pre-selected in the 调色盘 colour palette's
+  library selector when a workspace is opened. Configured via
+  `penpotDefaultPaletteLibrary` in resources/config.js as a single
+  lowercase-uuid string. Returns nil when absent or malformed, so the
+  palette falls back to 最近颜色."
+  (some-> (obj/get global "penpotDefaultPaletteLibrary") uuid/coerce))
+
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

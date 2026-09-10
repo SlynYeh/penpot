@@ -33,6 +33,7 @@
    [app.main.ui.ds.foundations.assets.icon :refer [icon*] :as i]
    [app.main.ui.icons :as deprecated-icon]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
    [app.util.strings :as ust]
@@ -103,24 +104,29 @@
 
 (mf/defc font-selector*
   [{:keys [on-select on-close current-font show-recent full-size]}]
-  (let [selected     (mf/use-state current-font)
-        state*       (mf/use-state
-                      #(do {:term "" :backends #{}}))
-        state        (deref state*)
+  (let [selected      (mf/use-state current-font)
+        state*        (mf/use-state
+                       #(do {:term "" :backends #{}}))
+        state         (deref state*)
 
-        flist        (mf/use-ref)
-        input        (mf/use-ref)
+        flist         (mf/use-ref)
+        input         (mf/use-ref)
+        wrapper-ref   (mf/use-ref)
+        listening-ref (mf/use-ref false)
 
-        fonts        (mf/deref fonts/fonts)
-        fonts        (mf/with-memo [state fonts]
-                       (filter-fonts state fonts))
+        fonts         (mf/deref fonts/fonts)
+        fonts         (mf/with-memo [state fonts]
+                        (filter-fonts state fonts))
 
-        recent-fonts (mf/deref refs/recent-fonts)
-        recent-fonts (mf/with-memo [state recent-fonts]
-                       (filter-fonts state recent-fonts))
+        recent-fonts  (mf/deref refs/recent-fonts)
+        recent-fonts  (mf/with-memo [state recent-fonts]
+                        ;; FORK(字体列表只保留 Noto Sans SC): 历史 localStorage 里的
+                        ;; sourcesanspro / google 字体不在「最近使用」中显示。
+                        (->> (filter-fonts state recent-fonts)
+                             (filter fonts/font-visible?)))
 
 
-        full-size?   (boolean (and full-size show-recent))
+        full-size?    (boolean (and full-size show-recent))
 
         select-next
         (mf/use-fn
@@ -159,10 +165,25 @@
          (mf/deps on-select on-close)
          (fn [font]
            (on-select font)
-           (on-close)))]
+           (on-close)))
+
+        on-click-outside
+        (mf/use-fn
+         (mf/deps on-close)
+         (fn [event]
+           (when (mf/ref-val listening-ref)
+             (let [wrapper (mf/ref-val wrapper-ref)]
+               (when (and (some? wrapper)
+                          (not (dom/child? (dom/get-target event) wrapper)))
+                 (on-close))))))]
 
     (mf/with-effect [fonts]
       (let [key (events/listen js/document "keydown" on-key-down)]
+        #(events/unlistenByKey key)))
+
+    (mf/with-effect []
+      (let [key (events/listen js/document "click" on-click-outside)]
+        (tm/schedule #(mf/set-ref-val! listening-ref true))
         #(events/unlistenByKey key)))
 
     (mf/with-effect [@selected]
@@ -186,7 +207,8 @@
             (.scrollToPosition ^js inst offset)))))
 
     [:div {:class [(stl/css-case :font-selector true
-                                 :fonts-on-modal (not full-size?))]}
+                                 :fonts-on-modal (not full-size?))]
+           :ref wrapper-ref}
      [:div {:class (stl/css-case :font-selector-dropdown true
                                  :font-selector-dropdown-full-size full-size?)}
       [:div {:class (stl/css :header)}
@@ -242,6 +264,9 @@
 
         fonts           (mf/deref fonts/fontsdb)
         font            (get fonts font-id)
+        ;; FORK: 匹配不到字体（如旧文件引用已停用的 google 字体）时默认显示
+        ;; Noto Sans SC，不再显示「字体已删除」占位符。
+        font            (or font (get fonts fonts/fallback-font-id))
 
         last-font       (mf/use-ref nil)
 
@@ -314,7 +339,7 @@
 
      [:div {:class (stl/css :font-option)
             :title (tr "inspect.attributes.typography.font-family")
-            :on-click #(reset! open-selector? true)}
+            :on-click #(swap! open-selector? not)}
       (cond
         (or (= :multiple font-id) (= "mixed" font-id))
         [:*
@@ -359,7 +384,7 @@
                                         (map (fn [variant]
                                                {:value (:id variant)
                                                 :key (pr-str variant)
-                                                :label (:name variant)})))
+                                                :label (font-style/localized-font-style (:name variant))})))
              variant-options (if (or (= font-variant-id :multiple) (= font-variant-id "mixed"))
                                (conj basic-variant-options
                                      {:value ""
@@ -378,17 +403,19 @@
            :on-blur on-blur}])]]]))
 
 (mf/defc spacing-options*
-  [{:keys [values on-change on-blur]}]
+  [{:keys [values on-change on-blur fill]}]
   (let [{:keys [line-height
                 letter-spacing]} values
-        line-height (or line-height "1.2")
+        line-height    (or line-height "1.2")
         letter-spacing (or letter-spacing "0")
         handle-change
         (fn [value attr]
           (on-change {attr (ust/format-precision value 2)}))]
 
-    [:div {:class (stl/css :spacing-options)}
-     [:div {:class (stl/css :line-height)
+    [:div {:class (stl/css-case :spacing-options true
+                                :spacing-options-fill fill)}
+     [:div {:class (stl/css-case :line-height true
+                                 :line-height-in-grid fill)
             :title (tr "inspect.attributes.typography.line-height")}
       [:span {:class (stl/css :icon)
               :alt (tr "workspace.options.text-options.line-height")}
@@ -406,7 +433,8 @@
         :on-change #(handle-change % :line-height)
         :on-blur on-blur}]]
 
-     [:div {:class (stl/css :letter-spacing)
+     [:div {:class (stl/css-case :letter-spacing true
+                                 :letter-spacing-in-grid fill)
             :title (tr "inspect.attributes.typography.letter-spacing")}
       [:span
        {:class (stl/css :icon)
@@ -456,10 +484,15 @@
                         :value "lowercase"
                         :id "text-transform-lowercase"}]]]))
 
+(def text-transform-enabled?
+  "When false, uppercase/capitalize/lowercase controls are omitted."
+  false)
+
 (mf/defc text-options*
-  [{:keys [ids editor values on-change on-blur show-recent]}]
-  (let [full-size-selector? (and show-recent (= (mf/use-ctx ctx/sidebar) :right))
-        opts (mf/props
+  [{:keys [ids editor values on-change on-blur show-recent show-spacing]}]
+  (let [show-spacing        (if (nil? show-spacing) true show-spacing)
+        full-size-selector? (and show-recent (= (mf/use-ctx ctx/sidebar) :right))
+        opts                (mf/props
               {:editor editor
                :ids ids
                :values values
@@ -470,9 +503,11 @@
     [:div {:class (stl/css-case :text-options true
                                 :text-options-full-size full-size-selector?)}
      [:> font-options* opts]
-     [:div {:class (stl/css :typography-variations)}
-      [:> spacing-options* opts]
-      [:> text-transform-options* opts]]]))
+     (when show-spacing
+       [:div {:class (stl/css :typography-variations)}
+        [:> spacing-options* opts]
+        (when text-transform-enabled?
+          [:> text-transform-options* opts])])]))
 
 (mf/defc typography-advanced-options*
   {::mf/wrap [mf/memo]}
@@ -482,6 +517,7 @@
         font-data      (fonts/get-font-data (:font-id typography))
         typography-id  (:id typography)
         show-actions?  (and is-asset? is-editable)
+        display-name   (font-style/localized-typography-name (:name typography))
 
         on-delete
         (mf/use-fn
@@ -525,7 +561,7 @@
             {:class (stl/css :adv-typography-name)
              :type "text"
              :ref name-input-ref
-             :default-value (:name typography)
+             :default-value display-name
              :max-length max-input-length
              :on-key-down on-key-down
              :on-blur on-name-blur}]
@@ -560,8 +596,8 @@
             (tr "workspace.assets.typography.sample")]
 
            [:div {:class (stl/css :typography-name)
-                  :title (:name typography)}
-            (:name typography)]
+                  :title (font-style/localized-typography-name (:name typography))}
+            (font-style/localized-typography-name (:name typography))]
            [:span {:class (stl/css :typography-font)}
             (:name font-data)]
            [:> icon-button* {:variant "ghost"
@@ -571,7 +607,7 @@
 
           [:div {:class (stl/css :info-row)}
            [:span {:class (stl/css :info-label)}  (tr "workspace.assets.typography.font-style")]
-           [:span {:class (stl/css :info-content)} (:font-variant-id typography)]]
+           [:span {:class (stl/css :info-content)} (font-style/localized-font-style (:font-variant-id typography))]]
 
           [:div {:class (stl/css :info-row)}
            [:span {:class (stl/css :info-label)}  (tr "workspace.assets.typography.font-size")]
@@ -604,14 +640,19 @@
         open?                (deref open*)
         font-data            (fonts/get-font-data (:font-id typography))
         name-only?           (= (:name typography) (:name font-data))
+        display-name          (font-style/localized-typography-name (:name typography))
 
         on-name-blur
         (mf/use-fn
-         (mf/deps on-change)
+         (mf/deps on-change typography)
          (fn [event]
-           (let [name (dom/get-target-val event)]
+           (let [name      (dom/get-target-val event)
+                 stored    (:name typography)
+                 localized (font-style/localized-typography-name stored)]
              (when-not (str/blank? name)
-               (on-change {:name name})
+               (on-change {:name (if (or (= name stored) (= name localized))
+                                   stored
+                                   name)})
                (st/emit! #(update % :workspace-global dissoc :rename-typography))))))
 
         on-open
@@ -670,7 +711,7 @@
           {:class (stl/css :adv-typography-name)
            :type "text"
            :ref name-input-ref
-           :default-value (:name typography)
+           :default-value display-name
            :max-length max-input-length
            :on-key-down on-key-down
            :on-blur on-name-blur}]]
@@ -688,12 +729,12 @@
 
          [:div {:class (stl/css :name-block)
                 :title (if name-only?
-                         (:name typography)
-                         (dm/str (:name typography) " (" (:name font-data) ")"))}
+                         display-name
+                         (dm/str display-name " (" (:name font-data) ")"))}
           (if name-only?
-            [:span  {:class (stl/css :typography-name)} (:name typography)]
+            [:span  {:class (stl/css :typography-name)} display-name]
             [:*
-             (:name typography)
+             display-name
              [:span  {:class (stl/css :typography-name :typography-font)} (:name font-data)]])]])
       [:div {:class (stl/css :element-set-actions)}
        (when ^boolean on-detach

@@ -42,14 +42,14 @@
 
 .element-group {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
 }
 
 .input-wrapper {
   grid-column: span 7;
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(7);
 }
 
 .format-select {

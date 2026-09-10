@@ -71,7 +71,7 @@
                [:div {:class (stl/css :blur-row)
                       :key (dm/str "block-" (:id shape) "-background-blur")}
                 [:div {:class (stl/css :global/attr-label)}
-                 "Backdrop Filter"]
+                 (tr "inspect.css-rule.backdrop-filter")]
                 [:div {:class (stl/css :global/attr-value)}
                  [:> copy-button* {:data (dm/str background-blur-property-value)}
                   [:div {:class (stl/css :button-children)}
@@ -80,7 +80,7 @@
                [:div {:class (stl/css :blur-row)
                       :key (dm/str "block-" (:id shape) "-layer-blur")}
                 [:div {:class (stl/css :global/attr-label)}
-                 "Filter"]
+                 (tr "inspect.css-rule.filter")]
                 [:div {:class (stl/css :global/attr-value)}
                  [:> copy-button* {:data (dm/str blur-property-value)}
                   [:div {:class (stl/css :button-children)}

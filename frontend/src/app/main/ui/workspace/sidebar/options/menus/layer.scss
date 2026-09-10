@@ -34,7 +34,7 @@
   .actions {
     grid-column: span 2;
     display: grid;
-    grid-template-columns: subgrid;
+    @include sidebar.option-grid-subgrid(2);
   }
 
   &.hidden {

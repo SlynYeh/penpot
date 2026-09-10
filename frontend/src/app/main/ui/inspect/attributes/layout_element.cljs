@@ -14,6 +14,7 @@
    [app.main.ui.components.title-bar :refer [title-bar*]]
    [app.main.ui.inspect.attributes.common :as cmm]
    [app.util.code-gen.style-css :as css]
+   [app.util.i18n :refer [tr]]
    [rumext.v2 :as mf]))
 
 (def ^:private properties
@@ -59,11 +60,11 @@
         menu-title
         (cond
           only-flex?
-          "Flex element"
+          (tr "workspace.options.layout.title.flex-element")
           only-grid?
-          "Grid element"
+          (tr "workspace.options.layout.title.grid-element")
           :else
-          "Layout element")]
+          (tr "workspace.options.layout.title.layout-element"))]
 
     (when some-layout-prop?
       [:div {:class (stl/css :attributes-block)}

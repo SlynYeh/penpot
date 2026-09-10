@@ -463,6 +463,7 @@
                              :subsections [:main-menu]
                              :fn #(st/emit! (toggle-layout-flag :snap-guides))}
 
+   ;; NOTE(keymap): :shortcuts flag now drives the workspace keymap-panel overlay (mounted in workspace.cljs); entry points: "?" key, Help Center menu
    :show-shortcuts       {:tooltip "?"
                           :command "?"
                           :subsections [:main-menu]

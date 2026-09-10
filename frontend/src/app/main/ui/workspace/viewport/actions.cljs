@@ -37,7 +37,7 @@
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
 
-(def scale-per-pixel -0.0057)
+(def zoom-per-spin 0.1)
 
 (defn on-pointer-down
   [{:keys [id blocked hidden type]} selected edition drawing-tool text-editing?
@@ -450,9 +450,11 @@
 
              delta-y    (.-pixelY norm-event)
              delta-x    (.-pixelX norm-event)
-             delta-zoom (+ delta-y delta-x)
+             spin-y     (.-spinY norm-event)
+             spin-x     (.-spinX norm-event)
+             delta-zoom (+ spin-y spin-x)
 
-             scale      (+ 1 (mth/abs (* scale-per-pixel delta-zoom)))
+             scale      (+ 1 (mth/abs (* zoom-per-spin delta-zoom)))
              scale      (if (pos? delta-zoom) (/ 1 scale) scale)]
 
          (when (or (uwvv/inside-viewport? target) picking-color?)
@@ -477,18 +479,21 @@
                   (not component-inst?))
          (let [point (gpt/point (.-clientX e) (.-clientY e))
                viewport-coord (uwvv/point->viewport point)
-               {:keys [component file-id shape]} @wsac/drag-data*
-
-               ;; shape (get-in component [:objects (:id component)])
-               final-x (- (:x viewport-coord) (/ (:width shape) 2))
-               final-y (- (:y viewport-coord) (/ (:height shape) 2))]
+               {:keys [component file-id shape placement-size glyph-color]} @wsac/drag-data*
+               drop-size (or placement-size (:width shape))
+               final-x (- (:x viewport-coord) (/ drop-size 2))
+               final-y (- (:y viewport-coord) (/ drop-size 2))]
 
            (mf/set-ref-val! comp-inst-ref true)
            (st/emit! (dwl/instantiate-component
                       file-id
                       (:id component)
                       (gpt/point final-x final-y)
-                      {:start-move? true :initial-point viewport-coord :origin "sidebar"})))))
+                      (cond-> {:start-move? true :initial-point viewport-coord :origin "sidebar"}
+                        (some? placement-size)
+                        (assoc :initial-size placement-size)
+                        (some? glyph-color)
+                        (assoc :glyph-color glyph-color)))))))
      (when (or (dnd/has-type? e "penpot/shape")
                (dnd/has-type? e "penpot/component")
                (dnd/has-type? e "Files")

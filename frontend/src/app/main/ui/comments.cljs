@@ -32,6 +32,7 @@
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
    [app.util.object :as obj]
+   [app.util.shape-name :as usn]
    [app.util.webapi :as wapi]
    [beicon.v2.core :as rx]
    [clojure.math :refer [floor]]
@@ -1349,7 +1350,7 @@
        (str "#" (:seqn item))
        (str " - " (:page-name item))
        (when (and (some? frame) (not (cfh/root? frame)))
-         (str " - " (:name frame)))]]
+         (str " - " (usn/localized-layer-name (:name frame))))]]
 
      [:> comment-info* {:item item
                         :profile owner}]]))

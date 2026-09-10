@@ -176,7 +176,7 @@
                                :input-class (stl/css :numeric-input)
                                :min 1
                                :options size-options
-                               :placeholder "Auto"
+                               :placeholder (tr "workspace.options.grid.auto")
                                :on-change handle-change-size}]])]
 
       [:div {:class (stl/css :actions)}
@@ -254,9 +254,9 @@
                             (tr "workspace.options.grid.params.width"))}
              [:span {:class (stl/css :icon-text)}
               (if (= :row type)
-                "H"
-                "W")]
-             [:> numeric-input* {:placeholder "Auto"
+                (tr "workspace.options.grid.params.height.icon")
+                (tr "workspace.options.grid.params.width.icon"))]
+             [:> numeric-input* {:placeholder (tr "workspace.options.grid.auto")
                                  :on-change handle-change-item-length
                                  :nillable true
                                  :className (stl/css :numeric-input)

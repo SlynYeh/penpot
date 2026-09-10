@@ -18,3 +18,4 @@
 - WASM modifier updates set plugin/local props with parsed geometry/structure modifiers rather than directly mutating file data.
 - The position-data recomputation watcher ignores commits tagged `:position-data`; keep that tag when adding derived position-data commits.
 - Rotation has separate WASM and non-WASM event paths. Check both when changing rotation modifier semantics.
+- For which perf optimizations cover move vs resize vs path-editor vertex drags (and the gaps): `mem:frontend/drag-resize-vertex-perf`.

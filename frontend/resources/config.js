@@ -1,6 +1,10 @@
 // Runtime configuration for Penpot frontend
 // This file is served from the static resources and can be overridden per deployment
 // Frontend configuration
+
+// 从指定共享库拖入组件时，自动解绑实例（列表为库文件 file-id）
+window.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"];
+
 (function () {
   // 直接读取 iframe 自身的完整地址（src 属性的值）
   var _iframeSrc = window.location.href;
@@ -48,6 +52,42 @@
   window.addEventListener("popstate", function () {
     _iframeSrc = window.location.href;
   });
+})();
+
+(function () {
+  // 右键菜单「插入表格行/列」生效的表格主组件 ID 集合(小写 uuid 字符串)。
+  // 实例根 shape 的 :component-id 命中任一 ID 即显示菜单。
+  // Docker 部署: 可用环境变量 PENPOT_TABLE_COMPONENT_IDS 覆盖此默认值
+  // (逗号分隔, 由 nginx-entrypoint.sh 在启动时追加赋值, 优先级更高)。
+  globalThis.penpotTableComponentIds = [
+    "5140cbc1-cb3a-803f-8008-8977ae7bee03", // 1 基础组件 / Table 表格 (flex table 库)
+  ];
+})();
+
+(function () {
+  // 进入 workspace 时, 「素材」侧边栏默认展开的共享库及其二级分类。
+  // libraryId 为库文件 file-id; groups 为组件 path 前缀 (与组件的 :path 一致,
+  // 用 " / " 分隔, 支持中文)。仅预置展开状态, 不会把左侧栏切到「素材」。
+  // 同一会话内用户手动收起后不再重置, 刷新页面会重新预置(open-status 在内存)。
+  // Docker 部署: 可用环境变量 PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS 覆盖
+  // (必须是合法 JSON 数组, 由 nginx-entrypoint.sh 追加赋值, 优先级更高)。
+  globalThis.penpotDefaultExpandedAssetGroups = [
+    {
+      libraryId: "40e06342-8830-80d6-8008-9b0e302c3f65",
+      groups: ["_Utilities"],
+    },
+  ];
+})();
+
+(function () {
+  // 调色盘(颜色面板)库选择菜单 `palette-menu`(color_palette_ctx_menu)
+  // 默认选中的共享库 file-id。打开调色盘时默认选中该库, 而不是「最近颜色」。
+  // 仅当该库已加载并出现在 refs/libraries 中、且不是当前文件时才生效,
+  // 否则回退到「最近颜色」。同一会话内用户手动切换后不再重置, 刷新页面会重新预置。
+  // Docker 部署: 可用环境变量 PENPOT_DEFAULT_PALETTE_LIBRARY 覆盖
+  // (由 nginx-entrypoint.sh 追加赋值, 优先级更高)。
+  globalThis.penpotDefaultPaletteLibrary =
+    "40e06342-8830-80d6-8008-9b0e302c3f65";
 })();
 
 (function () {

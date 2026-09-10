@@ -14,11 +14,14 @@
 .colorpicker-tooltip {
   @extend %modal-background;
 
-  --colorpicker-width: #{$sz-284};
+  --colorpicker-width: px2rem(308);
 
   left: calc(10 * px2rem(140));
   padding: var(--sp-m);
   width: var(--colorpicker-width);
+  // 高度由内容决定（以「自定义」tab 的高度为准），最大高度由
+  // colorpicker.cljs 的 calculate-position 传入的 max-height 兜底，
+  // 避免「自定义」tab 底部的「最近使用颜色」被裁切到可视区域外。
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -27,6 +30,106 @@
 .colorpicker {
   border-radius: $br-8;
   overflow: hidden;
+}
+
+// --- 色板 / 自定义 top-level tab strip —------------------------------
+// The modal header between the 色板 (palette) and 自定义 (customize) tabs
+// and the close button. Spec: img_5.png — flat text tabs (no pill/capsule),
+// a full-width divider line below the strip, and a gray close (X) button on
+// the right.
+//
+// NOTE: these rules must live in `colorpicker.scss` (not palette.scss)
+// because `stl/css` scopes class names per-file; the modal in
+// `colorpicker.cljs` compiles against this file.
+
+.colorpicker-modal-tabs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-block-end: 12px;
+  margin-block-end: 16px;
+  border-block-end: 1px solid var(--color-background-secondary, rgba(0, 0, 0, 0.08));
+
+  // The tab-switcher (色板 / 自定义) renders its own capsule (pill) styling.
+  // Those classes live in a different css-module (tab_switcher.scss) and are
+  // scoped separately, so we reach them with `:global(...)` and strip the pill
+  // down to flat text — matching img_5.png.
+
+  // Keep the tab group fit-content (compact) on the left; `justify-content:
+  // space-between` on the row pushes the close button (flex: 0) to the far
+  // right.
+  :global(.main_ui_ds_layout_tab_switcher__tabs) {
+    flex: 0 0 auto;
+    min-inline-size: 0;
+  }
+
+  // tab-switcher* renders a section.tab-panel for its children, but the
+  // palette/customize panel is rendered via `case`, so suppress the slot.
+  :global(.main_ui_ds_layout_tab_switcher__tab-panel) {
+    display: none;
+  }
+
+  // Strip the pill / capsule look: transparent background on the nav/list,
+  // no pill background or radius on the individual tabs.
+  :global(.main_ui_ds_layout_tab_switcher__tab-nav),
+  :global(.main_ui_ds_layout_tab_switcher__tab-list) {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    gap: 18px;
+  }
+
+  :global(.main_ui_ds_layout_tab_switcher__tab) {
+    --tabs-item-bg-color: transparent;
+
+    height: auto;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    width: auto;
+    justify-content: start;
+    color: var(--color-foreground-secondary, #8a8b8e);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  :global(.main_ui_ds_layout_tab_switcher__tab.main_ui_ds_layout_tab_switcher__selected) {
+    background: transparent;
+    color: var(--color-foreground-primary, #1f1f1f);
+    font-weight: 600;
+  }
+
+  :global(.main_ui_ds_layout_tab_switcher__tab-text) {
+    width: auto;
+  }
+}
+
+.colorpicker-modal-close {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  color: var(--color-foreground-secondary, #8a8b8e);
+  flex: 0 0 auto;
+  transition: color 120ms ease;
+
+  svg {
+    stroke: currentColor;
+  }
+
+  &:hover {
+    background: transparent;
+    color: var(--color-foreground-primary, #1f1f1f);
+  }
 }
 
 .top-actions {
@@ -150,30 +253,6 @@
   width: 100%;
   height: var(--sp-xxxl);
   margin-top: var(--sp-s);
-}
-
-.picker-detail-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  margin: var(--sp-m) 0 var(--sp-s) 0;
-}
-
-.center-circle {
-  width: var(--sp-xxl);
-  height: var(--sp-xxl);
-  border: $b-2 solid var(--colorpicker-details-color);
-  border-radius: $br-circle;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(calc(-1 * var(--sp-m)), calc(-1 * var(--sp-m)));
-}
-
-.picker-detail {
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
 }
 
 .select {

@@ -10,14 +10,13 @@
    [app.common.data :as d]
    [app.common.data.macros :as dm]
    [app.common.math :as mth]
-   [app.config :as cfg]
+   [app.common.types.color :as cc]
    [app.main.data.modal :as modal]
    [app.main.data.workspace.colors :as dwc]
    [app.main.data.workspace.undo :as dwu]
    [app.main.fonts :as fonts]
    [app.main.rasterizer :as thr]
    [app.main.store :as st]
-   [app.main.ui.css-cursors :as cur]
    [app.render-wasm.api :as wasm.api]
    [app.util.dom :as dom]
    [app.util.globals :as ug]
@@ -54,53 +53,93 @@
                (obj/set! internal-state "canvas" new-canvas)
                new-canvas))))))))
 
+;; --- Circular, cursor-following magnifier loupe ---------------------------------
+;; Draws the zoomed region into the #picker-detail canvas, clips it to a circle
+;; (via .picker-loupe-circle border-radius), and moves the whole loupe (the
+;; #picker-loupe node) so it follows the cursor. Shared by the SVG and WASM
+;; pointer-move handlers. Matches img_6.png: round loupe centred on the cursor,
+;; small hollow square crosshair, dark pill with R:G:B + hex below.
+
+(def ^:private loupe-size 160)
+
+;; Where the sampled pixel is drawn inside the loupe box. The loupe is anchored
+;; on this point (not the centre) so the cursor/sample sits BELOW the circle
+;; (sample-y > 160 → outside the bottom edge, img_7.png) — the eyedropper icon
+;; and the crosshair both live here, while the magnified region is shown above.
+(def ^:private sample-x 60)
+(def ^:private sample-y 185)
+
+(defn ^:private update-loupe-label!
+  [r g b]
+  (when-let [rgb-node (dom/get-element "picker-loupe-rgb")]
+    (dom/set-text! rgb-node (dm/str "R:" r " G:" g " B:" b)))
+  (when-let [hex-node (dom/get-element "picker-loupe-hex")]
+    (dom/set-text! hex-node (.toUpperCase (cc/rgb->hex [r g b])))))
+
+(defn ^:private draw-loupe!
+  [zoom-view-context source-canvas sx sy sw sh client-x client-y color]
+  ;; 1. Reposition the loupe so the sample point (the cursor pixel) sits at the
+  ;;    bottom of the circle (img_7.png): anchor on `sample-x/y` instead of the
+  ;;    centre, and publish those anchors for the CSS crosshair to use.
+  (when-let [wrapper-node (dom/get-element "picker-loupe")]
+    (when-let [overlay-node (dom/get-element "pixel-overlay")]
+      (let [{left :left top :top} (dom/get-bounding-rect overlay-node)]
+        (dom/set-css-property! wrapper-node "--loupe-x" (dm/str (- client-x left sample-x) "px"))
+        (dom/set-css-property! wrapper-node "--loupe-y" (dm/str (- client-y top  sample-y) "px"))
+        (dom/set-css-property! wrapper-node "--loupe-sample-x" (dm/str sample-x "px"))
+        (dom/set-css-property! wrapper-node "--loupe-sample-y" (dm/str sample-y "px"))))
+
+    ;; 2. Draw the pixelated zoomed region into the loupe canvas.
+    (when-let [detail-node (dom/get-element "picker-detail")]
+      (when-let [ctx (or (mf/ref-val zoom-view-context)
+                         (do (mf/set-ref-val! zoom-view-context (.getContext detail-node "2d"))
+                             (mf/ref-val zoom-view-context)))]
+        (when (obj/get ctx "imageSmoothingEnabled")
+          (obj/set! ctx "imageSmoothingEnabled" false))
+        (.clearRect ctx 0 0 loupe-size loupe-size)
+        (.drawImage ctx source-canvas sx sy sw sh 0 0 loupe-size loupe-size))))
+
+  ;; 3. Live colour pill (R:G:B + #HEX). `color` is nil when outside the canvas,
+  ;; so the pill keeps its last value instead of flashing empty.
+  (when-let [[r g b] color]
+    (update-loupe-label! r g b)))
+
 (defn process-pointer-move
   [viewport-node canvas canvas-image-data zoom-view-context last-picked-color client-x client-y]
   (when-let [image-data (mf/ref-val canvas-image-data)]
-    (when-let [zoom-view-node (dom/get-element "picker-detail")]
-      (when-not (mf/ref-val zoom-view-context)
-        (mf/set-ref-val! zoom-view-context (.getContext zoom-view-node "2d")))
-      (let [canvas-width  260
-            canvas-height 140
-            {brx :left bry :top} (dom/get-bounding-rect viewport-node)
+    (let [{brx :left bry :top} (dom/get-bounding-rect viewport-node)
+          x (mth/floor (- client-x brx))
+          y (mth/floor (- client-y bry))
+          img-width  (unchecked-get image-data "width")
+          img-height (unchecked-get image-data "height")]
 
-            x (mth/floor (- client-x brx))
-            y (mth/floor (- client-y bry))
+      ;; Read + store the pixel synchronously, so a pointer-down always sees a
+      ;; fresh colour even when the loupe is not (yet) drawn — and reuse it for
+      ;; the loupe label on the same frame.
+      (let [color (when (and (>= x 0) (< x img-width) (>= y 0) (< y img-height))
+                    (let [offset (* (+ (* y img-width) x) 4)
+                          rgba   (unchecked-get image-data "data")
+                          r      (d/check-num (obj/get rgba (+ 0 offset)) 255)
+                          g      (d/check-num (obj/get rgba (+ 1 offset)) 255)
+                          b      (d/check-num (obj/get rgba (+ 2 offset)) 255)
+                          a      (d/check-num (obj/get rgba (+ 3 offset)) 255)]
+                      [r g b a]))]
+        (when (some? color)
+          ;; Store latest color synchronously so the click handler always reads
+          ;; the correct pixel even before the rAF fires (fixes race condition)
+          (mf/set-ref-val! last-picked-color color)
+          (timers/raf
+           (fn []
+             (st/emit! (dwc/pick-color color)))))
 
-            img-width  (unchecked-get image-data "width")
-            img-height (unchecked-get image-data "height")
-
-            zoom-context (mf/ref-val zoom-view-context)
-
-            sx (- x 32)
-            sy (if (cfg/check-browser? :safari) y (- y 17))
-            sw 65
-            sh 35
-            dx 0
-            dy 0
-            dw canvas-width
-            dh canvas-height]
-
-        (when (obj/get zoom-context "imageSmoothingEnabled")
-          (obj/set! zoom-context "imageSmoothingEnabled" false))
-        (.clearRect zoom-context 0 0 canvas-width canvas-height)
-        (.drawImage zoom-context canvas sx sy sw sh dx dy dw dh)
-
-        ;; Only pick color when cursor is within canvas bounds to avoid garbage pixels
-        (when (and (>= x 0) (< x img-width) (>= y 0) (< y img-height))
-          (let [offset (* (+ (* y img-width) x) 4)
-                rgba   (unchecked-get image-data "data")
-                r      (d/check-num (obj/get rgba (+ 0 offset)) 255)
-                g      (d/check-num (obj/get rgba (+ 1 offset)) 255)
-                b      (d/check-num (obj/get rgba (+ 2 offset)) 255)
-                a      (d/check-num (obj/get rgba (+ 3 offset)) 255)
-                color  [r g b a]]
-            ;; Store latest color synchronously so the click handler always reads
-            ;; the correct pixel even before the rAF fires (fixes race condition)
-            (mf/set-ref-val! last-picked-color color)
-            (timers/raf
-             (fn []
-               (st/emit! (dwc/pick-color color))))))))))
+        ;; Draw the loupe: 40×40 source → 4× zoom into the 160×160 circle, but
+        ;; offset so the cursor pixel lands at the sample point (bottom, img_7.png)
+        ;; instead of the centre: nudge the source rect a quarter of the sample
+        ;; offset up (the ÷4 is the 40→160 scale).
+        (let [src-size 40
+              sx (- x (/ sample-x 4.0))
+              sy (- y (/ sample-y 4.0))]
+          (draw-loupe! zoom-view-context canvas sx sy src-size src-size client-x client-y color))))))
 
 
 (mf/defc pixel-overlay*
@@ -250,11 +289,24 @@
 
     [:div {:id "pixel-overlay"
            :tab-index 0
-           :class (dm/str (cur/get-static "picker") " " (stl/css :pixel-overlay))
+           :class (dm/str "cursor-picker " (stl/css :pixel-overlay))
            :on-pointer-down handle-pointer-down-picker
            :on-pointer-up handle-pointer-up-picker
            :on-pointer-move handle-pointer-move-picker
-           :on-mouse-enter handle-mouse-enter}]))
+           :on-mouse-enter handle-mouse-enter}
+     ;; Circular magnifier loupe that follows the cursor (img_6.png / img_7.png).
+     ;; Positioned via CSS vars set in draw-loupe!; the native eyedropper cursor
+     ;; (`cursor-picker`) shows at the sample point, which now sits just below
+     ;; (outside) the circle, with the magnified region shown above it.
+     [:div {:id "picker-loupe" :class (stl/css :picker-loupe)}
+      [:div {:class (stl/css :picker-loupe-circle)}
+       [:canvas#picker-detail {:class (stl/css :picker-detail) :width 160 :height 160}]]
+      ;; Crosshair is a direct child of #picker-loupe (no overflow:hidden) so it
+      ;; can render OUTSIDE the circle at the sample point (below it, img_7.png).
+      [:div {:class (stl/css :picker-loupe-crosshair)}]
+      [:div {:class (stl/css :picker-loupe-pill)}
+       [:span {:id "picker-loupe-rgb"}]
+       [:span {:id "picker-loupe-hex"}]]]]))
 
 
 (defn- viewport->canvas-coords
@@ -266,30 +318,6 @@
         y (mth/floor (- client-y bry))]
     [(mth/floor (* x dpr))
      (mth/floor (* y dpr))]))
-
-(defn process-pointer-move-wasm
-  "Updates the magnifier loupe with the canvas region under the cursor. The
-   actual color is only read on click (see `pick-color-at-wasm`)."
-  [viewport-node canvas zoom-view-context client-x client-y]
-  (when canvas
-    (when-let [zoom-view-node (dom/get-element "picker-detail")]
-      (when-not (mf/ref-val zoom-view-context)
-        (mf/set-ref-val! zoom-view-context (.getContext zoom-view-node "2d")))
-      (let [zoom-view-width  260
-            zoom-view-height 140
-            [canvas-x canvas-y] (viewport->canvas-coords viewport-node client-x client-y)
-
-            zoom-context (mf/ref-val zoom-view-context)
-
-            sx (- canvas-x 32)
-            sy (if (cfg/check-browser? :safari) canvas-y (- canvas-y 17))
-            sw 65
-            sh 35]
-
-        (when (obj/get zoom-context "imageSmoothingEnabled")
-          (obj/set! zoom-context "imageSmoothingEnabled" false))
-        (.clearRect zoom-context 0 0 zoom-view-width zoom-view-height)
-        (.drawImage zoom-context canvas sx sy sw sh 0 0 zoom-view-width zoom-view-height)))))
 
 ;; Tiny scratch 2D canvas used to sample a single pixel from the WebGL canvas.
 (def ^:private get-pick-canvas
@@ -322,11 +350,33 @@
           (let [data (.-data (.getImageData ctx 0 0 1 1))]
             [(aget data 0) (aget data 1) (aget data 2) (aget data 3)]))))))
 
+(defn process-pointer-move-wasm
+  "Updates the circular magnifier loupe with the canvas region under the cursor.
+   Reads the color under the cursor for the live pill label. The pixel actually
+   applied on click is re-read in the pointer-down handler (see `pick-color-at-wasm`)."
+  [viewport-node canvas zoom-view-context last-picked-color client-x client-y]
+  (when canvas
+    ;; Sample the color for the loupe label. Cheap: one drawImage + getImageData
+    ;; on a 1×1 scratch canvas. Falls back to nil (label keeps its last value).
+    (let [color (pick-color-at-wasm viewport-node canvas client-x client-y)]
+      (when (some? color)
+        (mf/set-ref-val! last-picked-color color))
+      ;; 40×40 source → 4× zoom into the 160×160 circle, offset so the cursor
+      ;; pixel lands at the sample point (bottom, img_7.png) instead of the centre.
+      (let [[canvas-x canvas-y] (viewport->canvas-coords viewport-node client-x client-y)
+            src-size 40
+            sx (- canvas-x (/ sample-x 4.0))
+            sy (- canvas-y (/ sample-y 4.0))]
+        (draw-loupe! zoom-view-context canvas sx sy src-size src-size client-x client-y color)))))
+
 (mf/defc pixel-overlay-wasm*
   [{:keys [viewport-ref canvas-ref]}]
   (let [viewport-node     (mf/ref-val viewport-ref)
         canvas            (mf/ref-val canvas-ref)
         zoom-view-context (mf/use-ref nil)
+        ;; Holds the last successfully sampled [r g b a] so the pointer-down
+        ;; handler always has a current pixel (mirrors pixel-overlay*).
+        last-picked-color (mf/use-ref nil)
         ;; Use a ref (not state) so tracking the cursor doesn't cause re-renders.
         ;; Updated by both on-mouse-enter and a document-level pointermove listener
         ;; so that the position is always current when the canvas first becomes ready.
@@ -375,7 +425,8 @@
              ;; each render even without a mouse-move.
              (let [{mx :x my :y} (mf/ref-val initial-mouse-pos)]
                (process-pointer-move-wasm viewport-node canvas
-                                          zoom-view-context mx my)))))
+                                          zoom-view-context last-picked-color
+                                          mx my)))))
 
         handle-canvas-changed
         (mf/use-callback
@@ -394,7 +445,8 @@
         (mf/use-callback
          (mf/deps viewport-node)
          (fn [event]
-           (process-pointer-move-wasm viewport-node canvas zoom-view-context (.-clientX event) (.-clientY event))))]
+           (process-pointer-move-wasm viewport-node canvas zoom-view-context
+                                      last-picked-color (.-clientX event) (.-clientY event))))]
 
     ;; Move focus to the overlay div on mount so the eyedropper button loses
     ;; :focus styling immediately.  Without this, prevent-default on pointer-down
@@ -436,8 +488,21 @@
 
     [:div {:id "pixel-overlay"
            :tab-index 0
-           :class (dm/str (cur/get-static "picker") " " (stl/css :pixel-overlay))
+           :class (dm/str "cursor-picker " (stl/css :pixel-overlay))
            :on-pointer-down handle-pointer-down-picker
            :on-pointer-up handle-pointer-up-picker
            :on-pointer-move handle-pointer-move-picker
-           :on-mouse-enter handle-mouse-enter}]))
+           :on-mouse-enter handle-mouse-enter}
+     ;; Circular magnifier loupe that follows the cursor (img_6.png / img_7.png).
+     ;; Positioned via CSS vars set in draw-loupe!; the native eyedropper cursor
+     ;; (`cursor-picker`) shows at the sample point, which now sits just below
+     ;; (outside) the circle, with the magnified region shown above it.
+     [:div {:id "picker-loupe" :class (stl/css :picker-loupe)}
+      [:div {:class (stl/css :picker-loupe-circle)}
+       [:canvas#picker-detail {:class (stl/css :picker-detail) :width 160 :height 160}]]
+      ;; Crosshair is a direct child of #picker-loupe (no overflow:hidden) so it
+      ;; can render OUTSIDE the circle at the sample point (below it, img_7.png).
+      [:div {:class (stl/css :picker-loupe-crosshair)}]
+      [:div {:class (stl/css :picker-loupe-pill)}
+       [:span {:id "picker-loupe-rgb"}]
+       [:span {:id "picker-loupe-hex"}]]]]))

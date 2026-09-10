@@ -38,6 +38,7 @@
    [app.main.data.notifications :as ntf]
    [app.main.data.workspace :as-alias dw]
    [app.main.data.workspace.groups :as dwg]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.data.workspace.notifications :as-alias dwn]
    [app.main.data.workspace.pages :as-alias dwpg]
    [app.main.data.workspace.selection :as dws]
@@ -609,12 +610,14 @@
          (rx/map #(restore-component (val %) (key %)) (rx/from components-data))
          (rx/of (dwu/commit-undo-transaction undo-id)))))))
 
+(declare detach-component)
+
 (defn instantiate-component
   "Create a new shape in the current page, from the component with the given id
   in the given file library. Then selects the newly created instance."
   ([file-id component-id position]
    (instantiate-component file-id component-id position nil))
-  ([file-id component-id position {:keys [start-move? initial-point id-ref origin]}]
+  ([file-id component-id position {:keys [start-move? initial-point id-ref origin initial-size glyph-color]}]
    (dm/assert! (uuid? file-id))
    (dm/assert! (uuid? component-id))
    (dm/assert! (gpt/point? position))
@@ -640,7 +643,14 @@
                                                  libraries)
              component (ctn/get-component-from-shape new-shape libraries)
 
-             undo-id (js/Symbol)]
+             detach?   (and (= origin "sidebar")
+                            (contains? cf/auto-unbind-library-ids file-id))
+
+             undo-id   (js/Symbol)
+             added-ids (->> (:redo-changes changes)
+                            (into [] (keep (fn [change]
+                                             (when (= :add-obj (:type change))
+                                               (:id change))))))]
 
          (when id-ref
            (reset! id-ref (:id new-shape)))
@@ -655,6 +665,18 @@
                 (dch/commit-changes changes)
                 (ptk/data-event :layout/update {:ids [(:id new-shape)]})
                 (dws/select-shapes (d/ordered-set (:id new-shape)))
+                (when detach?
+                  (detach-component (:id new-shape)))
+                (when glyph-color
+                  (dwsh/update-shapes added-ids
+                                      #(dwi/recolor-icon-shape % glyph-color)
+                                      {:attrs [:fills :strokes]}))
+                (when initial-size
+                  (dwsh/update-shapes [(:id new-shape)]
+                                      #(assoc % :proportion-lock true :proportion 1.0)
+                                      {:ignore-touched true}))
+                (when initial-size
+                  (dwtr/update-dimensions [(:id new-shape)] :width initial-size))
                 (when start-move?
                   (dwtr/start-move initial-point #{(:id new-shape)}))
                 (dwu/commit-undo-transaction undo-id)))))))

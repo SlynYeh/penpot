@@ -14,6 +14,7 @@
    [app.common.geom.shapes.text :as gst]
    [app.common.math :as mth]
    [app.common.text :as legacy.txt]
+   [app.common.types.text :as txt]
    [app.config :as cf]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.texts :as dwt]
@@ -60,12 +61,21 @@
                        :shape shape}}
       nil)))
 
+(defn editor-span-style-data
+  "Empty Draft leaves use block data (real font-size). Non-empty leaves
+  use inline styles, falling back to block data / defaults so a paste
+  that replaced the empty block does not inherit paragraph font-size 0."
+  [block-data inline-attrs text]
+  (if (= text "")
+    (merge (txt/get-default-text-attrs) block-data)
+    (merge (txt/get-default-text-attrs) block-data inline-attrs)))
+
 (defn- styles-fn [shape styles content]
-  (let [data (if (= (.getText ^js content) "")
-               (-> ^js (.getData content)
-                   (.toJS)
-                   (js->clj :keywordize-keys true))
-               (legacy.txt/styles-to-attrs styles))]
+  (let [block-data (-> ^js (.getData content)
+                       (.toJS)
+                       (js->clj :keywordize-keys true))
+        inline     (legacy.txt/styles-to-attrs styles)
+        data       (editor-span-style-data block-data inline (.getText ^js content))]
     (sts/generate-text-styles shape data {:show-text? false})))
 
 (def default-decorator
@@ -80,11 +90,15 @@
                  (nil? (:old v))))
        (mapv first)))
 
-(defn- get-blocks-to-add-styles
+(defn blocks-to-add-styles
+  "Blocks that just gained text. Paste replaces the empty block so `:old` is
+  nil, not \"\"; those still need the block's inline styles applied."
   [block-changes]
   (->> block-changes
        (filter (fn [[_ v]]
-                 (and (not= (:old v) (:new v)) (= (:old v) ""))))
+                 (and (not= (:old v) (:new v))
+                      (or (= (:old v) "")
+                          (nil? (:old v))))))
        (mapv first)))
 
 (defn- shape->justify
@@ -138,13 +152,17 @@
         (mf/use-callback
          (mf/deps shape state)
          (fn [event]
-           (let [is-empty? (ted/is-current-empty state)]
+           (let [is-empty?      (ted/is-current-empty state)
+                 still-editing? (= id (dm/get-in @st/state [:workspace-local :edition]))]
              (dom/stop-propagation event)
              (dom/prevent-default event)
              (when (not is-empty?)
                (st/emit! ::dwt/finalize-editor-state)
                (st/emit! (dwt/initialize-editor-state shape default-decorator)))
-             (reset! blurred true))))
+             ;; Overlay resize after paste can blur the contenteditable while
+             ;; edition is still this shape. Hiding then looks like a 1px box.
+             (when-not still-editing?
+               (reset! blurred true)))))
 
         on-focus
         (mf/use-callback
@@ -167,7 +185,7 @@
                (let [block-changes       (ted/get-content-changes old-state state)
                      prev-data           (ted/get-editor-current-inline-styles old-state)
                      block-to-setup      (get-blocks-to-setup block-changes)
-                     block-to-add-styles (get-blocks-to-add-styles block-changes)]
+                     block-to-add-styles (blocks-to-add-styles block-changes)]
                  (-> state
                      (ted/setup-block-styles block-to-setup prev-data)
                      (ted/apply-block-styles-to-content block-to-add-styles)))
@@ -220,22 +238,26 @@
            (st/emit! (dwt/focus-editor))))
 
         handle-pasted-text
-        (fn [text _ _]
-          (when (seq text)
-            (let [current-block-styles (ted/get-editor-current-block-data state)
-                  inline-styles        (ted/get-editor-current-inline-styles state)
-                  style                (merge current-block-styles inline-styles)
-                  state                (-> (ted/insert-text state text style)
-                                           (handle-change))]
-              (st/emit! (dwt/update-editor-state shape state))))
-          "handled")]
+        (mf/use-callback
+         (mf/deps state shape)
+         (fn [text _ _]
+           (when (seq text)
+             (let [current-block-styles (ted/get-editor-current-block-data state)
+                   inline-styles        (ted/get-editor-current-inline-styles state)
+                   style                (merge (txt/get-default-text-attrs)
+                                               current-block-styles
+                                               inline-styles)
+                   state                (-> (ted/insert-text state text style)
+                                            (handle-change))]
+               (st/emit! (dwt/update-editor-state shape state))))
+           "handled"))]
 
     (mf/use-layout-effect on-mount)
 
     [:div.text-editor
      {:ref self-ref
-      :style {:width (:width shape)
-              :height (:height shape)
+      :style {:width (mth/max 8 (:width shape))
+              :height (mth/max 8 (:height shape))
               ;; We hide the editor when is blurred because otherwise the selection won't let us see
               ;; the underlying text. Use opacity because display or visibility won't allow to recover
               ;; focus afterwards.
@@ -307,9 +329,11 @@
                         (dm/get-prop shape :x))
         y      (mth/min (dm/get-prop bounds :y)
                         (dm/get-prop shape :y))
-        width  (mth/max (dm/get-prop bounds :width)
+        width  (mth/max 8
+                        (dm/get-prop bounds :width)
                         (dm/get-prop shape :width))
-        height (mth/max (dm/get-prop bounds :height)
+        height (mth/max 8
+                        (dm/get-prop bounds :height)
                         (dm/get-prop shape :height))
 
         style

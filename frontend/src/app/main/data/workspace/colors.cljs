@@ -723,7 +723,7 @@
                        (let [colors (d/removev (partial recent-color-equal? color) colors)
                              colors (conj colors color)]
                          (cond-> colors
-                           (> (count colors) 15)
+                           (> (count colors) 18)
                            (subvec 1)))))))
 
       ptk/EffectEvent

@@ -25,6 +25,7 @@
    [app.main.ui.workspace.colorpicker]
    [app.main.ui.workspace.context-menu :refer [context-menu*]]
    [app.main.ui.workspace.coordinates :as coordinates]
+   [app.main.ui.workspace.keymap-panel :refer [keymap-panel*]]
    [app.main.ui.workspace.libraries]
    [app.main.ui.workspace.nudge]
    [app.main.ui.workspace.palette :refer [palette*]]
@@ -71,6 +72,7 @@
         colorpalette?  (:colorpalette layout)
         textpalette?   (:textpalette layout)
         hide-ui?       (:hide-ui layout)
+        shortcuts?     (:shortcuts layout)
 
         on-resize
         (mf/use-fn
@@ -90,6 +92,10 @@
      (when (not ^boolean hide-ui?)
        [:> palette* {:layout layout
                      :on-change-size on-resize-palette}])
+
+     (when (and (not ^boolean hide-ui?)
+                ^boolean shortcuts?)
+       [:> keymap-panel* {}])
 
      [:section
       {:key (dm/str "workspace-" page-id)

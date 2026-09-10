@@ -150,6 +150,18 @@
               (rx/map (fn [_] (clear-thumbnail-batch)))
               (rx/take-until stopper-s)))))))
 
+(defn thumbnail-stale?
+  "True when an in-session render is older than the component.
+
+  Server-fetched thumbnails have a URI but no `:rendered-at`. Those are
+  treated as fresh so the assets panel can reuse persisted images across
+  reloads without requiring the main instance to be open on the canvas."
+  [thumbnail-uri rendered-at modified-at]
+  (and (some? thumbnail-uri)
+       (some? rendered-at)
+       (some? modified-at)
+       (> modified-at rendered-at)))
+
 (defn assoc-thumbnail
   [object-id uri]
   (let [prev-uri* (volatile! nil)]

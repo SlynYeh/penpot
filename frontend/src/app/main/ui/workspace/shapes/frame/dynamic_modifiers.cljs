@@ -147,7 +147,15 @@
         (doseq [node nodes]
           (cond
             (dom/class? node "frame-children")
-            (set-transform-att! node "transform" (gmt/inverse transform))
+            ;; Pure MOVE: do NOT counter-transform the children -- let them
+            ;; translate with the frame (they inherit #shape-<id>'s transform).
+            ;; Translation preserves relative layout, so this is correct and
+            ;; fixes the "only the frame border moves" preview artifact (the
+            ;; "just a box" effect on grid/flex frames). For resize/rotate/scale
+            ;; we still apply the inverse so children don't distort during the
+            ;; preview (layout re-solves on commit).
+            (when-not (ctm/only-move? modifiers)
+              (set-transform-att! node "transform" (gmt/inverse transform)))
 
             (dom/class? node "frame-title")
             (let [shape (gsh/transform-shape shape modifiers)

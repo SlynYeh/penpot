@@ -26,6 +26,7 @@
    [app.util.dom :as dom]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
+   [app.util.shape-name :as usn]
    [goog.events :as events]
    [rumext.v2 :as mf]))
 
@@ -221,7 +222,7 @@
       [:div {:on-click toggle-dropdown
              :class (stl/css :view-options)}
        [:span {:class (stl/css :icon)} deprecated-icon/play]
-       [:span {:class (stl/css :dropdown-title)} (:name current-flow)]
+       [:span {:class (stl/css :dropdown-title)} (usn/localized-flow-name (:name current-flow))]
        [:span {:class (stl/css :icon-dropdown)}  deprecated-icon/arrow]
        [:& dropdown {:show show-dropdown?
                      :on-close hide-dropdown}
@@ -234,7 +235,7 @@
                  ;; performant DO NOT COPY
                  :data-value (pr-str flow)
                  :on-click select-flow}
-            [:span {:class (stl/css :label)} (:name flow)]
+            [:span {:class (stl/css :label)} (usn/localized-flow-name (:name flow))]
             (when (= flow-id (:id current-flow))
               [:span {:class (stl/css :icon)} deprecated-icon/tick])])]]])))
 

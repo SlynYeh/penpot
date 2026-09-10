@@ -1,0 +1,198 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "refactor/common-refactor.scss" as deprecated;
+@use "ds/colors.scss" as *;
+@use "ds/typography.scss" as t;
+@use "ds/z-index.scss" as *;
+@use "ds/_borders.scss" as *;
+@use "ds/_sizes.scss" as *;
+@use "ds/_utils.scss" as *;
+
+// Foreground hexes are per fork design spec; intentionally not tokenized.
+// Hover/focus background is the design-system $gray-50 (spec typo #f2f3f6 unified).
+.help-trigger {
+  @include deprecated.flex-center;
+
+  gap: deprecated.$s-4;
+  height: deprecated.$s-32;
+  padding: deprecated.$s-6 deprecated.$s-12;
+  border: 0;
+  border-radius: deprecated.$br-4;
+  background: transparent;
+  color: #495e74;
+  cursor: pointer;
+  font: inherit;
+
+  svg {
+    width: deprecated.$s-16;
+    height: deprecated.$s-16;
+
+    // help.svg ships without stroke/fill attributes; tie it to the button color.
+    stroke: currentcolor;
+    fill: none;
+  }
+
+  &:hover {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+
+  &:focus-visible {
+    background-color: $gray-50;
+    color: #6911D4;
+  }
+}
+
+.trigger-label {
+  @include t.use-typography("body-small");
+
+  white-space: nowrap;
+}
+
+// Visual block intentionally duplicated from main-menu's .base-menu:
+// css-modules cannot @extend across files.
+.help-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+  padding: var(--sp-xs);
+  top: $sz-48;
+  right: deprecated.$s-12;
+  inline-size: $sz-192;
+  border-radius: $br-8;
+  z-index: var(--z-index-dropdown);
+  background-color: var(--menu-background-color);
+  border: $b-2 solid var(--panel-border-color);
+  box-shadow: 0 0 $sz-12 0 var(--menu-shadow-color);
+}
+
+// Visual block intentionally duplicated from main-menu's .base-menu-item:
+// css-modules cannot @extend across files.
+.help-menu-item {
+  @include t.use-typography("body-small");
+
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto $sz-16 $sz-16;
+  grid-template-areas: "name indicator arrow";
+  block-size: $sz-28;
+  inline-size: 100%;
+  padding: $sz-6;
+  border-radius: $br-8;
+  color: var(--menu-foreground-color);
+  background-color: var(--menu-background-color);
+
+  &:hover {
+    --menu-foreground-color: var(--menu-foreground-color-hover);
+    --menu-background-color: var(--menu-background-color-hover);
+    --menu-shortcut-foreground-color: var(--menu-shortcut-foreground-color-hover);
+    --menu-icon-foreground-color: var(--menu-foreground-color-hover);
+  }
+}
+
+.item-name {
+  grid-area: name;
+}
+
+// --- One-time onboarding guide popover (fork feature)
+
+// Anchored to the aside.left-settings-bar, same containing block and anchor
+// offsets as .help-menu above. Fork-spec colors (#296afd) intentionally not
+// tokenized, same policy as .help-trigger.
+.guide-popover {
+  position: absolute;
+  top: $sz-48;
+  right: deprecated.$s-12;
+  z-index: var(--z-index-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-8;
+  inline-size: px2rem(240);
+  padding: deprecated.$s-12;
+  border-radius: $br-6;
+  background-color: #296afd;
+  box-shadow: 0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
+    0 px2rem(9) px2rem(28) 0 rgb(2 22 61 / 0.05),
+    0 px2rem(12) px2rem(48) px2rem(16) rgb(2 22 61 / 0.03);
+}
+
+// 8px rotated square poking out of the popover's top edge toward the trigger;
+// horizontal offset tuned in browser (trigger center sits ~44-52px from the
+// sidebar's right edge depending on the locale label width).
+.guide-arrow {
+  position: absolute;
+  top: px2rem(-4);
+  right: deprecated.$s-48;
+  inline-size: px2rem(8);
+  block-size: px2rem(8);
+  border-radius: px2rem(1);
+  background-color: #296afd;
+  transform: rotate(45deg);
+}
+
+.guide-title {
+  @include t.use-typography("body-medium");
+
+  padding-inline-end: deprecated.$s-24; // keep clear of the ✕ button
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.guide-body {
+  @include t.use-typography("body-medium");
+
+  color: #ffffff;
+}
+
+.guide-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.guide-got-it {
+  @include t.use-typography("body-small");
+
+  height: deprecated.$s-24;
+  padding: deprecated.$s-2 deprecated.$s-8;
+  border: 0;
+  border-radius: px2rem(3);
+  background-color: #ffffff;
+  color: #296afd;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f2f5ff;
+  }
+}
+
+.guide-close {
+  @include deprecated.flex-center;
+
+  position: absolute;
+  top: deprecated.$s-12;
+  right: deprecated.$s-12;
+  inline-size: deprecated.$s-20;
+  block-size: deprecated.$s-20;
+  padding: 0;
+  border: 0;
+  border-radius: px2rem(3);
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+
+  // close.svg (not close-small: its X spans only ~4.8/16 of the viewBox)
+  // fills the whole 20x20 hit area, so the X scales to ~10px. The svg ships
+  // without stroke/fill attributes, same as help.svg.
+  svg {
+    inline-size: 100%;
+    block-size: 100%;
+
+    stroke: currentcolor;
+    fill: none;
+  }
+}

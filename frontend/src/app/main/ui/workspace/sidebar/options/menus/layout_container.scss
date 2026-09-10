@@ -49,7 +49,7 @@
 .first-row {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   margin-block: var(--sp-xs) var(--sp-m);
 }
 
@@ -84,7 +84,7 @@
 .third-row {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   margin-block-end: var(--sp-m);
 }
 
@@ -114,7 +114,12 @@
 .gap-group {
   grid-column: span 3;
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns:
+    var(--grid-exception-input-width) /* first input block */
+    var(--grid-exception-input-width) /* second input block */
+    var(--sp-xxxl); /* action button */
+
+  gap: var(--sp-xs);
 }
 
 // TODO: Remove when activating token numeric inputs
@@ -138,20 +143,26 @@
 .padding-group {
   display: grid;
   grid-column: span 3;
-  grid-template-columns: subgrid;
+  grid-template-columns:
+    var(--grid-exception-input-width) /* first input block */
+    var(--grid-exception-input-width) /* second input block */
+    var(--sp-xxxl); /* action button */
+
+  gap: var(--sp-xs);
 }
 
 .padding-inputs,
 .paddings-simple {
   grid-column: span 2;
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: var(--grid-exception-input-width) var(--grid-exception-input-width);
+  gap: var(--sp-xs);
 }
 
 .paddings-multiple {
   display: grid;
   grid-column: span 2;
-  grid-template-columns: subgrid;
+  grid-template-columns: var(--grid-exception-input-width) var(--grid-exception-input-width);
   gap: var(--sp-xs);
 }
 
@@ -189,12 +200,12 @@
 .first-row {
   margin-block-end: var(--sp-s);
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
 }
 
 .grid-layout-align {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   align-items: flex-start;
   position: relative;
   gap: var(--sp-xs);
@@ -235,7 +246,7 @@
 
 .grid-tracks-info-container {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
   gap: var(--sp-xs);
   margin-block-start: var(--sp-xs);
@@ -247,19 +258,19 @@
 
 .grid-tracks-row {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
 }
 
 .edit-grid-wrapper {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
 }
 
 .track-info {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
 
   &.dnd-over-top {
     border-block-start: $b-2 solid var(--color-accent-primary);
@@ -309,7 +320,7 @@
 
 .grid-tracks {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
   margin-block-start: var(--sp-s);
 }
@@ -451,7 +462,7 @@
 
 .grid-first-row {
   display: grid;
-  grid-template-columns: subgrid;
+  @include sidebar.option-grid-subgrid(8);
   grid-column: 1 / -1;
   align-items: center;
 }

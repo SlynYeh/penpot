@@ -12,13 +12,14 @@
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.assets :as dwa]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.refs :as refs]
    [app.main.store :as st]
    [app.main.ui.components.context-menu-a11y :refer [context-menu*]]
    [app.main.ui.components.search-bar :refer [search-bar*]]
    [app.main.ui.context :as ctx]
    [app.main.ui.ds.buttons.icon-button :refer [icon-button*]]
-   [app.main.ui.icons :as deprecated-icon]
+   [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.workspace.sidebar.assets.common :as cmm]
    [app.main.ui.workspace.sidebar.assets.file-library :refer [file-library*]]
    [app.util.dom :as dom]
@@ -37,6 +38,7 @@
                     (->> (refs/select-libraries files file-id)
                          (vals)
                          (remove #(= file-id (:id %)))
+                         (dwi/assets-libraries)
                          (map (fn [file]
                                 (update file :data dissoc :pages-index)))
                          (sort-by #(str/lower (:name %)))))]
@@ -54,14 +56,39 @@
                (update file :data dissoc :pages-index))
              refs/file))
 
+(defn has-assets?
+  "True when a file's `:data` map holds at least one non-deleted component,
+  color or typography. Drives whether the local library starts expanded: a
+  library with nothing to show starts collapsed."
+  [file-data]
+  (boolean
+   (or (seq (ctkl/components-seq file-data))
+       (seq (:colors file-data))
+       (seq (:typographies file-data)))))
+
 (mf/defc assets-local-library*
   {::mf/private true}
   [{:keys [filters]}]
   (let [file (mf/deref ref:local-library)]
+    (when-not (dwi/iconpark-library? file)
+      [:> file-library*
+       {:file file
+        :is-local true
+        :is-default-open true
+        :filters filters}])))
+  (let [file (mf/deref ref:local-library)
+
+        ;; Unlike shared libraries, the local one opens by default — but only
+        ;; when it actually has assets. An empty library stays folded so the
+        ;; panel doesn't start with a blank section; it opens on its own once
+        ;; the first asset is added.
+        is-default-open (mf/with-memo [file]
+                          (has-assets? (:data file)))]
+
     [:> file-library*
      {:file file
       :is-local true
-      :is-default-open true
+      :is-default-open is-default-open
       :filters filters}]))
 
 (defn- toggle-values
@@ -143,6 +170,36 @@
         on-menu-close
         (mf/use-fn #(swap! filters* assoc :open-menu false))
 
+        ;; Width of the filter dropdown panel, in px. Kept as a binding so the
+        ;; right-alignment math below stays in sync with the `:width` prop.
+        menu-width 120
+
+        ;; Ref to the actions container so we can measure the filter button's
+        ;; right edge and right-align the dropdown panel with it.
+        actions-ref (mf/use-ref nil)
+
+        ;; Dropdown panel position, computed when the menu opens.
+        menu-pos* (mf/use-state {:left 0 :top 46})
+
+        ;; Recompute panel position whenever the menu opens so it stays
+        ;; right-aligned with the filter button even after layout changes.
+        _ (mf/use-effect
+           (mf/deps menu-open?)
+           (fn []
+             (when menu-open?
+               (let [el (mf/ref-val actions-ref)]
+                 (when (some? el)
+                   (let [rect (dom/get-bounding-rect el)]
+                     ;; The filter button is the last visible child of .actions
+                     ;; (the manage-libraries button next to it is display:none
+                     ;; and takes no space), so the container's `right` edge is
+                     ;; the button's `right` edge. Anchor the panel's right edge
+                     ;; to it, and hang the panel just below the header with a
+                     ;; small 2px gap.
+                     (swap! menu-pos* assoc
+                            :left (- (get rect :right) menu-width)
+                            :top  (+ (get rect :bottom) 2))))))))
+
         ;; Memoize options to prevent infinite re-render loops when dev-tools are open.
         ;;
         ;; Problem: When dev-tools are open, they constantly monitor the application state,
@@ -173,46 +230,41 @@
 
     [:article  {:class (stl/css :assets-bar)}
      [:div {:class (stl/css :assets-header)}
-      (when-not ^boolean read-only?
-        (if (and (= num-libs 1) (empty? components) (not shared?))
-          [:button {:class (stl/css :add-library-button)
-                    :on-click show-libraries-dialog
-                    :data-testid "libraries"}
-           (tr "workspace.assets.add-library")]
-
-          [:button {:class (stl/css :libraries-button)
-                    :on-click show-libraries-dialog
-                    :data-testid "libraries"}
-           (tr "workspace.assets.manage-library")]))
-
-
       [:div {:class (stl/css :search-wrapper)}
        [:> search-bar* {:on-change on-search-term-change
                         :value term
-                        :placeholder (tr "workspace.assets.search")}
-        [:button
-         {:on-click on-open-menu
-          :title (tr "workspace.assets.filter")
-          :class (stl/css-case :section-button true
-                               :opened menu-open?)}
-         deprecated-icon/filter-icon]]
+                        :placeholder (tr "workspace.assets.search")}]]
 
-       [:> context-menu*
-        {:on-close on-menu-close
-         :selectable true
-         :selected section
-         :show menu-open?
-         :fixed true
-         :min-width true
-         :width size
-         :top 158
-         :left 18
-         :options options}]
+      (when-not ^boolean read-only?
+        [:div {:class (stl/css :actions)
+               :ref actions-ref}
+         [:> icon-button* {:variant (if menu-open? "secondary" "ghost")
+                           :icon i/filter
+                           :aria-label (tr "workspace.assets.filter")
+                           :tooltip-placement "top"
+                           :on-click on-open-menu}]
+         ;; Kept in the DOM (and reachable by tests) but hidden via CSS; the
+         ;; search box and the filter button are meant to fill the row.
+         [:> icon-button* {:class (stl/css :manage-library-btn)
+                           :variant "ghost"
+                           :icon i/book-open
+                           :aria-label (tr "workspace.assets.manage-library")
+                           :tooltip-placement "top"
+                           :on-click show-libraries-dialog
+                           :data-testid "libraries"}]])
 
-       [:> icon-button* {:variant "ghost"
-                         :aria-label (tr "workspace.assets.sort")
-                         :on-click toggle-ordering
-                         :icon (if reverse-sort? "asc-sort" "desc-sort")}]]]
+      [:> context-menu*
+       {:on-close on-menu-close
+        :selectable true
+        :selected section
+        :show menu-open?
+        :fixed true
+        :min-width false
+        :width menu-width
+        :top (:top @menu-pos*)
+        :left (:left @menu-pos*)
+        :options options}]]
+
 
      [:& (mf/provider cmm/assets-filters) {:value filters}
       [:& (mf/provider cmm/assets-toggle-ordering) {:value toggle-ordering}

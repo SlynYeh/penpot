@@ -106,8 +106,9 @@
 (def default-text-attrs
   {:typography-ref-file nil
    :typography-ref-id nil
-   :font-id "sourcesanspro"
-   :font-family "sourcesanspro"
+   ;; FORK(字体列表只保留 Noto Sans SC): 新文本默认字体由 Source Sans Pro 改为 Noto Sans SC。
+   :font-id "notosanssc"
+   :font-family "notosanssc"
    :font-variant-id "regular"
    :font-size "14"
    :font-weight "400"
@@ -148,7 +149,7 @@
 (def default-typography
   (-> default-text-attrs
       (select-keys typography-fields)
-      (assoc :name "Source Sans Pro Regular")))
+      (assoc :name "Noto Sans SC Regular")))
 
 (defn node-seq
   ([root] (node-seq identity root))

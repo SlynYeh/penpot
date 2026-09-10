@@ -17,6 +17,8 @@
    [app.common.types.container :as ctn]
    [app.common.types.shape :as cts]
    [app.common.types.shape-tree :as ctst]
+   [app.common.uuid :as uuid]
+   [app.main.constants :as constants]
    [app.main.data.changes :as dch]
    [app.main.data.comments :as dc]
    [app.main.data.event :as ev]
@@ -379,6 +381,54 @@
                             (assoc :parent-id parent-id)))]
 
          (rx/of (add-shape shape {:skip-edition? skip-edition?})))))))
+
+(defn- shape-right-edge
+  [shape]
+  (let [selrect (:selrect shape)]
+    (or (:x2 selrect)
+        (+ (or (:x selrect) (:x shape) 0)
+           (or (:width selrect) (:width shape) 0)))))
+
+(defn- shape-top-edge
+  [shape]
+  (let [selrect (:selrect shape)]
+    (or (:y1 selrect) (:y selrect) (:y shape) 0)))
+
+(defn next-board-position
+  "When the page has top-level content, return `{:x :y}` for a new board
+  placed `constants/board-preset-gap` to the right of the rightmost object,
+  top-aligned with that object. Returns nil when the canvas is empty."
+  [objects]
+  (let [children (cfh/get-immediate-children objects uuid/zero {:remove-hidden true})]
+    (when (seq children)
+      (let [rightmost (apply max-key shape-right-edge children)]
+        {:x (+ (shape-right-edge rightmost) constants/board-preset-gap)
+         :y (shape-top-edge rightmost)}))))
+
+(defn add-board-from-size-preset
+  [width height]
+  (ptk/reify ::add-board-from-size-preset
+    ptk/WatchEvent
+    (watch [_ state _]
+      (let [page-id  (:current-page-id state)
+            objects  (dsh/lookup-page-objects state page-id)
+            position (next-board-position objects)
+            vbc      (dsh/get-viewport-center state)
+            x        (or (:x position)
+                         (when vbc (- (:x vbc) (/ width 2)))
+                         constants/frame-start-x)
+            y        (or (:y position)
+                         (when vbc (- (:y vbc) (/ height 2)))
+                         constants/frame-start-y)
+            shape    (cts/setup-shape
+                      {:type      :frame
+                       :x         x
+                       :y         y
+                       :width     width
+                       :height    height
+                       :frame-id  uuid/zero
+                       :parent-id uuid/zero})]
+        (rx/of (add-shape shape))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Artboard

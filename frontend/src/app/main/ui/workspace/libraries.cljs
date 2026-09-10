@@ -42,6 +42,7 @@
    [app.main.ui.workspace.tokens.import-from-library]
    [app.util.color :as uc]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.i18n :refer [c tr]]
    [app.util.strings :refer [matches-search]]
    [beicon.v2.core :as rx]
@@ -591,8 +592,8 @@
                       (tr "workspace.assets.typography.sample")]
                      [:div {:class (stl/css :name-block)}
                       [:span {:class (stl/css :item-name)
-                              :title (:name typography)}
-                       (:name typography)]]]])
+                              :title (font-style/localized-typography-name (:name typography))}
+                       (font-style/localized-typography-name (:name typography))]]]])
                  (when (:typographies exceeded)
                    [:div {:class (stl/css :libraries-updates-item)
                           :key (uuid/next)}

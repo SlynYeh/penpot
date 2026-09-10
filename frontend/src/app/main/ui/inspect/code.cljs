@@ -28,6 +28,7 @@
    [app.util.code-gen :as cg]
    [app.util.dom :as dom]
    [app.util.http :as http]
+   [app.util.i18n :refer [tr]]
    [beicon.v2.core :as rx]
    [cuerdas.core :as str]
    [okulary.core :as l]
@@ -280,7 +281,7 @@
      [:div {:class (stl/css :attributes-block)}
       [:button {:class (stl/css :download-button)
                 :on-click handle-copy-all-code}
-       "Copy all code"]]
+       (tr "inspect.tabs.code.copy-all")]]
 
      #_[:div.attributes-block
         [:button.download-button {:on-click handle-open-review}

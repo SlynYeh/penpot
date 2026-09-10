@@ -40,6 +40,7 @@ UI and packages:
 Workspace behavior:
 - Workspace state, commits, persistence, undo, repo calls, and refs: `mem:frontend/workspace-state-persistence-subtleties`.
 - Workspace transforms, modifier previews, WASM modifier integration, and transform commits: `mem:frontend/workspace-transform-subtleties`.
+- Which rendering-perf optimizations cover which drag interactions (move vs edge/corner resize vs path-editor vertex drag, wasm vs svg): `mem:frontend/drag-resize-vertex-perf`.
 - Workspace token application/propagation: `mem:frontend/workspace-token-subtleties`; shared token data/schema: `mem:common/tokens-schema-subtleties`.
 
 App shell and product flows:

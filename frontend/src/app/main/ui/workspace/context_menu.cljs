@@ -28,6 +28,7 @@
    [app.main.data.workspace.shape-layout :as dwsl]
    [app.main.data.workspace.shapes :as dwsh]
    [app.main.data.workspace.shortcuts :as sc]
+   [app.main.data.workspace.table :as dwt]
    [app.main.data.workspace.variants :as dwv]
    [app.main.features :as features]
    [app.main.refs :as refs]
@@ -312,6 +313,42 @@
                       :shortcut (sc/get-tooltip :flip-horizontal)
                       :on-click do-flip-horizontal}]
      [:> menu-separator* {}]]))
+
+(mf/defc context-menu-table*
+  {::mf/private true}
+  [{:keys [shapes objects hover-ids]}]
+  (when (seq shapes)
+    ;; `hover-ids` is the raw hit stack at the right-click position, sorted
+    ;; outermost-first (ancestors first, deepest descendant last) — which is
+    ;; why a plain hover stops at the outermost container. Take the last
+    ;; table member of the stack: the deepest descendant of the table that
+    ;; comes last in the stack (possibly a text inside a cell; the table
+    ;; events/predicates resolve it up to the cell/column/row). The selected
+    ;; shapes are only a fallback for when the hover stack has no table
+    ;; member (e.g. when editing contents in depth).
+    (let [hover-shapes (->> hover-ids (map (d/getf objects)) (remove nil?))
+          hover-shape  (->> hover-shapes (filter #(dwt/find-table-root objects %)) (last))]
+      (when-let [shape (or hover-shape (d/seek #(dwt/find-table-root objects %) shapes))]
+        (let [shape-id        (:id shape)
+              can-delete-row? (dwt/can-delete-table-row? objects shape)
+              can-delete-col? (dwt/can-delete-table-column? objects shape)]
+          [:*
+           [:> menu-separator* {}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-row-above")
+                            :on-click #(st/emit! (dwt/insert-table-row shape-id :above))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-row-below")
+                            :on-click #(st/emit! (dwt/insert-table-row shape-id :below))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-column-left")
+                            :on-click #(st/emit! (dwt/insert-table-column shape-id :left))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.insert-table-column-right")
+                            :on-click #(st/emit! (dwt/insert-table-column shape-id :right))}]
+           [:> menu-separator* {}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.delete-table-row")
+                            :disabled (not can-delete-row?)
+                            :on-click #(st/emit! (dwt/delete-table-row shape-id))}]
+           [:> menu-entry* {:title (tr "workspace.shape.menu.delete-table-column")
+                            :disabled (not can-delete-col?)
+                            :on-click #(st/emit! (dwt/delete-table-column shape-id))}]])))))
 
 (mf/defc context-menu-thumbnail*
   {::mf/private true}
@@ -679,6 +716,7 @@
         props  (mf/props
                 {:shapes shapes
                  :objects objects
+                 :hover-ids (:hover-ids mdata)
                  :disable-booleans disable-booleans
                  :disable-flatten disable-flatten})]
     (when-not (empty? shapes)
@@ -696,6 +734,7 @@
        [:> context-menu-prototype* props]
        (when is-not-variant-container?
          [:> context-menu-layout* props])
+       [:> context-menu-table* props]
        [:> context-menu-component* props]
        [:> context-menu-guides* props]
        [:> context-menu-delete* props]])))

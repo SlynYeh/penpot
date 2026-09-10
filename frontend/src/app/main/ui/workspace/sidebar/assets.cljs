@@ -69,13 +69,6 @@
 (mf/defc assets-local-library*
   {::mf/private true}
   [{:keys [filters]}]
-  (let [file (mf/deref ref:local-library)]
-    (when-not (dwi/iconpark-library? file)
-      [:> file-library*
-       {:file file
-        :is-local true
-        :is-default-open true
-        :filters filters}])))
   (let [file (mf/deref ref:local-library)
 
         ;; Unlike shared libraries, the local one opens by default — but only
@@ -85,11 +78,12 @@
         is-default-open (mf/with-memo [file]
                           (has-assets? (:data file)))]
 
-    [:> file-library*
-     {:file file
-      :is-local true
-      :is-default-open is-default-open
-      :filters filters}]))
+    (when-not (dwi/iconpark-library? file)
+      [:> file-library*
+       {:file file
+        :is-local true
+        :is-default-open is-default-open
+        :filters filters}])))
 
 (defn- toggle-values
   [v a b]

@@ -59,6 +59,7 @@
 (def ^:icon-id at "at")
 (def ^:icon-id board "board")
 (def ^:icon-id boards-thumbnail "boards-thumbnail")
+(def ^:icon-id book-open "book-open")
 (def ^:icon-id boolean-difference "boolean-difference")
 (def ^:icon-id boolean-exclude "boolean-exclude")
 (def ^:icon-id boolean-flatten "boolean-flatten")

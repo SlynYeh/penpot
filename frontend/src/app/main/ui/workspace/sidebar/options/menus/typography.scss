@@ -227,11 +227,12 @@
 }
 
 .font-option {
-  @include t.use-typography("body-small");
-  @extend %asset-element;
+  position: relative;
+  padding: 0;
+}
 
-  padding: var(--sp-s);
-  cursor: pointer;
+.font-family-select {
+  inline-size: 100%;
 }
 
 .font-option-name {

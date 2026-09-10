@@ -7,6 +7,7 @@
 @use "refactor/common-refactor.scss" as deprecated;
 
 .new-inline {
+  display: none;
   position: absolute;
   top: deprecated.$s-72;
   margin: auto;

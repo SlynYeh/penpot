@@ -64,6 +64,35 @@
       (or next (peek fonts)))
     current))
 
+(defn font-select-options
+  "Sidebar font-family select options. Mixed selection prepends a blank row.
+  Recent fonts, when present, appear under a non-selectable group header."
+  ([fonts font-id mixed-label]
+   (font-select-options fonts font-id mixed-label nil nil))
+  ([fonts font-id mixed-label recent-fonts recent-label]
+   (let [font-option (fn [font]
+                       {:value (:id font)
+                        :key   (:id font)
+                        :label (:name font)})
+         all-options (mapv font-option fonts)
+         recent-rows (when (seq recent-fonts)
+                       (into [{:group-header true
+                               :label recent-label}]
+                             (concat (map font-option recent-fonts)
+                                     [:separator])))
+         mixed-row   (when (or (= font-id :multiple) (= font-id "mixed"))
+                       [{:value ""
+                         :key   :multiple-fonts
+                         :label mixed-label}])]
+     (into [] (concat mixed-row recent-rows all-options)))))
+
+(defn font-select-value
+  "Value shown by the sidebar font-family select."
+  [font-id font]
+  (if (or (= font-id :multiple) (= font-id "mixed"))
+    ""
+    (or (:id font) "")))
+
 (mf/defc font-item*
   {::mf/wrap [mf/memo]}
   [{:keys [font is-current on-click style]}]
@@ -255,7 +284,7 @@
                      :is-current (= (:id font) (:id selected))}])))
 
 (mf/defc font-options*
-  [{:keys [values on-change on-blur show-recent full-size-selector]}]
+  [{:keys [values on-change on-blur show-recent]}]
   (let [{:keys [font-id font-size font-variant-id]} values
 
         font-id         (or font-id (:font-id txt/default-typography))
@@ -263,14 +292,20 @@
         font-variant-id (or font-variant-id (:font-variant-id txt/default-typography))
 
         fonts           (mf/deref fonts/fontsdb)
+        font-list       (mf/deref fonts/fonts)
         font            (get fonts font-id)
         ;; FORK: 匹配不到字体（如旧文件引用已停用的 google 字体）时默认显示
         ;; Noto Sans SC，不再显示「字体已删除」占位符。
         font            (or font (get fonts fonts/fallback-font-id))
-
-        last-font       (mf/use-ref nil)
-
-        open-selector?  (mf/use-state false)
+        mixed-label     (tr "inspect.attributes.typography.mixed-font-family")
+        recent-label    (tr "workspace.options.recent-fonts")
+        recent-fonts    (mf/deref refs/recent-fonts)
+        recent-fonts    (mf/with-memo [recent-fonts show-recent]
+                          (when show-recent
+                            (into [] (filter fonts/font-visible?) recent-fonts)))
+        font-options    (mf/with-memo [font-list font-id mixed-label recent-fonts recent-label]
+                          (font-select-options font-list font-id mixed-label recent-fonts recent-label))
+        font-value      (font-select-value font-id font)
 
         change-font
         (mf/use-fn
@@ -282,8 +317,19 @@
                          :font-family family
                          :font-variant-id (or id name)
                          :font-weight weight
-                         :font-style style})
-             (mf/set-ref-val! last-font font))))
+                         :font-style style}))))
+
+        on-font-family-change
+        (mf/use-fn
+         (mf/deps change-font fonts font-id on-blur)
+         (fn [new-font-id]
+           (when (and (not (str/empty? new-font-id))
+                      (not= font-id new-font-id))
+             (change-font new-font-id)
+             (when-let [new-font (get fonts new-font-id)]
+               (st/emit! (fts/add-recent-font new-font))))
+           (when (some? on-blur)
+             (on-blur))))
 
         on-font-size-change
         (mf/use-fn
@@ -306,59 +352,16 @@
              ;; NOTE: the select component we are using does not fire on-blur event
              ;; so we need to call on-blur manually
              (when (some? on-blur)
-               (on-blur)))))
-
-        on-font-select
-        (mf/use-fn
-         (mf/deps change-font)
-         (fn [font*]
-           (when (not= font font*)
-             (change-font (:id font*)))
-
-           (when (some? on-blur)
-             (on-blur))))
-
-        on-font-selector-close
-        (mf/use-fn
-         (fn []
-           (reset! open-selector? false)
-           (when (some? on-blur)
-             (on-blur))
-           (when (mf/ref-val last-font)
-             (st/emit! (fts/add-recent-font (mf/ref-val last-font))))))]
+               (on-blur)))))]
 
     [:*
-     (when @open-selector?
-       [:> font-selector*
-        {:current-font font
-         :on-close on-font-selector-close
-         :on-select on-font-select
-         :full-size full-size-selector
-         :origin "right-sidebar"
-         :show-recent show-recent}])
-
      [:div {:class (stl/css :font-option)
-            :title (tr "inspect.attributes.typography.font-family")
-            :on-click #(swap! open-selector? not)}
-      (cond
-        (or (= :multiple font-id) (= "mixed" font-id))
-        [:*
-         [:span {:class (stl/css :font-option-name :font-family-mixed)}
-          (tr "inspect.attributes.typography.mixed-font-family")]
-         [:> icon* {:icon-id i/arrow-down
-                    :class (stl/css :dropdown-icon)
-                    :size "s"}]]
-
-        (some? font)
-        [:*
-         [:span {:class (stl/css :font-option-name)}
-          (:name font)]
-         [:> icon* {:icon-id i/arrow-down
-                    :class (stl/css :dropdown-icon)
-                    :size "s"}]]
-
-        :else
-        (tr "dashboard.fonts.deleted-placeholder"))]
+            :title (tr "inspect.attributes.typography.font-family")}
+      [:& select
+       {:class (stl/css :font-family-select)
+        :default-value font-value
+        :options font-options
+        :on-change on-font-family-change}]]
 
      [:div {:class (stl/css :font-modifiers)}
       [:div {:class (stl/css :font-size-options)
@@ -490,18 +493,15 @@
 
 (mf/defc text-options*
   [{:keys [ids editor values on-change on-blur show-recent show-spacing]}]
-  (let [show-spacing        (if (nil? show-spacing) true show-spacing)
-        full-size-selector? (and show-recent (= (mf/use-ctx ctx/sidebar) :right))
-        opts                (mf/props
-              {:editor editor
-               :ids ids
-               :values values
-               :on-change on-change
-               :on-blur on-blur
-               :show-recent show-recent
-               :full-size-selector full-size-selector?})]
-    [:div {:class (stl/css-case :text-options true
-                                :text-options-full-size full-size-selector?)}
+  (let [show-spacing (if (nil? show-spacing) true show-spacing)
+        opts         (mf/props
+                      {:editor      editor
+                       :ids         ids
+                       :values      values
+                       :on-change   on-change
+                       :on-blur     on-blur
+                       :show-recent show-recent})]
+    [:div {:class (stl/css :text-options)}
      [:> font-options* opts]
      (when show-spacing
        [:div {:class (stl/css :typography-variations)}

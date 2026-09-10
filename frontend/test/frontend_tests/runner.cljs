@@ -14,7 +14,9 @@
    [frontend-tests.data.viewer-test]
    [frontend-tests.data.workspace-colors-test]
    [frontend-tests.data.workspace-comments-test]
+   [frontend-tests.data.workspace-icons-test]
    [frontend-tests.data.workspace-interactions-test]
+   [frontend-tests.data.workspace-layout-test]
    [frontend-tests.data.workspace-mcp-test]
    [frontend-tests.data.workspace-media-test]
    [frontend-tests.data.workspace-shortcuts-test]
@@ -92,7 +94,9 @@
    'frontend-tests.data.viewer-test
    'frontend-tests.data.workspace-colors-test
    'frontend-tests.data.workspace-comments-test
+   'frontend-tests.data.workspace-icons-test
    'frontend-tests.data.workspace-interactions-test
+   'frontend-tests.data.workspace-layout-test
    'frontend-tests.data.workspace-mcp-test
    'frontend-tests.data.workspace-media-test
    'frontend-tests.data.workspace-shortcuts-test

@@ -5944,6 +5944,19 @@ msgstr[1] "%s 种颜色"
 msgid "workspace.libraries.colors.add-library-color"
 msgstr "添加颜色至库"
 
+msgid "workspace.options.size-preset.category.web"
+msgstr "网页"
+
+msgid "workspace.options.size-preset.category.phone"
+msgstr "手机"
+
+msgid "workspace.options.size-preset.category.print"
+msgstr "印刷品"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:587
+msgid "workspace.options.size.lock"
+msgstr "锁定比率"
+
 #: src/app/main/ui/workspace/color_palette.cljs:203, src/app/main/ui/workspace/colorpicker/libraries.cljs:372, src/app/main/ui/workspace/colorpicker/libraries.cljs:403
 msgid "workspace.libraries.colors.empty-palette"
 msgstr "你的库中还没有颜色风格"
@@ -6666,6 +6679,58 @@ msgstr "退出"
 #: src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:377
 msgid "workspace.options.interaction-auto"
 msgstr "自动"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons"
+msgstr "图标"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.category.all"
+msgstr "全部"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.category-count"
+msgstr "（%s）"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.view-all"
+msgstr "查看全部"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.drag-hint"
+msgstr "拖到画布中使用"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.empty"
+msgstr "暂时没有找到相关结果"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.search"
+msgstr "搜索图标"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.size"
+msgstr "尺寸"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.size.custom"
+msgstr "自定义"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme"
+msgstr "图标样式"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme.filled"
+msgstr "填充"
+
+#: src/app/main/ui/workspace/sidebar
+msgid "workspace.sidebar.icons.theme.outline"
+msgstr "线性"
+
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:164
+msgid "workspace.sidebar.layers"
+msgstr "图层"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:579
 msgid "workspace.options.interaction-background"

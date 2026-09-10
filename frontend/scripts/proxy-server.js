@@ -40,39 +40,33 @@ app.use((req, res, next) => {
 
 app.use(compression());
 
+// Stream request bodies instead of buffering them. The default
+// parseReqBody=true uses a 1mb raw-body limit and returns HTTP 413
+// on .penpot imports (chunked uploads are 25 MiB each).
+function apiProxy(pathResolver) {
+  return proxy(TARGET_URL, {
+    parseReqBody: false,
+    proxyReqPathResolver: pathResolver,
+  });
+}
+
 // Proxy API requests to target backend
-app.use("/api", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => {
-    return req.originalUrl;
-  },
-}));
+app.use("/api", apiProxy((req) => req.originalUrl));
 
 // Proxy RPC requests to target backend
-app.use("/rpc", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => {
-    return req.originalUrl;
-  },
-}));
+app.use("/rpc", apiProxy((req) => req.originalUrl));
 
 // Proxy API/RPC requests under base path (before SPA fallback)
-app.use(BASE_PATH + "api", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => "/api" + req.url,
-}));
+app.use(BASE_PATH + "api", apiProxy((req) => "/api" + req.url));
 
-app.use(BASE_PATH + "rpc", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => "/rpc" + req.url,
-}));
+app.use(BASE_PATH + "rpc", apiProxy((req) => "/rpc" + req.url));
 
 // Storage objects (component thumbnails, file media, fonts). Must be
 // registered before the SPA fallback: object ids have no file extension,
 // so they would otherwise receive index.html.
-app.use("/assets", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => req.originalUrl,
-}));
+app.use("/assets", apiProxy((req) => req.originalUrl));
 
-app.use(BASE_PATH + "assets", proxy(TARGET_URL, {
-  proxyReqPathResolver: (req) => "/assets" + req.url,
-}));
+app.use(BASE_PATH + "assets", apiProxy((req) => "/assets" + req.url));
 
 // Serve static files under base path
 // Disable caching for local development

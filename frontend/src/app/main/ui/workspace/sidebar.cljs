@@ -19,6 +19,7 @@
    [app.main.data.style-dictionary :as sd]
    [app.main.data.tokenscript :as ts]
    [app.main.data.workspace :as dw]
+   [app.main.data.workspace.layout :as dwlt]
    [app.main.features :as features]
    [app.main.refs :as refs]
    [app.main.store :as st]
@@ -35,6 +36,7 @@
    [app.main.ui.workspace.sidebar.debug :refer [debug-panel*]]
    [app.main.ui.workspace.sidebar.debug-shape-info :refer [debug-shape-info*]]
    [app.main.ui.workspace.sidebar.history :refer [history-toolbox*]]
+   [app.main.ui.workspace.sidebar.icons :refer [icons-toolbox*]]
    [app.main.ui.workspace.sidebar.layers :refer [layers-toolbox*]]
    [app.main.ui.workspace.sidebar.options :refer [options-toolbox*]]
    [app.main.ui.workspace.sidebar.sitemap :refer [sitemap*]]
@@ -115,6 +117,14 @@
 
      [:> layers-toolbox* {:size-parent width}]]))
 
+(mf/defc sidebar-tab-panel*
+  {::mf/private true}
+  [{:keys [active children]}]
+  [:div {:class (stl/css-case :sidebar-tab-panel true
+                              :sidebar-tab-panel-hidden (not active))
+         :aria-hidden (not active)}
+   children])
+
 
 (mf/defc left-sidebar*
   {::mf/memo true}
@@ -130,6 +140,7 @@
         section        (cond
                          (or mode-inspect? (contains? layout :layers)) :layers
                          (contains? layout :assets) :assets
+                         (contains? layout :icons) :icons
                          (contains? layout :tokens) :tokens)
 
         {on-pointer-down :on-pointer-down
@@ -156,12 +167,16 @@
                 :id "layers"}
                {:label (tr "workspace.toolbar.assets")
                 :id "assets"}
+               {:label (tr "workspace.sidebar.icons")
+                :id "icons"}
                {:label (tr "workspace.sidebar.tokens")
                 :id "tokens"}]
               [{:label (tr "workspace.sidebar.layers")
                 :id "layers"}
                {:label (tr "workspace.toolbar.assets")
-                :id "assets"}])))
+                :id "assets"}
+               {:label (tr "workspace.sidebar.icons")
+                :id "icons"}])))
 
         aside-class
         (stl/css-case
@@ -172,7 +187,28 @@
 
         tabs-action-button
         (mf/with-memo []
-          (mf/html [:> collapse-button* {}]))]
+          (mf/html [:> collapse-button* {}]))
+
+        seen-tabs*
+        (mf/use-ref #{})
+
+        seen-tabs
+        (let [next-seen (conj (or (mf/ref-val seen-tabs*) #{}) section)]
+          (mf/set-ref-val! seen-tabs* next-seen)
+          next-seen)
+
+        keep-layers?
+        (dwlt/keep-sidebar-tab? section seen-tabs :layers)
+
+        keep-assets?
+        (dwlt/keep-sidebar-tab? section seen-tabs :assets)
+
+        keep-icons?
+        (dwlt/keep-sidebar-tab? section seen-tabs :icons)
+
+        keep-tokens?
+        (and design-tokens?
+             (dwlt/keep-sidebar-tab? section seen-tabs :tokens))]
 
     [:> (mf/provider muc/sidebar) {:value :left}
      [:aside {:ref parent-ref
@@ -206,23 +242,30 @@
                             :class (stl/css :left-sidebar-tabs)
                             :action-button-position "start"
                             :action-button tabs-action-button}
-
-          (case section
-            :assets
-            [:> assets-toolbox*
-             {:size (- width  58)
-              :file-id file-id}]
-
-            :tokens
-            [:> tokens-sidebar-tab*
-             {:tokens-lib tokens-lib
-              :active-tokens active-tokens
-              :resolved-active-tokens resolved-active-tokens}]
-
-            :layers
-            [:> layers-content*
-             {:layout layout
-              :width width}])]])]]))
+          [:div {:class (stl/css :sidebar-tab-panels)}
+           (when keep-layers?
+             [:> sidebar-tab-panel* {:key "layers"
+                                     :active (= section :layers)}
+              [:> layers-content*
+               {:layout layout
+                :width width}]])
+           (when keep-assets?
+             [:> sidebar-tab-panel* {:key "assets"
+                                     :active (= section :assets)}
+              [:> assets-toolbox*
+               {:size (- width  58)
+                :file-id file-id}]])
+           (when keep-icons?
+             [:> sidebar-tab-panel* {:key "icons"
+                                     :active (= section :icons)}
+              [:> icons-toolbox*]])
+           (when keep-tokens?
+             [:> sidebar-tab-panel* {:key "tokens"
+                                     :active (= section :tokens)}
+              [:> tokens-sidebar-tab*
+               {:tokens-lib tokens-lib
+                :active-tokens active-tokens
+                :resolved-active-tokens resolved-active-tokens}]])]]])]]))
 
 ;; --- Right Sidebar (Component)
 

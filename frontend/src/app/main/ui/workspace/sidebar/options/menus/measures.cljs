@@ -97,6 +97,10 @@
     (select-keys shape measure-attrs)))
 
 (def ^:private xf:map-type (map :type))
+;; Set these to true to restore size-preset search and landscape/portrait.
+(def size-preset-search-enabled? false)
+(def frame-orientation-enabled? false)
+
 (def ^:private xf:mapcat-type-to-options (mapcat type->options))
 
 (defn fixed-decimal-value
@@ -111,6 +115,19 @@
 
      (number? value)
      (parse-double (.toFixed value decimals)))))
+
+(defn size-preset-header-label
+  "Translate category headers; device names stay as authored."
+  [preset]
+  (let [name (:name preset)]
+    (case name
+      "workspace.options.size-preset.category.web"
+      (tr "workspace.options.size-preset.category.web")
+
+      "workspace.options.size-preset.category.phone"
+      (tr "workspace.options.size-preset.category.phone")
+
+      name)))
 
 (defn filter-size-presets
   "Filter the `size-presets` list by `term`, preserving category headers only
@@ -336,15 +353,17 @@
 
         filtered-size-presets
         (mf/with-memo [preset-search-term]
-          (filter-size-presets preset-search-term size-presets))
+          (if size-preset-search-enabled?
+            (filter-size-presets preset-search-term size-presets)
+            size-presets))
 
         on-preset-selected
         (mf/use-fn
          (mf/deps ids)
          (fn [event]
-           (let [width (-> (dom/get-current-target event)
-                           (dom/get-data "width")
-                           (d/read-string))
+           (let [width  (-> (dom/get-current-target event)
+                            (dom/get-data "width")
+                            (d/read-string))
                  height (-> (dom/get-current-target event)
                             (dom/get-data "height")
                             (d/read-string))]
@@ -471,7 +490,8 @@
                 (or (nil? all-types) (= (count all-types) 1)))
        [:div {:class (stl/css :presets)}
         [:div {:class (stl/css-case  :presets-wrapper true
-                                     :opened show-presets-dropdown?)
+                                     :opened show-presets-dropdown?
+                                     :with-orientation frame-orientation-enabled?)
                :ref preset-container-ref
                :on-click toggle-presets}
          [:span {:class (stl/css :select-name)} (tr "workspace.options.size-presets")]
@@ -482,11 +502,12 @@
                        :container preset-container-ref}
           [:div {:class (stl/css :custom-select-dropdown)
                  :on-click dom/stop-propagation}
-           [:div {:class (stl/css :preset-search)}
-            [:> search-bar* {:on-change on-preset-search-change
-                             :value preset-search-term
-                             :auto-focus true
-                             :placeholder (tr "workspace.options.search-size-preset")}]]
+           (when size-preset-search-enabled?
+             [:div {:class (stl/css :preset-search)}
+              [:> search-bar* {:on-change on-preset-search-change
+                               :value preset-search-term
+                               :auto-focus true
+                               :placeholder (tr "workspace.options.search-size-preset")}]])
            [:ul {:class (stl/css :preset-list)}
             (if (empty? filtered-size-presets)
               [:li {:class (stl/css-case :dropdown-element true
@@ -498,7 +519,7 @@
                   [:li {:key (:name size-preset)
                         :class (stl/css-case :dropdown-element true
                                              :disabled true)}
-                   [:span {:class (stl/css :preset-name)} (:name size-preset)]]
+                   [:span {:class (stl/css :preset-name)} (size-preset-header-label size-preset)]]
 
                   (let [preset-match (and (= (:width size-preset) (d/parse-integer (:width values) 0))
                                           (= (:height size-preset) (d/parse-integer (:height values) 0)))]
@@ -514,17 +535,18 @@
                      (when preset-match
                        [:span {:class (stl/css :check-icon)} deprecated-icon/tick])]))))]]]]
 
-        [:& radio-buttons {:selected (or (d/name orientation) "")
-                           :on-change on-orientation-change
-                           :name "frame-orientation"
-                           :wide true
-                           :class (stl/css :radio-buttons)}
-         [:& radio-button {:icon i/size-vertical
-                           :value "vert"
-                           :id "size-vertical"}]
-         [:& radio-button {:icon i/size-horizontal
-                           :value "horiz"
-                           :id "size-horizontal"}]]
+        (when frame-orientation-enabled?
+          [:& radio-buttons {:selected (or (d/name orientation) "")
+                             :on-change on-orientation-change
+                             :name "frame-orientation"
+                             :wide true
+                             :class (stl/css :radio-buttons)}
+           [:& radio-button {:icon i/size-vertical
+                             :value "vert"
+                             :id "size-vertical"}]
+           [:& radio-button {:icon i/size-horizontal
+                             :value "horiz"
+                             :id "size-horizontal"}]])
         [:> icon-button*
          {:variant "ghost"
           :aria-label (tr "workspace.options.fit-content")

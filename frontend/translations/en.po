@@ -3076,8 +3076,7 @@ msgstr "All"
 msgid "labels.and"
 msgstr "and"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:279
 msgid "labels.back"
 msgstr "Back"
 
@@ -6751,7 +6750,7 @@ msgstr "Distribute vertical spacing (%s)"
 msgid "workspace.align.vtop"
 msgstr "Align top (%s)"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:181
+#: src/app/main/ui/workspace/sidebar/assets.cljs:184
 msgid "workspace.assets.add-library"
 msgstr "Add library"
 
@@ -6760,7 +6759,7 @@ msgstr "Add library"
 msgid "workspace.assets.assets"
 msgstr "Assets"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:158
+#: src/app/main/ui/workspace/sidebar/assets.cljs:161
 msgid "workspace.assets.box-filter-all"
 msgstr "All assets"
 
@@ -6816,7 +6815,7 @@ msgstr "Duplicate main"
 msgid "workspace.assets.edit"
 msgstr "Edit"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:195
+#: src/app/main/ui/workspace/sidebar/assets.cljs:198
 msgid "workspace.assets.filter"
 msgstr "Filter"
 
@@ -6845,7 +6844,7 @@ msgstr "List view"
 msgid "workspace.assets.local-library"
 msgstr "local library"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:186
+#: src/app/main/ui/workspace/sidebar/assets.cljs:189
 msgid "workspace.assets.manage-library"
 msgstr "Manage library"
 
@@ -6866,7 +6865,7 @@ msgstr "Rename"
 msgid "workspace.assets.rename-group"
 msgstr "Rename group"
 
-#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
+#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:195
 msgid "workspace.assets.search"
 msgstr "Search assets"
 
@@ -6888,7 +6887,7 @@ msgid_plural "workspace.assets.sidebar.components"
 msgstr[0] "1 component"
 msgstr[1] "%s components"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:213
+#: src/app/main/ui/workspace/sidebar/assets.cljs:216
 msgid "workspace.assets.sort"
 msgstr "Sort"
 
@@ -8672,6 +8671,87 @@ msgstr "Row"
 msgid "workspace.options.layout.direction.row-reverse"
 msgstr "Reverse row"
 
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:234
+msgid "workspace.options.layout.align-content.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:217, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:872
+msgid "workspace.options.layout.align-items.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:876
+msgid "workspace.options.layout.align-items.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:213, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:868
+msgid "workspace.options.layout.align-items.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:66, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:502
+msgid "workspace.options.layout.align-self.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:73, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:506
+msgid "workspace.options.layout.align-self.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:59, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:498
+msgid "workspace.options.layout.align-self.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:80
+msgid "workspace.options.layout.align-self.stretch"
+msgstr "Stretch"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout.cljs
+#, unused
+msgid "workspace.options.layout.bottom"
+msgstr "Bottom"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:214, src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:216
+msgid "workspace.options.layout.cell-mode.area"
+msgstr "Area"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:226
+msgid "workspace.options.layout.cell-mode.area-name"
+msgstr "Area name"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:225
+msgid "workspace.options.layout.cell-mode.area-name-label"
+msgstr "Area name"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:206, src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:207
+msgid "workspace.options.layout.cell-mode.auto"
+msgstr "Auto"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:210, src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:211
+msgid "workspace.options.layout.cell-mode.manual"
+msgstr "Manual"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:790, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:802
+msgid "workspace.options.layout.column-gap"
+msgstr "Column gap"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1293
+msgid "workspace.options.layout.container-section"
+msgstr "Layout container section"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:238, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:185, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:834
+msgid "workspace.options.layout.direction.column"
+msgstr "Column"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:189
+msgid "workspace.options.layout.direction.column-reverse"
+msgstr "Reverse column"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/grid_cell.cljs:249, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:177, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:830
+msgid "workspace.options.layout.direction.row"
+msgstr "Row"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:181
+msgid "workspace.options.layout.direction.row-reverse"
+msgstr "Reverse row"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/layout.cljs
 #, unused
 msgid "workspace.options.layout.gap"
@@ -8692,6 +8772,146 @@ msgstr "Grid layout"
 #: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1032
 msgid "workspace.options.layout.grid-track.column"
 msgstr "Column %s"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1027
+msgid "workspace.options.layout.grid-track.column-empty"
+msgstr "Column - empty"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1037
+msgid "workspace.options.layout.grid-track.columns"
+msgstr "Columns %s"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1033
+msgid "workspace.options.layout.grid-track.row"
+msgstr "Row %s"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1028
+msgid "workspace.options.layout.grid-track.row-empty"
+msgstr "Row - empty"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1038
+msgid "workspace.options.layout.grid-track.rows"
+msgstr "Rows %s"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:883
+msgid "workspace.options.layout.item-section"
+msgstr "Layout item section"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:591
+msgid "workspace.options.layout.item-size-constraints"
+msgstr "Item size constraints"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:691, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:704
+msgid "workspace.options.layout.item.max-h"
+msgstr "Max H"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:628, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:641
+msgid "workspace.options.layout.item.max-w"
+msgstr "Max W"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:660, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:673
+msgid "workspace.options.layout.item.min-h"
+msgstr "Min H"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:601, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:611
+msgid "workspace.options.layout.item.min-w"
+msgstr "Min W"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:270
+msgid "workspace.options.layout.justify-content.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:274
+msgid "workspace.options.layout.justify-content.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:282
+msgid "workspace.options.layout.justify-content.space-around"
+msgstr "Space around"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:278
+msgid "workspace.options.layout.justify-content.space-between"
+msgstr "Space between"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:286
+msgid "workspace.options.layout.justify-content.space-evenly"
+msgstr "Space evenly"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:266
+msgid "workspace.options.layout.justify-content.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:899
+msgid "workspace.options.layout.justify-items.center"
+msgstr "Center"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:905
+msgid "workspace.options.layout.justify-items.end"
+msgstr "End"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:911
+msgid "workspace.options.layout.justify-items.space-around"
+msgstr "Space around"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:917
+msgid "workspace.options.layout.justify-items.space-between"
+msgstr "Space between"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:893
+msgid "workspace.options.layout.justify-items.start"
+msgstr "Start"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:923
+msgid "workspace.options.layout.justify-items.stretch"
+msgstr "Stretch"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout.cljs
+#, unused
+msgid "workspace.options.layout.left"
+msgstr "Left"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs
+#, unused
+msgid "workspace.options.layout.margin"
+msgstr "Margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs
+#, unused
+msgid "workspace.options.layout.margin-all"
+msgstr "All sides"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs
+#, unused
+msgid "workspace.options.layout.margin-simple"
+msgstr "Simple margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:334, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:340
+msgid "workspace.options.layout.margin.bottom"
+msgstr "Bottom margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:182, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:188
+msgid "workspace.options.layout.margin.horizontal"
+msgstr "Horizontal margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:362, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:369
+msgid "workspace.options.layout.margin.left"
+msgstr "Left margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:414
+msgid "workspace.options.layout.margin.multiple"
+msgstr "Multiple margins"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:304, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:310
+msgid "workspace.options.layout.margin.right"
+msgstr "Right margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:275, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:281
+msgid "workspace.options.layout.margin.top"
+msgstr "Top margin"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:151, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:157
+msgid "workspace.options.layout.margin.vertical"
+msgstr "Vertical margin"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1027
 msgid "workspace.options.layout.grid-track.column-empty"
@@ -9146,6 +9366,19 @@ msgstr "Show in view mode"
 #: src/app/main/ui/workspace/sidebar/options/menus/frame_grid.cljs:165
 msgid "workspace.options.size"
 msgstr "Size"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:128
+msgid "workspace.options.size-preset.category.phone"
+msgstr "Phone"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:131
+#, unused
+msgid "workspace.options.size-preset.category.print"
+msgstr "Print"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:125
+msgid "workspace.options.size-preset.category.web"
+msgstr "Web"
 
 #: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:100, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:477
 msgid "workspace.options.size-presets"
@@ -9933,6 +10166,61 @@ msgid "workspace.sidebar.history"
 msgstr "History"
 
 #: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:152, src/app/main/ui/workspace/sidebar.cljs:155, src/app/main/ui/workspace/sidebar.cljs:161
+msgid "workspace.sidebar.layers"
+msgstr "Layers"
+
+#: src/app/main/ui/workspace/sidebar.cljs:172, src/app/main/ui/workspace/sidebar.cljs:180
+msgid "workspace.sidebar.icons"
+msgstr "Icons"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:241
+msgid "workspace.sidebar.icons.category-count"
+msgstr " (%s)"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:127
+#, unused
+msgid "workspace.sidebar.icons.category.all"
+msgstr "All"
+
+#: src/app/main/ui/workspace/sidebar
+#, unused
+msgid "workspace.sidebar.icons.drag-hint"
+msgstr "Drag onto the canvas"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:294, src/app/main/ui/workspace/sidebar/icons.cljs:313
+msgid "workspace.sidebar.icons.empty"
+msgstr "No matching results"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:420
+msgid "workspace.sidebar.icons.search"
+msgstr "Search icons"
+
+#: src/app/main/ui/workspace/sidebar
+#, unused
+msgid "workspace.sidebar.icons.size"
+msgstr "Size"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:339
+msgid "workspace.sidebar.icons.size.custom"
+msgstr "Custom"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:358
+msgid "workspace.sidebar.icons.theme"
+msgstr "Icon style"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:346
+msgid "workspace.sidebar.icons.theme.filled"
+msgstr "Filled"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:345
+msgid "workspace.sidebar.icons.theme.outline"
+msgstr "Outline"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:263
+msgid "workspace.sidebar.icons.view-all"
+msgstr "View all"
+
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:165, src/app/main/ui/workspace/sidebar.cljs:168, src/app/main/ui/workspace/sidebar.cljs:176
 msgid "workspace.sidebar.layers"
 msgstr "Layers"
 

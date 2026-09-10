@@ -479,18 +479,21 @@
                   (not component-inst?))
          (let [point (gpt/point (.-clientX e) (.-clientY e))
                viewport-coord (uwvv/point->viewport point)
-               {:keys [component file-id shape]} @wsac/drag-data*
-
-               ;; shape (get-in component [:objects (:id component)])
-               final-x (- (:x viewport-coord) (/ (:width shape) 2))
-               final-y (- (:y viewport-coord) (/ (:height shape) 2))]
+               {:keys [component file-id shape placement-size glyph-color]} @wsac/drag-data*
+               drop-size (or placement-size (:width shape))
+               final-x (- (:x viewport-coord) (/ drop-size 2))
+               final-y (- (:y viewport-coord) (/ drop-size 2))]
 
            (mf/set-ref-val! comp-inst-ref true)
            (st/emit! (dwl/instantiate-component
                       file-id
                       (:id component)
                       (gpt/point final-x final-y)
-                      {:start-move? true :initial-point viewport-coord :origin "sidebar"})))))
+                      (cond-> {:start-move? true :initial-point viewport-coord :origin "sidebar"}
+                        (some? placement-size)
+                        (assoc :initial-size placement-size)
+                        (some? glyph-color)
+                        (assoc :glyph-color glyph-color)))))))
      (when (or (dnd/has-type? e "penpot/shape")
                (dnd/has-type? e "penpot/component")
                (dnd/has-type? e "Files")

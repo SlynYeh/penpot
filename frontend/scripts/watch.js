@@ -46,6 +46,9 @@ async function compileSass(path) {
   try {
     const result = await h.compileSass(worker, path, { modules: true });
     sass.index[result.outputPath] = result.css;
+    if (!sass.items.includes(result.outputPath)) {
+      sass.items.push(result.outputPath);
+    }
 
     const output = h.concatSass(sass);
 

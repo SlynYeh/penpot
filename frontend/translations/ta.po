@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.6.dev0\n"
 
-#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:180, src/app/main/ui/viewer/login.cljs:100
+#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:169, src/app/main/ui/viewer/login.cljs:100
 msgid "auth.already-have-account"
 msgstr "ஏற்கனவே ஒரு கணக்கு உள்ளதா?"
 
@@ -49,7 +49,7 @@ msgstr "கடவுச்சொல்லை மறந்துவிட்�
 msgid "auth.fullname"
 msgstr "முழு பெயர்"
 
-#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:183, src/app/main/ui/viewer/login.cljs:103
+#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:172, src/app/main/ui/viewer/login.cljs:103
 msgid "auth.login-here"
 msgstr "இங்கே உள்நுழைக"
 
@@ -128,11 +128,11 @@ msgstr "கடவுச்சொல்லை மறந்துவிட்�
 msgid "auth.recovery-submit"
 msgstr "உங்கள் கடவுச்சொல்லை மாற்றுக"
 
-#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:166, src/app/main/ui/viewer/login.cljs:89
+#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:155, src/app/main/ui/viewer/login.cljs:89
 msgid "auth.register"
 msgstr "இன்னும் கணக்கு இல்லையா?"
 
-#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:170, src/app/main/ui/viewer/login.cljs:93
+#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:159, src/app/main/ui/viewer/login.cljs:93
 msgid "auth.register-submit"
 msgstr "ஒரு கணக்கை உருவாக்கவும்"
 
@@ -145,7 +145,7 @@ msgstr "ஒரு கணக்கை உருவாக்கவும்"
 msgid "auth.sidebar-tagline"
 msgstr "வடிவமைப்பு மற்றும் முன்மாதிரிக்கான திறந்த மூல தீர்வு."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1221, src/app/main/ui/workspace/main_menu.cljs:205
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
 msgid "auth.terms-of-service"
 msgstr "சேவை விதிமுறைகள்"
 
@@ -154,7 +154,7 @@ msgstr "சேவை விதிமுறைகள்"
 msgid "auth.verification-email-sent"
 msgstr "சரிபார்ப்பு மின்னஞ்சலை அனுப்பியுள்ளோம் இந்த முகவரிக்கு"
 
-#: src/app/main/ui/workspace/libraries.cljs:349
+#: src/app/main/ui/workspace/libraries.cljs:350
 msgid "common.publish"
 msgstr "வெளியிடுங்கள்"
 
@@ -213,3 +213,67 @@ msgstr "பக்கங்கள் பகிரப்பட்டன"
 #: src/app/main/ui/auth/recovery.cljs:32
 msgid "errors.invalid-recovery-token"
 msgstr "மீட்பு டோக்கன் செல்லுபடியாகாது."
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:149
+msgid "keymap.important.click-through"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:150
+msgid "keymap.important.click-through.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.important.drag-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:152
+msgid "keymap.important.drag-canvas.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:153
+msgid "keymap.important.draw-frame"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:154
+msgid "keymap.important.draw-frame.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:155
+msgid "keymap.important.draw-text"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:156
+msgid "keymap.important.draw-text.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:157
+msgid "keymap.important.escape"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:158
+msgid "keymap.important.escape.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:159
+msgid "keymap.important.group"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:160
+msgid "keymap.important.group.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:161
+msgid "keymap.important.multi-select"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
+msgid "keymap.important.multi-select.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
+msgid "keymap.important.zoom-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
+msgid "keymap.important.zoom-canvas.desc"
+msgstr ""

@@ -179,6 +179,7 @@
 (def ^:icon mask (icon-xref :mask))
 (def ^:icon masked (icon-xref :masked))
 (def ^:icon menu (icon-xref :menu))
+(def ^:icon menu-lines (icon-xref :menu-lines))
 (def ^:icon merge-nodes (icon-xref :merge-nodes))
 (def ^:icon move (icon-xref :move))
 (def ^:icon msg-error (icon-xref :msg-error))

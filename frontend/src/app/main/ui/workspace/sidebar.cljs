@@ -39,7 +39,6 @@
    [app.main.ui.workspace.sidebar.icons :refer [icons-toolbox*]]
    [app.main.ui.workspace.sidebar.layers :refer [layers-toolbox*]]
    [app.main.ui.workspace.sidebar.options :refer [options-toolbox*]]
-   [app.main.ui.workspace.sidebar.shortcuts :refer [shortcuts-container*]]
    [app.main.ui.workspace.sidebar.sitemap :refer [sitemap*]]
    [app.main.ui.workspace.sidebar.versions :refer [versions-toolbox*]]
    [app.main.ui.workspace.tokens.sidebar :refer [tokens-sidebar-tab*]]
@@ -136,7 +135,6 @@
 
         design-tokens? (features/use-feature "design-tokens/v1")
         mode-inspect?  (= options-mode :inspect)
-        shortcuts?     (contains? layout :shortcuts)
         show-debug?    (contains? layout :debug-panel)
 
         section        (cond
@@ -232,9 +230,6 @@
              :class (stl/css :resize-area)}]
 
       (cond
-        (true? shortcuts?)
-        [:> shortcuts-container* {:class (stl/css :settings-bar-content)}]
-
         (true? show-debug?)
         [:> debug-panel* {:class (stl/css :settings-bar-content)}]
 

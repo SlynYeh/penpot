@@ -54,14 +54,32 @@
                (update file :data dissoc :pages-index))
              refs/file))
 
+(defn has-assets?
+  "True when a file's `:data` map holds at least one non-deleted component,
+  color or typography. Drives whether the local library starts expanded: a
+  library with nothing to show starts collapsed."
+  [file-data]
+  (boolean
+   (or (seq (ctkl/components-seq file-data))
+       (seq (:colors file-data))
+       (seq (:typographies file-data)))))
+
 (mf/defc assets-local-library*
   {::mf/private true}
   [{:keys [filters]}]
-  (let [file (mf/deref ref:local-library)]
+  (let [file (mf/deref ref:local-library)
+
+        ;; Unlike shared libraries, the local one opens by default — but only
+        ;; when it actually has assets. An empty library stays folded so the
+        ;; panel doesn't start with a blank section; it opens on its own once
+        ;; the first asset is added.
+        is-default-open (mf/with-memo [file]
+                          (has-assets? (:data file)))]
+
     [:> file-library*
      {:file file
       :is-local true
-      :is-default-open true
+      :is-default-open is-default-open
       :filters filters}]))
 
 (defn- toggle-values
@@ -143,15 +161,19 @@
         on-menu-close
         (mf/use-fn #(swap! filters* assoc :open-menu false))
 
+        ;; Width of the filter dropdown panel, in px. Kept as a binding so the
+        ;; right-alignment math below stays in sync with the `:width` prop.
+        menu-width 120
+
         ;; Ref to the actions container so we can measure the filter button's
-        ;; left edge and left-align the dropdown panel with it.
+        ;; right edge and right-align the dropdown panel with it.
         actions-ref (mf/use-ref nil)
 
         ;; Dropdown panel position, computed when the menu opens.
         menu-pos* (mf/use-state {:left 0 :top 46})
 
         ;; Recompute panel position whenever the menu opens so it stays
-        ;; left-aligned with the filter button even after layout changes.
+        ;; right-aligned with the filter button even after layout changes.
         _ (mf/use-effect
            (mf/deps menu-open?)
            (fn []
@@ -159,13 +181,14 @@
                (let [el (mf/ref-val actions-ref)]
                  (when (some? el)
                    (let [rect (dom/get-bounding-rect el)]
-                     ;; The filter button is the first child of .actions, so the
-                     ;; container's `left` edge is the filter button's `left`
-                     ;; edge — align the panel to that. The filter button sits
-                     ;; flush with the bottom of `.actions`, so use that as the
-                     ;; anchor and leave a small 2px gap above the panel.
+                     ;; The filter button is the last visible child of .actions
+                     ;; (the manage-libraries button next to it is display:none
+                     ;; and takes no space), so the container's `right` edge is
+                     ;; the button's `right` edge. Anchor the panel's right edge
+                     ;; to it, and hang the panel just below the header with a
+                     ;; small 2px gap.
                      (swap! menu-pos* assoc
-                            :left (get rect :left)
+                            :left (- (get rect :right) menu-width)
                             :top  (+ (get rect :bottom) 2))))))))
 
         ;; Memoize options to prevent infinite re-render loops when dev-tools are open.
@@ -211,7 +234,10 @@
                            :aria-label (tr "workspace.assets.filter")
                            :tooltip-placement "top"
                            :on-click on-open-menu}]
-         [:> icon-button* {:variant "ghost"
+         ;; Kept in the DOM (and reachable by tests) but hidden via CSS; the
+         ;; search box and the filter button are meant to fill the row.
+         [:> icon-button* {:class (stl/css :manage-library-btn)
+                           :variant "ghost"
                            :icon i/book-open
                            :aria-label (tr "workspace.assets.manage-library")
                            :tooltip-placement "top"
@@ -225,7 +251,7 @@
         :show menu-open?
         :fixed true
         :min-width false
-        :width 120
+        :width menu-width
         :top (:top @menu-pos*)
         :left (:left @menu-pos*)
         :options options}]]

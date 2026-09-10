@@ -97,6 +97,13 @@
   }
 }
 
+// The "manage libraries" button stays in the DOM (so it remains reachable from
+// tests) but is not rendered: the search box and the filter button are the only
+// controls meant to show in the header row.
+.manage-library-btn {
+  display: none;
+}
+
 .sections-container {
   @include deprecated.menu-shadow;
   @include deprecated.flex-column;

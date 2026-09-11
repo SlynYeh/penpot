@@ -6,7 +6,7 @@ USER root
 RUN set -ex; \
     apk update; \
     apk upgrade; \
-    apk add --no-cache bash gettext; \
+    apk add --no-cache bash gettext jq; \
     rm -rf /var/cache/apk/*; \
     addgroup -g 1001 penpot; \
     adduser -D -H -u 1001 -s /bin/false -h /opt/penpot -G penpot penpot; \

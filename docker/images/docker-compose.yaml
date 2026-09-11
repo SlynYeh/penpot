@@ -121,6 +121,24 @@ services:
       # component UUIDs (case insensitive). When set, it replaces the
       # default from js/config.js. Set to "none" to disable the menu.
       PENPOT_TABLE_COMPONENT_IDS: "5140cbc1-cb3a-803f-8008-8977ae7bee03"
+      # Auto-unbind (fork feature): component instances dragged from a shared
+      # library whose file-id is listed here are detached automatically.
+      # Comma separated library UUIDs (case insensitive). When set, it replaces
+      # the default from js/config.js. Set to "none" to disable the feature.
+      # An empty value counts as unset (the js/config.js default is kept).
+      PENPOT_AUTO_UNBIND_LIBRARY_IDS: "caf3ed7a-ac34-8165-8008-1fb0a074f9a9"
+      # Asset sidebar groups (fork feature) pre-expanded when a workspace opens.
+      # A JSON array of {"libraryId": <file-id>, "groups": [<path>...]}, where
+      # each path is a component :path prefix. Invalid JSON is rejected with a
+      # warning and the js/config.js default is kept. Single quotes are REQUIRED
+      # here because the value itself contains double quotes.
+      # An empty value counts as unset; use [] to disable the feature.
+      PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS: '[{"libraryId":"40e06342-8830-80d6-8008-9b0e302c3f65","groups":["_Utilities"]}]'
+      # Colour palette (fork feature): shared library pre-selected in the
+      # 调色盘 library selector. Single library UUID (case insensitive).
+      # Set to "none" to always fall back to 最近颜色.
+      # An empty value counts as unset (the js/config.js default is kept).
+      PENPOT_DEFAULT_PALETTE_LIBRARY: "40e06342-8830-80d6-8008-9b0e302c3f65"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

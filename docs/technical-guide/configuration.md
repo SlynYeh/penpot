@@ -674,6 +674,127 @@ PENPOT_TABLE_COMPONENT_IDS: "5140cbc1-cb3a-803f-8008-8977ae7bee03"
 The value is written to `js/config.js` by the frontend container entrypoint
 at startup, and takes precedence over the defaults defined in the file.
 
+### Auto-unbind library ids configuration (fork)
+
+This fork adds an environment variable that controls from which shared
+libraries component instances are automatically detached when dragged into a
+file from the assets sidebar:
+
+```bash
+# Frontend
+PENPOT_AUTO_UNBIND_LIBRARY_IDS: "caf3ed7a-ac34-8165-8008-1fb0a074f9a9"
+```
+
+- `PENPOT_AUTO_UNBIND_LIBRARY_IDS`: comma separated list of library (file)
+  UUIDs. Case insensitive (values are lowercased at container startup). Spaces
+  around the commas are ignored. Example with several libraries:
+  `"<uuid1>,<uuid2>"`.
+- When unset **or empty**, the default list baked into `js/config.js` is used.
+- When set, it **replaces** (does not merge with) the default list.
+- The special value `none` disables the feature (empty list).
+
+### Default expanded asset groups configuration (fork)
+
+This fork adds an environment variable that controls which shared libraries
+and which of their component groups are pre-expanded in the assets sidebar
+when a workspace is opened:
+
+```bash
+# Frontend
+PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS: '[{"libraryId":"40e06342-8830-80d6-8008-9b0e302c3f65","groups":["_Utilities"]}]'
+```
+
+- `PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS`: a JSON array whose entries are
+  objects with a `libraryId` (the library's file-id) and `groups` (an array of
+  component `:path` prefixes, `/` separated, unicode allowed). Example with
+  several groups:
+  `'[{"libraryId":"<uuid>","groups":["_Utilities","_工具/表格"]}]'`.
+- The value contains double quotes, so in YAML it **must** be single quoted.
+- When unset **or empty**, the default baked into `js/config.js` is used.
+  Use `[]` to disable the feature.
+- The value is validated with `jq` before being written. Anything that is not
+  an array of `{"libraryId": <string>, "groups": [<string>...]}` is rejected:
+  a warning is printed and the `js/config.js` default is kept. A malformed
+  entry would otherwise be built at frontend startup and could prevent the
+  whole application from booting, not just this feature.
+- This variable requires `jq` inside the frontend image. On an image that does
+  not provide it, the write is skipped with a warning and the default is kept.
+- This is only a pre-set expand state: it does not switch the sidebar to the
+  assets tab, and a group collapsed manually stays collapsed until the page is
+  reloaded.
+
+### Default palette library configuration (fork)
+
+This fork adds an environment variable that pre-selects a shared library in
+the 调色盘 colour palette's library selector:
+
+```bash
+# Frontend
+PENPOT_DEFAULT_PALETTE_LIBRARY: "40e06342-8830-80d6-8008-9b0e302c3f65"
+```
+
+- `PENPOT_DEFAULT_PALETTE_LIBRARY`: a single library (file) UUID. Case
+  insensitive.
+- When unset **or empty**, the default baked into `js/config.js` is used.
+- The special value `none` falls back to 最近颜色.
+- The value only applies when that library is loaded and is not the current
+  file; otherwise the palette falls back to 最近颜色. A library selected
+  manually stays selected until the page is reloaded.
+- A value that is not a UUID is rejected: a warning is printed and the
+  `js/config.js` default is kept.
+
+### Hide tokens UI configuration (fork)
+
+This fork adds an environment variable that hides the tokens (变量) UI of the
+workspace. The tokens UI is **hidden by default**; set the variable to `false`
+to bring it back:
+
+```bash
+# Frontend
+PENPOT_HIDE_TOKENS: "false"
+```
+
+- `PENPOT_HIDE_TOKENS`: a boolean. `true`/`t`/`1` hides the tokens UI,
+  `false`/`f`/`0` shows it again. Case insensitive, surrounding whitespace is
+  ignored.
+- When unset **or empty**, the default baked into `js/config.js` is used,
+  which is `true` (hidden).
+- A value that is not one of those booleans is rejected: a warning is printed
+  and the `js/config.js` default is kept. Both `true` and `false` are written
+  by the entrypoint on purpose, so `false` is really honoured instead of being
+  mistaken for "unset".
+- This single variable controls three places:
+  1. the **Tokens** tab of the workspace left sidebar;
+  2. the tokens block of the colorpicker (the 颜色 / 变量 switcher, the tokens
+     title, and the token set/token sections);
+  3. the token-list button of an applied-token row in the right sidebar.
+- It does **not** affect the applied-token name, swatch and detach button of
+  that right-sidebar row, nor the token import entry point of the shared
+  libraries. The `design-tokens/v1` feature itself stays enabled.
+- A workspace URL that still selects the tokens layout (a bookmark or a
+  reload) falls back to the layers panel instead of rendering an empty
+  sidebar.
+- The value is read once while the frontend boots, so a change requires a
+  page reload.
+- Like the other fork variables, this one is handled by the entrypoint
+  installed by `docker/images/Dockerfile.frontend` and has no effect in the
+  `docker/devenv` environment; for local development edit
+  `frontend/resources/config.js` instead. See also the caching caveat below.
+
+### Caching and development environment caveats (fork)
+
+- `js/config.js` is served with `Cache-Control: public, max-age=604800`
+  (7 days) under a URL that does not change between builds, so a browser that
+  has already loaded it may keep using the old copy for up to a week after you
+  change an environment variable and restart the container. If an environment
+  variable appears to be ignored, hard-reload the page first.
+- These variables are handled by the entrypoint installed by
+  `docker/images/Dockerfile.frontend`. The `docker/devenv` development
+  environment does not use that entrypoint (it serves the compiled
+  `public/js/config.js` through Caddy), so none of the fork environment
+  variables in this section have any effect there — for local development, edit
+  `frontend/resources/config.js` instead.
+
 ### Exporter
 
 The exporter uses this variable:

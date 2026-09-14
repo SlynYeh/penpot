@@ -19,6 +19,7 @@
    [app.util.i18n :refer [tr]]
    [app.util.keyboard :as k]
    [app.util.storage :as storage]
+   [cuerdas.core :as str]
    [goog.events :as events]
    [rumext.v2 :as mf])
   (:import goog.events.EventType))
@@ -47,17 +48,37 @@
   [watched item-id]
   (conj (or watched #{}) item-id))
 
+(def guide-video-urls
+  "CDN URL per beginner-guide card. Compiled into the frontend bundle, so local
+   devenv and Docker images share the same values. Update this map in source
+   when a video needs to change."
+  {"click-through"     "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4"
+   "table-shortcuts"   "https://stream7.iqilu.com/10339/upload_transcode/202002/09/20200209104902N3v5Vpxuvb.mp4"
+   "component-library" "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"})
+
+(defn item-video-url
+  [item]
+  (let [url (:video-url item)]
+    (when (and (string? url)
+               (not (str/blank? url)))
+      url)))
+
 (defn guide-items
-  []
-  [{:id "click-through"
-    :title (tr "workspace.beginner-guide.items.click-through.title")
-    :description (tr "workspace.beginner-guide.items.click-through.description")}
-   {:id "table-shortcuts"
-    :title (tr "workspace.beginner-guide.items.table-shortcuts.title")
-    :description (tr "workspace.beginner-guide.items.table-shortcuts.description")}
-   {:id "component-library"
-    :title (tr "workspace.beginner-guide.items.component-library.title")
-    :description (tr "workspace.beginner-guide.items.component-library.description")}])
+  ([]
+   (guide-items guide-video-urls))
+  ([videos]
+   [{:id          "click-through"
+     :title       (tr "workspace.beginner-guide.items.click-through.title")
+     :description (tr "workspace.beginner-guide.items.click-through.description")
+     :video-url   (get videos "click-through")}
+    {:id          "table-shortcuts"
+     :title       (tr "workspace.beginner-guide.items.table-shortcuts.title")
+     :description (tr "workspace.beginner-guide.items.table-shortcuts.description")
+     :video-url   (get videos "table-shortcuts")}
+    {:id          "component-library"
+     :title       (tr "workspace.beginner-guide.items.component-library.title")
+     :description (tr "workspace.beginner-guide.items.component-library.description")
+     :video-url   (get videos "component-library")}]))
 
 (defn- dismiss!
   []
@@ -101,6 +122,32 @@
               :width 20
               :height 20}]]]]))
 
+(mf/defc guide-video*
+  {::mf/private true}
+  [{:keys [src title]}]
+  (let [video-ref (mf/use-ref nil)]
+    (mf/with-effect [src]
+      (when-let [node (mf/ref-val video-ref)]
+        (let [can-unmute? (boolean (some-> (.-userActivation js/navigator)
+                                           (.-isActive)))]
+          (set! (.-muted node) (not can-unmute?))
+          (let [playing (.play node)]
+            (when (some? playing)
+              (.catch playing
+                      (fn [_]
+                        (set! (.-muted node) true)
+                        (.play node))))))))
+    [:video {:ref video-ref
+             :key src
+             :class (stl/css :video)
+             :src src
+             :controls true
+             :auto-play true
+             :muted true
+             :plays-inline true
+             :preload "auto"
+             :aria-label title}]))
+
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
 (mf/defc beginner-guide-modal*
   {::mf/register modal/components
@@ -115,6 +162,7 @@
         watched        @watched*
         last-selected? (last-item? selected total)
         current        (nth items selected)
+        media-url      (item-video-url current)
 
         close
         (mf/use-fn
@@ -169,7 +217,11 @@
 
       [:div {:class (stl/css :modal-body)}
        [:div {:class (stl/css :video-pane)}
-        (tr "workspace.beginner-guide.video" (inc selected))]
+        (if media-url
+          [:> guide-video* {:src media-url
+                            :title (:title current)}]
+          [:div {:class (stl/css :video-placeholder)}
+           (tr "workspace.beginner-guide.video" (inc selected))])]
        [:div {:ref list-ref
               :class (stl/css :card-list)}
         (for [[index item] (d/enumerate items)]

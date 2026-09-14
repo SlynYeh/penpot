@@ -14,6 +14,6 @@ SELECT file_id, library_file_id, synced_at
 -- and will be removed in a future migration. It's kept temporarily
 -- for backward compatibility while data is migrated to `file_library_sync`.
 COMMENT ON COLUMN file_library_rel.synced_at IS
-  'DEPRECATED: will be removed in a future migration; kept temporarily for backward compatibility';
+  'DEPRECATED: will be removed in a future migration. It is kept temporarily for backward compatibility';
 
 

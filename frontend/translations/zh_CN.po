@@ -5382,6 +5382,39 @@ msgstr "文本变换"
 msgid "workspace.assets.ungroup"
 msgstr "解组"
 
+msgid "workspace.beginner-guide.done"
+msgstr "完成"
+
+msgid "workspace.beginner-guide.items.click-through.description"
+msgstr "按住 Ctrl / Command 键并点击元素/文字，可直接选中该元素/文字无需连续双击，操作更高效"
+
+msgid "workspace.beginner-guide.items.click-through.title"
+msgstr "穿透选择"
+
+msgid "workspace.beginner-guide.items.component-library.description"
+msgstr "推荐使用 FTD通用组件库/典型页面快速搭建页面，右侧菜单可切换组件属性，组件解绑实例后即可自由增减元素"
+
+msgid "workspace.beginner-guide.items.component-library.title"
+msgstr "使用组件库"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.description"
+msgstr "从FTD通用组件库拖拽表格组件至画布中，在表格组件上打开右键菜单，可快速新增或删除行与列"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.title"
+msgstr "表格的快捷操作"
+
+msgid "workspace.beginner-guide.next"
+msgstr "下一个"
+
+msgid "workspace.beginner-guide.skip"
+msgstr "跳过"
+
+msgid "workspace.beginner-guide.title"
+msgstr "新手基础操作"
+
+msgid "workspace.beginner-guide.video"
+msgstr "视频%s"
+
 #: src/app/main/ui/workspace/viewport_wasm.cljs:672
 msgid "workspace.canvas.text-editor-v3"
 msgstr "文本编辑器 v3"

@@ -1,0 +1,237 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "ds/_utils.scss" as *;
+@use "ds/_borders.scss" as *;
+@use "ds/typography.scss" as *;
+@use "refactor/common-refactor.scss" as deprecated;
+
+.modal-overlay {
+  @extend %modal-overlay-base;
+
+  background-color: rgb(0 0 0 / 0.5);
+}
+
+.modal-dialog {
+  --guide-border: rgb(199 205 213);
+  --guide-card-bg: rgb(243 244 246);
+  --guide-card-pressed: rgb(232 234 238);
+  --guide-accent: rgb(105 17 212);
+  --guide-accent-hover: rgb(140 51 235);
+  --guide-accent-pressed: rgb(89 4 192);
+  --guide-accent-selected-bg: rgb(105 17 212 / 0.06);
+  --guide-title: rgb(0 0 0);
+  --guide-description: rgb(73 94 116);
+  --guide-status-pending: rgb(134 148 163);
+  --guide-on-accent: rgb(255 255 255);
+  --guide-footer-border: #e8eaed;
+  --status-color: var(--guide-status-pending);
+  --title-color: var(--guide-title);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: px2rem(1200);
+  height: px2rem(646);
+  overflow: hidden;
+  background-color: var(--color-background-primary);
+  border-radius: $br-12;
+  box-shadow: deprecated.$s-4 deprecated.$s-4 deprecated.$s-8 rgb(0 0 0 / 0.2);
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  height: px2rem(64);
+  padding: 0 px2rem(32);
+}
+
+.modal-title {
+  margin: 0;
+  font-weight: 500;
+  color: var(--guide-title);
+}
+
+.modal-close {
+  flex-shrink: 0;
+}
+
+.modal-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: px2rem(12);
+  padding: px2rem(8) px2rem(32);
+}
+
+.video-pane {
+  @include use-typography("body-large");
+
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: px2rem(840);
+  height: px2rem(486);
+  font-weight: 500;
+  color: var(--guide-title);
+  background-color: var(--guide-card-bg);
+  border-radius: $br-8;
+  border: $b-1 solid var(--guide-border);
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: px2rem(12);
+  width: px2rem(284);
+  height: px2rem(486);
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.card {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  width: px2rem(284);
+  height: px2rem(154);
+  padding: px2rem(16);
+  text-align: start;
+  cursor: pointer;
+  background-color: var(--guide-card-bg);
+  border: $b-1 solid transparent;
+  border-radius: $br-8;
+  appearance: none;
+}
+
+.card:hover {
+  border-color: var(--guide-accent);
+}
+
+.card-selected {
+  --title-color: var(--guide-accent);
+
+  background-color: var(--guide-accent-selected-bg);
+  border-color: var(--guide-accent);
+}
+
+.card-selected:hover {
+  border-color: var(--guide-accent);
+}
+
+.card-watched {
+  --status-color: var(--guide-accent);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+  padding-inline-end: px2rem(24);
+}
+
+.card-title {
+  @include use-typography("body-large");
+
+  font-weight: 500;
+  line-height: px2rem(24);
+  color: var(--title-color);
+  margin-bottom: px2rem(8);
+}
+
+.card-description {
+  @include use-typography("body-medium");
+
+  overflow: hidden;
+  font-size: px2rem(14);
+  line-height: px2rem(22);
+  color: var(--guide-description);
+}
+
+.card-status {
+  position: absolute;
+  top: px2rem(16);
+  right: px2rem(16);
+  width: px2rem(20);
+  height: px2rem(20);
+  color: var(--status-color);
+  pointer-events: none;
+}
+
+.card-status-icon {
+  display: block;
+  width: px2rem(20);
+  height: px2rem(20);
+}
+
+.modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-s);
+  height: px2rem(64);
+  padding: 0 px2rem(32);
+  border-top: $b-1 solid var(--guide-footer-border);
+}
+
+.btn-skip,
+.btn-next {
+  @include use-typography("body-medium");
+
+  box-sizing: border-box;
+  min-width: px2rem(80);
+  height: px2rem(32);
+  padding: 0 var(--sp-m);
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: $br-8;
+  appearance: none;
+}
+
+.btn-skip {
+  color: var(--guide-title);
+  background-color: transparent;
+  border: $b-1 solid var(--guide-border);
+}
+
+.btn-skip:hover {
+  background-color: var(--guide-card-bg);
+}
+
+.btn-skip:active {
+  background-color: var(--guide-card-pressed);
+}
+
+.btn-next {
+  color: var(--guide-on-accent);
+  background-color: var(--guide-accent);
+  border: $b-1 solid var(--guide-accent);
+}
+
+.btn-next:hover {
+  background-color: var(--guide-accent-hover);
+  border-color: var(--guide-accent-hover);
+}
+
+.btn-next:active {
+  background-color: var(--guide-accent-pressed);
+  border-color: var(--guide-accent-pressed);
+}
+
+.card:focus-visible,
+.btn-skip:focus-visible,
+.btn-next:focus-visible {
+  outline: $b-2 solid var(--guide-accent);
+  outline-offset: px2rem(2);
+}

@@ -75,6 +75,8 @@
 (def ^:icon bug (icon-xref :bug))
 (def ^:icon character-e (icon-xref :character-e))
 (def ^:icon character-u (icon-xref :character-u))
+(def ^:icon check-one (icon-xref :check-one))
+(def ^:icon circle (icon-xref :circle))
 (def ^:icon clip-content (icon-xref :clip-content))
 (def ^:icon clipboard (icon-xref :clipboard))
 (def ^:icon clock (icon-xref :clock))

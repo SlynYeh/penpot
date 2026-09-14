@@ -6944,6 +6944,39 @@ msgstr "Text Transform"
 msgid "workspace.assets.ungroup"
 msgstr "Ungroup"
 
+msgid "workspace.beginner-guide.done"
+msgstr "Done"
+
+msgid "workspace.beginner-guide.items.click-through.description"
+msgstr "Hold Ctrl / Command and click an element or text to select it directly. No need to double-click repeatedly — this is faster."
+
+msgid "workspace.beginner-guide.items.click-through.title"
+msgstr "Click-through selection"
+
+msgid "workspace.beginner-guide.items.component-library.description"
+msgstr "Use the FTD common component library or typical pages to build screens quickly. Switch component properties in the right panel, then detach the instance to add or remove elements freely."
+
+msgid "workspace.beginner-guide.items.component-library.title"
+msgstr "Use the component library"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.description"
+msgstr "Drag a table from the FTD common component library onto the canvas, then open the context menu on the table to quickly add or delete rows and columns."
+
+msgid "workspace.beginner-guide.items.table-shortcuts.title"
+msgstr "Table shortcuts"
+
+msgid "workspace.beginner-guide.next"
+msgstr "Next"
+
+msgid "workspace.beginner-guide.skip"
+msgstr "Skip"
+
+msgid "workspace.beginner-guide.title"
+msgstr "Beginner basics"
+
+msgid "workspace.beginner-guide.video"
+msgstr "Video %s"
+
 #: src/app/main/ui/workspace/viewport_wasm.cljs:672
 msgid "workspace.canvas.text-editor-v3"
 msgstr "Text Editor v3"

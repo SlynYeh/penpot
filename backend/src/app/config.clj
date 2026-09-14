@@ -100,6 +100,7 @@
 
     [:tenant {:optional false} :string]
     [:public-uri {:optional false} ::sm/uri]
+    [:base-route-path {:optional true} :string]
     [:host {:optional false} :string]
 
     [:http-server-port {:optional true} ::sm/int]

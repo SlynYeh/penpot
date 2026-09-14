@@ -203,6 +203,32 @@
   palette falls back to 最近颜色."
   (some-> (obj/get global "penpotDefaultPaletteLibrary") uuid/coerce))
 
+(defn parse-boolean
+  "Coerces a `js/config.js` value into a boolean. Only real booleans and the
+  strings \"true\"/\"false\" (case insensitive) are accepted; anything else,
+  including a typo, falls back to `default` instead of being silently read as
+  truthy. This mirrors how the nginx entrypoint rejects non-boolean values of
+  the matching environment variable. Public so the fork knobs relying on it
+  can be unit-tested."
+  [value default]
+  (cond
+    (boolean? value) value
+    (string? value)  (case (str/lower value)
+                       "true"  true
+                       "false" false
+                       default)
+    :else            default))
+
+(def hide-tokens
+  "When true the tokens (变量) UI is hidden: the workspace left sidebar
+  Tokens tab, the colorpicker token block and the token-list button of the
+  applied-token row in the right sidebar. Configured via `penpotHideTokens`
+  in resources/config.js and defaults to true.
+
+  Read once while this namespace loads, so flipping the global at runtime
+  has no effect: the page must be reloaded."
+  (parse-boolean (obj/get global "penpotHideTokens" nil) true))
+
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

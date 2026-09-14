@@ -111,8 +111,14 @@
 
         should-update?         (mf/use-var true)
         last-synced-data       (mf/use-ref data)
-        token-color            (contains? cfg/flags :token-color)
-        color-style*           (mf/use-state (d/nilv tab :direct-color))
+        token-color            (and (contains? cfg/flags :token-color)
+                                    (not cfg/hide-tokens))
+        ;; With the tokens UI hidden the picker must never open in token mode,
+        ;; even though callers may still pass `:token-color` as `tab`
+        ;; (eg. the applied-token swatch in the right sidebar).
+        color-style*           (mf/use-state (if cfg/hide-tokens
+                                               :direct-color
+                                               (d/nilv tab :direct-color)))
         color-style            (deref color-style*)
         toggle-token-color
         (mf/use-fn

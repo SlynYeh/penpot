@@ -185,6 +185,28 @@ update_default_palette_library() {
   fi
 }
 
+update_hide_tokens() {
+  # 是否隐藏变量(Tokens) UI (左侧面板 Tab / 取色器变量区块 / 右侧变量列表按钮)。
+  # 未设置时保留 js/config.js 的默认值(隐藏)。
+  # 注意 true 与 false 都必须写入: 若只在 truthy 时赋值, PENPOT_HIDE_TOKENS=false
+  # 会变成空操作, 部署里就永远无法把变量 UI 恢复出来。
+  if [ -z "${PENPOT_HIDE_TOKENS:-}" ]; then
+    return;
+  fi
+
+  local raw="${PENPOT_HIDE_TOKENS}";
+  # strip whitespace so that " true " works too (is_truthy/is_falsy also lowercase)
+  raw="${raw//[[:space:]]/}";
+
+  if is_truthy "$raw"; then
+    printf 'globalThis.penpotHideTokens = true;\n' >> "$1";
+  elif is_falsy "$raw"; then
+    printf 'globalThis.penpotHideTokens = false;\n' >> "$1";
+  else
+    echo "nginx-entrypoint: PENPOT_HIDE_TOKENS must be a boolean (true/false/1/0/t/f); keeping the js/config.js default" >&2;
+  fi
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
@@ -192,6 +214,7 @@ update_table_component_ids /var/www/app/js/config.js
 update_auto_unbind_library_ids /var/www/app/js/config.js
 update_default_expanded_asset_groups /var/www/app/js/config.js
 update_default_palette_library /var/www/app/js/config.js
+update_hide_tokens /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

@@ -118,6 +118,16 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // 隐藏 workspace 的「变量(Tokens)」UI, 共三处: 左侧面板的 Tokens Tab、
+  // 取色器中的变量区块、右侧属性面板已应用变量行上的「变量列表」按钮。
+  // 已应用变量的名称/药丸与解绑按钮不受影响, 组件库的 token 导入也不受影响。
+  // Docker 部署: 可用环境变量 PENPOT_HIDE_TOKENS=false 恢复显示
+  // (true/false/1/0/t/f, 由 nginx-entrypoint.sh 追加赋值, 优先级更高;
+  // 未设置或非法值则保留此处默认值; 需刷新页面生效)。
+  globalThis.penpotHideTokens = true;
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

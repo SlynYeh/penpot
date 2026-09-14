@@ -171,11 +171,15 @@
          :aria-label (tr "token-actions.detach-token")
          :on-click on-detach-token
          :icon i/detach}]
-       [:> icon-button*
-        {:variant "action"
-         :aria-label (tr "ds.inputs.numeric-input.open-token-list-dropdown")
-         :on-click open-modal-from-token
-         :icon i/tokens}]]]]))
+       ;; The token-list button only makes sense while the tokens UI is
+       ;; visible (it opens the colorpicker in token mode). `open-modal-from-token`
+       ;; is deliberately kept so re-enabling the knob restores the button.
+       (when-not cfg/hide-tokens
+         [:> icon-button*
+          {:variant "action"
+           :aria-label (tr "ds.inputs.numeric-input.open-token-list-dropdown")
+           :on-click open-modal-from-token
+           :icon i/tokens}])]]]))
 
 (mf/defc color-row*
   [{:keys [index color class disable-gradient disable-opacity disable-image disable-picker hidden

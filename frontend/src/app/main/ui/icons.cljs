@@ -62,6 +62,7 @@
 (def ^:icon align-self-row-stretch (icon-xref :align-self-row-stretch))
 (def ^:icon align-top (icon-xref :align-top))
 (def ^:icon align-vertical-center (icon-xref :align-vertical-center))
+(def ^:icon alarm (icon-xref :alarm))
 (def ^:icon arrow (icon-xref :arrow))
 (def ^:icon asc-sort (icon-xref :asc-sort))
 (def ^:icon board (icon-xref :board))

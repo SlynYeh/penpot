@@ -49,6 +49,7 @@
 (def ^:icon-id align-self-row-stretch "align-self-row-stretch")
 (def ^:icon-id align-top "align-top")
 (def ^:icon-id align-vertical-center "align-vertical-center")
+(def ^:icon-id alarm "alarm")
 (def ^:icon-id arrow "arrow")
 (def ^:icon-id arrow-down "arrow-down")
 (def ^:icon-id arrow-left "arrow-left")

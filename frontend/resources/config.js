@@ -104,6 +104,23 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // 以 iframe 方式嵌入第三方系统时的父窗口源, 形如 https://portal.example.com。
+  // 用途: (1) 向父窗口发 postMessage「就绪」消息时的 targetOrigin;
+  //      (2) 校验父窗口回传凭据消息的 event.origin(精确匹配)。
+  // 留空则回退 "*", 即任何能触达本页面的窗口都可注入凭据, 生产环境务必配置。
+  // 注意: 需与父页面同源, 否则页面会因 nginx 的 X-Frame-Options: SAMEORIGIN 无法被嵌入。
+  // Docker 部署: 可用环境变量 PENPOT_EMBED_PARENT_ORIGIN 覆盖
+  // (由 nginx-entrypoint.sh 追加赋值, 优先级更高; 设为 none 则清空)。
+  globalThis.penpotEmbedParentOrigin = "";
+})();
+
+(function () {
+  // 嵌入时等待父窗口回传凭据的最长时间(毫秒)。超时后照常启动, 但首个请求
+  // 不带凭据(会落到未登录态); 若之后凭据才到达, 会自动重试一次 profile 请求。
+  globalThis.penpotEmbedTimeoutMs = 5000;
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

@@ -12,6 +12,7 @@
    [app.common.uri :as u]
    [app.config :as cfg]
    [app.util.cache :as c]
+   [app.util.embed :as embed]
    [app.util.globals :as globals]
    [app.util.perf :as perf]
    [app.util.webapi :as wapi]
@@ -52,8 +53,10 @@
 
 (defn default-headers
   []
-  {"x-frontend-version" (:full cfg/version)
-   "x-client" (str "penpot-frontend/" (:full cfg/version))})
+  (merge
+   {"x-frontend-version" (:full cfg/version)
+    "x-client" (str "penpot-frontend/" (:full cfg/version))}
+   (embed/headers)))
 
 ;; Storage to save the average time of the requests
 (defonce network-averages

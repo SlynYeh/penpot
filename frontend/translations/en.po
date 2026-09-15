@@ -3936,65 +3936,69 @@ msgstr "Your account"
 msgid "labels.youtube"
 msgstr "YouTube"
 
-#: src/app/main/ui/ds/product/loader.cljs:21
+#: src/app/main/ui/ds/product/loader.cljs
+msgid "loader.tips.label"
+msgstr "Tips"
+
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.01.message"
-msgstr "Keep your designs consistent and easy to update across projects."
+msgstr "Hold Ctrl and click a shape or text to select it directly."
 
 #: src/app/main/ui/ds/product/loader.cljs:20
 msgid "loader.tips.01.title"
 msgstr "Reusable Components"
 
-#: src/app/main/ui/ds/product/loader.cljs:23
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.02.message"
-msgstr "Work with your team live, share feedback instantly."
+msgstr "Right-click a table component to quickly add or delete rows and columns."
 
 #: src/app/main/ui/ds/product/loader.cljs:22
 msgid "loader.tips.02.title"
 msgstr "Real-time Collaboration"
 
-#: src/app/main/ui/ds/product/loader.cljs:25
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.03.message"
-msgstr "Design flexibly with familiar CSS-like layout controls."
+msgstr "Select multiple shapes and press Ctrl + G to group them for moving and managing together."
 
 #: src/app/main/ui/ds/product/loader.cljs:24
 msgid "loader.tips.03.title"
 msgstr "Layouts like CSS"
 
-#: src/app/main/ui/ds/product/loader.cljs:27
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.04.message"
-msgstr "Get CSS and SVG code directly from your designs."
+msgstr "Prefer building pages with components; detach an instance to add or remove elements freely."
 
 #: src/app/main/ui/ds/product/loader.cljs:26
 msgid "loader.tips.04.title"
 msgstr "Export to Code"
 
-#: src/app/main/ui/ds/product/loader.cljs:29
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.05.message"
-msgstr "Share assets and styles to maintain consistency."
+msgstr "Hold Shift and click one by one to select multiple shapes."
 
 #: src/app/main/ui/ds/product/loader.cljs:28
 msgid "loader.tips.05.title"
 msgstr "Design Libraries"
 
-#: src/app/main/ui/ds/product/loader.cljs:31
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.06.message"
-msgstr "Bring your ideas to life with animations and transitions."
+msgstr "Hold Alt and drag a shape to quickly copy and move it."
 
 #: src/app/main/ui/ds/product/loader.cljs:30
 msgid "loader.tips.06.title"
 msgstr "Interactive Prototypes"
 
-#: src/app/main/ui/ds/product/loader.cljs:33
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.07.message"
-msgstr "Penpot uses SVG and CSS for seamless development."
+msgstr "Hold Ctrl and scroll to zoom the canvas in or out."
 
 #: src/app/main/ui/ds/product/loader.cljs:32
 msgid "loader.tips.07.title"
 msgstr "Web-Standard Formats"
 
-#: src/app/main/ui/ds/product/loader.cljs:35
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.08.message"
-msgstr "Speed up your workflow with handy shortcuts like Shift + A for Auto Layout."
+msgstr "Hold Space and drag to pan the canvas."
 
 #: src/app/main/ui/ds/product/loader.cljs:34
 msgid "loader.tips.08.title"
@@ -6940,6 +6944,39 @@ msgstr "Text Transform"
 msgid "workspace.assets.ungroup"
 msgstr "Ungroup"
 
+msgid "workspace.beginner-guide.done"
+msgstr "Done"
+
+msgid "workspace.beginner-guide.items.click-through.description"
+msgstr "Hold Ctrl / Command and click an element or text to select it directly. No need to double-click repeatedly — this is faster."
+
+msgid "workspace.beginner-guide.items.click-through.title"
+msgstr "Click-through selection"
+
+msgid "workspace.beginner-guide.items.component-library.description"
+msgstr "Use the FTD common component library or typical pages to build screens quickly. Switch component properties in the right panel, then detach the instance to add or remove elements freely."
+
+msgid "workspace.beginner-guide.items.component-library.title"
+msgstr "Use the component library"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.description"
+msgstr "Drag a table from the FTD common component library onto the canvas, then open the context menu on the table to quickly add or delete rows and columns."
+
+msgid "workspace.beginner-guide.items.table-shortcuts.title"
+msgstr "Table shortcuts"
+
+msgid "workspace.beginner-guide.next"
+msgstr "Next"
+
+msgid "workspace.beginner-guide.skip"
+msgstr "Skip"
+
+msgid "workspace.beginner-guide.title"
+msgstr "Beginner basics"
+
+msgid "workspace.beginner-guide.video"
+msgstr "Video %s"
+
 #: src/app/main/ui/workspace/viewport_wasm.cljs:672
 msgid "workspace.canvas.text-editor-v3"
 msgstr "Text Editor v3"
@@ -7173,6 +7210,13 @@ msgstr "Got it"
 #: src/app/main/ui/workspace/help_center_menu.cljs:106
 msgid "workspace.header.help.guide.title"
 msgstr "Help center"
+
+msgid "workspace.header.help.hint.body"
+msgstr "Watch the guide videos again here, and get the shortcuts guide and FAQ."
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.beginner-guide"
+msgstr "Beginner guide videos"
 
 #: src/app/main/ui/workspace/help_center_menu.cljs:30
 msgid "workspace.header.help.option.faq"

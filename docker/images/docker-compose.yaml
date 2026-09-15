@@ -116,6 +116,12 @@ services:
       # PENPOT_HELP_CENTER_URI: "https://help.example.com"
       # PENPOT_LEARNING_CENTER_URI: "https://learn.example.com"
       # PENPOT_HUB_URI: "https://hub.example.com"
+      # First-visit 新手基础操作 modal + help-menu 新手引导视频 item.
+      # Unset keeps the js/config.js default (shown). Set false to hide both.
+      # PENPOT_SHOW_BEGINNER_GUIDE: "true"
+      # Beginner-guide card video URLs. JSON object of {id: url}. Unset keeps
+      # the js/config.js default. Use {} to clear every URL.
+      # PENPOT_BEGINNER_GUIDE_VIDEOS: '{"click-through":"https://cdn.example/a.mp4","table-shortcuts":"https://cdn.example/b.mp4","component-library":"https://cdn.example/c.mp4"}'
       # Table main components (fork feature) that enable the insert/delete
       # row & column entries on the workspace context menu. Comma separated
       # component UUIDs (case insensitive). When set, it replaces the

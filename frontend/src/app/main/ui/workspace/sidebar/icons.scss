@@ -24,13 +24,19 @@
   --icon-meta-fg: #{$blue-teal-700};
   --icons-radius: #{$br-4};
 
+  // Five columns in the default 318px left sidebar: 2 inline paddings + 4
+  // column gaps are 6 × --sp-m. Keep in sync with icon-tile-size in
+  // app.main.data.workspace.icons.
+  --icon-tile-size: calc((#{px2rem(318)} - 6 * var(--sp-m)) / 5);
+
   display: flex;
   flex-direction: column;
   gap: 0;
   height: calc(100vh - deprecated.$s-92);
   overflow: hidden;
   padding-block: var(--sp-s);
-  padding-inline: var(--tabs-nav-padding-inline-start, var(--sp-m)) var(--tabs-nav-padding-inline-end, var(--sp-m));
+  padding-inline: var(--tabs-nav-padding-inline-start, var(--sp-m))
+    var(--tabs-nav-padding-inline-end, var(--sp-m));
 
   .search,
   .size-combobox,
@@ -173,7 +179,7 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: deprecated.$s-12;
+  gap: var(--sp-s);
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -198,10 +204,11 @@
 
 .icon-group-header {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-s);
-  min-height: $sz-32;
+  height: $sz-36;
 }
 
 .icon-category-title {
@@ -256,18 +263,26 @@
 .icon-group {
   display: flex;
   flex-direction: column;
-  gap: deprecated.$s-8;
+  gap: 0;
 }
 
 .icon-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--sp-m);
+  grid-template-columns: repeat(auto-fill, var(--icon-tile-size));
+  gap: var(--sp-xs) var(--sp-m);
+  justify-content: start;
   max-width: 100%;
+}
+
+.icon-group .icon-grid {
+  overflow: hidden;
+  max-height: calc((3 * var(--icon-tile-size)) + (2 * var(--sp-xs)));
 }
 
 .icon-cell {
   position: relative;
+  width: var(--icon-tile-size);
+  height: var(--icon-tile-size);
   aspect-ratio: 1 / 1;
 }
 

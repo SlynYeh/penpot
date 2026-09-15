@@ -3055,65 +3055,69 @@ msgstr "你的账户"
 msgid "labels.youtube"
 msgstr "YouTube"
 
-#: src/app/main/ui/ds/product/loader.cljs:21
+#: src/app/main/ui/ds/product/loader.cljs
+msgid "loader.tips.label"
+msgstr "Tips"
+
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.01.message"
-msgstr "保持设计的一致性，方便跨项目更新。"
+msgstr "按住 Ctrl 键并点击元素/文字，可直接选中该元素/文字"
 
 #: src/app/main/ui/ds/product/loader.cljs:20
 msgid "loader.tips.01.title"
 msgstr "可重用组件"
 
-#: src/app/main/ui/ds/product/loader.cljs:23
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.02.message"
-msgstr "与您的团队实时协作，即时分享反馈。"
+msgstr "在表格组件上打开右键菜单，可快速新增或删除行与列"
 
 #: src/app/main/ui/ds/product/loader.cljs:22
 msgid "loader.tips.02.title"
 msgstr "实时协作"
 
-#: src/app/main/ui/ds/product/loader.cljs:25
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.03.message"
-msgstr "使用熟悉的类CSS布局控制灵活设计。"
+msgstr "选中多个元素后按 Ctrl + G 编组，方便统一移动与管理"
 
 #: src/app/main/ui/ds/product/loader.cljs:24
 msgid "loader.tips.03.title"
 msgstr "像 CSS 一样自动布局"
 
-#: src/app/main/ui/ds/product/loader.cljs:27
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.04.message"
-msgstr "从您的设计中直接获取 CSS 和 SVG。"
+msgstr "推荐使用组件搭建页面，组件解绑成实例后即可自由增减元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:26
 msgid "loader.tips.04.title"
 msgstr "导出为代码"
 
-#: src/app/main/ui/ds/product/loader.cljs:29
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.05.message"
-msgstr "共享资产和风格以保持一致性。"
+msgstr "按住 Shift 逐个点击，可同时选中多个元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:28
 msgid "loader.tips.05.title"
 msgstr "设计库"
 
-#: src/app/main/ui/ds/product/loader.cljs:31
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.06.message"
-msgstr "通过动画和过渡让您的想法变为现实。"
+msgstr "按住 Alt 并拖动元素，快速复制并移动该元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:30
 msgid "loader.tips.06.title"
 msgstr "交互式原型"
 
-#: src/app/main/ui/ds/product/loader.cljs:33
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.07.message"
-msgstr "Penpot 使用 SVG 和 CSS 进行无缝开发。"
+msgstr "按住 Ctrl 键并滚动滚轮，可自由放大或缩小画布"
 
 #: src/app/main/ui/ds/product/loader.cljs:32
 msgid "loader.tips.07.title"
 msgstr "Web 标准格式"
 
-#: src/app/main/ui/ds/product/loader.cljs:35
+#: src/app/main/ui/ds/product/loader.cljs
 msgid "loader.tips.08.message"
-msgstr "使用便捷的快捷键（例如 Shift + A 用于自动布局）来加快您的工作流程。"
+msgstr "按住空格键并拖动鼠标，平移画布查看其他区域"
 
 #: src/app/main/ui/ds/product/loader.cljs:34
 msgid "loader.tips.08.title"
@@ -5378,6 +5382,39 @@ msgstr "文本变换"
 msgid "workspace.assets.ungroup"
 msgstr "解组"
 
+msgid "workspace.beginner-guide.done"
+msgstr "完成"
+
+msgid "workspace.beginner-guide.items.click-through.description"
+msgstr "按住 Ctrl / Command 键并点击元素/文字，可直接选中该元素/文字无需连续双击，操作更高效"
+
+msgid "workspace.beginner-guide.items.click-through.title"
+msgstr "穿透选择"
+
+msgid "workspace.beginner-guide.items.component-library.description"
+msgstr "推荐使用 FTD通用组件库/典型页面快速搭建页面，右侧菜单可切换组件属性，组件解绑实例后即可自由增减元素"
+
+msgid "workspace.beginner-guide.items.component-library.title"
+msgstr "使用组件库"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.description"
+msgstr "从FTD通用组件库拖拽表格组件至画布中，在表格组件上打开右键菜单，可快速新增或删除行与列"
+
+msgid "workspace.beginner-guide.items.table-shortcuts.title"
+msgstr "表格的快捷操作"
+
+msgid "workspace.beginner-guide.next"
+msgstr "下一个"
+
+msgid "workspace.beginner-guide.skip"
+msgstr "跳过"
+
+msgid "workspace.beginner-guide.title"
+msgstr "新手基础操作"
+
+msgid "workspace.beginner-guide.video"
+msgstr "视频%s"
+
 #: src/app/main/ui/workspace/viewport_wasm.cljs:672
 msgid "workspace.canvas.text-editor-v3"
 msgstr "文本编辑器 v3"
@@ -5609,6 +5646,13 @@ msgstr "知道了"
 #: src/app/main/ui/workspace/help_center_menu.cljs:106
 msgid "workspace.header.help.guide.title"
 msgstr "帮助中心"
+
+msgid "workspace.header.help.hint.body"
+msgstr "在这里再次查看引导视频，获取快捷键指南和常见问题解答"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.beginner-guide"
+msgstr "新手引导视频"
 
 #: src/app/main/ui/workspace/help_center_menu.cljs:30
 msgid "workspace.header.help.option.faq"

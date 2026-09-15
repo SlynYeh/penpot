@@ -750,7 +750,8 @@
            on-close
            tab
            applied-token
-           on-accept]}]
+           on-accept
+           on-add-color]}]
   (let [vport       (mf/deref viewport)
         dirty?      (mf/use-var false)
         last-change (mf/use-var nil)
@@ -871,6 +872,7 @@
        [:> palette-panel* {:state colorpicker-state
                            :current-color current-color
                            :on-change on-change'
+                           :on-add-color on-add-color
                            :on-start-drag on-start-drag
                            :on-finish-drag on-finish-drag}]
 

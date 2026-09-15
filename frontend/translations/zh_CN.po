@@ -5199,7 +5199,7 @@ msgstr "素材"
 
 #: src/app/main/ui/workspace/sidebar/assets.cljs:158
 msgid "workspace.assets.box-filter-all"
-msgstr "所有素材"
+msgstr "全部"
 
 #: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
 msgid "workspace.assets.colors"
@@ -5288,7 +5288,7 @@ msgstr "管理组件库"
 
 #: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:298
 msgid "workspace.assets.not-found"
-msgstr "未找到素材"
+msgstr "未找到"
 
 #: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:111
 #, unused
@@ -5305,7 +5305,7 @@ msgstr "重命名组"
 
 #: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
 msgid "workspace.assets.search"
-msgstr "搜索组件/颜色/排版"
+msgstr "搜索组件/颜色/文本"
 
 #: src/app/main/ui/workspace/sidebar/assets.cljs
 #, unused
@@ -5331,11 +5331,11 @@ msgstr "排序"
 
 #: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:167
 msgid "workspace.assets.typography"
-msgstr "排版"
+msgstr "文本"
 
 #: src/app/main/ui/workspace/sidebar/assets/groups.cljs:87, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:430
 msgid "workspace.assets.typography.add-typography"
-msgstr "新增排版"
+msgstr "新增文本"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs
 #, unused
@@ -9126,7 +9126,7 @@ msgstr "重命名此变量将断开对其旧名称的所有引用"
 
 #: src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:165
 msgid "workspace.toolbar.assets"
-msgstr "素材"
+msgstr "组件"
 
 #: src/app/main/ui/workspace/palette.cljs:182, src/app/main/ui/workspace/palette.cljs:183
 msgid "workspace.toolbar.color-palette"

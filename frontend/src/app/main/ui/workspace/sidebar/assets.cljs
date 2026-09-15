@@ -164,19 +164,19 @@
         on-menu-close
         (mf/use-fn #(swap! filters* assoc :open-menu false))
 
-        ;; Width of the filter dropdown panel, in px. Kept as a binding so the
-        ;; right-alignment math below stays in sync with the `:width` prop.
+        ;; Width of the filter dropdown panel, in px. Kept as a binding so it
+        ;; stays in sync with the `:width` prop below.
         menu-width 120
 
         ;; Ref to the actions container so we can measure the filter button's
-        ;; right edge and right-align the dropdown panel with it.
+        ;; left edge and left-align the dropdown panel with it.
         actions-ref (mf/use-ref nil)
 
         ;; Dropdown panel position, computed when the menu opens.
         menu-pos* (mf/use-state {:left 0 :top 46})
 
         ;; Recompute panel position whenever the menu opens so it stays
-        ;; right-aligned with the filter button even after layout changes.
+        ;; left-aligned with the filter button even after layout changes.
         _ (mf/use-effect
            (mf/deps menu-open?)
            (fn []
@@ -184,14 +184,14 @@
                (let [el (mf/ref-val actions-ref)]
                  (when (some? el)
                    (let [rect (dom/get-bounding-rect el)]
-                     ;; The filter button is the last visible child of .actions
+                     ;; The filter button is the first visible child of .actions
                      ;; (the manage-libraries button next to it is display:none
-                     ;; and takes no space), so the container's `right` edge is
-                     ;; the button's `right` edge. Anchor the panel's right edge
+                     ;; and takes no space), so the container's `left` edge is
+                     ;; the button's `left` edge. Anchor the panel's left edge
                      ;; to it, and hang the panel just below the header with a
                      ;; small 2px gap.
                      (swap! menu-pos* assoc
-                            :left (- (get rect :right) menu-width)
+                            :left (get rect :left)
                             :top  (+ (get rect :bottom) 2))))))))
 
         ;; Memoize options to prevent infinite re-render loops when dev-tools are open.

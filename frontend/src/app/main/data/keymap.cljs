@@ -63,10 +63,13 @@
                 :add-comment :hide-ui :toggle-colorpalette :toggle-textpalette]}
    {:id :text
     :shortcuts [:bold :underline :font-size-dec :escape
-                :font-size-inc]}
+                :font-size-inc]
+    :labels {:escape "keymap.text.exit-edit"}}
    {:id :selection
     :shortcuts [:click-through :select-all :escape :measure-distance
-                :start-editing :select-parent-layer :select-next :select-prev]}
+                :start-editing :select-parent-layer :select-next :select-prev]
+    :labels {:escape "keymap.selection.deselect"
+             :start-editing "keymap.selection.select-child"}}
    {:id :zoom
     :shortcuts [:drag-canvas :increase-zoom :decrease-zoom :reset-zoom
                 :fit-all :zoom-selected :zoom-lense-increase :zoom-lense-decrease]}
@@ -78,7 +81,8 @@
    {:id :edit
     :shortcuts [:copy :cut :paste :paste-replace
                 :copy-props :paste-props :start-editing :detach-component
-                :opacity-0 :opacity-5 :opacity-1]}
+                :opacity-0 :opacity-5 :opacity-1]
+    :labels {:start-editing "keymap.edit.edit-shape-or-text"}}
    {:id :arrange
     :shortcuts [:align-left :align-right :align-top :align-bottom
                 :align-hcenter :align-vcenter :toggle-layout-flex]}])
@@ -97,6 +101,13 @@
    tab 未指定 :max-items 时用 max-items-per-column"
   [tab]
   (partition-all (:max-items tab max-items-per-column) (:shortcuts tab)))
+
+(defn label-msgid
+  "条目文案 msgid：tab 的 :labels 可为跨 tab 复用的 kw 指定专属文案，
+   缺省回落 shortcuts.<kw>"
+  [tab kw]
+  (or (get-in tab [:labels kw])
+      (str "shortcuts." (d/name kw))))
 
 (def ^:private modified-keys
   {:up ds/up-arrow

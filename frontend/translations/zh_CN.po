@@ -2165,13 +2165,17 @@ msgstr "解析值："
 msgid "inspect.tabs.styles.variants-panel"
 msgstr "变体属性"
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.edit.edit-shape-or-text"
+msgstr "编辑形状或文字"
+
 #: src/app/main/ui/workspace/keymap_panel.cljs:149
 msgid "keymap.important.click-through"
 msgstr "穿透选择"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:150
 msgid "keymap.important.click-through.desc"
-msgstr "可直接选中最底层的图层"
+msgstr "可直接选中目标元素/文字，无需连续双击"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:151
 msgid "keymap.important.drag-canvas"
@@ -2229,6 +2233,14 @@ msgstr "放大/缩小画布"
 msgid "keymap.important.zoom-canvas.desc"
 msgstr "按住 Ctrl 滚动滚轮即可快速缩放画布"
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.selection.deselect"
+msgstr "取消选择"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.selection.select-child"
+msgstr "选择子级"
+
 #: src/app/main/ui/workspace/keymap_panel.cljs:95
 msgid "keymap.tab.arrange"
 msgstr "排列"
@@ -2260,6 +2272,10 @@ msgstr "工具&视图"
 #: src/app/main/ui/workspace/keymap_panel.cljs:92
 msgid "keymap.tab.zoom"
 msgstr "缩放"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.text.exit-edit"
+msgstr "退出文本编辑"
 
 #: src/app/main/ui/dashboard/comments.cljs:94
 msgid "label.mark-all-as-read"
@@ -4165,7 +4181,7 @@ msgstr "缩放"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
 msgid "shortcuts.add-comment"
-msgstr "评论"
+msgstr "添加评论"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
 msgid "shortcuts.add-node"
@@ -4173,7 +4189,7 @@ msgstr "添加节点"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
 msgid "shortcuts.align-bottom"
-msgstr "底部对齐"
+msgstr "底对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
 msgid "shortcuts.align-center"
@@ -4189,15 +4205,15 @@ msgstr "两端对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
 msgid "shortcuts.align-left"
-msgstr "靠左对齐"
+msgstr "左对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
 msgid "shortcuts.align-right"
-msgstr "靠右对齐"
+msgstr "右对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
 msgid "shortcuts.align-top"
-msgstr "顶部对齐"
+msgstr "顶对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
 msgid "shortcuts.align-vcenter"
@@ -4205,11 +4221,11 @@ msgstr "垂直居中对齐"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
 msgid "shortcuts.artboard-selection"
-msgstr "以所选内容创建画板"
+msgstr "转为画板"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
 msgid "shortcuts.bold"
-msgstr "切换粗体"
+msgstr "加粗"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
 msgid "shortcuts.bool-difference"
@@ -4229,19 +4245,19 @@ msgstr "布尔合并"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
 msgid "shortcuts.bring-back"
-msgstr "移至最下层"
+msgstr "移至底层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
 msgid "shortcuts.bring-backward"
-msgstr "移至下一层"
+msgstr "下移一层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
 msgid "shortcuts.bring-forward"
-msgstr "移至上一层"
+msgstr "上移一层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
 msgid "shortcuts.bring-front"
-msgstr "移至最上层"
+msgstr "移至顶层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
 msgid "shortcuts.clear-undo"
@@ -4253,7 +4269,7 @@ msgstr "穿透选择"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
 msgid "shortcuts.copy"
-msgstr "拷贝"
+msgstr "复制"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:153, src/app/main/ui/workspace/sidebar/shortcuts.cljs:96
 msgid "shortcuts.copy-link"
@@ -4289,7 +4305,7 @@ msgstr "删除节点"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
 msgid "shortcuts.detach-component"
-msgstr "拆分组件"
+msgstr "解绑实例"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
 msgid "shortcuts.drag-canvas"
@@ -4297,7 +4313,7 @@ msgstr "拖动画布"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
 msgid "shortcuts.draw-curve"
-msgstr "曲线"
+msgstr "铅笔/曲线"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
 msgid "shortcuts.draw-ellipse"
@@ -4313,11 +4329,11 @@ msgstr "绘制路径"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
 msgid "shortcuts.draw-path"
-msgstr "路径"
+msgstr "钢笔/路径"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
 msgid "shortcuts.draw-rect"
-msgstr "长方形"
+msgstr "矩形"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
 msgid "shortcuts.draw-text"
@@ -4337,7 +4353,7 @@ msgstr "导出形状"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:172, src/app/main/ui/workspace/sidebar/shortcuts.cljs:114
 msgid "shortcuts.find"
-msgstr "查找"
+msgstr "搜索图层名称"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:173, src/app/main/ui/workspace/sidebar/shortcuts.cljs:115
 msgid "shortcuts.find-and-replace"
@@ -4345,7 +4361,7 @@ msgstr "查找并替换"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
 msgid "shortcuts.fit-all"
-msgstr "缩放至适应所有"
+msgstr "全览"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
 msgid "shortcuts.flip-horizontal"
@@ -4357,11 +4373,11 @@ msgstr "垂直翻转"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
 msgid "shortcuts.font-size-dec"
-msgstr "缩小字体大小"
+msgstr "减小字号"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
 msgid "shortcuts.font-size-inc"
-msgstr "增加字体大小"
+msgstr "增大字号"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
 msgid "shortcuts.go-to-drafts"
@@ -4377,7 +4393,7 @@ msgstr "搜索"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
 msgid "shortcuts.group"
-msgstr "组"
+msgstr "创建编组"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
 msgid "shortcuts.h-distribute"
@@ -4385,7 +4401,7 @@ msgstr "水平分布"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
 msgid "shortcuts.hide-ui"
-msgstr "显示/隐藏UI"
+msgstr "显示/隐藏界面"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
 msgid "shortcuts.increase-zoom"
@@ -4481,11 +4497,11 @@ msgstr "没找到快捷方式"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:205, src/app/main/ui/workspace/sidebar/shortcuts.cljs:147
 msgid "shortcuts.opacity-0"
-msgstr "设置不透明度为100%"
+msgstr "透明度100%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:206, src/app/main/ui/workspace/sidebar/shortcuts.cljs:148
 msgid "shortcuts.opacity-1"
-msgstr "设置不透明度为10%"
+msgstr "透明度10%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:207, src/app/main/ui/workspace/sidebar/shortcuts.cljs:149
 msgid "shortcuts.opacity-2"
@@ -4501,7 +4517,7 @@ msgstr "设置不透明度为40%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:210, src/app/main/ui/workspace/sidebar/shortcuts.cljs:152
 msgid "shortcuts.opacity-5"
-msgstr "设置不透明度为50%"
+msgstr "透明度50%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:211, src/app/main/ui/workspace/sidebar/shortcuts.cljs:153
 msgid "shortcuts.opacity-6"
@@ -4521,7 +4537,7 @@ msgstr "设置不透明度为90%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:215, src/app/main/ui/workspace/sidebar/shortcuts.cljs:157
 msgid "shortcuts.open-color-picker"
-msgstr "色彩拾取器"
+msgstr "取色器"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:216, src/app/main/ui/workspace/sidebar/shortcuts.cljs:158
 msgid "shortcuts.open-comments"
@@ -4561,7 +4577,7 @@ msgstr "粘贴属性"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:224, src/app/main/ui/workspace/sidebar/shortcuts.cljs:165
 msgid "shortcuts.paste-replace"
-msgstr "粘贴并替换"
+msgstr "粘贴替换"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:604
 #, unused
@@ -4578,11 +4594,11 @@ msgstr "重做"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:227, src/app/main/ui/workspace/sidebar/shortcuts.cljs:168
 msgid "shortcuts.rename"
-msgstr "重命名"
+msgstr "重命名图层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:228, src/app/main/ui/workspace/sidebar/shortcuts.cljs:169
 msgid "shortcuts.reset-zoom"
-msgstr "重置缩放"
+msgstr "缩放至100%"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:229, src/app/main/ui/workspace/sidebar/shortcuts.cljs:170
 msgid "shortcuts.scale"
@@ -4594,7 +4610,7 @@ msgstr "搜索快捷方式"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:231, src/app/main/ui/workspace/sidebar/shortcuts.cljs:172
 msgid "shortcuts.select-all"
-msgstr "选择所有"
+msgstr "全选"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:232, src/app/main/ui/workspace/sidebar/shortcuts.cljs:173
 msgid "shortcuts.select-next"
@@ -4602,7 +4618,7 @@ msgstr "选择下一个图层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:233, src/app/main/ui/workspace/sidebar/shortcuts.cljs:174
 msgid "shortcuts.select-parent-layer"
-msgstr "选择上级图层"
+msgstr "选择父级"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:234, src/app/main/ui/workspace/sidebar/shortcuts.cljs:175
 msgid "shortcuts.select-prev"
@@ -4658,7 +4674,7 @@ msgstr "切换资产"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:246, src/app/main/ui/workspace/sidebar/shortcuts.cljs:187
 msgid "shortcuts.toggle-colorpalette"
-msgstr "切换调色板"
+msgstr "显示/隐藏调色盘"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:247, src/app/main/ui/workspace/sidebar/shortcuts.cljs:188
 msgid "shortcuts.toggle-focus-mode"
@@ -4690,7 +4706,7 @@ msgstr "添加/移除网格布局"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:254, src/app/main/ui/workspace/sidebar/shortcuts.cljs:195
 msgid "shortcuts.toggle-lock"
-msgstr "锁定所选"
+msgstr "锁定/解锁图层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:255, src/app/main/ui/workspace/sidebar/shortcuts.cljs:196
 msgid "shortcuts.toggle-lock-size"
@@ -4710,7 +4726,7 @@ msgstr "吸附到标尺参考线"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:259, src/app/main/ui/workspace/sidebar/shortcuts.cljs:200
 msgid "shortcuts.toggle-textpalette"
-msgstr "切换文本调色板"
+msgstr "显示/隐藏字体调色盘"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:260, src/app/main/ui/workspace/sidebar/shortcuts.cljs:201
 msgid "shortcuts.toggle-theme"
@@ -4718,7 +4734,7 @@ msgstr "更改主题"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:261, src/app/main/ui/workspace/sidebar/shortcuts.cljs:202
 msgid "shortcuts.toggle-visibility"
-msgstr "切换可见度"
+msgstr "显示/隐藏图层"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:262, src/app/main/ui/workspace/sidebar/shortcuts.cljs:203
 msgid "shortcuts.toggle-zoom-style"
@@ -4726,15 +4742,15 @@ msgstr "切换缩放样式"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:263, src/app/main/ui/workspace/sidebar/shortcuts.cljs:204
 msgid "shortcuts.underline"
-msgstr "切换下划线"
+msgstr "下划线"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:264, src/app/main/ui/workspace/sidebar/shortcuts.cljs:205
 msgid "shortcuts.undo"
-msgstr "回退"
+msgstr "撤销"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:265, src/app/main/ui/workspace/sidebar/shortcuts.cljs:206
 msgid "shortcuts.ungroup"
-msgstr "取消组合"
+msgstr "取消编组"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:266, src/app/main/ui/workspace/sidebar/shortcuts.cljs:207
 msgid "shortcuts.unmask"
@@ -4750,15 +4766,15 @@ msgstr "放大/缩小画布"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
 msgid "shortcuts.zoom-lense-decrease"
-msgstr "变焦镜头缩小"
+msgstr "缩小特定位置"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:269, src/app/main/ui/workspace/sidebar/shortcuts.cljs:210
 msgid "shortcuts.zoom-lense-increase"
-msgstr "变焦镜头放大"
+msgstr "放大特定位置"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:270, src/app/main/ui/workspace/sidebar/shortcuts.cljs:211
 msgid "shortcuts.zoom-selected"
-msgstr "缩放到选定对象"
+msgstr "缩放至选中图层"
 
 #: src/app/main/ui/dashboard/subscription.cljs:118, src/app/main/ui/dashboard/subscription.cljs:299
 msgid "subscription.dashboard.power-up.enterprise-plan"

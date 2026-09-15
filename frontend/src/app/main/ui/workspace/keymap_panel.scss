@@ -24,7 +24,7 @@
   pointer-events: auto;
   width: 100%;
   min-width: 1200px;
-  height: 264px;
+  height: 244px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -144,8 +144,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: deprecated.$s-20;
-  min-height: deprecated.$s-20;
+  min-width: deprecated.$s-24;
+  height: deprecated.$s-24;
   padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
   background-color: var(--menu-shortcut-background-color);
@@ -158,6 +158,8 @@
 
   display: inline-flex;
   align-items: center;
+  min-width: deprecated.$s-24;
+  height: deprecated.$s-24;
   padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
   background-color: var(--menu-shortcut-background-color);
@@ -167,11 +169,11 @@
 }
 
 .keymap-content-important {
-  align-items: center; // 两行条目在 264px 面板内垂直居中
+  align-items: center; // 两行条目在 244px 面板内垂直居中
 
   // 重要快捷键 tab 专属列宽（其余 tab 维持 .keymap-column 的 232px）
   .keymap-column {
-    width: 256px;
+    width: 260px;
   }
 
   // 重要 tab 不画列间分割线（不能写成 `& + &`：嵌套里 & 是完整父链，
@@ -223,4 +225,7 @@
   @include use-typography("body-small"); // 12px/400，正合需求
 
   color: #495e74; // 需求指定色；硬编码先例：.keymap-column 的 #e8eaee
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; // 与 .keymap-important-label 同款长文案防护
 }

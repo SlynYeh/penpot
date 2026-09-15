@@ -55,8 +55,22 @@
   @include t.use-typography("body-small");
 
   white-space: nowrap;
+  line-height: 1;
+  font-family: '微软雅黑', system-ui;
+  vertical-align: middle;
 }
 
+// Shrink-wraps the trigger (flex item of the header) so the dropdown can
+// anchor to the button's left edge, which is dynamic per locale label width.
+.help-wrapper {
+  position: relative;
+}
+
+// Visual block intentionally duplicated from main-menu's .base-menu
+// (css-modules cannot @extend across files), except the anchoring: this menu
+// hangs off .help-wrapper with left: 0, so its left edge aligns with the
+// trigger's left edge; top keeps the old 4px gap below the 32px button,
+// i.e. 48px below the aside's top edge as before.
 // Positions the dropdown under the trigger so the hint can sit against
 // the whole list (left: 100%) instead of the sidebar edge.
 .help-flyout {
@@ -74,6 +88,8 @@
   flex-direction: column;
   gap: var(--sp-xs);
   padding: var(--sp-xs);
+  top: calc(100% + px2rem(4));
+  left: 0;
   inline-size: $sz-192;
   border-radius: $br-8;
   background-color: var(--menu-background-color);
@@ -111,8 +127,9 @@
 
 // --- One-time onboarding guide popover (fork feature)
 
-// Anchored under the help-center trigger (position: relative on .help-center).
-// Fork-spec colors (#296afd) intentionally not tokenized, same policy as .help-trigger.
+// Anchored to the aside.left-settings-bar (NOT .help-wrapper: the popover
+// must not follow the trigger's dynamic width). Fork-spec colors (#296afd)
+// intentionally not tokenized, same policy as .help-trigger.
 .guide-popover {
   position: absolute;
   top: calc(100% + #{px2rem(8)});

@@ -7845,6 +7845,10 @@ msgstr "垂直居中"
 msgid "workspace.options.text-options.align-top"
 msgstr "顶部对齐"
 
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs
+msgid "workspace.options.text-options.bold"
+msgstr "加粗"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:99
 msgid "workspace.options.text-options.direction-ltr"
 msgstr "从左到右"

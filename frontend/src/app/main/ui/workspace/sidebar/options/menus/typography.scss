@@ -231,8 +231,72 @@
   padding: 0;
 }
 
-.font-family-select {
+.font-family-select,
+.font-variant-select {
   inline-size: 100%;
+}
+
+.font-style-combo {
+  display: flex;
+  align-items: stretch;
+  overflow: visible;
+  box-sizing: border-box;
+  block-size: $sz-32;
+  inline-size: 100%;
+  border-radius: $br-8;
+  background-color: var(--color-background-tertiary);
+  border: $b-1 solid var(--color-background-tertiary);
+}
+
+.font-bold-toggle {
+  @include t.use-typography("headline-small");
+
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  inline-size: $sz-32;
+  block-size: 100%;
+  padding: 0;
+  border: none;
+  border-start-start-radius: $br-8;
+  border-end-start-radius: $br-8;
+  background-color: transparent;
+  color: var(--color-foreground-secondary);
+  cursor: pointer;
+
+  &:hover:not(:disabled),
+  &.is-selected:not(:disabled),
+  &[aria-pressed="true"]:not(:disabled) {
+    color: var(--color-accent-primary);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.font-style-divider {
+  flex: 0 0 auto;
+  align-self: stretch;
+  inline-size: $b-1;
+  pointer-events: none;
+  background-color: var(--color-background-primary);
+}
+
+.font-variant-select-combo {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  block-size: 100%;
+  overflow: visible;
+  border: none;
+  border-radius: 0;
+  border-start-end-radius: $br-8;
+  border-end-end-radius: $br-8;
+  background-color: transparent;
 }
 
 .font-option-name {
@@ -247,12 +311,16 @@
   gap: var(--sp-xs);
 }
 
+.font-size-options,
+.font-variant-options {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
 .font-size-options {
   @extend %asset-element;
   @include t.use-typography("body-small");
 
-  flex-grow: 1;
-  inline-size: px2rem(60);
   margin: 0;
   padding: 0;
   border: $b-1 solid var(--color-background-tertiary);
@@ -260,8 +328,10 @@
 }
 
 .font-variant-options {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
   padding: 0;
-  flex-grow: 2;
 }
 
 .typography-variations {

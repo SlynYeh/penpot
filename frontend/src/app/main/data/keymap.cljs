@@ -131,14 +131,24 @@
 
 (defn convert-char
   "单个按键 token 的显示转换：方向键/Esc/加号始终替换；mac 下修饰键转符号；
-   单个小写字母键帽显示大写（docs/UI/new-keymap-group.md 全部 tab 的约定）"
+   单个小写字母键帽显示大写（docs/UI/new-keymap-group.md 全部 tab 的约定）；
+   非 mac（windows 显示风格）下小写开头的 token 首字母大写"
   [char]
   (let [char (or (get modified-keys (keyword (str/lower char))) char)
         char (if (and (cf/check-platform? :macos)
                       (contains? macos-keys (keyword (str/lower char))))
                (get macos-keys (keyword (str/lower char)))
                char)]
-    (if (re-matches #"[a-z]" char) (str/upper char) char)))
+    (cond
+      (cf/check-platform? :macos)
+      (if (re-matches #"[a-z]" char) (str/upper char) char)
+
+      ;; windows 显示风格：ctrl/alt/shift/tab/enter/del/backspace/num0… 等
+      ;; 小写开头的多字符 token 首字母大写
+      (re-matches #"[a-z].*" char)
+      (str (str/upper (subs char 0 1)) (subs char 1))
+
+      :else char)))
 
 (defn display-chars
   "条目的键帽字符序列；多候选 command 只取第一个候选"

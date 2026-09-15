@@ -229,6 +229,20 @@
   has no effect: the page must be reloaded."
   (parse-boolean (obj/get global "penpotHideTokens" nil) true))
 
+(def embed-parent-origin
+  "Origin of the third party system embedding this application in an
+  iframe. Used both as the `postMessage` target origin and to validate
+  the origin of the received credentials. Configured via
+  `penpotEmbedParentOrigin` in resources/config.js. When absent or not a
+  valid absolute url, the handshake falls back to a wildcard target
+  origin and accepts credentials from any window."
+  (obj/get global "penpotEmbedParentOrigin"))
+
+(def embed-timeout-ms
+  "How long the boot waits for the iframe credentials before starting up
+  anyway. Configured via `penpotEmbedTimeoutMs` in resources/config.js."
+  (d/parse-integer (obj/get global "penpotEmbedTimeoutMs") 5000))
+
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

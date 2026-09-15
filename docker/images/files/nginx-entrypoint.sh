@@ -207,6 +207,73 @@ update_hide_tokens() {
   fi
 }
 
+update_embed_parent_origin() {
+  # Origin of the third party system embedding the app in an iframe, used
+  # both as the postMessage target origin and to validate the origin of the
+  # credentials the parent sends back. Overrides the js/config.js default.
+  # The special value "none" (case insensitive) clears it, falling back to
+  # a wildcard target origin that accepts credentials from any window.
+  if [ -z "${PENPOT_EMBED_PARENT_ORIGIN:-}" ]; then
+    return;
+  fi
+
+  local raw="${PENPOT_EMBED_PARENT_ORIGIN}";
+  # strip whitespace so that " none " works too
+  raw="${raw//[[:space:]]/}";
+
+  if [ "${raw,,}" == "none" ]; then
+    printf 'globalThis.penpotEmbedParentOrigin = "";\n' >> "$1";
+    return;
+  fi
+
+  # The value is interpolated into a double quoted JS string, so a quote, a
+  # backslash or a newline would break the whole js/config.js file (every
+  # other global in it stops being assigned). Only accept a bare origin,
+  # optionally with a trailing slash.
+  if [[ ! "$raw" =~ ^https?://[A-Za-z0-9._:-]+/?$ ]]; then
+    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN must be an origin like https://portal.example.com; keeping the js/config.js default" >&2;
+    return;
+  fi
+
+  printf 'globalThis.penpotEmbedParentOrigin = "%s";\n' "$raw" >> "$1";
+}
+
+update_frame_ancestors() {
+  # Let the third party system that embeds the app actually frame it. The
+  # bundled `add_header X-Frame-Options SAMEORIGIN` makes the browser refuse
+  # cross origin framing, which no amount of frontend handshake can work
+  # around, so when a parent origin is configured the X-Frame-Options line is
+  # swapped for the equivalent CSP directive naming that origin.
+  #
+  # Only an explicit origin opens this up: unset, empty and "none" keep the
+  # SAMEORIGIN default, and a wildcard is not expressible on purpose (it would
+  # let any site frame the app). `'self'` stays in the list because the app
+  # frames itself (rasterizer, render, viewer).
+  local raw="${PENPOT_EMBED_PARENT_ORIGIN:-}";
+  raw="${raw//[[:space:]]/}";
+
+  if [ -z "$raw" ] || [ "${raw,,}" == "none" ]; then
+    return;
+  fi
+
+  # Same validation as update_embed_parent_origin: only a bare origin, since
+  # the value is interpolated into the nginx config and anything able to break
+  # out of the quoted string would be a config injection.
+  if [[ ! "$raw" =~ ^https?://[A-Za-z0-9._:-]+/?$ ]]; then
+    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN must be an origin like https://portal.example.com; keeping X-Frame-Options: SAMEORIGIN" >&2;
+    return;
+  fi
+
+  local origin="${raw%/}";
+  local policy="add_header Content-Security-Policy \"frame-ancestors 'self' ${origin}\" always;";
+
+  # Rewritten with grep + mv rather than `sed -i`: the in-place flag is not
+  # portable across the busybox/BSD/GNU seds this script may run under.
+  grep -v '^add_header X-Frame-Options' "$1" > "$1.tmp" || true;
+  printf '%s\n' "$policy" >> "$1.tmp";
+  mv "$1.tmp" "$1";
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
@@ -215,6 +282,7 @@ update_auto_unbind_library_ids /var/www/app/js/config.js
 update_default_expanded_asset_groups /var/www/app/js/config.js
 update_default_palette_library /var/www/app/js/config.js
 update_hide_tokens /var/www/app/js/config.js
+update_embed_parent_origin /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config
@@ -245,5 +313,10 @@ PENPOT_DEFAULT_INTERNAL_RESOLVER="$(awk 'BEGIN{ORS=" "} $1=="nameserver" { sub(/
 export PENPOT_INTERNAL_RESOLVER=${PENPOT_INTERNAL_RESOLVER:-$PENPOT_DEFAULT_INTERNAL_RESOLVER}
 envsubst "\$PENPOT_INTERNAL_RESOLVER" \
          < /tmp/resolvers.conf.template > /etc/nginx/overrides/http.d/resolvers.conf
+
+# Runs after the include file is in place and before nginx starts: the framing
+# policy depends on PENPOT_EMBED_PARENT_ORIGIN, which the app frontend config
+# above has already been read for.
+update_frame_ancestors /etc/nginx/nginx-security-headers.conf
 
 exec "$@";

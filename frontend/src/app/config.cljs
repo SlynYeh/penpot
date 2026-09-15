@@ -243,7 +243,7 @@
   anyway. Configured via `penpotEmbedTimeoutMs` in resources/config.js."
   (d/parse-integer (obj/get global "penpotEmbedTimeoutMs") 5000))
 
-(defn parse-beginner-guide-videos)
+(defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.
    Accepts a JS object (from `js/config.js`) or a Clojure map (tests)."

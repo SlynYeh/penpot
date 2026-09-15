@@ -190,7 +190,7 @@
          [:button {:class (stl/css :guide-got-it)
                    :type "button"
                    :on-click dismiss-guide!}
-          (tr "workspace.header.help.guide.got-it")]]])]))
+          (tr "workspace.header.help.guide.got-it")]]])
 
      (when show-menu?
        [:div {:class (stl/css :help-flyout)}

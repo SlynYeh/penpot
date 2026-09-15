@@ -83,7 +83,7 @@
 // Visual block intentionally duplicated from main-menu's .base-menu:
 // css-modules cannot @extend across files.
 .help-menu {
-  position: relative;
+  position: absolute;
   display: flex;
   flex-direction: column;
   gap: var(--sp-xs);
@@ -92,6 +92,7 @@
   left: 0;
   inline-size: $sz-192;
   border-radius: $br-8;
+  z-index: var(--z-index-dropdown);
   background-color: var(--menu-background-color);
   border: $b-2 solid var(--panel-border-color);
   box-shadow: 0 0 $sz-12 0 var(--menu-shadow-color);

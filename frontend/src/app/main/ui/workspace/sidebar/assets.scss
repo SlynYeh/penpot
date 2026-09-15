@@ -16,7 +16,7 @@
   overflow-y: auto;
 
   // Scoped overrides for the filter dropdown panel so it stays compact and
-  // matches the design reference (right-aligned with the filter button, light
+  // matches the design reference (left-aligned with the filter button, light
   // background, check mark on the right of the selected item).
   .context-menu {
     // The outer wrapper has position:fixed and inline top/left; keep that.

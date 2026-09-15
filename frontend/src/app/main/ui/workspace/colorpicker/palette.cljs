@@ -15,7 +15,6 @@
    [app.main.data.workspace.colors :as mdc]
    [app.main.refs :as refs]
    [app.main.store :as st]
-   [app.main.ui.context :as ctx]
    [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.ds.utilities.swatch :refer [swatch*]]
    [app.main.ui.formats :as fmt]
@@ -39,18 +38,28 @@
 
 ;; --- Default palette (preset)
 
-;; 9 columns × 7 rows of preset colors, sourced from img_3.png in
+;; 9 columns × 6 rows of preset colors, sourced from img_3.png in
 ;; 颜色选择器变更.md. Top row is a grayscale ramp from white to black;
 ;; each subsequent row is a single hue at increasing saturation; the
 ;; bottom row is the darkest variant of each hue.
 (def default-palette
   [["#ffffff" "#f7f7f9" "#ecedf0" "#dedfdf" "#b8b9bd" "#8a8b8e" "#545456" "#303030" "#000000"]
-   ["#fff5f2" "#fff6ea" "#fbf4e1" "#e4fbe4" "#eefcfc" "#e8f4ff" "#f4f8ff" "#f8f3ff" "#fff4f7"]
    ["#ffded7" "#ffe2c9" "#fee8b2" "#b0f7a5" "#96f7fa" "#bfe0fe" "#d1e3ff" "#e6ddff" "#ffdbe7"]
    ["#ff957f" "#ffb45d" "#f6d25c" "#5fe055" "#00dcdc" "#80c0fe" "#6ba8ff" "#b99afc" "#ff8bbb"]
    ["#fe5340" "#fd8b00" "#f1bf26" "#3bc11e" "#0bbdbb" "#4fa7ff" "#4481ff" "#9963ff" "#ff459f"]
    ["#d82500" "#e35c01" "#d49d00" "#2a9a0d" "#009292" "#068ae5" "#2061ff" "#771df4" "#dd1480"]
    ["#790d00" "#772b01" "#765000" "#194b00" "#004747" "#004572" "#0032a0" "#3f0089" "#7d014d"]])
+
+;; The grid renders the fixed preset only — library colors live in the
+;; assets sidebar and must not leak in here, otherwise every color added
+;; to the local library would show up as an extra swatch in 色板.
+;;
+;; Each entry is wrapped as `{:color hex :opacity 1}` so it matches the
+;; shape expected by swatch* / the swatch click handler (same shape as
+;; recent-colors and library-color->color).
+(def grid-swatches
+  (mapv (fn [hex] {:color hex :opacity 1})
+        (apply concat default-palette)))
 
 ;; --- Helpers
 
@@ -63,7 +72,7 @@
     (str (-> opacity
              (d/coalesce 1)
              (* 100)
-             (fmt/format-number)))))
+             (fmt/format-int)))))
 
 (defn set-palette-color-css!
   "Drive the opacity slider gradient from the current color. Used inline
@@ -80,7 +89,7 @@
 ;; --- Component
 
 (mf/defc palette-panel*
-  [{:keys [on-change on-start-drag on-finish-drag state current-color]}]
+  [{:keys [on-change on-start-drag on-finish-drag state current-color on-add-color]}]
   (let [picking-color?       (mf/deref picking-color?)
         picked-color         (mf/deref picked-color)
         picked-color-select  (mf/deref picked-color-select)
@@ -93,27 +102,6 @@
         ;; variable so the opacity gradient updates per selection.
         _                    (mf/with-effect [current-color]
                                (set-palette-color-css! slider-node-ref current-color))
-
-        libraries            (mf/deref refs/libraries)
-        file-id              (mf/use-ctx ctx/current-file-id)
-
-        ;; The palette grid renders the fixed 9×7 preset (img_3.png), with
-        ;; the file's saved library colors appended below. The 最近颜色
-        ;; section below renders the recent list explicitly so the user can
-        ;; see history even when it overlaps with the palette grid.
-        ;;
-        ;; Each entry is wrapped as `{:color hex :opacity 1}` so it matches
-        ;; the shape expected by swatch* / on-swatch-click (same shape as
-        ;; recent-colors and library-color->color).
-        grid-swatches
-        (mf/with-memo [libraries file-id]
-          (vec (concat
-                (mapv (fn [hex] {:color hex :opacity 1})
-                      (apply concat default-palette))
-                (->> (vals (dm/get-in libraries [file-id :data :colors]))
-                     (filterv ctc/valid-library-color?)
-                     (sort-by :name)
-                     (map #(ctc/library-color->color % file-id))))))
 
         ;; Selecting a swatch / eyedropper color. For a solid color we
         ;; normalise it into a fully materialized color (hex + alpha + rgb/hsv
@@ -144,7 +132,22 @@
                    (when (fn? on-change)
                      (on-change color)))))))
 
-        on-swatch-click  handle-color-selected
+        ;; Palette swatches (preset grid and 最近颜色). When the picker was
+        ;; opened to add a color to the library, clicking a swatch also adds
+        ;; it right away. The eyedropper keeps calling
+        ;; `handle-color-selected` directly, so picking from the canvas never
+        ;; writes to the library.
+        on-swatch-click
+        (mf/use-fn
+         (mf/deps handle-color-selected on-add-color)
+         (fn [color]
+           (handle-color-selected color)
+           (when (fn? on-add-color)
+             (let [color (d/without-qualified color)
+                   hex   (or (:color color) (:hex color))]
+               (when hex
+                 (on-add-color {:color hex
+                                :opacity (d/coalesce (or (:opacity color) (:alpha color)) 1)}))))))
 
         on-opacity-change
         (mf/use-fn

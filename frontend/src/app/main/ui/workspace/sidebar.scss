@@ -15,6 +15,7 @@
   min-width: var(--left-sidebar-width);
   max-width: var(--left-sidebar-width-max);
   width: var(--right-sidebar-width);
+  overflow: visible;
   background-color: var(--panel-background-color);
   height: 100vh;
   max-height: 100vh;
@@ -32,6 +33,8 @@
 
 .left-header {
   grid-area: header;
+  overflow: visible;
+  z-index: deprecated.$z-index-2;
 }
 
 .settings-bar-content {

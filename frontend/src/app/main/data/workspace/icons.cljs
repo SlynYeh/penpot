@@ -266,17 +266,84 @@
        (sort-by (comp category-sort-key :category))
        vec))
 
-(def icon-preview-limit 15)
+;; Tile size fills five columns in the default 318px left sidebar
+;; (12px inline padding on each side, 12px column gap). Keep in sync
+;; with `--icon-tile-size` in icons.scss.
+(def icon-sidebar-default-width 318)
+(def icon-sidebar-inline-padding 12)
+(def icon-default-columns 5)
+(def icon-column-gap 12)
+(def icon-preview-rows 3)
+(def icon-content-width-at-default
+  (- icon-sidebar-default-width (* 2 icon-sidebar-inline-padding)))
+(def icon-tile-size
+  (/ (- icon-content-width-at-default
+        (* (dec icon-default-columns) icon-column-gap))
+     icon-default-columns))
+(def icon-preview-limit
+  (* icon-preview-rows icon-default-columns))
+
+(defn icon-grid-columns
+  "How many fixed-size icon columns fit in `available-width`.
+   Keep `icon-tile-size` / `icon-column-gap` in sync with icons.scss."
+  [available-width]
+  (let [tile  icon-tile-size
+        gap   icon-column-gap
+        width (if (number? available-width) available-width 0)]
+    (cond
+      (< width tile)
+      1
+
+      :else
+      (inc (int (/ (- width tile) (+ tile gap)))))))
+
+(defn- track-size
+  [part]
+  (if-let [m (re-find #"([0-9]+(?:\.[0-9]+)?)" (str part))]
+    (js/parseFloat (second m))
+    0))
+
+(defn count-grid-columns
+  "Column count from a computed `grid-template-columns` value.
+   Ignores collapsed 0-width auto-fill tracks."
+  [template]
+  (let [s (if (string? template) template "")]
+    (if (or (str/blank? s) (= "none" s))
+      1
+      (->> (str/split s #"\s+")
+           (remove str/blank?)
+           (filter #(> (track-size %) 1))
+           count
+           (max 1)))))
+
+(defn resolved-grid-columns
+  "Visible icon columns from the live CSS template, with the width
+   formula as fallback when the template is not available yet."
+  [available-width template]
+  (if (or (not (string? template))
+          (str/blank? template)
+          (= "none" template))
+    (icon-grid-columns available-width)
+    (count-grid-columns template)))
+
+(defn preview-limit-for-columns
+  [columns]
+  (* icon-preview-rows (max 1 (or columns 1))))
 
 (defn preview-icon-entries
-  "Keep the first `icon-preview-limit` paired icons for the overview grid."
-  [entries]
-  (into [] (take icon-preview-limit) entries))
+  "Keep the first `limit` paired icons for the overview grid.
+   `limit` defaults to three rows of five columns (15)."
+  ([entries]
+   (preview-icon-entries entries icon-preview-limit))
+  ([entries limit]
+   (into [] (take (max 1 (or limit icon-preview-limit))) entries)))
 
 (defn icon-category-overflows?
   "True when a category has more icons than the overview preview."
-  [entries]
-  (> (count entries) icon-preview-limit))
+  ([entries]
+   (icon-category-overflows? entries icon-preview-limit))
+  ([entries limit]
+   (> (count entries) (max 1 (or limit icon-preview-limit)))))
 
 (defn find-icon-group
   "Return the grouped category named `category`, or nil."

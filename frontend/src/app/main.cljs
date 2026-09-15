@@ -29,12 +29,14 @@
    [app.main.worker :as mw]
    [app.plugins :as plugins]
    [app.util.dom :as dom]
+   [app.util.embed :as embed]
    [app.util.i18n :as i18n]
    [beicon.v2.core :as rx]
    [cuerdas.core :as str]
    [debug]
    [features]
    [potok.v2.core :as ptk]
+   [promesa.core :as p]
    [rumext.v2 :as mf]))
 
 (log/setup! {:app :info})
@@ -119,6 +121,15 @@
             (rx/take 1)
             (rx/map #(initialize-rasterizer)))))))
 
+(defn- boot!
+  "Emits everything that starts backend traffic. Kept in a single call
+  because the iframe credentials must be in place before any of it goes
+  out: `initialize` fetches the profile and `ev/initialize` fetches the
+  enabled flags."
+  []
+  (st/emit! (plugins/initialize)
+            (initialize)))
+
 (defn ^:export init
   [options]
   ;; WORKAROUND: we set this really not useful property for signal a
@@ -144,9 +155,41 @@
       (i18n/init)
       (cur/init-styles)
 
+      ;; Mounting the UI early is safe: nothing is rendered until a route
+      ;; is set, which only happens once the profile has been fetched.
       (init-ui)
-      (st/emit! (plugins/initialize)
-                (initialize)))))
+
+      ;; When embedded in a third party system, wait for the credentials
+      ;; sent over postMessage so that the very first request already
+      ;; carries them. Everywhere else this resolves immediately.
+      (let [handshake (embed/start!)
+            timed-out (volatile! false)]
+
+        ;; NOTE: thread with `->`, not `->>`: promesa's `timeout` is a plain
+        ;; function and its `then`/`catch` macros pass their arguments through
+        ;; in order, so the promise must stay in first position.
+        (-> handshake
+            (p/timeout cf/embed-timeout-ms ::timeout)
+            (p/then (fn [result]
+                      (when (= result ::timeout)
+                        (vreset! timed-out true)
+                        (log/wrn :hint "embed: timed out waiting for credentials"))
+                      (boot!)))
+            (p/catch (fn [cause]
+                       (log/err :hint "embed: handshake failed, booting anyway"
+                                :cause cause)
+                       (boot!))))
+
+        ;; Credentials that show up only after giving up: redo the initial
+        ;; profile fetch once so the session is not stuck logged out.
+        (-> handshake
+            (p/then (fn [creds]
+                      (when (and (some? creds) @timed-out)
+                        (log/wrn :hint "embed: credentials arrived late, refreshing profile")
+                        (st/emit! (dp/refresh-profile)))))
+            (p/catch (fn [cause]
+                       (log/err :hint "embed: late credentials handling failed"
+                                :cause cause))))))))
 
 (defn ^:export reinit
   ([]

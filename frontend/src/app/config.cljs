@@ -229,6 +229,67 @@
   has no effect: the page must be reloaded."
   (parse-boolean (obj/get global "penpotHideTokens" nil) true))
 
+(def embed-parent-origin
+  "Origin of the third party system embedding this application in an
+  iframe. Used both as the `postMessage` target origin and to validate
+  the origin of the received credentials. Configured via
+  `penpotEmbedParentOrigin` in resources/config.js. When absent or not a
+  valid absolute url, the handshake falls back to a wildcard target
+  origin and accepts credentials from any window."
+  (obj/get global "penpotEmbedParentOrigin"))
+
+(def embed-timeout-ms
+  "How long the boot waits for the iframe credentials before starting up
+  anyway. Configured via `penpotEmbedTimeoutMs` in resources/config.js."
+  (d/parse-integer (obj/get global "penpotEmbedTimeoutMs") 5000))
+
+(defn parse-beginner-guide-videos)
+  "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
+   values are dropped so a missing URL falls through to the modal placeholder.
+   Accepts a JS object (from `js/config.js`) or a Clojure map (tests)."
+  [value]
+  (let [entries (cond
+                  (map? value)
+                  value
+
+                  (and (some? value)
+                       (not (array? value))
+                       (= "object" (goog/typeOf value)))
+                  (js->clj value :keywordize-keys false)
+
+                  :else
+                  nil)]
+    (into {}
+          (keep (fn [[k v]]
+                  (let [id  (cond
+                              (string? k)  k
+                              (keyword? k) (name k)
+                              :else        nil)
+                        url (when (string? v) (str/trim v))]
+                    (when (and (some? id)
+                               (not (str/blank? id))
+                               (some? url)
+                               (not (str/blank? url)))
+                      [id url]))))
+          entries)))
+
+(def beginner-guide-videos
+  "CDN URL per 新手基础操作 card id. Configured via `penpotBeginnerGuideVideos`
+   in resources/config.js so ops can change URLs without a frontend rebuild.
+
+   Read once while this namespace loads, so flipping the global at runtime
+   has no effect: the page must be reloaded."
+  (parse-beginner-guide-videos (obj/get global "penpotBeginnerGuideVideos")))
+
+(def show-beginner-guide
+  "When true, the first visit to a workspace opens the 新手基础操作 modal
+   and the help-center menu lists 新手引导视频. Configured via
+   `penpotShowBeginnerGuide` in resources/config.js and defaults to true.
+
+   Read once while this namespace loads, so flipping the global at runtime
+   has no effect: the page must be reloaded."
+  (parse-boolean (obj/get global "penpotShowBeginnerGuide" nil) true))
+
 (def templates-uri        (obj/get global "penpotTemplatesURI" "https://penpot.github.io/penpot-files/"))
 (def upload-chunk-size    (obj/get global "penpotUploadChunkSize" (* 1024 1024 25))) ;; 25 MiB
 

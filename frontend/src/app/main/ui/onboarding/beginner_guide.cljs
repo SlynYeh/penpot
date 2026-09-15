@@ -9,6 +9,7 @@
   (:require
    [app.common.data :as d]
    [app.common.data.macros :as dm]
+   [app.config :as cf]
    [app.main.data.modal :as modal]
    [app.main.store :as st]
    [app.main.ui.ds.buttons.icon-button :refer [icon-button*]]
@@ -79,14 +80,6 @@
   [watched item-id]
   (conj (or watched #{}) item-id))
 
-(def guide-video-urls
-  "CDN URL per beginner-guide card. Compiled into the frontend bundle, so local
-   devenv and Docker images share the same values. Update this map in source
-   when a video needs to change."
-  {"click-through"     "https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4"
-   "table-shortcuts"   "https://stream7.iqilu.com/10339/upload_transcode/202002/09/20200209104902N3v5Vpxuvb.mp4"
-   "component-library" "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"})
-
 (defn item-video-url
   [item]
   (let [url (:video-url item)]
@@ -94,9 +87,17 @@
                (not (str/blank? url)))
       url)))
 
+(defn should-auto-show?
+  "First-visit modal opens only when the config switch is on, the user has
+   not already dismissed it, and the modal is not already on screen."
+  [enabled? already-viewed modal-type]
+  (and enabled?
+       (not already-viewed)
+       (not= :beginner-guide modal-type)))
+
 (defn guide-items
   ([]
-   (guide-items guide-video-urls))
+   (guide-items cf/beginner-guide-videos))
   ([videos]
    [{:id          "click-through"
      :title       (tr "workspace.beginner-guide.items.click-through.title")
@@ -126,8 +127,9 @@
 
 (defn maybe-show!
   []
-  (when (and (not (viewed?))
-             (not= :beginner-guide (:type (get @st/state ::modal/modal))))
+  (when (should-auto-show? cf/show-beginner-guide
+                           (viewed?)
+                           (:type (get @st/state ::modal/modal)))
     (show!)))
 
 (mf/defc guide-card*

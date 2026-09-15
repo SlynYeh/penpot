@@ -189,14 +189,15 @@
           [:span {:class (stl/css :item-name)}
            (tr "workspace.header.help.option.shortcuts")]]
 
-         [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                  :on-click    open-beginner-guide
-                                  :on-key-down (fn [event]
-                                                 (when (kbd/enter? event)
-                                                   (open-beginner-guide event)))
-                                  :id          "help-menu-beginner-guide"}
-          [:span {:class (stl/css :item-name)}
-           (tr "workspace.header.help.option.beginner-guide")]]
+         (when cf/show-beginner-guide
+           [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
+                                    :on-click    open-beginner-guide
+                                    :on-key-down (fn [event]
+                                                   (when (kbd/enter? event)
+                                                     (open-beginner-guide event)))
+                                    :id          "help-menu-beginner-guide"}
+            [:span {:class (stl/css :item-name)}
+             (tr "workspace.header.help.option.beginner-guide")]])
 
          (when cf/help-center-uri
            [:> dropdown-menu-item* {:class (stl/css :help-menu-item)

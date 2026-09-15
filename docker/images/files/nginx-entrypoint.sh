@@ -274,6 +274,47 @@ update_frame_ancestors() {
   mv "$1.tmp" "$1";
 }
 
+update_show_beginner_guide() {
+  # 是否在首次进入 workspace 时弹出「新手基础操作」, 以及帮助中心是否展示
+  # 「新手引导视频」。未设置时保留 js/config.js 的默认值(开启)。
+  # 注意 true 与 false 都必须写入: 若只在 truthy 时赋值, PENPOT_SHOW_BEGINNER_GUIDE=false
+  # 会变成空操作, 部署里就永远无法关掉弹窗。
+  if [ -z "${PENPOT_SHOW_BEGINNER_GUIDE:-}" ]; then
+    return;
+  fi
+
+  local raw="${PENPOT_SHOW_BEGINNER_GUIDE}";
+  raw="${raw//[[:space:]]/}";
+
+  if is_truthy "$raw"; then
+    printf 'globalThis.penpotShowBeginnerGuide = true;\n' >> "$1";
+  elif is_falsy "$raw"; then
+    printf 'globalThis.penpotShowBeginnerGuide = false;\n' >> "$1";
+  else
+    echo "nginx-entrypoint: PENPOT_SHOW_BEGINNER_GUIDE must be a boolean (true/false/1/0/t/f); keeping the js/config.js default" >&2;
+  fi
+}
+
+update_beginner_guide_videos() {
+  # Overrides the fork default beginner-guide video URLs from config.js with
+  # the JSON object in $PENPOT_BEGINNER_GUIDE_VIDEOS (highest priority:
+  # appended assignments run last, after the defaults in the file).
+  #
+  # On any invalid input we warn and keep the default from js/config.js.
+  if [ -n "${PENPOT_BEGINNER_GUIDE_VIDEOS:-}" ]; then
+    local check='select(type == "object" and all(to_entries[]; (.key | type == "string") and (.value | type == "string")))'
+    local value="";
+
+    if ! value=$(printf '%s' "$PENPOT_BEGINNER_GUIDE_VIDEOS" | jq -ec "$check" 2>/dev/null) \
+       || [ -z "$value" ]; then
+      echo "nginx-entrypoint: PENPOT_BEGINNER_GUIDE_VIDEOS must be a JSON object of {id: url}; keeping the js/config.js default" >&2;
+      return;
+    fi
+
+    printf 'globalThis.penpotBeginnerGuideVideos = %s;\n' "$value" >> "$1";
+  fi
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
@@ -283,6 +324,8 @@ update_default_expanded_asset_groups /var/www/app/js/config.js
 update_default_palette_library /var/www/app/js/config.js
 update_hide_tokens /var/www/app/js/config.js
 update_embed_parent_origin /var/www/app/js/config.js
+update_show_beginner_guide /var/www/app/js/config.js
+update_beginner_guide_videos /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

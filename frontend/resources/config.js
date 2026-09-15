@@ -121,6 +121,27 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // 「新手基础操作」弹窗三张卡片的视频地址。改这里即可, 无需重新编译前端。
+  // 键名对应卡片 id: click-through / table-shortcuts / component-library。
+  // 某张卡片缺地址或为空字符串时, 弹窗仍显示, 该卡走占位文案。
+  // Docker 部署: 可用环境变量 PENPOT_BEGINNER_GUIDE_VIDEOS 覆盖
+  // (必须是合法 JSON 对象 {id: url, ...}, 由 nginx-entrypoint.sh 校验后追加赋值,
+  // 优先级更高; 校验不通过则保留此处默认值; 设为 {} 可清空全部地址)。
+  globalThis.penpotBeginnerGuideVideos = {
+    "click-through": "",
+    "table-shortcuts": "",
+    "component-library": ""
+  };
+
+  // 是否在首次进入 workspace 时弹出「新手基础操作」, 以及帮助中心下拉是否
+  // 展示「新手引导视频」。false: 首次不弹窗, 下拉也不出该条目。需刷新页面生效。
+  // Docker 部署: PENPOT_SHOW_BEGINNER_GUIDE=false 关闭
+  // (true/false/1/0/t/f, 由 nginx-entrypoint.sh 追加赋值, 优先级更高;
+  // 未设置或非法值则保留此处默认值)。
+  globalThis.penpotShowBeginnerGuide = true;
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

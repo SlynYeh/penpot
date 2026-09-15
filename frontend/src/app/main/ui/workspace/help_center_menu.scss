@@ -66,13 +66,9 @@
   position: relative;
 }
 
-// Visual block intentionally duplicated from main-menu's .base-menu
-// (css-modules cannot @extend across files), except the anchoring: this menu
-// hangs off .help-wrapper with left: 0, so its left edge aligns with the
-// trigger's left edge; top keeps the old 4px gap below the 32px button,
-// i.e. 48px below the aside's top edge as before.
-// Positions the dropdown under the trigger so the hint can sit against
-// the whole list (left: 100%) instead of the sidebar edge.
+// Positions the dropdown under the trigger (relative to .help-wrapper) so
+// the hint can sit against the whole list (left: 100%) instead of the
+// sidebar edge. top keeps the old 4px gap below the 32px button.
 .help-flyout {
   position: absolute;
   top: calc(100% + #{px2rem(4)});
@@ -81,18 +77,17 @@
 }
 
 // Visual block intentionally duplicated from main-menu's .base-menu:
-// css-modules cannot @extend across files.
+// css-modules cannot @extend across files. In-flow inside .help-flyout so
+// the hint's left: 100% uses the menu width; do not re-apply absolute
+// top/left here or the menu double-offsets under the trigger.
 .help-menu {
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--sp-xs);
   padding: var(--sp-xs);
-  top: calc(100% + px2rem(4));
-  left: 0;
   inline-size: $sz-192;
   border-radius: $br-8;
-  z-index: var(--z-index-dropdown);
   background-color: var(--menu-background-color);
   border: $b-2 solid var(--panel-border-color);
   box-shadow: 0 0 $sz-12 0 var(--menu-shadow-color);

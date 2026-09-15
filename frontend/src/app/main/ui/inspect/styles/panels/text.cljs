@@ -17,6 +17,8 @@
    [app.main.ui.inspect.styles.rows.color-properties-row :refer [color-properties-row*]]
    [app.main.ui.inspect.styles.rows.properties-row :refer [properties-row*]]
    [app.util.clipboard :as clipboard]
+   [app.util.font-style :as font-style]
+   [app.util.i18n :refer [tr]]
    [app.util.timers :as tm]
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
@@ -60,8 +62,8 @@
   (let [typography (ict/get-typography style)
         property-value (:name typography)]
     (when typography
-      [:> properties-row* {:term "Typography"
-                           :detail property-value
+      [:> properties-row* {:term (tr "inspect.attributes.typography")
+                           :detail (font-style/localized-typography-name property-value)
                            :property property-value
                            :copiable true}])))
 
@@ -69,7 +71,7 @@
   [{:keys [fill shape resolved-tokens color-space]}]
   (let [color (types.fills/fill->color fill)
         resolved-token (get-resolved-token :fill shape resolved-tokens)]
-    [:> color-properties-row* {:term "Font Color"
+    [:> color-properties-row* {:term (tr "inspect.attributes.typography.font-color")
                                :color color
                                :token resolved-token
                                :format color-space
@@ -109,7 +111,7 @@
      ;; Composite Typography token
      (when (and (not (:typography-ref-id style))
                 composite-typography-token)
-       [:> properties-row* {:term "Typography"
+       [:> properties-row* {:term (tr "inspect.attributes.typography")
                             :detail (:name composite-typography-token)
                             :token composite-typography-token
                             :property (:name composite-typography-token)
@@ -118,14 +120,14 @@
      (when (:font-id style)
        (let [name (get (fonts/get-font-data (:font-id style)) :name)
              resolved-token (get-resolved-token :font-family shape resolved-tokens)]
-         [:> properties-row* {:term "Font Family"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.font-family")
                               :detail name
                               :token resolved-token
                               :property (str "font-family: \"" name "\";")
                               :copiable true}]))
 
      (when (:font-style style)
-       [:> properties-row* {:term "Font Style"
+       [:> properties-row* {:term (tr "inspect.attributes.typography.font-style")
                             :detail (:font-style style)
                             :property (str "font-style: " (:font-style style) ";")
                             :copiable true}])
@@ -133,14 +135,14 @@
      (when (:font-size style)
        (let [font-size (fmt/format-pixels (:font-size style))
              resolved-token (get-resolved-token :font-size shape resolved-tokens)]
-         [:> properties-row* {:term "Font Size"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.font-size")
                               :detail font-size
                               :token resolved-token
                               :property (str "font-size: " font-size ";")
                               :copiable true}]))
      (when (:font-weight style)
        (let [resolved-token (get-resolved-token :font-weight shape resolved-tokens)]
-         [:> properties-row* {:term "Font Weight"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.font-weight")
                               :detail (:font-weight style)
                               :token resolved-token
                               :property (str "font-weight: " (:font-weight style) ";")
@@ -149,7 +151,7 @@
      (when (:line-height style)
        (let [line-height (:line-height style)
              resolved-token (get-resolved-token :line-height shape resolved-tokens)]
-         [:> properties-row* {:term "Line Height"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.line-height")
                               :detail (str line-height)
                               :token resolved-token
                               :property (str "line-height: " line-height ";")
@@ -158,7 +160,7 @@
      (when (:letter-spacing style)
        (let [letter-spacing (fmt/format-pixels (:letter-spacing style))
              resolved-token (get-resolved-token :letter-spacing shape resolved-tokens)]
-         [:> properties-row* {:term "Letter Spacing"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.letter-spacing")
                               :detail letter-spacing
                               :token resolved-token
                               :property (str "letter-spacing: " letter-spacing ";")
@@ -166,7 +168,7 @@
 
      (when (:text-decoration style)
        (let [resolved-token (get-resolved-token :text-decoration shape resolved-tokens)]
-         [:> properties-row* {:term "Text Decoration"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.text-decoration")
                               :detail (:text-decoration style)
                               :token resolved-token
                               :property (str "text-decoration: " (:text-decoration style) ";")
@@ -174,7 +176,7 @@
 
      (when (:text-transform style)
        (let [resolved-token (get-resolved-token :text-case shape resolved-tokens)]
-         [:> properties-row* {:term "Text Transform"
+         [:> properties-row* {:term (tr "inspect.attributes.typography.text-transform")
                               :detail (:text-transform style)
                               :token resolved-token
                               :property (str "text-transform: " (:text-transform style) ";")

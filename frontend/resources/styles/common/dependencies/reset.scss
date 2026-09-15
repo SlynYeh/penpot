@@ -114,6 +114,14 @@ video {
   vertical-align: baseline;
 }
 
+// Pin the root font size so `rem` units don't scale with the browser's
+// user-configured default font size (which breaks the UI layout). Must come
+// after the reset block above to override its `font-size: 100%` on `html`.
+html {
+  /* stylelint-disable-next-line declaration-property-unit-allowed-list */
+  font-size: 16px;
+}
+
 article,
 aside,
 details,

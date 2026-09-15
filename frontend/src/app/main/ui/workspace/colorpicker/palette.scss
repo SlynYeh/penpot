@@ -1,0 +1,128 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+//
+// Self-contained styles for the 色板 / 自定义 colorpicker tooltip body.
+// Spec: img_5.png — panel padding ~14px, 9×7 swatch grid (24px cells,
+// 8px gaps), opacity row 30px / 1fr / 30px. The modal header (tabs +
+// close) lives in `colorpicker.scss`, not here, because those classes are
+// referenced from `colorpicker.cljs` (same-file scoping).
+// Does not import any project mixins; all values are local.
+
+// --- Palette (色板) panel --------------------------------------------
+
+.colorpicker-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  // 高度以「自定义」tab 为准：色板面板作为 modal 的 flex 子项，
+  // flex: 1 在 modal 高度被约束时（如顶到 calc 出的 max-height 上限）
+  // 撑满剩余高度，使色板与「自定义」tab 的可见高度一致。
+  flex: 1;
+}
+
+// 9 × 7 swatch grid (img_5.png). Each cell is a fixed 24×24 swatch
+// (the medium size from `swatch*`) with 8px gaps on all sides.
+// Total width ≈ 9 × 24 + 8 × 8 = 280px.
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 24px);
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.palette-grid > li {
+  width: 24px;
+  height: 24px;
+}
+
+// Opacity row: 24px picker button (20px glyph inside) | 1fr slider |
+// 30px readout.
+.palette-opacity-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 30px;
+  align-items: center;
+  gap: 12px;
+  padding-block: 4px;
+}
+
+.palette-opacity-wrapper {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.palette-opacity-value {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: end;
+  color: var(--color-foreground-secondary, #8a8b8e);
+}
+
+// Picker button — overrides the project's `.picker-btn` rule
+// (`colorpicker.scss`) only inside the palette panel.
+.colorpicker-palette .picker-btn {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--color-foreground-secondary, #5a5b5e);
+  margin-top: 0;
+
+  // The picker glyph is a raw svg (not `icon*`), so it needs the DS
+  // `.icon` defaults spelled out here: hollow paths, stroked outline.
+  svg {
+    fill: none;
+    stroke: currentColor;
+  }
+
+  &:hover {
+    background: var(--color-background-quaternary, rgba(0, 0, 0, 0.04));
+    color: var(--color-foreground-primary, #1f1f1f);
+  }
+
+  &.selected {
+    color: var(--color-accent-primary, #2061ff);
+  }
+}
+
+// --- 最近颜色 ---------------------------------------------------------
+
+.palette-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.palette-recent-title {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--color-foreground-secondary, #8a8b8e);
+  margin: 0;
+}
+
+// Up to 18 recent swatches (img_5.png): 9-col grid wraps to 2 rows.
+.palette-recent-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 24px);
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.palette-recent-grid > li {
+  width: 24px;
+  height: 24px;
+}

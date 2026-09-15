@@ -39,11 +39,11 @@ msgstr "Gjenopprett passord"
 msgid "auth.recovery-submit"
 msgstr "Endre passordet ditt"
 
-#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:166, src/app/main/ui/viewer/login.cljs:89
+#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:155, src/app/main/ui/viewer/login.cljs:89
 msgid "auth.register"
 msgstr "Ingen konto enda?"
 
-#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:170, src/app/main/ui/viewer/login.cljs:93
+#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:159, src/app/main/ui/viewer/login.cljs:93
 msgid "auth.register-submit"
 msgstr "Opprett konto"
 
@@ -51,7 +51,7 @@ msgstr "Opprett konto"
 msgid "auth.register-title"
 msgstr "Opprett konto"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:323, src/app/main/ui/workspace/main_menu.cljs:695
+#: src/app/main/ui/dashboard/file_menu.cljs:323
 msgid "dashboard.add-shared"
 msgstr "Legg til som delt bibliotek"
 
@@ -67,11 +67,11 @@ msgstr "Din Penpot"
 msgid "dashboard.delete-team"
 msgstr "Slett lag"
 
-#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:829
+#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:833
 msgid "dashboard.invite-profile"
 msgstr "Inviter til team"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:433
+#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:436
 msgid "dashboard.leave-team"
 msgstr "Forlat team"
 
@@ -99,7 +99,7 @@ msgstr "+ Ny fil"
 msgid "dashboard.new-project"
 msgstr "+ Nytt prosjekt"
 
-#: src/app/main/ui/dashboard/team.cljs:1658
+#: src/app/main/ui/dashboard/team.cljs:1662
 msgid "dashboard.num-of-members"
 msgstr "%s medlemmer"
 
@@ -148,15 +148,15 @@ msgstr "Velg drakt"
 msgid "dashboard.show-all-files"
 msgstr "Vis alle filer"
 
-#: src/app/main/ui/dashboard/team.cljs:1602
+#: src/app/main/ui/dashboard/team.cljs:1606
 msgid "dashboard.team-info"
 msgstr "Teaminfo"
 
-#: src/app/main/ui/dashboard/team.cljs:1647
+#: src/app/main/ui/dashboard/team.cljs:1651
 msgid "dashboard.team-members"
 msgstr "Teammedlemmer"
 
-#: src/app/main/ui/dashboard/team.cljs:1662
+#: src/app/main/ui/dashboard/team.cljs:1666
 msgid "dashboard.team-projects"
 msgstr "Lagprosjekter"
 
@@ -172,11 +172,11 @@ msgstr "Din konto"
 msgid "dashboard.your-name"
 msgstr "Ditt navn"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:40, src/app/main/ui/dashboard/fonts.cljs:46, src/app/main/ui/dashboard/libraries.cljs:55, src/app/main/ui/dashboard/projects.cljs:352, src/app/main/ui/dashboard/search.cljs:47, src/app/main/ui/dashboard/sidebar.cljs:411, src/app/main/ui/dashboard/team.cljs:616, src/app/main/ui/dashboard/team.cljs:1191, src/app/main/ui/dashboard/team.cljs:1471, src/app/main/ui/dashboard/team.cljs:1577
+#: src/app/main/ui/dashboard/file_menu.cljs:40, src/app/main/ui/dashboard/fonts.cljs:47, src/app/main/ui/dashboard/libraries.cljs:55, src/app/main/ui/dashboard/projects.cljs:352, src/app/main/ui/dashboard/search.cljs:47, src/app/main/ui/dashboard/sidebar.cljs:411, src/app/main/ui/dashboard/team.cljs:619, src/app/main/ui/dashboard/team.cljs:1195, src/app/main/ui/dashboard/team.cljs:1475, src/app/main/ui/dashboard/team.cljs:1581
 msgid "dashboard.your-penpot"
 msgstr "Din Penpot"
 
-#: src/app/main/ui/comments.cljs:693, src/app/main/ui/confirm.cljs:42, src/app/main/ui/settings/subscription.cljs:303, src/app/main/ui/settings/subscription.cljs:336, src/app/main/ui/settings/subscription.cljs:776, src/app/main/ui/settings/subscription.cljs:823, src/app/main/ui/workspace/plugins.cljs:373, src/app/main/ui/workspace/plugins.cljs:436
+#: src/app/main/ui/comments.cljs:693, src/app/main/ui/confirm.cljs:42, src/app/main/ui/settings/subscription.cljs:303, src/app/main/ui/settings/subscription.cljs:336, src/app/main/ui/settings/subscription.cljs:776, src/app/main/ui/settings/subscription.cljs:823, src/app/main/ui/workspace/plugins.cljs:375, src/app/main/ui/workspace/plugins.cljs:438
 msgid "ds.confirm-cancel"
 msgstr "Avbryt"
 
@@ -213,7 +213,7 @@ msgstr "Emne"
 msgid "inspect.attributes.blur.value"
 msgstr "Verdi"
 
-#: src/app/main/ui/inspect/attributes/common.cljs:78, src/app/main/ui/inspect/styles/rows/color_properties_row.cljs:129
+#: src/app/main/ui/inspect/attributes/common.cljs:83, src/app/main/ui/inspect/styles/rows/color_properties_row.cljs:129
 msgid "inspect.attributes.image.download"
 msgstr "Last ned kildebilde"
 
@@ -242,7 +242,7 @@ msgstr "Venstre"
 msgid "inspect.attributes.layout.width"
 msgstr "Bredde"
 
-#: src/app/main/ui/inspect/attributes/shadow.cljs:65
+#: src/app/main/ui/inspect/attributes/shadow.cljs:66
 msgid "inspect.attributes.shadow"
 msgstr "Skygge"
 
@@ -251,55 +251,119 @@ msgstr "Skygge"
 msgid "inspect.attributes.stroke.width"
 msgstr "Bredde"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:53, src/app/main/ui/inspect/attributes/text.cljs:159
+#: src/app/main/ui/inspect/attributes/text.cljs:54, src/app/main/ui/inspect/attributes/text.cljs:160, src/app/main/ui/inspect/styles/panels/text.cljs:65, src/app/main/ui/inspect/styles/panels/text.cljs:114
 msgid "inspect.attributes.typography"
 msgstr "Typografi"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:316
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
 msgid "inspect.attributes.typography.font-family"
 msgstr "Skriftfamilie"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:340, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:346
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
 msgid "inspect.attributes.typography.font-size"
 msgstr "Skriftstørrelse"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:357
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
 msgid "inspect.attributes.typography.font-style"
 msgstr "Skriftstil"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:142
+#: src/app/util/shape_name.cljs:28
 msgid "inspect.tabs.code.selected.circle"
 msgstr "Sirkel"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:146
+#: src/app/util/shape_name.cljs:33
 msgid "inspect.tabs.code.selected.group"
 msgstr "Gruppe"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:147
+#: src/app/util/shape_name.cljs:34
 msgid "inspect.tabs.code.selected.image"
 msgstr "Bilde"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:149
+#: src/app/util/shape_name.cljs:36
 msgid "inspect.tabs.code.selected.path"
 msgstr "Sti"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:151
+#: src/app/util/shape_name.cljs:38
 msgid "inspect.tabs.code.selected.svg-raw"
 msgstr "SVG"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:152
+#: src/app/util/shape_name.cljs:39
 msgid "inspect.tabs.code.selected.text"
 msgstr "Tekst"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:149
+msgid "keymap.important.click-through"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:150
+msgid "keymap.important.click-through.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.important.drag-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:152
+msgid "keymap.important.drag-canvas.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:153
+msgid "keymap.important.draw-frame"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:154
+msgid "keymap.important.draw-frame.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:155
+msgid "keymap.important.draw-text"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:156
+msgid "keymap.important.draw-text.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:157
+msgid "keymap.important.escape"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:158
+msgid "keymap.important.escape.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:159
+msgid "keymap.important.group"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:160
+msgid "keymap.important.group.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:161
+msgid "keymap.important.multi-select"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
+msgid "keymap.important.multi-select.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
+msgid "keymap.important.zoom-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
+msgid "keymap.important.zoom-canvas.desc"
+msgstr ""
 
 #: src/app/main/data/common.cljs:90, src/app/main/data/team.cljs:163, src/app/main/data/team.cljs:584, src/app/main/ui/dashboard/import.cljs:556
 msgid "labels.accept"
 msgstr "Godta"
 
-#: src/app/main/data/common.cljs:119, src/app/main/ui/dashboard/change_owner.cljs:67, src/app/main/ui/dashboard/change_owner.cljs:174, src/app/main/ui/dashboard/import.cljs:541, src/app/main/ui/dashboard/team.cljs:866, src/app/main/ui/dashboard/team.cljs:1345, src/app/main/ui/delete_shared.cljs:36, src/app/main/ui/exports/assets.cljs:163, src/app/main/ui/exports/files.cljs:167, src/app/main/ui/settings/integrations.cljs:233, src/app/main/ui/viewer/share_link.cljs:204, src/app/main/ui/workspace/sidebar/assets/groups.cljs:178, src/app/main/ui/workspace/tokens/export/modal.cljs:43, src/app/main/ui/workspace/tokens/import/modal.cljs:268, src/app/main/ui/workspace/tokens/import_from_library.cljs:88, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:360, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:73, src/app/main/ui/workspace/tokens/settings/menu.cljs:104, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:242
+#: src/app/main/data/common.cljs:119, src/app/main/ui/dashboard/change_owner.cljs:67, src/app/main/ui/dashboard/change_owner.cljs:174, src/app/main/ui/dashboard/import.cljs:541, src/app/main/ui/dashboard/team.cljs:870, src/app/main/ui/dashboard/team.cljs:1349, src/app/main/ui/delete_shared.cljs:36, src/app/main/ui/exports/assets.cljs:164, src/app/main/ui/exports/files.cljs:167, src/app/main/ui/settings/integrations.cljs:233, src/app/main/ui/viewer/share_link.cljs:204, src/app/main/ui/workspace/sidebar/assets/groups.cljs:178, src/app/main/ui/workspace/tokens/export/modal.cljs:43, src/app/main/ui/workspace/tokens/import/modal.cljs:268, src/app/main/ui/workspace/tokens/import_from_library.cljs:88, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:360, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:73, src/app/main/ui/workspace/tokens/settings/menu.cljs:104, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:242
 msgid "labels.cancel"
 msgstr "Avbryt"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:111, src/app/main/ui/inspect/right_sidebar.cljs:116
+#: src/app/main/ui/inspect/right_sidebar.cljs:113, src/app/main/ui/inspect/right_sidebar.cljs:118
 msgid "labels.code"
 msgstr "Kode"
 
@@ -327,7 +391,7 @@ msgstr "Egendefinerte skrifter"
 msgid "labels.dashboard"
 msgstr "Oversikt"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:337, src/app/main/ui/dashboard/fonts.cljs:286, src/app/main/ui/dashboard/fonts.cljs:363, src/app/main/ui/dashboard/fonts.cljs:397, src/app/main/ui/dashboard/project_menu.cljs:115, src/app/main/ui/dashboard/team.cljs:1379, src/app/main/ui/settings/integrations.cljs:389, src/app/main/ui/settings/profile.cljs:117, src/app/main/ui/settings/profile.cljs:128, src/app/main/ui/settings/profile.cljs:129, src/app/main/ui/workspace/sidebar/assets/common.cljs:231, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:223, src/app/main/ui/workspace/sidebar/versions.cljs:258, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:353, src/app/main/ui/workspace/tokens/management/node_context_menu.cljs:111, src/app/main/ui/workspace/tokens/sets/context_menu.cljs:66, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:378
+#: src/app/main/ui/dashboard/file_menu.cljs:337, src/app/main/ui/dashboard/fonts.cljs:288, src/app/main/ui/dashboard/fonts.cljs:365, src/app/main/ui/dashboard/fonts.cljs:399, src/app/main/ui/dashboard/project_menu.cljs:115, src/app/main/ui/dashboard/team.cljs:1383, src/app/main/ui/settings/integrations.cljs:389, src/app/main/ui/settings/profile.cljs:117, src/app/main/ui/settings/profile.cljs:128, src/app/main/ui/settings/profile.cljs:129, src/app/main/ui/workspace/sidebar/assets/common.cljs:252, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:223, src/app/main/ui/workspace/sidebar/versions.cljs:258, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:353, src/app/main/ui/workspace/tokens/management/node_context_menu.cljs:111, src/app/main/ui/workspace/tokens/sets/context_menu.cljs:66, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:378
 msgid "labels.delete"
 msgstr "Slett"
 
@@ -347,11 +411,11 @@ msgstr "Slett %s filer"
 msgid "labels.drafts"
 msgstr "Kladder"
 
-#: src/app/main/ui/comments.cljs:1011, src/app/main/ui/dashboard/fonts.cljs:280, src/app/main/ui/dashboard/team.cljs:1377, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:218, src/app/main/ui/workspace/tokens/themes.cljs:52
+#: src/app/main/ui/comments.cljs:1011, src/app/main/ui/dashboard/fonts.cljs:282, src/app/main/ui/dashboard/team.cljs:1381, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:218, src/app/main/ui/workspace/tokens/themes.cljs:52
 msgid "labels.edit"
 msgstr "Rediger"
 
-#: src/app/main/ui/dashboard/fonts.cljs:472
+#: src/app/main/ui/dashboard/fonts.cljs:474
 msgid "labels.font-family"
 msgstr "Skriftfamilie"
 
@@ -359,15 +423,15 @@ msgstr "Skriftfamilie"
 msgid "labels.font-providers"
 msgstr "Skrifttilbydere"
 
-#: src/app/main/ui/dashboard/fonts.cljs:74, src/app/main/ui/dashboard/sidebar.cljs:1078
+#: src/app/main/ui/dashboard/fonts.cljs:75, src/app/main/ui/dashboard/sidebar.cljs:1078
 msgid "labels.fonts"
 msgstr "Skrifter"
 
-#: src/app/main/ui/inspect/right_sidebar.cljs:114
+#: src/app/main/ui/inspect/right_sidebar.cljs:116
 msgid "labels.info"
 msgstr "Info"
 
-#: src/app/main/ui/dashboard/fonts.cljs:470
+#: src/app/main/ui/dashboard/fonts.cljs:472
 msgid "labels.installed-fonts"
 msgstr "Installerte skrifter"
 
@@ -375,7 +439,7 @@ msgstr "Installerte skrifter"
 msgid "labels.language"
 msgstr "Språk"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1405
+#: src/app/main/ui/dashboard/sidebar.cljs:1413
 msgid "labels.logout"
 msgstr "Logg ut"
 
@@ -391,7 +455,7 @@ msgstr "Nytt passord"
 msgid "labels.old-password"
 msgstr "Gammelt passord"
 
-#: src/app/main/ui/dashboard/team.cljs:406, src/app/main/ui/dashboard/team.cljs:644, src/app/main/ui/dashboard/team.cljs:1653
+#: src/app/main/ui/dashboard/team.cljs:409, src/app/main/ui/dashboard/team.cljs:647, src/app/main/ui/dashboard/team.cljs:1657
 msgid "labels.owner"
 msgstr "Eier"
 
@@ -407,7 +471,7 @@ msgstr "Profil"
 msgid "labels.projects"
 msgstr "Prosjekter"
 
-#: src/app/main/ui/forms.cljs:196, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:167, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:406
+#: src/app/main/ui/forms.cljs:196, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:176, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:415
 msgid "labels.remove"
 msgstr "Fjern"
 
@@ -415,19 +479,19 @@ msgstr "Fjern"
 msgid "labels.rename"
 msgstr "Gi nytt navn"
 
-#: src/app/main/ui/components/progress.cljs:80, src/app/main/ui/static.cljs:320, src/app/main/ui/static.cljs:329, src/app/main/ui/static.cljs:450
+#: src/app/main/ui/components/progress.cljs:80, src/app/main/ui/static.cljs:309, src/app/main/ui/static.cljs:318, src/app/main/ui/static.cljs:439
 msgid "labels.retry"
 msgstr "Prøv igjen"
 
-#: src/app/main/ui/dashboard/team.cljs:593, src/app/main/ui/dashboard/team.cljs:1154
+#: src/app/main/ui/dashboard/team.cljs:596, src/app/main/ui/dashboard/team.cljs:1158
 msgid "labels.role"
 msgstr "Rolle"
 
-#: src/app/main/ui/dashboard/fonts.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:204, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:364, src/app/main/ui/workspace/tokens/settings/menu.cljs:109
+#: src/app/main/ui/dashboard/fonts.cljs:437, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:204, src/app/main/ui/workspace/tokens/management/forms/generic_form.cljs:364, src/app/main/ui/workspace/tokens/settings/menu.cljs:109
 msgid "labels.save"
 msgstr "Lagre"
 
-#: src/app/main/ui/dashboard/fonts.cljs:475
+#: src/app/main/ui/dashboard/fonts.cljs:477
 msgid "labels.search-font"
 msgstr "Søk etter skrift"
 
@@ -451,15 +515,15 @@ msgstr "Delte bibliotek"
 msgid "labels.show-all-comments"
 msgstr "Vis alle kommentarer"
 
-#: src/app/main/ui/dashboard/fonts.cljs:270
+#: src/app/main/ui/dashboard/fonts.cljs:272
 msgid "labels.upload"
 msgstr "Last opp"
 
-#: src/app/main/ui/dashboard/fonts.cljs:197
+#: src/app/main/ui/dashboard/fonts.cljs:199
 msgid "labels.upload-custom-fonts"
 msgstr "Last opp egendefinerte skrifter"
 
-#: src/app/main/ui/dashboard/fonts.cljs:269
+#: src/app/main/ui/dashboard/fonts.cljs:271
 msgid "labels.uploading"
 msgstr "Laster opp …"
 
@@ -467,7 +531,7 @@ msgstr "Laster opp …"
 msgid "labels.write-new-comment"
 msgstr "Skriv ny kommentar"
 
-#: src/app/main/data/media.cljs:51, src/app/main/data/workspace/media.cljs:250, src/app/main/data/workspace/media.cljs:462
+#: src/app/main/data/media.cljs:51, src/app/main/data/workspace/media.cljs:261, src/app/main/data/workspace/media.cljs:473
 msgid "media.loading"
 msgstr "Laster inn bilde …"
 
@@ -499,7 +563,7 @@ msgstr "Slett fil"
 msgid "modals.delete-file-multi-confirm.accept"
 msgstr "Slett filer"
 
-#: src/app/main/ui/workspace/context_menu.cljs:706, src/app/main/ui/workspace/sidebar/sitemap.cljs:108, src/app/main/ui/workspace/sidebar/sitemap.cljs:225
+#: src/app/main/ui/workspace/context_menu.cljs:751, src/app/main/ui/workspace/sidebar/sitemap.cljs:108, src/app/main/ui/workspace/sidebar/sitemap.cljs:225
 msgid "modals.delete-page.title"
 msgstr "Slett side"
 
@@ -507,23 +571,23 @@ msgstr "Slett side"
 msgid "modals.delete-project-confirm.accept"
 msgstr "Slett prosjekt"
 
-#: src/app/main/ui/dashboard/team.cljs:542
+#: src/app/main/ui/dashboard/team.cljs:545
 msgid "modals.delete-team-member-confirm.accept"
 msgstr "Slett medlem"
 
-#: src/app/main/ui/dashboard/team.cljs:540
+#: src/app/main/ui/dashboard/team.cljs:543
 msgid "modals.delete-team-member-confirm.title"
 msgstr "Slett teammedlem"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:506, src/app/main/ui/dashboard/sidebar.cljs:528, src/app/main/ui/dashboard/team.cljs:509, src/app/main/ui/dashboard/team.cljs:531
+#: src/app/main/ui/dashboard/sidebar.cljs:506, src/app/main/ui/dashboard/sidebar.cljs:528, src/app/main/ui/dashboard/team.cljs:512, src/app/main/ui/dashboard/team.cljs:534
 msgid "modals.leave-confirm.accept"
 msgstr "Forlat team"
 
-#: src/app/main/ui/workspace/sidebar/assets/common.cljs:494
+#: src/app/main/ui/workspace/sidebar/assets/common.cljs:524
 msgid "modals.update-remote-component.cancel"
 msgstr "Avbryt"
 
-#: src/app/main/ui/dashboard/team.cljs:193, src/app/main/ui/dashboard/team.cljs:1071
+#: src/app/main/ui/dashboard/team.cljs:196, src/app/main/ui/dashboard/team.cljs:1075
 msgid "notifications.invitation-email-sent"
 msgstr "Invitasjon sendt"
 
@@ -543,19 +607,19 @@ msgstr "Passord - Penpot"
 msgid "title.settings.profile"
 msgstr "Profil - Penpot"
 
-#: src/app/main/ui/dashboard/team.cljs:1575
+#: src/app/main/ui/dashboard/team.cljs:1579
 msgid "title.team-settings"
 msgstr "Innstillinger - %s - Penpot"
 
-#: src/app/main/ui/workspace.cljs:239
+#: src/app/main/ui/workspace.cljs:243
 msgid "title.workspace"
 msgstr "%s - Penpot"
 
-#: src/app/main/ui/dashboard/grid.cljs:160, src/app/main/ui/dashboard/grid.cljs:192, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
+#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
 msgid "workspace.assets.colors"
 msgstr "Farger"
 
-#: src/app/main/ui/dashboard/grid.cljs:156, src/app/main/ui/dashboard/grid.cljs:171, src/app/main/ui/workspace/sidebar/assets/components.cljs:588, src/app/main/ui/workspace/sidebar/assets.cljs:161
+#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:161
 msgid "workspace.assets.components"
 msgstr "Komponenter"
 
@@ -563,7 +627,7 @@ msgstr "Komponenter"
 msgid "workspace.assets.create-group"
 msgstr "Opprett en gruppe"
 
-#: src/app/main/ui/workspace/context_menu.cljs:716, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:670, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:541
+#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:567
 msgid "workspace.assets.delete"
 msgstr "Slett"
 
@@ -576,7 +640,7 @@ msgstr "Rediger"
 msgid "workspace.assets.graphics"
 msgstr "Grafikk"
 
-#: src/app/main/ui/workspace/sidebar/assets/colors.cljs:269, src/app/main/ui/workspace/sidebar/assets/components.cljs:654, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:480
+#: src/app/main/ui/workspace/sidebar/assets/colors.cljs:269, src/app/main/ui/workspace/sidebar/assets/components.cljs:660, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:480
 msgid "workspace.assets.group"
 msgstr "Gruppe"
 
@@ -584,7 +648,7 @@ msgstr "Gruppe"
 msgid "workspace.assets.group-name"
 msgstr "Gruppenavn"
 
-#: src/app/main/ui/workspace/context_menu.cljs:719, src/app/main/ui/workspace/sidebar/assets/colors.cljs:254, src/app/main/ui/workspace/sidebar/assets/components.cljs:645, src/app/main/ui/workspace/sidebar/assets/groups.cljs:66, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:461
+#: src/app/main/ui/workspace/context_menu.cljs:764, src/app/main/ui/workspace/sidebar/assets/colors.cljs:254, src/app/main/ui/workspace/sidebar/assets/components.cljs:651, src/app/main/ui/workspace/sidebar/assets/groups.cljs:66, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:461
 msgid "workspace.assets.rename"
 msgstr "Gi nytt navn"
 
@@ -593,15 +657,15 @@ msgstr "Gi nytt navn"
 msgid "workspace.assets.typography.font-id"
 msgstr "Skrift"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:577
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:603
 msgid "workspace.assets.typography.font-size"
 msgstr "Størrelse"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:573
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:599
 msgid "workspace.assets.typography.font-style"
 msgstr "Skriftstil"
 
-#: src/app/main/ui/workspace/main_menu.cljs:383
+#: src/app/main/ui/workspace/main_menu.cljs:380
 msgid "workspace.header.menu.show-rules"
 msgstr "Vis regler"
 
@@ -622,11 +686,11 @@ msgstr "Nylige farger"
 msgid "workspace.libraries.colors.save-color"
 msgstr "Lagre fargestil"
 
-#: src/app/main/ui/workspace/libraries.cljs:336
+#: src/app/main/ui/workspace/libraries.cljs:337
 msgid "workspace.libraries.file-library"
 msgstr "Filbibliotek"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1023, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1029, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1278
+#: src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1028, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1034, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1283
 msgid "workspace.options.component"
 msgstr "Komponent"
 
@@ -634,7 +698,7 @@ msgstr "Komponent"
 msgid "workspace.options.design"
 msgstr "Design"
 
-#: src/app/main/ui/exports/assets.cljs:171, src/app/main/ui/exports/assets.cljs:253, src/app/main/ui/inspect/exports.cljs:216, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:273
+#: src/app/main/ui/exports/assets.cljs:172, src/app/main/ui/exports/assets.cljs:255, src/app/main/ui/inspect/exports.cljs:216, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:273
 msgid "workspace.options.exporting-object"
 msgstr "Eksporterer …"
 

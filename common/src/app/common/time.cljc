@@ -290,6 +290,7 @@
           :ru dfn-ru
           :tr dfn-tr
           :zh-cn dfn-zh-cn
+          :zh_cn dfn-zh-cn
           :nl dfn-nl
           :eu dfn-eu
           :gl dfn-gl
@@ -397,8 +398,13 @@
 #?(:cljs
    (defn set-default-locale
      [locale]
-     (when-let [locale (unchecked-get locales locale)]
-       (dfn-set-default-options #js {:locale locale}))))
+     (when locale
+       (let [key (if (keyword? locale) (name locale) (str locale))
+             loc (or (unchecked-get locales key)
+                     (unchecked-get locales (.replace key "_" "-"))
+                     (unchecked-get locales (.replace key "-" "_")))]
+         (when loc
+           (dfn-set-default-options #js {:locale loc}))))))
 
 ;; --- HELPERS
 

@@ -1,0 +1,226 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) KALEIDOS INC Sucursal en España SL
+
+@use "ds/spacing.scss" as *;
+@use "ds/typography.scss" as *;
+@use "ds/z-index.scss" as *;
+@use "ds/_sizes.scss" as *;
+@use "refactor/common-refactor.scss" as deprecated;
+
+.keymap-wrapper {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: deprecated.$z-index-10;
+  overflow-x: auto;
+  pointer-events: none; // 非模态：wrapper 不拦截画布交互
+  box-shadow: 0 -12px 24px 0 rgba(40, 47, 53, 0.04);
+}
+
+.keymap-panel {
+  pointer-events: auto;
+  width: 100%;
+  min-width: 1200px;
+  height: 264px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--panel-background-color);
+  border-top: deprecated.$s-1 solid var(--panel-border-color);
+}
+
+.keymap-header {
+  position: relative; // 作为关闭按钮绝对定位的锚点
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-8;
+}
+
+// 关闭按钮的 tooltip 包裹层（ds tooltip-trigger）脱离文档流，
+// tabs 才能以整个 header 宽度为基准居中
+.keymap-close-trigger {
+  position: absolute;
+  inset-inline-end: deprecated.$s-12;
+}
+
+.keymap-tabs {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: deprecated.$s-16;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  align-self: stretch;
+  border-bottom: deprecated.$s-1 solid var(--panel-border-color);
+}
+
+.keymap-tab {
+  @include use-typography("body-medium");
+
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: deprecated.$s-8 deprecated.$s-4;
+  color: var(--color-foreground-secondary);
+  border-bottom: deprecated.$s-2 solid transparent;
+
+  // 非选中态 hover 时文字提亮，选中态不受影响
+  &:hover:not(.selected) {
+    color: var(--color-foreground-primary);
+  }
+
+  &.selected {
+    // 文字与 border-bottom 同色，保持选中态视觉一致
+    color: var(--color-accent-primary);
+    font-weight: 600;
+    border-bottom-color: var(--color-accent-primary);
+  }
+}
+
+.keymap-content {
+  flex: 1; // 自动撑满 panel 剩余高度
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem;
+  overflow-x: auto;
+}
+
+.keymap-column {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 232px; // 固定列宽，无对应 DS token
+  // 左右 padding 撑出列间距（相邻两列 padding 相加 = 24px），替代容器 gap
+  padding: 1.5rem 1rem;
+
+  // 相邻列之间的分割线（首列前/末列后不画）
+  & + & {
+    border-inline-start: deprecated.$s-1 solid #e8eaee;
+  }
+}
+
+.keymap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-16;
+  min-height: deprecated.$s-24;
+  margin-bottom: 20px; // 列内条目间距，替代 column 的 gap
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.keymap-item-label {
+  @include use-typography("body-small");
+
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keymap-keys {
+  display: flex;
+  gap: deprecated.$s-4;
+  flex-shrink: 0;
+}
+
+.keymap-key {
+  @include use-typography("body-small");
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: deprecated.$s-20;
+  min-height: deprecated.$s-20;
+  padding: deprecated.$s-2 deprecated.$s-4;
+  border-radius: deprecated.$br-4;
+  background-color: var(--menu-shortcut-background-color);
+  border: deprecated.$s-1 solid var(--panel-border-color);
+  color: var(--color-foreground-primary);
+}
+
+.keymap-gesture {
+  @include use-typography("body-small");
+
+  display: inline-flex;
+  align-items: center;
+  padding: deprecated.$s-2 deprecated.$s-4;
+  border-radius: deprecated.$br-4;
+  background-color: var(--menu-shortcut-background-color);
+  border: deprecated.$s-1 solid var(--panel-border-color);
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+}
+
+.keymap-content-important {
+  align-items: center; // 两行条目在 264px 面板内垂直居中
+
+  // 重要快捷键 tab 专属列宽（其余 tab 维持 .keymap-column 的 232px）
+  .keymap-column {
+    width: 256px;
+  }
+
+  // 重要 tab 不画列间分割线（不能写成 `& + &`：嵌套里 & 是完整父链，
+  // 会编译成 .keymap-column + .keymap-content-important .keymap-column，永不匹配）
+  .keymap-column + .keymap-column {
+    border-inline-start: none;
+  }
+}
+
+.keymap-key-group {
+  display: flex;
+  gap: deprecated.$s-2; // 镜像 .keymap-keys 的 gap，包裹层不改变间距
+}
+
+.keymap-key-sep {
+  color: var(--color-foreground-secondary);
+}
+
+.keymap-important-item {
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-4;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.keymap-important-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: deprecated.$s-8; // 比 .keymap-item 的 $s-16 窄，容纳 16px label + 键位
+  min-height: deprecated.$s-24;
+}
+
+.keymap-important-label {
+  @include use-typography("body-large"); // 16px/400
+
+  font-weight: 700; // → 16px/700
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; // en 长文案防护
+}
+
+.keymap-important-desc {
+  @include use-typography("body-small"); // 12px/400，正合需求
+
+  color: #495e74; // 需求指定色；硬编码先例：.keymap-column 的 #e8eaee
+}

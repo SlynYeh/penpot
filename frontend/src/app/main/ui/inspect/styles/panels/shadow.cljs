@@ -13,6 +13,7 @@
    [app.main.ui.inspect.styles.rows.properties-row :refer [properties-row*]]
    [app.util.code-gen.style-css :as css]
    [app.util.code-gen.style-css-formats :as scf]
+   [app.util.i18n :refer [tr]]
    [rumext.v2 :as mf]))
 
 (defn- get-applied-tokens-in-shape
@@ -56,12 +57,12 @@
          (for [[idx shadow] (map-indexed vector (:shadow shape))]
            [:div {:key (dm/str idx) :class (stl/css :shadow-shape)}
             (when composite-shadow-token
-              [:> properties-row* {:term "Shadow"
+              [:> properties-row* {:term (tr "labels.shadow")
                                    :detail (:name composite-shadow-token)
                                    :token composite-shadow-token
                                    :property (:name composite-shadow-token)
                                    :copiable true}])
-            [:> color-properties-row* {:term "Shadow Color"
+            [:> color-properties-row* {:term (tr "inspect.attributes.shadow.color")
                                        :color (:color shadow)
                                        :format color-space
                                        :copiable true}]

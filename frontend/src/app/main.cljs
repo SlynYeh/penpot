@@ -50,6 +50,20 @@
 
 (declare reinit)
 
+;; Intercept the browser "save page" shortcut (Ctrl+S / Cmd+S) so it
+;; does nothing instead of opening the save dialog. Penpot persists
+;; changes automatically, so there is nothing to save.
+(defonce disable-save-shortcut
+  (when (= :browser cf/target)
+    (.addEventListener js/window "keydown"
+                       (fn [event]
+                         (when (and (or (.-ctrlKey ^js event)
+                                        (.-metaKey ^js event))
+                                    (= "s" (str/lower (.-key ^js event))))
+                           (.preventDefault event)
+                           (.stopPropagation event)))
+                       true)))
+
 (defonce app-root
   (let [el (dom/get-element "app")]
     (mf/create-root el)))

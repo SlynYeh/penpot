@@ -6,7 +6,74 @@
 
 .pixel-overlay {
   inset: 0;
-  pointer-events: initial;
+  pointer-events: auto;
   position: absolute;
   z-index: 1;
+}
+
+// --- Circular, cursor-following magnifier loupe (img_6.png) ------------
+// A 160×160 circle zoomed to ~4×, centred on the cursor, with a small hollow
+// square crosshair marking the sampled pixel, and a dark pill showing
+// `R:G:B  #HEX` below. Repositioned every pointermove via `--loupe-x/y` CSS
+// vars (set in draw-loupe!) so it tracks the cursor without a React re-render.
+
+.picker-loupe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 160px;
+  height: 160px;
+  pointer-events: none;
+  z-index: 2;
+  transform: translate(var(--loupe-x, 0), var(--loupe-y, 0));
+  will-change: transform;
+}
+
+.picker-loupe-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+}
+
+// Hollow square that pins the exact sampled pixel. Follows the sample point —
+// now just BELOW (outside) the circle (img_7.png), matching the eyedropper
+// cursor. It is a direct child of #picker-loupe (no overflow:hidden), so the
+// position can exceed the 160px circle without being clipped.
+.picker-loupe-crosshair {
+  position: absolute;
+  left: var(--loupe-sample-x, 60px);
+  top: var(--loupe-sample-y, 185px);
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--colorpicker-details-color);
+  background: transparent;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.6);
+}
+
+// Dark pill inside the circle with live `R:G:B` + `#HEX` values (img_7.png).
+// The sample point now sits below the circle, so the pill moves inside to avoid
+// it; .picker-loupe has no overflow:hidden, so the pill may extend past the
+// circle edges horizontally.
+.picker-loupe-pill {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(0 0 0 / 0.78);
+  border-radius: 6px;
+  color: #fff;
+  font: 500 12px/1 system-ui, sans-serif;
+  padding: 6px 10px;
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+}
+
+.picker-detail {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }

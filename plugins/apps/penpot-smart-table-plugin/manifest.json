@@ -1,0 +1,6 @@
+{
+  "name": "Prototype Table",
+  "code": "plugin.js",
+  "description": "根据 JSON 定义在 Penpot 画布渲染锁定、可拖拽的表格，支持编辑 JSON 后重新渲染。",
+  "permissions": ["content:read", "content:write"]
+}

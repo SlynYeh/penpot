@@ -72,7 +72,39 @@
         shapes         (mf/with-memo [shapes vbox frame-overlap?]
                          (cond->> shapes
                            (some? vbox)
-                           (filter frame-overlap?)))]
+                           (filter frame-overlap?)))
+
+        ;; DEBUG: canvas redraw tracing (add/remove shapes, resize, variant switch, pan/zoom)
+        prev-objects (mf/use-ref nil)
+        prev         (mf/ref-val prev-objects)
+        _            (mf/set-ref-val! prev-objects objects)
+        added        (when prev (into [] (remove prev) (keys objects)))
+        removed      (when prev (into [] (remove objects) (keys prev)))
+        changed      (when prev
+                       (into []
+                             (filter (fn [id]
+                                       (and (contains? objects id)
+                                            (contains? prev id)
+                                            (not= (get objects id) (get prev id)))))
+                             (keys objects)))
+        shape-label  (fn [objs id]
+                       (let [shape (get objs id)]
+                         (dm/str (get shape :type) " " (or (get shape :name) "?") " " id)))]
+
+    ;; DEBUG: canvas redraw tracing - prints which shapes triggered the redraw
+    ;; (js/console.log
+    ;;  "[canvas-redraw] root-shape"
+    ;;  (cond
+    ;;    (nil? prev)
+    ;;    "(initial render)"
+
+    ;;    (and (empty? added) (empty? removed) (empty? changed))
+    ;;    "(objects unchanged - pan/zoom/active-frames)"
+
+    ;;    :else
+    ;;    (pr-str {:added   (mapv (partial shape-label objects) added)
+    ;;             :removed (mapv (partial shape-label prev) removed)
+    ;;             :changed (mapv (partial shape-label objects) changed)})))
 
     [:g {:id (dm/str "shape-" uuid/zero)}
      [:& (mf/provider ctx/active-frames) {:value active-frames}

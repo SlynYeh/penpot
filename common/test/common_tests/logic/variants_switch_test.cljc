@@ -659,6 +659,62 @@
     (t/is (= (get-in copy-both-t' text-path-0) "text overriden"))))
 
 ;; ============================================================
+;; TEXT OVERRIDES (different property, switching twice)
+;; ============================================================
+
+(t/deftest test-switch-with-different-prop-text-override-twice
+  (let [;; ==== Setup: same as the different-prop case, the second
+        ;; component only differs in a text property (font size)
+        file (-> (thf/sample-file :file1)
+                 (thv/add-variant-with-text
+                  :v01 :c01 :m01 :c02 :m02 :t01 :t02 "hello world" "hello world")
+                 (update-attr :t02 font-size-path-0 "50")
+
+                 (thc/instantiate-component :c01
+                                            :copy-text
+                                            :children-labels [:copy-text-t]))
+
+        ;; Override text on the copy
+        file        (update-attr file :copy-text-t text-path-0 "text overriden")
+        copy-text-t (ths/get-shape file :copy-text-t)
+
+        ;; ==== Action: switch the same copy twice (c01 -> c02 -> c01)
+        file1        (tho/swap-component-in-shape file :copy-text :c02 {:new-shape-label :copy-text-2 :keep-touched? true})
+        page1        (thf/current-page file1)
+        copy-text-2  (ths/get-shape file1 :copy-text-2)
+        copy-text-2t (get-in page1 [:objects (-> copy-text-2 :shapes first)])
+
+        file2        (tho/swap-component-in-shape file1 :copy-text-2 :c01 {:new-shape-label :copy-text-3 :keep-touched? true})
+        page2        (thf/current-page file2)
+        copy-text-3  (ths/get-shape file2 :copy-text-3)
+        copy-text-3t (get-in page2 [:objects (-> copy-text-3 :shapes first)])]
+
+    (thf/dump-file file2 {:keys [:name]})
+
+    ;; Before the switches:
+    ;;   * font size 14
+    ;;   * text "text overriden"
+    ;;   * the text edit marks the granular touched group
+    (t/is (= (get-in copy-text-t font-size-path-0) "14"))
+    (t/is (= (get-in copy-text-t text-path-0) "text overriden"))
+    (t/is (contains? (:touched copy-text-t) :text-content-text))
+
+    ;; After the first switch:
+    ;;   * font size 50 (value of c02, because there was no override)
+    ;;   * text "text overriden" (the override is preserved)
+    ;;   * the granular touched group survives the switch, so a
+    ;;     subsequent switch knows only the letters are overriden
+    (t/is (= (get-in copy-text-2t font-size-path-0) "50"))
+    (t/is (= (get-in copy-text-2t text-path-0) "text overriden"))
+    (t/is (contains? (:touched copy-text-2t) :text-content-text))
+
+    ;; After the second switch:
+    ;;   * font size 14 (value of c01, because there was no override)
+    ;;   * text "text overriden" (the override is preserved)
+    (t/is (= (get-in copy-text-3t font-size-path-0) "14"))
+    (t/is (= (get-in copy-text-3t text-path-0) "text overriden"))))
+
+;; ============================================================
 ;; TEXT OVERRIDES (different text)
 ;; ============================================================
 

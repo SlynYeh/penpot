@@ -31,6 +31,8 @@
     :pencil (cur/get-static "pencil")
     :create-shape (cur/get-static "create-shape")
     :duplicate (cur/get-static "duplicate")
+    :none (cur/get-static "none")
+    :picker (cur/get-static "picker")
     :zoom (cur/get-static "zoom")
     :zoom-in (cur/get-static "zoom-in")
     :zoom-out (cur/get-static "zoom-out")

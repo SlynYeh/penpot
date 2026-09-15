@@ -14,95 +14,94 @@
   height: calc(100vh - deprecated.$s-92);
   scrollbar-gutter: stable;
   overflow-y: auto;
-  padding-top: deprecated.$s-8;
-}
 
-.libraries-button {
-  @extend %button-secondary;
-  @include deprecated.uppercase-title-typography;
+  // Scoped overrides for the filter dropdown panel so it stays compact and
+  // matches the design reference (right-aligned with the filter button, light
+  // background, check mark on the right of the selected item).
+  .context-menu {
+    // The outer wrapper has position:fixed and inline top/left; keep that.
 
-  gap: deprecated.$s-2;
-  height: deprecated.$s-32;
-  width: 100%;
-  margin-bottom: deprecated.$s-4;
-  border-radius: deprecated.$s-8;
+    .context-menu-items {
+      min-width: 120px;
+      padding: deprecated.$s-4;
+      border: deprecated.$s-1 solid var(--menu-border-color);
+      background-color: var(--menu-background-color);
 
-  &:hover {
-    background-color: var(--button-secondary-background-color-hover);
-    color: var(--button-secondary-foreground-color-hover);
-    border: deprecated.$s-1 solid var(--button-secondary-border-color-hover);
-  }
+      .context-menu-item {
+        .context-menu-action {
+          height: deprecated.$s-28;
+          padding: 0 deprecated.$s-8;
+          font-size: 12px;
+          line-height: 1.2;
+        }
 
-  &:focus {
-    background-color: var(--button-secondary-background-color-focus);
-    color: var(--button-secondary-foreground-color-focus);
-    border: deprecated.$s-1 solid var(--button-secondary-border-color-focus);
-  }
-}
+        &:hover .context-menu-action {
+          background-color: var(--menu-background-color-hover);
+        }
 
-.add-library-button {
-  @extend %button-primary;
-  @include deprecated.uppercase-title-typography;
+        &.selected .context-menu-action {
+          color: var(--color-accent-primary);
+          font-weight: deprecated.$fw500;
+        }
 
-  gap: deprecated.$s-2;
-  height: deprecated.$s-32;
-  width: 100%;
-  margin-bottom: deprecated.$s-4;
-  border-radius: deprecated.$s-8;
-}
+        &.selected .selected-icon svg {
+          stroke: var(--color-accent-primary);
+        }
+      }
 
-.section-button {
-  @include deprecated.flex-center;
-  @include deprecated.button-style;
-
-  height: deprecated.$s-32;
-  width: deprecated.$s-32;
-  margin: 0;
-  border: deprecated.$s-1 solid var(--input-border-color-rest);
-  border-radius: deprecated.$br-8 deprecated.$br-2 deprecated.$br-2 deprecated.$br-8;
-  background-color: var(--input-background-color-rest);
-
-  svg {
-    height: deprecated.$s-16;
-    width: deprecated.$s-16;
-    stroke: var(--icon-foreground);
-  }
-
-  &:focus {
-    border: deprecated.$s-1 solid var(--input-border-color-focus);
-    outline: 0;
-    background-color: var(--input-background-color-focus);
-    color: var(--input-foreground-color-focus);
-
-    svg {
-      background-color: var(--input-background-color-focus);
-    }
-  }
-
-  &:hover {
-    border: deprecated.$s-1 solid var(--input-border-color-hover);
-    background-color: var(--input-background-color-hover);
-
-    svg {
-      background-color: var(--input-background-color-hover);
-      stroke: var(--button-foreground-hover);
-    }
-
-    &:focus {
-      border: deprecated.$s-1 solid var(--input-border-color-focus);
-      outline: 0;
-      background-color: var(--input-background-color-focus);
-      color: var(--input-foreground-color-focus);
-
-      svg {
-        background-color: var(--input-background-color-focus);
+      // The `.is-selected` variant in the global stylesheet paints a tick on
+      // the left via background-image. We don't want that — the `.selected`
+      // variant already paints an SVG tick on the right.
+      .is-selected .context-menu-action {
+        padding-left: deprecated.$s-8;
+        background-image: none;
       }
     }
   }
+}
 
-  &.opened {
-    @extend %button-icon-selected;
+.assets-header {
+  display: flex;
+  align-items: center;
+  gap: deprecated.$s-8;
+  padding: deprecated.$s-8 deprecated.$s-12 0 deprecated.$s-12;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-panels);
+  background-color: var(--panel-background-color);
+}
+
+.search-wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: deprecated.$s-4;
+  flex-shrink: 0;
+
+  .icon-button {
+    --button-hover-bg-color: transparent;
   }
+
+  .icon svg {
+    transition: color 0.15s ease;
+  }
+
+  .icon-button:hover svg,
+  .icon-button:focus-visible svg {
+    color: var(--color-accent-primary);
+  }
+}
+
+// The "manage libraries" button stays in the DOM (so it remains reachable from
+// tests) but is not rendered: the search box and the filter button are the only
+// controls meant to show in the header row.
+.manage-library-btn {
+  display: none;
 }
 
 .sections-container {
@@ -132,13 +131,4 @@
 
 .section-btn {
   @include deprecated.button-style;
-}
-
-.assets-header {
-  padding: 0 0 deprecated.$s-24 deprecated.$s-12;
-}
-
-.search-wrapper {
-  display: flex;
-  gap: deprecated.$s-4;
 }

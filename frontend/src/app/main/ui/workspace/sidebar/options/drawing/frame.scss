@@ -18,7 +18,12 @@
   @extend %asset-element;
 
   position: relative;
-  grid-column: span 6;
+  grid-column: span 8;
+
+  &.with-orientation {
+    grid-column: span 6;
+  }
+
   display: flex;
   height: deprecated.$s-32;
   padding: deprecated.$s-8;

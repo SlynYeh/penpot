@@ -31,14 +31,17 @@
     "lint": "clj-kondo --parallel --lint src/",
     "test": "node --test",
     "watch:test": "node --test --watch",
-    "watch": "pnpm run clear:shadow-cache && clojure -M:dev:shadow-cljs watch library"
+    "watch": "pnpm run clear:shadow-cache && clojure -M:dev:shadow-cljs watch library",
+    "generate:iconpark": "node playground/generate-iconpark.mjs"
   },
   "devDependencies": {
+    "@icon-park/svg": "^1.4.2",
     "@types/node": "^26.0.1",
     "@zip.js/zip.js": "2.8.26",
     "concurrently": "^10.0.3",
     "date-fns": "^4.4.0",
     "nodemon": "^3.1.14",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "svgpath": "^2.6.0"
   }
 }

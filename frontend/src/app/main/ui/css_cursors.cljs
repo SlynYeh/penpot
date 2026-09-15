@@ -43,6 +43,7 @@
     (init-static-cursor-style style "duplicate" cur/duplicate)
     (init-static-cursor-style style "hand" cur/hand)
     (init-static-cursor-style style "move-pointer" cur/move-pointer)
+    (init-static-cursor-style style "none" "none")
     (init-static-cursor-style style "pen" cur/pen)
     (init-static-cursor-style style "pen-node" cur/pen-node)
     (init-static-cursor-style style "pencil" cur/pencil)

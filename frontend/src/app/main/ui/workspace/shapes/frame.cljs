@@ -97,10 +97,10 @@
 
 (defn check-thumbnail-size
   [image-node bounds file-id page-id frame-id]
-  (let [href   (dom/get-attribute image-node "href")
-        width  (dm/get-prop bounds :width)
-        height (dm/get-prop bounds :height)
-        [fixed-width fixed-height] (th/get-relative-size width height)]
+  (let [href                       (dom/get-attribute image-node "href")
+        width                      (dm/get-prop bounds :width)
+        height                     (dm/get-prop bounds :height)
+        [fixed-width fixed-height] (th/get-frame-raster-size width height)]
     ;; Even if looks like we're doing a new request the browser caches the image
     ;; so really we don't. We need a different API to check the sizes
     (-> (image-size href)
@@ -148,17 +148,21 @@
             hidden?        (true? (:hidden shape))
             content-visible? (or (not ^boolean thumbnail?) (not ^boolean thumbnail-uri))
 
-            tries-ref      (mf/use-ref 0)
-            imposter-ref   (mf/use-ref nil)
+            tries-ref        (mf/use-ref 0)
+            imposter-ref     (mf/use-ref nil)
             imposter-loaded  (mf/use-state false)
-            task-ref       (mf/use-ref nil)
+            task-ref         (mf/use-ref nil)
+            size-checked-ref (mf/use-ref false)
 
-            on-load        (mf/use-fn (fn []
-                                        ;; We need to check if this is the culprit of the thumbnail regeneration.
-                                        ;; (check-thumbnail-size (mf/ref-val imposter-ref) bounds file-id page-id frame-id)
-                                        (mf/set-ref-val! tries-ref 0)
-                                        (reset! imposter-loaded true)))
-            on-error       (mf/use-fn
+            on-load          (mf/use-fn (fn []
+                                          ;; One-shot: upgrade stale 1x thumbs without re-entering
+                                          ;; the regeneration loop that used to fire on every load.
+                                          (when-not (mf/ref-val size-checked-ref)
+                                            (mf/set-ref-val! size-checked-ref true)
+                                            (check-thumbnail-size (mf/ref-val imposter-ref) bounds file-id page-id frame-id))
+                                          (mf/set-ref-val! tries-ref 0)
+                                          (reset! imposter-loaded true)))
+            on-error         (mf/use-fn
                             (fn []
                               (let [current-tries (mf/ref-val tries-ref)
                                     new-tries     (mf/set-ref-val! tries-ref (inc current-tries))
@@ -176,6 +180,16 @@
           (when-not (some? thumbnail-uri)
             (tm/schedule-on-idle
              #(st/emit! (dwt/update-thumbnail file-id page-id frame-id "frame" "root-frame"))))
+
+          ;; Cached SVG images often skip on-load; check once after mount
+          ;; so stale 1x thumbs still upgrade to the 2x raster size.
+          (when (some? thumbnail-uri)
+            (tm/schedule-on-idle
+             (fn []
+               (when-not (mf/ref-val size-checked-ref)
+                 (when-let [node (mf/ref-val imposter-ref)]
+                   (mf/set-ref-val! size-checked-ref true)
+                   (check-thumbnail-size node bounds file-id page-id frame-id))))))
 
           #(when-let [task (mf/ref-val task-ref)]
              (d/close! task)))

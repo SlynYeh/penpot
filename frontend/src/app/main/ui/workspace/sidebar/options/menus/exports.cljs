@@ -188,19 +188,19 @@
              (when esc?
                (dom/blur! (dom/get-target event))))))
 
-        size-options [{:value "0.5" :label "0.5x"}
-                      {:value "0.75" :label "0.75x"}
-                      {:value "1" :label "1x"}
-                      {:value "1.5" :label "1.5x"}
-                      {:value "2" :label "2x"}
-                      {:value "4" :label "4x"}
-                      {:value "6" :label "6x"}]
+        size-options [{:value "0.5" :label (tr "workspace.options.export.scale" "0.5")}
+                      {:value "0.75" :label (tr "workspace.options.export.scale" "0.75")}
+                      {:value "1" :label (tr "workspace.options.export.scale" "1")}
+                      {:value "1.5" :label (tr "workspace.options.export.scale" "1.5")}
+                      {:value "2" :label (tr "workspace.options.export.scale" "2")}
+                      {:value "4" :label (tr "workspace.options.export.scale" "4")}
+                      {:value "6" :label (tr "workspace.options.export.scale" "6")}]
 
-        format-options [{:value "png" :label "PNG"}
-                        {:value "jpeg" :label "JPG"}
-                        {:value "webp" :label "WEBP"}
-                        {:value "svg" :label "SVG"}
-                        {:value "pdf" :label "PDF"}]]
+        format-options [{:value "png" :label (tr "workspace.options.export.format.png")}
+                        {:value "jpeg" :label (tr "workspace.options.export.format.jpg")}
+                        {:value "webp" :label (tr "workspace.options.export.format.webp")}
+                        {:value "svg" :label (tr "workspace.options.export.format.svg")}
+                        {:value "pdf" :label (tr "workspace.options.export.format.pdf")}]]
 
     [:div {:class (stl/css :element-set)}
      [:div {:class (stl/css :element-title)}

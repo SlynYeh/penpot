@@ -29,6 +29,7 @@
    [app.util.dom :as dom]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
+   [app.util.shape-name :as usn]
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
 
@@ -120,6 +121,7 @@
         [:input {:type "text"
                  :class (stl/css :prototype-pill-input)
                  :ref ref
+                 :key title
                  :default-value title
                  :on-focus handle-focus
                  :on-key-down handle-key-down
@@ -145,19 +147,26 @@
          #(st/emit! (dcm/go-to-viewer {:section "interactions"
                                        :frame-id (:starting-frame flow)})))
 
+        stored-name  (:name flow "")
+        display-name (usn/localized-flow-name stored-name)
+
         rename-flow
         (mf/use-fn
-         (mf/deps flow)
+         (mf/deps flow stored-name display-name)
          (fn [value]
            (when-not (str/empty? value)
-             (st/emit! (dwi/rename-flow (:id flow) value)))))
+             (st/emit! (dwi/rename-flow (:id flow)
+                                        (if (or (= value stored-name)
+                                                (= value display-name))
+                                          stored-name
+                                          value))))))
 
         remove-flow
         (mf/use-fn
          (mf/deps flow)
          #(st/emit! (dwi/remove-flow (:id flow))))]
 
-    [:> prototype-pill* {:title (:name flow "")
+    [:> prototype-pill* {:title display-name
                          :is-editable true
                          :on-change rename-flow
                          :left-button-icon-id i/play
@@ -592,9 +601,11 @@
                                   :on-change change-way
                                   :name "animation-way"}
                 [:& radio-button {:value "in"
-                                  :id "animation-way-in"}]
+                                  :id "animation-way-in"
+                                  :title (tr "workspace.options.interaction-animation-way-in")}]
                 [:& radio-button {:id "animation-way-out"
-                                  :value "out"}]]]])
+                                  :value "out"
+                                  :title (tr "workspace.options.interaction-animation-way-out")}]]]])
 
            ;; Direction
            (when (ctsi/has-direction? interaction)

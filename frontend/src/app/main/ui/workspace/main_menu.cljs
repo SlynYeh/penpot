@@ -35,8 +35,6 @@
    [app.main.ui.context :as ctx]
    [app.main.ui.dashboard.subscription :refer [get-subscription-type
                                                main-menu-power-up*]]
-   [app.main.ui.ds.buttons.icon-button :refer [icon-button*]]
-   [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.hooks.resize :as r]
    [app.main.ui.icons :as deprecated-icon]
    [app.plugins.register :as preg]
@@ -785,10 +783,12 @@
 
 
     [:*
-     [:> icon-button* {:variant "ghost"
-                       :aria-label (tr "shortcut-subsection.main-menu")
-                       :on-click open-menu
-                       :icon i/menu}]
+     [:button {:class (stl/css :menu-trigger)
+               :type "button"
+               :title (tr "shortcut-subsection.main-menu")
+               :aria-label (tr "shortcut-subsection.main-menu")
+               :on-click open-menu}
+      deprecated-icon/menu-lines]
 
      [:> dropdown-menu* {:show show-menu?
                          :id "workspace-menu"

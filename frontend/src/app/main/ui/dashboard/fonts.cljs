@@ -25,6 +25,7 @@
    [app.main.ui.icons :as deprecated-icon]
    [app.main.ui.notifications.context-notification :refer [context-notification]]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.http :as http]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
@@ -76,9 +77,10 @@
 (mf/defc font-variant-display-name*
   {::mf/private true}
   [{:keys [variant]}]
-  [:span (cm/font-display-variant (:variant-name variant)
-                                  (:font-weight variant)
-                                  (:font-style variant))])
+  [:span (font-style/localized-font-style
+          (cm/font-display-variant (:variant-name variant)
+                                   (:font-weight variant)
+                                   (:font-style variant)))])
 
 (mf/defc uploaded-fonts*
   {::mf/private true}

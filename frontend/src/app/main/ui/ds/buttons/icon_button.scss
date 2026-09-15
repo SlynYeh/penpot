@@ -16,6 +16,10 @@
 
   display: grid;
   place-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .icon-button-primary {

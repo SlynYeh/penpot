@@ -116,6 +116,11 @@ services:
       # PENPOT_HELP_CENTER_URI: "https://help.example.com"
       # PENPOT_LEARNING_CENTER_URI: "https://learn.example.com"
       # PENPOT_HUB_URI: "https://hub.example.com"
+      # Table main components (fork feature) that enable the insert/delete
+      # row & column entries on the workspace context menu. Comma separated
+      # component UUIDs (case insensitive). When set, it replaces the
+      # default from js/config.js. Set to "none" to disable the menu.
+      PENPOT_TABLE_COMPONENT_IDS: "5140cbc1-cb3a-803f-8008-8977ae7bee03"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

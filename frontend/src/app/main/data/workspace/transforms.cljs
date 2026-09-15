@@ -32,6 +32,7 @@
    [app.main.data.event :as ev]
    [app.main.data.helpers :as dsh]
    [app.main.data.workspace.collapse :as dwc]
+   [app.main.data.workspace.icons :as dwi]
    [app.main.data.workspace.modifiers :as dwm]
    [app.main.data.workspace.selection :as dws]
    [app.main.data.workspace.shapes :as dwsh]
@@ -43,7 +44,6 @@
    [app.render-wasm.api :as wasm.api]
    [app.util.array :as array]
    [app.util.dom :as dom]
-   [app.util.keyboard :as kbd]
    [app.util.mouse :as mse]
    [beicon.v2.core :as rx]
    [potok.v2.core :as ptk]))
@@ -139,7 +139,7 @@
   (ptk/reify ::finish-transform
     ptk/UpdateEvent
     (update [_ state]
-      (update state :workspace-local dissoc :transform :duplicate-move-started?))
+      (update state :workspace-local dissoc :transform :duplicate-move-started? :keyboard-nudge?))
 
     ptk/EffectEvent
     (effect [_ _ _]
@@ -281,12 +281,15 @@
           (rx/empty)
           (let [initial-position @ms/mouse-position
 
-                stopper (mse/drag-stopper stream)
-                layout  (:workspace-layout state)
-                page-id (:current-page-id state)
-                focus   (:workspace-focus-selected state)
-                zoom    (dm/get-in state [:workspace-local :zoom] 1)
-                objects (dsh/lookup-page-objects state page-id)
+                stopper   (mse/drag-stopper stream)
+                libraries (dsh/lookup-libraries state)
+                layout    (cond-> (:workspace-layout state)
+                            (dwi/iconpark-instance-root? shape libraries)
+                            (conj :scale-text))
+                page-id   (:current-page-id state)
+                focus     (:workspace-focus-selected state)
+                zoom      (dm/get-in state [:workspace-local :zoom] 1)
+                objects   (dsh/lookup-page-objects state page-id)
                 shape-ids (filterv (comp not :blocked (d/getf objects)) ids)]
 
             (if (empty? shape-ids)
@@ -329,21 +332,35 @@
                                (dwm/create-modif-tree shape-ids %)
                                :ignore-constraints (contains? layout :scale-text)))))
 
-                      (let [emit-modifiers
+                      (let [skip-solve? (gm/skip-live-solve? shape-ids objects
+                                                             mconst/preview-solve-max-affected-nodes)
+
+                            emit-preview
+                            (fn [modifiers]
+                              (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
+                                (rx/of (if skip-solve?
+                                         (dwm/set-preview-modifiers modif-tree)
+                                         ;; Pure-plain affected tree: cheap linear solve, children
+                                         ;; follow live via constraints (upstream behavior pre-fork).
+                                         (dwm/set-modifiers modif-tree (contains? layout :scale-text))))))
+
+                            emit-final
                             (fn [modifiers]
                               (let [modif-tree (dwm/create-modif-tree shape-ids modifiers)]
                                 (rx/of (dwm/set-modifiers modif-tree (contains? layout :scale-text)))))]
-                        ;; Throttle the live preview to limit re-renders; the trailing
-                        ;; rx/last applies the exact final frame.
+                        ;; Layout-affected or oversized trees freeze the preview
+                        ;; (smooth drag); pure-plain trees solve live. The trailing
+                        ;; rx/last + apply-modifiers run the exact full solve so the
+                        ;; committed result is unchanged either way.
                         (rx/merge
                          (->> resize-events-stream
                               (rx/sample mconst/resize-sample-time)
-                              (rx/mapcat emit-modifiers)
+                              (rx/mapcat emit-preview)
                               (rx/take-until stopper))
                          (->> resize-events-stream
                               (rx/take-until stopper)
                               (rx/last)
-                              (rx/mapcat emit-modifiers)))))]
+                              (rx/mapcat emit-final)))))]
 
                 (rx/concat
                  ;; This initial stream waits for some pixels to be move before making the resize
@@ -405,20 +422,30 @@
              objects
              (dwsh/lookup-changed-objects state page-id)
 
+             libraries
+             (dsh/lookup-libraries state)
+
              get-modifier
              (fn [shape]
                (let [modifiers (ctm/change-dimensions-modifiers shape attr value)]
-                 ;; For text shapes, also update grow-type based on the resize
-                 (if (cfh/text-shape? shape)
+                 (cond
+                   (cfh/text-shape? shape)
                    (let [{sr-width :width sr-height :height} (:selrect shape)
-                         new-width (if (= attr :width) value sr-width)
+                         new-width  (if (= attr :width) value sr-width)
                          new-height (if (= attr :height) value sr-height)
-                         scalev (gpt/point (/ new-width sr-width) (/ new-height sr-height))
+                         scalev     (gpt/point (/ new-width sr-width) (/ new-height sr-height))
                          current-grow-type (dm/get-prop shape :grow-type)
-                         new-grow-type (dwm/next-grow-type current-grow-type scalev)]
+                         new-grow-type     (dwm/next-grow-type current-grow-type scalev)]
                      (cond-> modifiers
                        (not= new-grow-type current-grow-type)
                        (ctm/change-property :grow-type new-grow-type)))
+
+                   (dwi/iconpark-instance-root? shape libraries)
+                   (let [{sr-width :width sr-height :height} (:selrect shape)
+                         native (if (= attr :width) sr-width sr-height)]
+                     (ctm/scale-content modifiers (dwi/icon-stroke-scale native value)))
+
+                   :else
                    modifiers)))
 
              modif-tree (dwm/build-modif-tree ids objects get-modifier)]
@@ -535,20 +562,33 @@
 
            (rx/of (finish-transform)))
 
-          (let [emit-modifiers
+          (let [objects     (dsh/lookup-page-objects state)
+                skip-solve? (gm/skip-live-solve? (mapv :id shapes) objects
+                                                 mconst/preview-solve-max-affected-nodes)
+
+                emit-preview
+                (fn [angle]
+                  (if skip-solve?
+                    (dwm/set-preview-modifiers (rotation-modifiers angle shapes group-center))
+                    ;; Pure-plain affected tree: full rotation solve per frame.
+                    (dwm/set-rotation-modifiers angle shapes group-center)))
+
+                emit-final
                 (fn [angle] (dwm/set-rotation-modifiers angle shapes group-center))]
-            ;; Throttle the live preview to limit re-renders; the trailing
-            ;; rx/last applies the exact final frame.
+            ;; Layout-affected or oversized trees freeze the preview
+            ;; (smooth drag); pure-plain trees solve live. The trailing
+            ;; rx/last + apply-modifiers run the exact full solve so the
+            ;; committed result is unchanged either way.
             (rx/concat
              (rx/merge
               (->> angle-stream
                    (rx/sample mconst/rotation-sample-time)
-                   (rx/map emit-modifiers)
+                   (rx/map emit-preview)
                    (rx/take-until stopper))
               (->> angle-stream
                    (rx/take-until stopper)
                    (rx/last)
-                   (rx/map emit-modifiers)))
+                   (rx/map emit-final)))
              (rx/of (dwm/apply-modifiers)
                     (finish-transform)))))))))
 
@@ -784,10 +824,16 @@
                                  [(assoc move-vector :x 0) :x]
 
                                  :else
-                                 [move-vector nil])]
-                           [(-> (dwm/create-modif-tree ids (ctm/move-modifiers move-vector))
-                                (dwm/build-change-frame-modifiers objects selected target-frame drop-index cell-data))
-                            snap-ignore-axis])))
+                                 [move-vector nil])
+                               ;; Preview uses a PURE-MOVE modif-tree so the frame
+                               ;; content follows the cursor via dynamic_modifiers
+                               ;; WITHOUT triggering the reparent/drop mirror (which
+                               ;; would jump the content to the drop cell while over
+                               ;; a container). The reparent (change-frame) is applied
+                               ;; only on commit (commit-modif-tree, rx/last below).
+                               preview-modif-tree (dwm/create-modif-tree ids (ctm/move-modifiers move-vector))
+                               commit-modif-tree  (dwm/build-change-frame-modifiers preview-modif-tree objects selected target-frame drop-index cell-data)]
+                           [preview-modif-tree commit-modif-tree snap-ignore-axis])))
                       (rx/share))]
 
              (if (features/active-feature? state "render-wasm/v1")
@@ -805,7 +851,7 @@
                        ;; this tends to avoid perceptible "jumps" while still capping WASM work.
                        (rx/sample mconst/move-sample-time)
                        (rx/map
-                        (fn [[modifiers snap-ignore-axis]]
+                        (fn [[_preview modifiers snap-ignore-axis]]
                           (dwm/set-wasm-modifiers modifiers
                                                   :snap-ignore-axis snap-ignore-axis
                                                   :subtree-ids-by-id subtree-ids-by-id
@@ -828,7 +874,7 @@
                        (rx/take-until duplicate-stopper)
                        (rx/with-latest-from modifiers-stream)
                        (rx/mapcat
-                        (fn [[[_ target-frame drop-index drop-cell] [modifiers snap-ignore-axis]]]
+                        (fn [[[_ target-frame drop-index drop-cell] [_preview modifiers snap-ignore-axis]]]
                           (let [undo-id (js/Symbol)]
                             (rx/of
                              (dwu/start-undo-transaction undo-id)
@@ -845,8 +891,12 @@
                      ;; Throttle the live preview to limit re-renders.
                      (rx/sample mconst/move-sample-time)
                      (rx/map
-                      (fn [[modifiers snap-ignore-axis]]
-                        (dwm/set-modifiers modifiers false false {:snap-ignore-axis snap-ignore-axis}))))
+                      (fn [[preview-modifiers _commit _snap-ignore-axis]]
+                        ;; Preview uses a PURE-MOVE modif-tree (no reparent) so the
+                        ;; frame content follows the cursor via dynamic_modifiers
+                        ;; without jumping to the drop cell while over a container.
+                        ;; Reparent is applied on commit (rx/last) via commit-modif-tree.
+                        (dwm/set-preview-modifiers preview-modifiers))))
 
                 (->> move-stream
                      (rx/with-latest-from ms/mouse-position-alt)
@@ -859,7 +909,14 @@
                                  (dws/duplicate-selected false true))
                           (rx/empty)))))
 
+                ;; The ghost-outline (layout drop indicator) must move in
+                ;; lockstep with the content. Both are sampled at
+                ;; move-sample-time so the indicator never leads the (now
+                ;; natively-moving, via dynamic_modifiers) frame content --
+                ;; otherwise crossing a layout frame shows the indicator
+                ;; misaligned with the content it overlaps.
                 (->> move-stream
+                     (rx/sample mconst/move-sample-time)
                      (rx/map (comp set-ghost-displacement first)))
 
                 ;; Last event will write the modifiers creating the changes
@@ -867,10 +924,10 @@
                      (rx/last)
                      (rx/with-latest-from modifiers-stream)
                      (rx/mapcat
-                      (fn [[[_ target-frame drop-index drop-cell] [modifiers snap-ignore-axis]]]
+                      (fn [[[_ target-frame drop-index drop-cell] [_preview modifiers snap-ignore-axis]]]
                         (let [undo-id (js/Symbol)]
                           (rx/of (dwu/start-undo-transaction undo-id)
-                                 ;; Apply the exact final modifiers; the preview may drop the last frame.
+                                 ;; Apply the exact final modifiers (incl. reparent); the pure-move preview may drop the last frame.
                                  (dwm/set-modifiers modifiers false false {:snap-ignore-axis snap-ignore-axis})
                                  (dwm/apply-modifiers {:undo-transation? false})
                                  (move-shapes-to-frame ids target-frame drop-index drop-cell)
@@ -974,75 +1031,173 @@
          (ptk/data-event :layout/update {:ids selected})
          (dwu/commit-undo-transaction undo-id))))))
 
-(defn nudge-selected-shapes
-  "Move shapes a fixed increment in one direction, from a keyboard action."
-  [direction shift?]
+(defn accumulate-nudge-delta
+  "Reduce keyboard steps into one displacement. Right/down alternating
+   must be one vector `(n, m)`, not n one-axis commits."
+  [nudge steps]
+  (let [nudge (or nudge {:big 10 :small 1})]
+    (reduce (fn [acc [direction shift?]]
+              (let [scale (if shift?
+                            (gpt/point (or (:big nudge) 10))
+                            (gpt/point (or (:small nudge) 1)))]
+                (gpt/add acc (gpt/multiply (get-displacement direction) scale))))
+            (gpt/point 0 0)
+            steps)))
 
-  (let [same-event (js/Symbol "same-event")]
-    (ptk/reify ::nudge-selected-shapes
-      IDeref
-      (-deref [_] direction)
+(defn enqueue-nudge-pending
+  "Add one keyboard step to the pending displacement."
+  [pending direction shift? nudge]
+  (gpt/add (or pending (gpt/point 0 0))
+           (accumulate-nudge-delta nudge [[direction shift?]])))
 
+(declare flush-nudge)
+(declare close-nudge-undo)
+
+(defn- flush-blocked?
+  [state]
+  (or (::nudge-applying? state)
+      (::nudge-cooldown? state)))
+
+(defn- set-nudge-undo-id
+  [undo-id]
+  (ptk/reify ::set-nudge-undo-id
+    ptk/UpdateEvent
+    (update [_ state]
+      (assoc state ::nudge-undo-id undo-id))))
+
+(defn- clear-nudge-undo-id
+  []
+  (ptk/reify ::clear-nudge-undo-id
+    ptk/UpdateEvent
+    (update [_ state]
+      (dissoc state ::nudge-undo-id))))
+
+(defn- schedule-nudge-undo-close
+  []
+  (ptk/reify ::schedule-nudge-undo-close
+    ptk/WatchEvent
+    (watch [_ _ stream]
+      (->> (rx/timer 250)
+           (rx/take-until (->> stream (rx/filter (ptk/type? ::nudge-selected-shapes))))
+           (rx/map (fn [_] (close-nudge-undo)))))))
+
+(defn- close-nudge-undo
+  []
+  (ptk/reify ::close-nudge-undo
+    ptk/WatchEvent
+    (watch [_ state _]
+      (let [pending (::nudge-pending state)]
+        (cond
+          (or (flush-blocked? state)
+              (and (some? pending) (not (gpt/zero? pending))))
+          (rx/of (schedule-nudge-undo-close))
+
+          (::nudge-undo-id state)
+          (rx/of (dwu/commit-undo-transaction (::nudge-undo-id state))
+                 (clear-nudge-undo-id))
+
+          :else
+          (rx/empty))))))
+
+(defn- end-nudge-cooldown
+  []
+  (ptk/reify ::end-nudge-cooldown
+    ptk/UpdateEvent
+    (update [_ state]
+      (dissoc state ::nudge-cooldown?))
+
+    ptk/WatchEvent
+    (watch [_ _ _]
+      (rx/of (flush-nudge)))))
+
+(defn- nudge-apply-finished
+  []
+  (ptk/reify ::nudge-apply-finished
+    ptk/UpdateEvent
+    (update [_ state]
+      (-> state
+          (dissoc ::nudge-applying?)
+          (assoc ::nudge-cooldown? true)))
+
+    ptk/WatchEvent
+    (watch [_ _ _]
+      (rx/concat
+       (rx/timer mconst/nudge-commit-time)
+       (rx/of (end-nudge-cooldown))))))
+
+(defn- apply-nudge-delta
+  [delta]
+  (ptk/reify ::apply-nudge-delta
+    ptk/WatchEvent
+    (watch [_ state _]
+      (let [selected (dsh/lookup-selected state {:omit-blocked? true})]
+        (if (or (empty? selected) (gpt/zero? delta))
+          (rx/of (nudge-apply-finished))
+          (let [tree  (dwm/create-modif-tree selected (ctm/move-modifiers delta))
+                wasm? (features/active-feature? state "render-wasm/v1")]
+            (if wasm?
+              (rx/of (dwm/apply-wasm-modifiers tree
+                                               :undo-transation? false
+                                               :ignore-snap-pixel true
+                                               :after (nudge-apply-finished)))
+              (rx/concat
+               (rx/of (dwm/apply-modifiers {:modifiers tree
+                                            :undo-transation? false
+                                            :ignore-snap-pixel true}))
+               (rx/of (nudge-apply-finished))))))))))
+
+(defn- flush-nudge
+  []
+  (let [delta (volatile! nil)]
+    (ptk/reify ::flush-nudge
       ptk/UpdateEvent
       (update [_ state]
-        (if (nil? (get state ::current-move-selected))
-          (-> state
-              (assoc-in [:workspace-local :transform] :move)
-              (assoc ::current-move-selected same-event))
-          state))
+        (let [pending (::nudge-pending state)]
+          (if (or (flush-blocked? state)
+                  (nil? pending)
+                  (gpt/zero? pending))
+            (do (vreset! delta nil)
+                state)
+            (do (vreset! delta pending)
+                (-> state
+                    (assoc ::nudge-applying? true)
+                    (dissoc ::nudge-pending))))))
 
       ptk/WatchEvent
-      (watch [_ state stream]
-        (if (= same-event (get state ::current-move-selected))
-          (let [selected (dsh/lookup-selected state {:omit-blocked? true})
-                nudge (get-in state [:profile :props :nudge] {:big 10 :small 1})
-                move-events (->> stream
-                                 (rx/filter (ptk/type? ::nudge-selected-shapes))
-                                 (rx/filter #(= direction (deref %))))
-
-                stopper
-                (->> move-events
-                     ;; We stop when there's been 1s without movement or after 250ms after a key-up
-                     (rx/switch-map #(rx/merge
-                                      (rx/timer 1000)
-                                      (->> stream
-                                           (rx/filter kbd/keyboard-event?)
-                                           (rx/filter kbd/key-up-event?)
-                                           (rx/delay 250))))
-                     (rx/take 1))
-
-                scale (if shift? (gpt/point (or (:big nudge) 10)) (gpt/point (or (:small nudge) 1)))
-                mov-vec (gpt/multiply (get-displacement direction) scale)]
-
-            (if (features/active-feature? state "render-wasm/v1")
-              (let [modif-stream
-                    (->> move-events
-                         (rx/scan #(gpt/add %1 mov-vec) (gpt/point 0 0))
-                         (rx/map #(dwm/create-modif-tree selected (ctm/move-modifiers %)))
-                         (rx/take-until stopper))]
-                (rx/concat
-                 (rx/merge
-                  (->> modif-stream
-                       (rx/map #(dwm/set-wasm-modifiers % {:ignore-snap-pixel true})))
-
-                  (->> modif-stream
-                       (rx/last)
-                       (rx/map #(dwm/apply-wasm-modifiers % {:ignore-snap-pixel true})))
-                  (rx/of (nudge-selected-shapes direction shift?)))
-                 (rx/of (finish-transform))))
-
-              (rx/concat
-               (rx/merge
-                (->> move-events
-                     (rx/scan #(gpt/add %1 mov-vec) (gpt/point 0 0))
-                     (rx/map #(dwm/create-modif-tree selected (ctm/move-modifiers %)))
-                     (rx/map #(dwm/set-modifiers % false true))
-                     (rx/take-until stopper))
-                (rx/of (nudge-selected-shapes direction shift?)))
-
-               (rx/of (dwm/apply-modifiers)
-                      (finish-transform)))))
+      (watch [_ state _]
+        (if-let [d @delta]
+          (let [undo-id (or (::nudge-undo-id state) (js/Symbol))
+                start?  (nil? (::nudge-undo-id state))]
+            (rx/concat
+             (if start?
+               (rx/of (dwu/start-undo-transaction undo-id)
+                      (set-nudge-undo-id undo-id))
+               (rx/empty))
+             (rx/of (apply-nudge-delta d))))
           (rx/empty))))))
+
+(defn nudge-selected-shapes
+  "Move selected shapes by one keyboard step.
+
+  Unlike mouse drag, nudge does not use a live WASM modifier preview.
+  Each step is committed the same way as `update-position`. Keys that
+  arrive while a commit is in flight, or in the short cooldown after
+  it, are coalesced into the next apply. The 250ms timer only groups
+  undo entries."
+  [direction shift?]
+  (ptk/reify ::nudge-selected-shapes
+    IDeref
+    (-deref [_] {:direction direction :shift? shift?})
+
+    ptk/UpdateEvent
+    (update [_ state]
+      (let [nudge (get-in state [:profile :props :nudge] {:big 10 :small 1})]
+        (update state ::nudge-pending enqueue-nudge-pending direction shift? nudge)))
+
+    ptk/WatchEvent
+    (watch [_ _ _]
+      (rx/of (flush-nudge)
+             (schedule-nudge-undo-close)))))
 
 (defn move-selected
   "Move shapes a fixed increment in one direction, from a keyboard action."

@@ -651,6 +651,29 @@ PENPOT_EXPORTER_URI: http://your-penpot-exporter:6061
 
 These variables are used for generate correct nginx.conf file on container startup.
 
+### Table components configuration (fork)
+
+This fork adds an environment variable that controls which table main
+components enable the *insert/delete row and column* entries on the
+workspace context menu:
+
+```bash
+# Frontend
+PENPOT_TABLE_COMPONENT_IDS: "5140cbc1-cb3a-803f-8008-8977ae7bee03"
+```
+
+- `PENPOT_TABLE_COMPONENT_IDS`: comma separated list of component UUIDs.
+  Case insensitive (values are lowercased at container startup). Spaces
+  around the commas are ignored. Example with several components:
+  `"<uuid1>,<uuid2>"`.
+- When unset or empty, the default list baked into `js/config.js` is used.
+- When set, it **replaces** (does not merge with) the default list.
+- The special value `none` disables the context menu entries entirely
+  (empty list).
+
+The value is written to `js/config.js` by the frontend container entrypoint
+at startup, and takes precedence over the defaults defined in the file.
+
 ### Exporter
 
 The exporter uses this variable:

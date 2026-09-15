@@ -326,7 +326,7 @@
        [:div {:class (stl/css :stroke-dash-options)
               :data-testid "stroke.dash-options"}
         [:> numeric-input-wrapper* {:on-change on-dash-change
-                                    :text-icon "DASH"
+                                    :text-icon (tr "workspace.options.stroke-dash.icon")
                                     :min 0
                                     :on-focus on-focus
                                     :on-blur on-blur
@@ -335,7 +335,7 @@
                                     :property (tr "workspace.options.stroke-dash")
                                     :value stroke-dash}]
         [:> numeric-input-wrapper* {:on-change on-gap-change
-                                    :text-icon "GAP"
+                                    :text-icon (tr "workspace.options.stroke-gap.icon")
                                     :min 0
                                     :on-focus on-focus
                                     :on-blur on-blur

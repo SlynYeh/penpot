@@ -177,7 +177,7 @@
          {:class (stl/css :numeric-input)
           :placeholder "--"
           :min 0
-          :text-icon "value"
+          :text-icon (tr "workspace.options.blur.value")
           :on-change handle-change
           :name "blur-value"
           :value (:value value)}]])]))

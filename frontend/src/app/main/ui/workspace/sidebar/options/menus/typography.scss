@@ -275,6 +275,20 @@
   gap: var(--sp-xs);
 }
 
+.spacing-options-fill {
+  display: contents;
+}
+
+.line-height-in-grid {
+  grid-column: span 4;
+  inline-size: 100%;
+}
+
+.letter-spacing-in-grid {
+  grid-column: span 3;
+  inline-size: 100%;
+}
+
 .line-height,
 .letter-spacing {
   @extend %input-element;

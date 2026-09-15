@@ -29,6 +29,7 @@
    [app.util.i18n :refer [tr]]
    [app.util.keyboard :as kbd]
    [app.util.shape-icon :as usi]
+   [app.util.shape-name :as usn]
    [app.util.timers :as ts]
    [beicon.v2.core :as rx]
    [clojure.set :as set]
@@ -71,7 +72,7 @@
            on-tab-press]}]
 
   (let [id                    (:id item)
-        name                  (:name item)
+        name                  (usn/localized-layer-name (:name item))
         blocked?              (:blocked item)
         hidden?               (:hidden item)
         has-shapes?           (-> item :shapes seq boolean)

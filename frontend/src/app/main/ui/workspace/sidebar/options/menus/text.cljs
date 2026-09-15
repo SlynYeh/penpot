@@ -30,7 +30,7 @@
    [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.hooks :as hooks]
    [app.main.ui.workspace.sidebar.options.menus.token-typography-row :refer [token-typography-row*]]
-   [app.main.ui.workspace.sidebar.options.menus.typography :refer [text-options* typography-entry*]]
+   [app.main.ui.workspace.sidebar.options.menus.typography :refer [spacing-options* text-options* text-transform-enabled? typography-entry*]]
    [app.main.ui.workspace.tokens.management.forms.controls.utils :as csu]
    [app.util.dom :as dom]
    [app.util.i18n :as i18n :refer [tr]]
@@ -50,6 +50,31 @@
   "True when the token-typography-row feature flag is enabled.
   Evaluated once at module load time; cf/flags is immutable after startup."
   (contains? cf/flags :token-typography-row))
+
+(def text-direction-enabled?
+  "When false, LTR/RTL controls are omitted from the design-tab text menu."
+  false)
+
+(defn show-local-font-spacing?
+  "Line-height and letter-spacing belong with local font controls, not
+  applied typography styles (排版字样) or typography tokens."
+  [{:keys [token-row-enabled current-token-name typography-id typography]}]
+  (and (not typography)
+       (not= typography-id :multiple)
+       (not (and token-row-enabled current-token-name))))
+
+(defn text-menu-option-layout
+  "Visible text-option groups in the design-tab text menu.
+  `:default` is always shown; `:more` is revealed by the options toggle.
+  Spacing is only included when the local font controls are visible."
+  ([]
+   (text-menu-option-layout {:show-spacing true}))
+  ([{:keys [show-spacing]}]
+   {:default [:text-align :vertical-align]
+    :more (cond-> [:grow :text-decoration]
+            show-spacing (conj :spacing)
+            text-direction-enabled? (conj :text-direction)
+            text-transform-enabled? (conj :text-transform))}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sub-components
@@ -86,6 +111,7 @@
     [:div {:class (stl/css :align-options)}
      [:> radio-buttons* {:selected  (:text-align values)
                          :on-change handle-change
+                         :extended  true
                          :name      "align-text-options"
                          :options   options}]]))
 
@@ -113,6 +139,7 @@
     [:div {:class (stl/css :text-direction-options)}
      [:> radio-buttons* {:selected  direction
                          :on-change handle-change
+                         :extended  true
                          :name      "text-direction-options"
                          :options   options}]]))
 
@@ -144,6 +171,7 @@
     [:div {:class (stl/css :vertical-align-options)}
      [:> radio-buttons* {:selected  vertical-align
                          :on-change handle-change
+                         :extended  true
                          :name      "vertical-align-text-options"
                          :options   options}]]))
 
@@ -192,6 +220,7 @@
     [:div {:class (stl/css :grow-options)}
      [:> radio-buttons* {:selected  (d/name grow-type)
                          :on-change handle-change
+                         :extended  true
                          :name      "grow-text-options"
                          :options   options}]]))
 
@@ -224,6 +253,7 @@
                                          nil
                                          text-decoration)
                          :on-change    handle-change
+                         :extended     true
                          :name         "text-decoration-options"
                          :disabled     (and token-typography-row-enabled? (some? token-applied))
                          :allow-empty  true
@@ -352,7 +382,12 @@
             (get typographies typography-id)))
 
         ;; --- Helpers
-        multiple?       (->> values vals (d/seek #(= % :multiple)))
+        multiple?          (->> values vals (d/seek #(= % :multiple)))
+        show-font-spacing? (show-local-font-spacing?
+                            {:token-row-enabled   token-typography-row-enabled?
+                             :current-token-name  current-token-name
+                             :typography-id       typography-id
+                             :typography          typography})
 
         apply-token!
         (mf/use-fn
@@ -475,11 +510,12 @@
                 (dom/focus! (txu/get-text-editor-content)))))))
 
         common-props (mf/props
-                      {:ids         ids
-                       :values      values
-                       :on-change   on-change
-                       :show-recent true
-                       :on-blur     on-text-blur})]
+                      {:ids          ids
+                       :values       values
+                       :on-change    on-change
+                       :show-recent  true
+                       :show-spacing false
+                       :on-blur      on-text-blur})]
 
     (hooks/use-stream
      expand-stream
@@ -572,17 +608,20 @@
           :else
           [:> text-options* common-props])
 
-        [:div {:class (stl/css :text-align-options)}
+        [:div {:class (stl/css :text-option-grid)}
          [:> text-align-options* common-props]
-         [:> grow-options* common-props]
-         [:> icon-button* {:variant     "ghost"
+         [:> vertical-align* common-props]
+         [:> icon-button* {:class       (stl/css :text-option-menu)
+                           :variant     "ghost"
                            :aria-label  (tr "labels.options")
                            :data-testid "text-align-options-button"
                            :on-click    toggle-more-options
-                           :icon        i/menu}]]
-
-        (when more-options-open?
-          [:div {:class (stl/css :text-decoration-options)}
-           [:> vertical-align* common-props]
-           [:> text-decoration-options* (mf/spread-props common-props {:token-applied current-token-name})]
-           [:> text-direction-options* common-props]])])]))
+                           :icon        i/menu}]
+         (when more-options-open?
+           [:*
+            [:> grow-options* common-props]
+            [:> text-decoration-options* (mf/spread-props common-props {:token-applied current-token-name})]
+            (when text-direction-enabled?
+              [:> text-direction-options* common-props])
+            (when show-font-spacing?
+              [:> spacing-options* (mf/spread-props common-props {:fill true})])])]])]))

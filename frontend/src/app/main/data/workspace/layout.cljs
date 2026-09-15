@@ -37,20 +37,24 @@
 
 (def presets
   {:assets
-   {:del #{:sitemap :layers :document-history}
+   {:del #{:sitemap :layers :document-history :tokens :icons}
     :add #{:assets}}
 
    :document-history
-   {:del #{:assets :layers :sitemap}
+   {:del #{:assets :layers :sitemap :tokens :icons}
     :add #{:document-history}}
 
    :layers
-   {:del #{:document-history :assets}
+   {:del #{:document-history :assets :tokens :icons}
     :add #{:sitemap :layers}}
 
    :tokens
-   {:del #{:sitemap :layers :document-history :assets}
-    :add #{:tokens}}})
+   {:del #{:sitemap :layers :document-history :assets :icons}
+    :add #{:tokens}}
+
+   :icons
+   {:del #{:sitemap :layers :document-history :assets :tokens}
+    :add #{:icons}}})
 
 (def valid-options-mode
   #{:design :prototype :inspect})
@@ -71,6 +75,13 @@
 
 (def default-global
   {:options-mode :design})
+
+(defn keep-sidebar-tab?
+  "Once a left-sidebar tab has been visited, keep it mounted and hide it
+   with CSS instead of remounting on the next switch."
+  [section seen-tabs tab]
+  (or (= section tab)
+      (contains? seen-tabs tab)))
 
 (defn ensure-layout
   [name]

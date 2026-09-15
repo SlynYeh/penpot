@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.6.dev0\n"
 
-#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:180, src/app/main/ui/viewer/login.cljs:100
+#: src/app/main/ui/auth/register.cljs:214, src/app/main/ui/static.cljs:169, src/app/main/ui/viewer/login.cljs:100
 msgid "auth.already-have-account"
 msgstr "Har du allerede en konto?"
 
@@ -49,7 +49,7 @@ msgstr "Glemt adgangskode?"
 msgid "auth.fullname"
 msgstr "Fulde Navn"
 
-#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:183, src/app/main/ui/viewer/login.cljs:103
+#: src/app/main/ui/auth/register.cljs:218, src/app/main/ui/static.cljs:172, src/app/main/ui/viewer/login.cljs:103
 msgid "auth.login-here"
 msgstr "Log på her"
 
@@ -122,11 +122,11 @@ msgstr "Glemt adgangskode?"
 msgid "auth.recovery-submit"
 msgstr "Skift din adgangskode"
 
-#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:166, src/app/main/ui/viewer/login.cljs:89
+#: src/app/main/ui/auth/login.cljs:286, src/app/main/ui/static.cljs:155, src/app/main/ui/viewer/login.cljs:89
 msgid "auth.register"
 msgstr "Ingen konto?"
 
-#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:170, src/app/main/ui/viewer/login.cljs:93
+#: src/app/main/ui/auth/login.cljs:290, src/app/main/ui/auth/register.cljs:186, src/app/main/ui/auth/register.cljs:339, src/app/main/ui/static.cljs:159, src/app/main/ui/viewer/login.cljs:93
 msgid "auth.register-submit"
 msgstr "Opret en konto"
 
@@ -144,7 +144,7 @@ msgstr "Open-source løsningen for design og prototyping."
 msgid "auth.verification-email-sent"
 msgstr "Vi har sendt en bekræftelsesmail til"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:323, src/app/main/ui/workspace/main_menu.cljs:695
+#: src/app/main/ui/dashboard/file_menu.cljs:323
 msgid "dashboard.add-shared"
 msgstr "Tilføj som Delt Bibliotek"
 
@@ -176,7 +176,7 @@ msgstr "Dublikér"
 msgid "dashboard.duplicate-multi"
 msgstr "Dublikér %s filer"
 
-#: src/app/main/ui/dashboard/fonts.cljs:198
+#: src/app/main/ui/dashboard/fonts.cljs:200
 #, markdown
 msgid "dashboard.fonts.hero-text1"
 msgstr ""
@@ -186,7 +186,7 @@ msgstr ""
 "som en **enkelt skrifttypefamilie**. Du kan uploade skrifttyper med "
 "følgende formater: **TTF, OTF og WOFF** (kun én er nødvendig)."
 
-#: src/app/main/ui/dashboard/fonts.cljs:211
+#: src/app/main/ui/dashboard/fonts.cljs:213
 #, markdown
 msgid "dashboard.fonts.hero-text2"
 msgstr ""
@@ -194,11 +194,11 @@ msgstr ""
 "Penpot. Find ud af mere i sektionen om indholdsrettigheder i [Penpot's "
 "Terms of Service] (%s). Du kan også læse om [font licensing](2)."
 
-#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:829
+#: src/app/main/ui/dashboard/team.cljs:137, src/app/main/ui/dashboard/team.cljs:833
 msgid "dashboard.invite-profile"
 msgstr "Invitér til team"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:433
+#: src/app/main/ui/dashboard/sidebar.cljs:570, src/app/main/ui/dashboard/sidebar.cljs:577, src/app/main/ui/dashboard/sidebar.cljs:582, src/app/main/ui/dashboard/team.cljs:436
 msgid "dashboard.leave-team"
 msgstr "Forlad team"
 
@@ -258,7 +258,7 @@ msgstr "Din email-adresse er blevet bekræftet med succes"
 msgid "dashboard.notifications.password-saved"
 msgstr "Adgangskode gemt med succes!"
 
-#: src/app/main/ui/dashboard/team.cljs:1658
+#: src/app/main/ui/dashboard/team.cljs:1662
 msgid "dashboard.num-of-members"
 msgstr "%s medlemmer"
 
@@ -323,7 +323,7 @@ msgstr "Din fil er blevet dublikeret med succes"
 msgid "dashboard.success-duplicate-project"
 msgstr "Dit projekt er blevet dublikeret med succes"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:133, src/app/main/ui/dashboard/grid.cljs:637, src/app/main/ui/dashboard/sidebar.cljs:186
+#: src/app/main/ui/dashboard/file_menu.cljs:133, src/app/main/ui/dashboard/grid.cljs:638, src/app/main/ui/dashboard/sidebar.cljs:186
 msgid "dashboard.success-move-file"
 msgstr "Din fil er blevet flyttet med succes"
 
@@ -335,15 +335,15 @@ msgstr "Dine filer er blevet flyttet med succes"
 msgid "dashboard.success-move-project"
 msgstr "Dit projekt er blevet flyttet med succes"
 
-#: src/app/main/ui/dashboard/team.cljs:1602
+#: src/app/main/ui/dashboard/team.cljs:1606
 msgid "dashboard.team-info"
 msgstr "Team info"
 
-#: src/app/main/ui/dashboard/team.cljs:1647
+#: src/app/main/ui/dashboard/team.cljs:1651
 msgid "dashboard.team-members"
 msgstr "Medlemmer"
 
-#: src/app/main/ui/dashboard/team.cljs:1662
+#: src/app/main/ui/dashboard/team.cljs:1666
 msgid "dashboard.team-projects"
 msgstr "Team projekter"
 
@@ -375,11 +375,11 @@ msgstr "Email"
 msgid "dashboard.your-name"
 msgstr "Dit navn"
 
-#: src/app/main/ui/dashboard/file_menu.cljs:40, src/app/main/ui/dashboard/fonts.cljs:46, src/app/main/ui/dashboard/libraries.cljs:55, src/app/main/ui/dashboard/projects.cljs:352, src/app/main/ui/dashboard/search.cljs:47, src/app/main/ui/dashboard/sidebar.cljs:411, src/app/main/ui/dashboard/team.cljs:616, src/app/main/ui/dashboard/team.cljs:1191, src/app/main/ui/dashboard/team.cljs:1471, src/app/main/ui/dashboard/team.cljs:1577
+#: src/app/main/ui/dashboard/file_menu.cljs:40, src/app/main/ui/dashboard/fonts.cljs:47, src/app/main/ui/dashboard/libraries.cljs:55, src/app/main/ui/dashboard/projects.cljs:352, src/app/main/ui/dashboard/search.cljs:47, src/app/main/ui/dashboard/sidebar.cljs:411, src/app/main/ui/dashboard/team.cljs:619, src/app/main/ui/dashboard/team.cljs:1195, src/app/main/ui/dashboard/team.cljs:1475, src/app/main/ui/dashboard/team.cljs:1581
 msgid "dashboard.your-penpot"
 msgstr "Dit Penpot"
 
-#: src/app/main/ui/comments.cljs:693, src/app/main/ui/confirm.cljs:42, src/app/main/ui/settings/subscription.cljs:303, src/app/main/ui/settings/subscription.cljs:336, src/app/main/ui/settings/subscription.cljs:776, src/app/main/ui/settings/subscription.cljs:823, src/app/main/ui/workspace/plugins.cljs:373, src/app/main/ui/workspace/plugins.cljs:436
+#: src/app/main/ui/comments.cljs:693, src/app/main/ui/confirm.cljs:42, src/app/main/ui/settings/subscription.cljs:303, src/app/main/ui/settings/subscription.cljs:336, src/app/main/ui/settings/subscription.cljs:776, src/app/main/ui/settings/subscription.cljs:823, src/app/main/ui/workspace/plugins.cljs:375, src/app/main/ui/workspace/plugins.cljs:438
 msgid "ds.confirm-cancel"
 msgstr "Fortryd"
 
@@ -391,7 +391,7 @@ msgstr "Ok"
 msgid "ds.confirm-title"
 msgstr "Er du sikker?"
 
-#: src/app/main/data/workspace/clipboard.cljs:541
+#: src/app/main/data/workspace/clipboard.cljs:542
 msgid "errors.clipboard-not-implemented"
 msgstr "Din browser kan ikke gøre denne operation"
 
@@ -399,11 +399,75 @@ msgstr "Din browser kan ikke gøre denne operation"
 msgid "errors.invalid-recovery-token"
 msgstr "Genopretningspoletten er ugyldig."
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:149
+msgid "keymap.important.click-through"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:150
+msgid "keymap.important.click-through.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.important.drag-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:152
+msgid "keymap.important.drag-canvas.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:153
+msgid "keymap.important.draw-frame"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:154
+msgid "keymap.important.draw-frame.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:155
+msgid "keymap.important.draw-text"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:156
+msgid "keymap.important.draw-text.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:157
+msgid "keymap.important.escape"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:158
+msgid "keymap.important.escape.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:159
+msgid "keymap.important.group"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:160
+msgid "keymap.important.group.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:161
+msgid "keymap.important.multi-select"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
+msgid "keymap.important.multi-select.desc"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
+msgid "keymap.important.zoom-canvas"
+msgstr ""
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
+msgid "keymap.important.zoom-canvas.desc"
+msgstr ""
+
 #, unused
 msgid "labels.custom-fonts"
 msgstr "Brugerdefinerede skrifttyper"
 
-#: src/app/main/ui/dashboard/fonts.cljs:472
+#: src/app/main/ui/dashboard/fonts.cljs:474
 msgid "labels.font-family"
 msgstr "Skrifttypefamilie"
 
@@ -411,48 +475,48 @@ msgstr "Skrifttypefamilie"
 msgid "labels.font-providers"
 msgstr "Skrifttype udbydere"
 
-#: src/app/main/ui/dashboard/fonts.cljs:74, src/app/main/ui/dashboard/sidebar.cljs:1078
+#: src/app/main/ui/dashboard/fonts.cljs:75, src/app/main/ui/dashboard/sidebar.cljs:1078
 msgid "labels.fonts"
 msgstr "Skrifttyper"
 
-#: src/app/main/ui/auth/recovery_request.cljs:104, src/app/main/ui/auth/register.cljs:360, src/app/main/ui/static.cljs:197, src/app/main/ui/viewer/login.cljs:113
+#: src/app/main/ui/auth/recovery_request.cljs:104, src/app/main/ui/auth/register.cljs:360, src/app/main/ui/static.cljs:186, src/app/main/ui/viewer/login.cljs:113
 msgid "labels.go-back"
 msgstr "Gå tilbage!"
 
-#: src/app/main/ui/dashboard/fonts.cljs:470
+#: src/app/main/ui/dashboard/fonts.cljs:472
 msgid "labels.installed-fonts"
 msgstr "Installeret skrifttyper"
 
-#: src/app/main/ui/dashboard/fonts.cljs:475
+#: src/app/main/ui/dashboard/fonts.cljs:477
 msgid "labels.search-font"
 msgstr "Søg efter skrifttype"
 
-#: src/app/main/ui/dashboard/fonts.cljs:270
+#: src/app/main/ui/dashboard/fonts.cljs:272
 msgid "labels.upload"
 msgstr "Upload"
 
-#: src/app/main/ui/dashboard/fonts.cljs:197
+#: src/app/main/ui/dashboard/fonts.cljs:199
 msgid "labels.upload-custom-fonts"
 msgstr "Upload brugerdefinerede skrifttyper"
 
-#: src/app/main/ui/dashboard/fonts.cljs:269
+#: src/app/main/ui/dashboard/fonts.cljs:271
 msgid "labels.uploading"
 msgstr "Uploader..."
 
-#: src/app/main/ui/dashboard/fonts.cljs:362
+#: src/app/main/ui/dashboard/fonts.cljs:364
 msgid "modals.delete-font.message"
 msgstr ""
 "Er du sikker på, at du vil slette denne skrifttype? Den vil ikke indlæse, "
 "hvis den bliver brugt i en fil."
 
-#: src/app/main/ui/dashboard/fonts.cljs:361
+#: src/app/main/ui/dashboard/fonts.cljs:363
 msgid "modals.delete-font.title"
 msgstr "Sletter skrifttype"
 
-#: src/app/main/ui/dashboard/fonts.cljs:50
+#: src/app/main/ui/dashboard/fonts.cljs:51
 msgid "title.dashboard.font-providers"
 msgstr "Skrifttype Udbydere - %s - Penpot"
 
-#: src/app/main/ui/dashboard/fonts.cljs:49
+#: src/app/main/ui/dashboard/fonts.cljs:50
 msgid "title.dashboard.fonts"
 msgstr "Skrifttyper - %s - Penpot"

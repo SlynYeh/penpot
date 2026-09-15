@@ -43,7 +43,7 @@
      [:& color-row
       {:color color
        :format format
-       :property "Background"
+       :property (tr "inspect.css-rule.background")
        :on-change-format on-change
        :copy-data (css/get-shape-properties-css objects {:fills [shape]} properties {:format format})}]]))
 
@@ -55,7 +55,7 @@
     [:div {:class (stl/css :attributes-fill-block)}
      [:& color-row
       {:color color
-       :property "Background"
+       :property (tr "inspect.css-rule.background")
        :format (d/nilv (keyword color-space) :hex)
        :copy-data (css/get-shape-properties-css objects {:fills [shape]} properties {:format (keyword color-space)})}]]))
 

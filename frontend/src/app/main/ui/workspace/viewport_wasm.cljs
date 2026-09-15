@@ -16,6 +16,8 @@
    [app.common.types.path :as path]
    [app.common.types.shape :as cts]
    [app.common.types.shape.layout :as ctl]
+   [app.config :as cf]
+   [app.main.data.helpers :as dsh]
    [app.main.data.modal :as modal]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.transforms :as dwt]
@@ -58,6 +60,7 @@
    [app.render-wasm.api :as wasm.api]
    [app.render-wasm.rulers-state :as rs]
    [app.util.debug :as dbg]
+   [app.util.i18n :refer [tr]]
    [app.util.text-editor :as ted]
    [app.util.theme :as theme]
    [app.util.timers :as ts]
@@ -168,7 +171,8 @@
                 vbox
                 vport
                 zoom
-                edition]}
+                edition
+                keyboard-nudge?]}
         (mf/deref refs/workspace-local)
 
         {:keys [options-mode
@@ -341,7 +345,9 @@
         show-gradient-handlers?  (= (count selected) 1)
         show-grids?              (and (contains? layout :display-guides) (not page-transition?))
 
-        show-frame-outline?      (and (= transform :move) (not panning) (not page-transition?))
+        show-frame-outline?      (and (dsh/show-move-frame-outline? transform keyboard-nudge?)
+                                      (not panning)
+                                      (not page-transition?))
         show-outlines?           (and (nil? transform)
                                       (not panning)
                                       (not edition)
@@ -613,7 +619,7 @@
 
     (hooks/setup-dom-events zoom disable-paste-ref in-viewport-ref read-only? drawing-tool path-drawing?)
     (hooks/setup-viewport-size vport viewport-ref)
-    (hooks/setup-cursor cursor alt? mod? space? panning drawing-tool path-drawing? path-editing? z? read-only?)
+    (hooks/setup-cursor cursor alt? mod? space? panning drawing-tool path-drawing? path-editing? z? read-only? picking-color?)
     (hooks/setup-keyboard alt? mod? space? z? shift?)
     (hooks/setup-hover-shapes page-id move-stream base-objects selected mod? hover measure-hover
                               hover-ids hover-top-frame-id @hover-disabled? focus zoom show-measures? read-only? transform)
@@ -654,7 +660,16 @@
 
       (when picking-color?
         [:> pixel-overlay/pixel-overlay-wasm* {:viewport-ref viewport-ref
-                                               :canvas-ref canvas-ref}])]
+                                               :canvas-ref canvas-ref}])
+
+      (when (contains? cf/flags :render-wasm-info)
+        [:div {:class (stl/css :wasm-info-label)
+               :aria-hidden true}
+         [:span (tr (if (dbg/enabled? :wasm-viewbox)
+                      "workspace.canvas.webgl-rendering-debug"
+                      "workspace.canvas.webgl-rendering"))]
+         (when (wasm.api/text-editor-wasm?)
+           [:span (tr "workspace.canvas.text-editor-v3")])])]
 
      [:canvas {:id "render"
                :data-testid "canvas-wasm-shapes"

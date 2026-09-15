@@ -28,6 +28,7 @@
    [app.util.debug :as dbg]
    [app.util.dom :as dom]
    [app.util.keyboard :as kbd]
+   [app.util.shape-name :as usn]
    [app.util.timers :as ts]
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
@@ -162,7 +163,8 @@
         local-ref        (mf/use-ref)
         ref              (d/nilv external-ref local-ref)
 
-        frame-id  (:id frame)
+        frame-id   (:id frame)
+        frame-name (usn/localized-layer-name (:name frame))
 
         start-edit
         (mf/use-fn
@@ -235,7 +237,7 @@
                    :auto-focus true
                    :on-key-down on-key-down
                    :ref ref
-                   :default-value (:name frame)
+                   :default-value frame-name
                    :on-blur accept-edit}]]
          ;; Case when edition? is false
          [:foreignObject {:x text-pos-x
@@ -254,8 +256,8 @@
                  :on-pointer-enter on-pointer-enter
                  :on-pointer-leave on-pointer-leave}
            (if is-show-id
-             (dm/str (:id frame) " - " (:name frame))
-             (:name frame))]])])))
+             (dm/str (:id frame) " - " frame-name)
+             frame-name)]])])))
 
 (mf/defc frame-titles*
   {::mf/wrap [mf/memo]}
@@ -296,7 +298,7 @@
         pos       (gpt/point x (- y (/ 35 zoom)))
 
         frame-id  (:id frame)
-        flow-name (:name flow)
+        flow-name (usn/localized-flow-name (:name flow))
 
         on-pointer-down
         (mf/use-fn

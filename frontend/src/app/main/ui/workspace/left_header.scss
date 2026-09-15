@@ -15,21 +15,6 @@
   width: 100%;
 }
 
-.main-icon {
-  @include deprecated.flex-center;
-
-  width: deprecated.$s-32;
-  height: deprecated.$s-32;
-  min-height: deprecated.$s-32;
-  margin-right: deprecated.$s-4;
-
-  svg {
-    min-height: deprecated.$s-32;
-    width: deprecated.$s-32;
-    fill: var(--icon-foreground-hover);
-  }
-}
-
 .project-tree {
   position: relative;
   flex-grow: 1;

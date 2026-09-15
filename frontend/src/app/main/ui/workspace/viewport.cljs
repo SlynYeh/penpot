@@ -17,6 +17,7 @@
    [app.common.types.shape :as cts]
    [app.common.types.shape-tree :as ctt]
    [app.common.types.shape.layout :as ctl]
+   [app.main.data.helpers :as dsh]
    [app.main.data.workspace.modifiers :as dwm]
    [app.main.data.workspace.variants :as dwv]
    [app.main.features :as features]
@@ -92,7 +93,8 @@
                 vport
                 zoom
                 zoom-inverse
-                edition]}
+                edition
+                keyboard-nudge?]}
         (mf/deref refs/workspace-local)
 
         {:keys [options-mode
@@ -231,7 +233,7 @@
         show-gradient-handlers?  (= (count selected) 1)
         show-grids?              (contains? layout :display-guides)
 
-        show-frame-outline?      (= transform :move)
+        show-frame-outline?      (dsh/show-move-frame-outline? transform keyboard-nudge?)
         show-outlines?           (and (nil? transform)
                                       (not edition)
                                       (not drawing-obj)
@@ -309,7 +311,7 @@
 
     (hooks/setup-dom-events zoom disable-paste-ref in-viewport-ref read-only? drawing-tool path-drawing?)
     (hooks/setup-viewport-size vport viewport-ref)
-    (hooks/setup-cursor cursor alt? mod? space? panning drawing-tool path-drawing? path-editing? z? read-only?)
+    (hooks/setup-cursor cursor alt? mod? space? panning drawing-tool path-drawing? path-editing? z? read-only? picking-color?)
     (hooks/setup-keyboard alt? mod? space? z? shift?)
     (hooks/setup-hover-shapes page-id move-stream base-objects selected mod? hover measure-hover
                               hover-ids hover-top-frame-id @hover-disabled? focus zoom show-measures? read-only? transform)

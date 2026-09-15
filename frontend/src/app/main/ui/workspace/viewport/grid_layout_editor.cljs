@@ -36,6 +36,7 @@
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
    [app.util.object :as obj]
+   [app.util.timers :as tmr]
    [cuerdas.core :as str]
    [rumext.v2 :as mf]))
 
@@ -142,6 +143,14 @@
   (let [dragging-ref    (mf/use-ref false)
         start-pos-ref   (mf/use-ref nil)
         current-pos-ref (mf/use-ref nil)
+        raf-id-ref      (mf/use-ref nil)
+
+        cancel-pending-raf
+        (mf/use-fn
+         (fn []
+           (when-let [id (mf/ref-val raf-id-ref)]
+             (tmr/cancel-af! id)
+             (mf/set-ref-val! raf-id-ref nil))))
 
         handle-pointer-down
         (mf/use-fn
@@ -157,8 +166,13 @@
 
         handle-lost-pointer-capture
         (mf/use-fn
-         (mf/deps on-drag-end)
+         (mf/deps on-drag-end cancel-pending-raf)
          (fn [event]
+           ;; Drop any not-yet-flushed frame so a stale position can never
+           ;; be emitted after drag-end. current-pos-ref always holds the
+           ;; exact latest pointer position (updated synchronously on move),
+           ;; so on-drag-end computes the precise final modifiers.
+           (cancel-pending-raf)
            (let [raw-pt (mf/ref-val current-pos-ref)
                  position (uwvv/point->viewport raw-pt)
                  start (mf/ref-val start-pos-ref)
@@ -170,15 +184,24 @@
 
         handle-pointer-move
         (mf/use-fn
-         (mf/deps on-drag-delta on-drag-position)
+         (mf/deps on-drag-delta on-drag-position cancel-pending-raf)
          (fn [event]
            (when (mf/ref-val dragging-ref)
-             (let [start (mf/ref-val start-pos-ref)
-                   pos   (dom/get-client-position event)
-                   pt (uwvv/point->viewport pos)]
+             (let [pos (dom/get-client-position event)]
+               ;; Keep the latest raw position synchronously — drag-end is exact.
                (mf/set-ref-val! current-pos-ref pos)
-               (when on-drag-delta (on-drag-delta event (gpt/to-vec start pos)))
-               (when on-drag-position (on-drag-position event pt))))))]
+               ;; Coalesce the (potentially expensive) emit into the next
+               ;; animation frame: at most one on-drag-position per rendered
+               ;; frame, regardless of pointermove frequency.
+               (cancel-pending-raf)
+               (mf/set-ref-val! raf-id-ref
+                 (tmr/raf
+                  (fn []
+                    (mf/set-ref-val! raf-id-ref nil)
+                    (let [start (mf/ref-val start-pos-ref)
+                          p     (mf/ref-val current-pos-ref)]
+                      (when on-drag-delta (on-drag-delta event (gpt/to-vec start p)))
+                      (when on-drag-position (on-drag-position event (uwvv/point->viewport p)))))))))))]
 
     {:handle-pointer-down handle-pointer-down
      :handle-lost-pointer-capture handle-lost-pointer-capture

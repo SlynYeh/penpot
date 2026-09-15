@@ -55,6 +55,22 @@
    [app.common.math :as mth]
    [app.common.types.shape.layout :as ctl]))
 
+;; Per-set-objects-modifiers-call cache for calc-layout-data. Bound to a
+;; fresh atom in app.common.geom.modifiers/set-objects-modifiers; nil
+;; elsewhere (no caching). Keyed by a fingerprint of calc-layout-data's
+;; inputs so that bounds-map evolution between pipeline stages can never
+;; cause a stale hit.
+;;
+;; INVARIANT (load-bearing): `objects` is immutable for the lifetime of the
+;; bound atom — set-objects-modifiers binds it once and only `bounds-map`
+;; evolves between pipeline stages. The fingerprint therefore captures only
+;; bounds-derived inputs; parent/child layout properties (paddings, gaps,
+;; justify/align-content, the parent's own auto-width?/auto-height?) are
+;; intentionally omitted because they are constant within one call. If a
+;; future caller binds *grid-layout-cache* over a scope where `objects`
+;; mutates, the fingerprint must be extended to cover the mutated fields.
+(def ^:dynamic *grid-layout-cache* nil)
+
 ;; Set in app.common.geom.shapes.common-layout
 ;; We do it this way because circular dependencies
 (def -child-min-width nil)
@@ -395,9 +411,9 @@
             min-fr (if (= type :flex) (max min-fr (/ size value)) min-fr)]
         (recur (rest tracks) (double min-fr))))))
 
-(defn calc-layout-data
+(defn- calc-layout-data*
   ([parent transformed-parent-bounds children bounds objects]
-   (calc-layout-data parent transformed-parent-bounds children bounds objects false))
+   (calc-layout-data* parent transformed-parent-bounds children bounds objects false))
 
   ([parent transformed-parent-bounds children bounds objects auto?]
    (let [hv     #(gpo/start-hv transformed-parent-bounds %)
@@ -594,6 +610,59 @@
       :column-total-gap column-total-gap
       :row-total-size row-total-size
       :row-total-gap row-total-gap})))
+
+(defn calc-layout-data
+  ([parent transformed-parent-bounds children bounds objects]
+   (calc-layout-data parent transformed-parent-bounds children bounds objects false))
+
+  ([parent transformed-parent-bounds children bounds objects auto?]
+   (if-not *grid-layout-cache*
+     (calc-layout-data* parent transformed-parent-bounds children bounds objects auto?)
+
+     (let [fingerprint
+           [(:id parent)
+            auto?
+            (hash (:layout-grid-columns parent))
+            (hash (:layout-grid-rows parent))
+            (hash (:layout-grid-cells parent))
+            (hash transformed-parent-bounds)
+            ;; children = seq of [bounds-value child]; first element is an
+            ;; already-realized value at both call sites (NOT a delay).
+            (hash (mapv (fn [[child-bounds child]]
+                          [(hash child-bounds) (:id child)])
+                        children))
+            ;; For fill-width children that are themselves layout frames,
+            ;; `child-min-*` (strict) recurses into the child's own children
+            ;; via `@(get bounds <grandchild-id>)` (see min_size_layout.cljc
+            ;; flex/grid strict branches). A frame's own points -- already
+            ;; hashed just above -- do NOT fold in descendant content, so
+            ;; without this element a grandchild resize between pipeline
+            ;; stages would collide with a stored entry and return a stale
+            ;; result. We hash only the grandchild ids + their realized bounds
+            ;; (far cheaper than realizing the whole bounds map), and only for
+            ;; the rare fill-width layout-frame child.
+            (hash
+             (mapv
+              (fn [[_child-bounds child]]
+                (when (and (ctl/fill-width? child)
+                           (or (ctl/flex-layout? child)
+                               (ctl/grid-layout? child)))
+                  (let [gc-ids (get-in objects [(:id child) :shapes])]
+                    [(hash gc-ids)
+                     (hash (mapv
+                            (fn [gid]
+                              ;; Bounds values are delays at every real call
+                              ;; site; guard anyway so a realized (non-delay)
+                              ;; map or a stale ghost id can never throw here.
+                              (when-let [b (get bounds gid)]
+                                (hash (if (delay? b) (deref b) b))))
+                            gc-ids))])))
+              children))]]
+       (if-let [hit (find @*grid-layout-cache* fingerprint)]
+         (val hit)
+         (let [result (calc-layout-data* parent transformed-parent-bounds children bounds objects auto?)]
+           (swap! *grid-layout-cache* assoc fingerprint result)
+           result))))))
 
 (defn get-cell-data
   [{:keys [origin row-tracks column-tracks shape-cells]} _transformed-parent-bounds [_ child]]

@@ -21,10 +21,13 @@
    [app.util.storage :as storage]
    [cuerdas.core :as str]
    [goog.events :as events]
+   [potok.v2.core :as ptk]
    [rumext.v2 :as mf])
   (:import goog.events.EventType))
 
 (def storage-key ::beginner-guide-viewed)
+(def help-hint-storage-key ::beginner-guide-help-hint-seen)
+(def help-hint-state-key :workspace-help-hint)
 
 (defn viewed?
   []
@@ -33,6 +36,34 @@
 (defn mark-viewed!
   []
   (swap! storage/global assoc storage-key true))
+
+(defn help-hint-seen?
+  []
+  (true? (get storage/global help-hint-storage-key)))
+
+(defn mark-help-hint-seen!
+  []
+  (swap! storage/global assoc help-hint-storage-key true))
+
+(defn should-reveal-help-hint?
+  "True only for the first close of the beginner-guide modal."
+  [already-viewed hint-seen]
+  (and (not already-viewed)
+       (not hint-seen)))
+
+(defn reveal-help-hint
+  []
+  (ptk/reify ::reveal-help-hint
+    ptk/UpdateEvent
+    (update [_ state]
+      (assoc state help-hint-state-key true))))
+
+(defn dismiss-help-hint
+  []
+  (ptk/reify ::dismiss-help-hint
+    ptk/UpdateEvent
+    (update [_ state]
+      (dissoc state help-hint-state-key))))
 
 (defn last-item?
   [index total]
@@ -82,15 +113,22 @@
 
 (defn- dismiss!
   []
-  (mark-viewed!)
-  (st/emit! (modal/hide)))
+  (let [reveal? (should-reveal-help-hint? (viewed?) (help-hint-seen?))]
+    (mark-viewed!)
+    (st/emit! (modal/hide))
+    (when reveal?
+      (st/async-emit! (reveal-help-hint)))))
+
+(defn show!
+  []
+  (st/emit! (modal/show {:type :beginner-guide})
+            (modal/update {:allow-click-outside true})))
 
 (defn maybe-show!
   []
   (when (and (not (viewed?))
              (not= :beginner-guide (:type (get @st/state ::modal/modal))))
-    (st/emit! (modal/show {:type :beginner-guide})
-              (modal/update {:allow-click-outside true}))))
+    (show!)))
 
 (mf/defc guide-card*
   {::mf/private true}

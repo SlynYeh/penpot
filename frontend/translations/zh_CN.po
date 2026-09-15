@@ -5647,6 +5647,13 @@ msgstr "知道了"
 msgid "workspace.header.help.guide.title"
 msgstr "帮助中心"
 
+msgid "workspace.header.help.hint.body"
+msgstr "在这里再次查看引导视频，获取快捷键指南和常见问题解答"
+
+#: src/app/main/ui/workspace/help_center_menu.cljs:30
+msgid "workspace.header.help.option.beginner-guide"
+msgstr "新手引导视频"
+
 #: src/app/main/ui/workspace/help_center_menu.cljs:30
 msgid "workspace.header.help.option.faq"
 msgstr "常见问题"

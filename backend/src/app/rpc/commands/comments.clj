@@ -154,11 +154,21 @@
             :comment-content comment-content
             :comment-url comment-url}))))))
 
+(defn- decode-participants
+  "Decode the participants JSONB value into a collection of profile
+  ids. Returns an empty set when the value can not be decoded to a
+  collection (the participants column is always written as a set)."
+  [v]
+  (let [result (try
+                 (db/decode-transit-jsonb v)
+                 (catch Throwable _ nil))]
+    (if (coll? result) result #{})))
+
 (defn- decode-row
   [{:keys [participants position mentions] :as row}]
   (cond-> row
     (db/pgpoint? position) (assoc :position (db/decode-pgpoint position))
-    (some? participants) (assoc :participants (db/safe-decode-jsonb participants))
+    (some? participants) (assoc :participants (decode-participants participants))
     (db/pgarray? mentions) (assoc :mentions (db/decode-pgarray mentions #{}))))
 
 (def xf-decode-row

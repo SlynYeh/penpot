@@ -122,16 +122,16 @@
                                             ::ev/origin "workspace-help-menu"}))
            (dom/open-new-window cf/learning-center-uri)
            (hide-menu!)))]
-    
+
     (mf/with-effect [hint?]
       (when hint?
         (dismiss-guide!)
         (reset! show-menu* true)))
-    
+
     [:*
-     ;; Wrapper shrink-wraps the trigger so the dropdown (and any other
-     ;; flyout needing left alignment) can anchor to the button's own left
-     ;; edge, which is dynamic (label width varies per locale).
+     ;; Wrapper shrink-wraps the trigger so the dropdown and hint flyout
+     ;; can anchor to the button's own left edge, which is dynamic (label
+     ;; width varies per locale).
      [:div {:class (stl/css :help-wrapper)}
       [:button {:class (stl/css :help-trigger)
                 :type "button"
@@ -141,35 +141,66 @@
        deprecated-icon/help
        [:span {:class (stl/css :trigger-label)} (tr "labels.help-center")]]
 
-      [:> dropdown-menu* {:show show-menu?
-                          :id "workspace-help-center-menu"
-                          :on-close close-menu
-                          :class (stl/css :help-menu)}
-       [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                :on-click    open-shortcuts
-                                :on-key-down (fn [event]
-                                               (when (kbd/enter? event)
-                                                 (open-shortcuts event)))
-                                :id          "help-menu-shortcuts"}
-        [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.shortcuts")]]
+      (when show-menu?
+        [:div {:class (stl/css :help-flyout)}
+         (when hint?
+           [:div {:class (stl/css :hint-popover)
+                  :role "status"
+                  :data-no-close true
+                  :on-click (fn [event]
+                              (dom/stop-propagation event))}
+            [:span {:class (stl/css :hint-arrow)}]
+            [:div {:class (stl/css :hint-body)}
+             (tr "workspace.header.help.hint.body")]
+            [:div {:class (stl/css :hint-footer)}
+             [:button {:class (stl/css :hint-got-it)
+                       :type "button"
+                       :data-no-close true
+                       :on-click acknowledge-hint!}
+              (tr "workspace.header.help.guide.got-it")]]])
 
-       (when cf/help-center-uri
-         [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                  :on-click    open-tutorials
-                                  :on-key-down (fn [event]
-                                                 (when (kbd/enter? event)
-                                                   (open-tutorials event)))
-                                  :id          "help-menu-tutorials"}
-          [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.tutorials")]])
+         [:> dropdown-menu* {:show true
+                             :id "workspace-help-center-menu"
+                             :on-close close-menu
+                             :class (stl/css :help-menu)}
+          [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
+                                   :on-click    open-shortcuts
+                                   :on-key-down (fn [event]
+                                                  (when (kbd/enter? event)
+                                                    (open-shortcuts event)))
+                                   :id          "help-menu-shortcuts"}
+           [:span {:class (stl/css :item-name)}
+            (tr "workspace.header.help.option.shortcuts")]]
 
-       (when cf/learning-center-uri
-         [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                  :on-click    open-faq
-                                  :on-key-down (fn [event]
-                                                 (when (kbd/enter? event)
-                                                   (open-faq event)))
-                                  :id          "help-menu-faq"}
-          [:span {:class (stl/css :item-name)} (tr "workspace.header.help.option.faq")]])]]
+          (when cf/show-beginner-guide
+            [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
+                                     :on-click    open-beginner-guide
+                                     :on-key-down (fn [event]
+                                                    (when (kbd/enter? event)
+                                                      (open-beginner-guide event)))
+                                     :id          "help-menu-beginner-guide"}
+             [:span {:class (stl/css :item-name)}
+              (tr "workspace.header.help.option.beginner-guide")]])
+
+          (when cf/help-center-uri
+            [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
+                                     :on-click    open-tutorials
+                                     :on-key-down (fn [event]
+                                                    (when (kbd/enter? event)
+                                                      (open-tutorials event)))
+                                     :id          "help-menu-tutorials"}
+             [:span {:class (stl/css :item-name)}
+              (tr "workspace.header.help.option.tutorials")]])
+
+          (when cf/learning-center-uri
+            [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
+                                     :on-click    open-faq
+                                     :on-key-down (fn [event]
+                                                    (when (kbd/enter? event)
+                                                      (open-faq event)))
+                                     :id          "help-menu-faq"}
+             [:span {:class (stl/css :item-name)}
+              (tr "workspace.header.help.option.faq")]])]])]
 
      ;; The guide popover stays OUTSIDE .help-wrapper: it is anchored to the
      ;; aside.left-settings-bar (see scss), not to the trigger.
@@ -190,65 +221,4 @@
          [:button {:class (stl/css :guide-got-it)
                    :type "button"
                    :on-click dismiss-guide!}
-          (tr "workspace.header.help.guide.got-it")]]])
-
-     (when show-menu?
-       [:div {:class (stl/css :help-flyout)}
-        (when hint?
-          [:div {:class (stl/css :hint-popover)
-                 :role "status"
-                 :data-no-close true
-                 :on-click (fn [event]
-                             (dom/stop-propagation event))}
-           [:span {:class (stl/css :hint-arrow)}]
-           [:div {:class (stl/css :hint-body)}
-            (tr "workspace.header.help.hint.body")]
-           [:div {:class (stl/css :hint-footer)}
-            [:button {:class (stl/css :hint-got-it)
-                      :type "button"
-                      :data-no-close true
-                      :on-click acknowledge-hint!}
-             (tr "workspace.header.help.guide.got-it")]]])
-
-        [:> dropdown-menu* {:show true
-                            :id "workspace-help-center-menu"
-                            :on-close close-menu
-                            :class (stl/css :help-menu)}
-         [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                  :on-click    open-shortcuts
-                                  :on-key-down (fn [event]
-                                                 (when (kbd/enter? event)
-                                                   (open-shortcuts event)))
-                                  :id          "help-menu-shortcuts"}
-          [:span {:class (stl/css :item-name)}
-           (tr "workspace.header.help.option.shortcuts")]]
-
-         (when cf/show-beginner-guide
-           [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                    :on-click    open-beginner-guide
-                                    :on-key-down (fn [event]
-                                                   (when (kbd/enter? event)
-                                                     (open-beginner-guide event)))
-                                    :id          "help-menu-beginner-guide"}
-            [:span {:class (stl/css :item-name)}
-             (tr "workspace.header.help.option.beginner-guide")]])
-
-         (when cf/help-center-uri
-           [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                    :on-click    open-tutorials
-                                    :on-key-down (fn [event]
-                                                   (when (kbd/enter? event)
-                                                     (open-tutorials event)))
-                                    :id          "help-menu-tutorials"}
-            [:span {:class (stl/css :item-name)}
-             (tr "workspace.header.help.option.tutorials")]])
-
-         (when cf/learning-center-uri
-           [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
-                                    :on-click    open-faq
-                                    :on-key-down (fn [event]
-                                                   (when (kbd/enter? event)
-                                                     (open-faq event)))
-                                    :id          "help-menu-faq"}
-            [:span {:class (stl/css :item-name)}
-             (tr "workspace.header.help.option.faq")]])]])]))
+          (tr "workspace.header.help.guide.got-it")]]])]))

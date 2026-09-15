@@ -9610,6 +9610,10 @@ msgstr "Align middle"
 msgid "workspace.options.text-options.align-top"
 msgstr "Align top"
 
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs
+msgid "workspace.options.text-options.bold"
+msgstr "Bold"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:99
 msgid "workspace.options.text-options.direction-ltr"
 msgstr "LTR"

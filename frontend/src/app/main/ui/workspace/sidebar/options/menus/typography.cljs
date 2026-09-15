@@ -283,6 +283,95 @@
                      :on-click on-select
                      :is-current (= (:id font) (:id selected))}])))
 
+(mf/defc font-variant-control*
+  {::mf/private true}
+  [{:keys [font font-variant-id on-apply-variant on-blur]}]
+  ;; Custom fonts: B toggle + style dropdown; builtin fonts: variant select only.
+  (let [custom-font?   (= :custom (:backend font))
+        mixed?         (or (= font-variant-id :multiple)
+                           (= font-variant-id "mixed"))
+        variants       (:variants font)
+        style-index    (mf/with-memo [variants]
+                         (font-style/custom-style-index variants))
+        current-style  (when-not mixed?
+                         (font-style/variant-id->custom-style variants font-variant-id))
+        bold-selected? (font-style/custom-bold-selected? current-style)
+        toggle-style   (font-style/custom-bold-target-style current-style)
+        can-toggle?    (some? (get style-index toggle-style))
+        bold-label     (tr "workspace.options.text-options.bold")
+
+        builtin-options
+        (mf/with-memo [variants mixed?]
+          (let [basic (->> (or variants [])
+                           (mapv (fn [variant]
+                                   {:value (:id variant)
+                                    :key   (pr-str variant)
+                                    :label (font-style/localized-font-style (:name variant))})))
+                mixed-row {:value ""
+                           :key   :multiple-variants
+                           :label "--"}]
+            (if mixed?
+              (into [mixed-row] basic)
+              basic)))
+
+        custom-options
+        (mf/with-memo [style-index mixed?]
+          (let [basic     (font-style/custom-style-options style-index)
+                mixed-row {:value ""
+                           :key   :multiple-variants
+                           :label "--"}]
+            (if mixed?
+              (into [mixed-row] basic)
+              basic)))
+
+        on-builtin-change
+        (mf/use-fn
+         (mf/deps variants on-apply-variant)
+         (fn [new-variant-id]
+           (on-apply-variant (d/seek #(= new-variant-id (:id %)) variants))))
+
+        on-custom-change
+        (mf/use-fn
+         (mf/deps style-index on-apply-variant)
+         (fn [style]
+           (on-apply-variant (get style-index style))))
+
+        on-bold-click
+        (mf/use-fn
+         (mf/deps style-index toggle-style can-toggle? on-apply-variant)
+         (fn [event]
+           (dom/prevent-default event)
+           (when can-toggle?
+             (on-apply-variant (get style-index toggle-style)))))]
+
+    (if custom-font?
+      [:div {:class (stl/css :font-style-combo)}
+       [:button {:type "button"
+                 :class (stl/css-case :font-bold-toggle true
+                                      :is-selected bold-selected?)
+                 :aria-pressed (boolean bold-selected?)
+                 :aria-label bold-label
+                 :disabled (not can-toggle?)
+                 :on-click on-bold-click}
+        "B"]
+       [:span {:class (stl/css :font-style-divider)
+               :aria-hidden true}]
+       [:& select
+        {:class (stl/css :font-variant-select-combo)
+         :default-value (if mixed? "" (or current-style ""))
+         :options custom-options
+         :on-change on-custom-change
+         :on-blur on-blur}]]
+
+      ;; TODO Add disabled mode
+      [:& select
+       {:class (stl/css :font-variant-select)
+        :default-value (let [value (attr->string font-variant-id)]
+                         (if (= value "mixed") "" value))
+        :options builtin-options
+        :on-change on-builtin-change
+        :on-blur on-blur}])))
+
 (mf/defc font-options*
   [{:keys [values on-change on-blur show-recent]}]
   (let [{:keys [font-id font-size font-variant-id]} values
@@ -338,21 +427,20 @@
            (when-not (str/empty? new-font-size)
              (on-change {:font-size (str new-font-size)}))))
 
-        on-font-variant-change
+        apply-variant
         (mf/use-fn
-         (mf/deps font on-change)
-         (fn [new-variant-id]
-           (let [variant (d/seek #(= new-variant-id (:id %)) (:variants font))]
-             (when-not (nil? variant)
-               (on-change {:font-id (:id font)
-                           :font-family (:family font)
-                           :font-variant-id new-variant-id
-                           :font-weight (:weight variant)
-                           :font-style (:style variant)}))
-             ;; NOTE: the select component we are using does not fire on-blur event
-             ;; so we need to call on-blur manually
-             (when (some? on-blur)
-               (on-blur)))))]
+         (mf/deps font on-change on-blur)
+         (fn [variant]
+           (when (some? variant)
+             (on-change {:font-id (:id font)
+                         :font-family (:family font)
+                         :font-variant-id (:id variant)
+                         :font-weight (:weight variant)
+                         :font-style (:style variant)}))
+           ;; NOTE: the select component we are using does not fire on-blur event
+           ;; so we need to call on-blur manually
+           (when (some? on-blur)
+             (on-blur))))]
 
     [:*
      [:div {:class (stl/css :font-option)
@@ -364,6 +452,14 @@
         :on-change on-font-family-change}]]
 
      [:div {:class (stl/css :font-modifiers)}
+      [:div {:class (stl/css :font-variant-options)
+             :title (tr "inspect.attributes.typography.font-style")}
+       [:> font-variant-control*
+        {:font font
+         :font-variant-id font-variant-id
+         :on-apply-variant apply-variant
+         :on-blur on-blur}]]
+
       [:div {:class (stl/css :font-size-options)
              :title (tr "inspect.attributes.typography.font-size")}
        (let [size-options [8 9 10 11 12 14 16 18 24 36 48 72]
@@ -379,30 +475,6 @@
            :min 3
            :max 1000
            :on-change on-font-size-change
-           :on-blur on-blur}])]
-
-      [:div {:class (stl/css :font-variant-options)
-             :title (tr "inspect.attributes.typography.font-style")}
-       (let [basic-variant-options (->> (:variants font)
-                                        (map (fn [variant]
-                                               {:value (:id variant)
-                                                :key (pr-str variant)
-                                                :label (font-style/localized-font-style (:name variant))})))
-             variant-options (if (or (= font-variant-id :multiple) (= font-variant-id "mixed"))
-                               (conj basic-variant-options
-                                     {:value ""
-                                      :key :multiple-variants
-                                      :label "--"})
-                               basic-variant-options)
-             font-variant-value (attr->string font-variant-id)
-             font-variant-value (if (= font-variant-value "mixed") "" font-variant-value)]
-
-         ;;  TODO Add disabled mode
-         [:& select
-          {:class (stl/css :font-variant-select)
-           :default-value font-variant-value
-           :options variant-options
-           :on-change on-font-variant-change
            :on-blur on-blur}])]]]))
 
 (mf/defc spacing-options*

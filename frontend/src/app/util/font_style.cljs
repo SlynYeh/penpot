@@ -6,6 +6,7 @@
 
 (ns app.util.font-style
   (:require
+   [app.common.data :as d]
    [app.util.i18n :refer [tr]]
    [cuerdas.core :as str]))
 
@@ -143,3 +144,100 @@
         (let [[prefix suffix] match]
           (str prefix (localized-font-style suffix)))
         s))))
+
+(def custom-font-style-labels
+  "Canonical custom-font style dropdown labels, in display order."
+  ["Light" "Regular" "Medium" "SemiBold" "Bold"])
+
+(def ^:private excluded-style
+  ::excluded)
+
+(defn- style-from-blob
+  [blob]
+  (when (and (string? blob) (not (str/blank? blob)))
+    (cond
+      (re-find #"(?:extra|ultra)\s+(?:light|bold|black)" blob) excluded-style
+      (re-find #"\b(?:hairline|thin|black|heavy|solid)\b" blob) excluded-style
+      (re-find #"\b(?:semi|demi)\s+bold\b" blob) "SemiBold"
+      (re-find #"\blight\b" blob) "Light"
+      (re-find #"\bmedium\b" blob) "Medium"
+      (re-find #"\bbold\b" blob) "Bold"
+      (re-find #"\b(?:regular|normal)\b" blob) "Regular"
+      :else nil)))
+
+(defn- style-from-weight
+  [weight]
+  (case (d/parse-integer weight)
+    300 "Light"
+    400 "Regular"
+    500 "Medium"
+    600 "SemiBold"
+    700 "Bold"
+    nil))
+
+(defn variant->custom-style
+  "Map a font variant onto one of Light/Regular/Medium/SemiBold/Bold.
+   Name wins; excluded names such as ExtraBold/Black do not fall through to
+   weight. Weights outside 300–700 are ignored unless the name matches."
+  [variant]
+  (when (map? variant)
+    (let [from-name (style-from-blob (normalize (:name variant)))]
+      (cond
+        (= excluded-style from-name) nil
+        (some? from-name)            from-name
+        :else                        (style-from-weight (:weight variant))))))
+
+(defn- preferred-variant
+  [current candidate]
+  (cond
+    (nil? current)
+    candidate
+
+    (and (not= "normal" (:style current))
+         (= "normal" (:style candidate)))
+    candidate
+
+    :else
+    current))
+
+(defn custom-style-index
+  "Canonical style label → preferred variant. Missing styles are omitted."
+  [variants]
+  (reduce
+   (fn [index variant]
+     (if-let [style (variant->custom-style variant)]
+       (update index style preferred-variant variant)
+       index))
+   {}
+   (or variants [])))
+
+(defn custom-style-options
+  "Select options for the custom-font style dropdown. Only styles that exist
+   on the font are included; Regular is not injected as a default."
+  [style-index]
+  (into []
+        (keep (fn [label]
+                (when (contains? style-index label)
+                  {:value label
+                   :key   label
+                   :label label})))
+        custom-font-style-labels))
+
+(defn variant-id->custom-style
+  [variants variant-id]
+  (when (and (some? variant-id)
+             (not (#{:multiple "mixed"} variant-id)))
+    (some-> (d/seek #(= (:id %) variant-id) variants)
+            variant->custom-style)))
+
+(defn custom-bold-selected?
+  "加粗 is selected when the mapped style is SemiBold or Bold."
+  [style]
+  (contains? #{"SemiBold" "Bold"} style))
+
+(defn custom-bold-target-style
+  "Toggle target: Bold when 加粗 is off, Regular when it is on."
+  [style]
+  (if (custom-bold-selected? style)
+    "Regular"
+    "Bold"))

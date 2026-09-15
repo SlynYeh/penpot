@@ -2927,6 +2927,10 @@ msgstr "The token will expire on %s"
 msgid "integrations.token.will-not-expire"
 msgstr "The token has no expiration date"
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.edit.edit-shape-or-text"
+msgstr "Edit shape or text"
+
 #: src/app/main/ui/workspace/keymap_panel.cljs:149
 msgid "keymap.important.click-through"
 msgstr "Select through"
@@ -2991,6 +2995,14 @@ msgstr "Zoom in / out"
 msgid "keymap.important.zoom-canvas.desc"
 msgstr "Hold Ctrl and scroll to zoom quickly"
 
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.selection.deselect"
+msgstr "Deselect"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.selection.select-child"
+msgstr "Select child"
+
 #: src/app/main/ui/workspace/keymap_panel.cljs:126
 msgid "keymap.tab.arrange"
 msgstr "Arrange"
@@ -3022,6 +3034,10 @@ msgstr "Tools & view"
 #: src/app/main/ui/workspace/keymap_panel.cljs:123
 msgid "keymap.tab.zoom"
 msgstr "Zoom"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:151
+msgid "keymap.text.exit-edit"
+msgstr "Exit text editing"
 
 #: src/app/main/ui/dashboard/comments.cljs:94
 msgid "label.mark-all-as-read"

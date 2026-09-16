@@ -253,7 +253,7 @@
   [{:keys [category entries placement-size theme preview-limit on-view-all]}]
   (let [total      (count entries)
         limit      (or preview-limit dwi/icon-preview-limit)
-        preview    (dwi/preview-icon-entries entries limit)
+        preview    (dwi/preview-icon-entries entries dwi/icon-preview-fill-limit)
         overflows? (dwi/icon-category-overflows? entries limit)
         on-open    (mf/use-fn
                     (mf/deps category on-view-all)

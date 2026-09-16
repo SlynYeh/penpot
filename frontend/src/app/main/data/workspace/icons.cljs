@@ -267,15 +267,21 @@
        vec))
 
 ;; Tile size fills five columns in the default 318px left sidebar
-;; (12px inline padding on each side, 12px column gap). Keep in sync
-;; with `--icon-tile-size` in icons.scss.
+;; (12px inline padding on each side, 12px column gap, plus the thin
+;; scrollbar gutter reserved by `scrollbar-gutter: stable`). The app
+;; rewrites scrollbars to `scrollbar-width: thin` (webkit fallback 12px).
+;; Keep in sync with `--icon-tile-size` in icons.scss.
 (def icon-sidebar-default-width 318)
+(def icon-sidebar-max-width 500)
 (def icon-sidebar-inline-padding 12)
+(def icon-scrollbar-gutter 12)
 (def icon-default-columns 5)
 (def icon-column-gap 12)
 (def icon-preview-rows 3)
 (def icon-content-width-at-default
-  (- icon-sidebar-default-width (* 2 icon-sidebar-inline-padding)))
+  (- icon-sidebar-default-width
+     (* 2 icon-sidebar-inline-padding)
+     icon-scrollbar-gutter))
 (def icon-tile-size
   (/ (- icon-content-width-at-default
         (* (dec icon-default-columns) icon-column-gap))
@@ -326,7 +332,23 @@
     (icon-grid-columns available-width)
     (count-grid-columns template)))
 
+(def icon-max-columns
+  "Most icon columns that fit in the max 500px left sidebar."
+  (icon-grid-columns
+   (- icon-sidebar-max-width
+      (* 2 icon-sidebar-inline-padding)
+      icon-scrollbar-gutter)))
+
+(def icon-preview-fill-limit
+  "Items to mount in each overview grid. CSS max-height clips to three
+   rows, so this must cover three full rows at every column count up to
+   `icon-max-columns`. Using the live column count would leave a short
+   last row while the sidebar is being resized."
+  (* icon-preview-rows icon-max-columns))
+
 (defn preview-limit-for-columns
+  "How many overview icons are visible at `columns` (three rows).
+   Used for the 查看全部 affordance, not for how many tiles to mount."
   [columns]
   (* icon-preview-rows (max 1 (or columns 1))))
 

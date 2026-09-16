@@ -24,10 +24,13 @@
   --icon-meta-fg: #{$blue-teal-700};
   --icons-radius: #{$br-4};
 
-  // Five columns in the default 318px left sidebar: 2 inline paddings + 4
-  // column gaps are 6 × --sp-m. Keep in sync with icon-tile-size in
-  // app.main.data.workspace.icons.
-  --icon-tile-size: calc((#{px2rem(318)} - 6 * var(--sp-m)) / 5);
+  // Five columns in the default 318px left sidebar, including the thin
+  // scrollbar reserved by `.icon-groups { scrollbar-gutter: stable }`.
+  // The app sets `scrollbar-width: thin` globally (`*` in base.scss and
+  // `%new-scrollbar` / `custom-scrollbar`, whose webkit fallback is 12px).
+  // 2 inline paddings + 4 column gaps = 6 × --sp-m. Keep in sync with
+  // icon-tile-size in app.main.data.workspace.icons.
+  --icon-tile-size: calc((#{px2rem(318)} - 6 * var(--sp-m) - #{px2rem(12)}) / 5);
 
   display: flex;
   flex-direction: column;
@@ -271,6 +274,7 @@
   grid-template-columns: repeat(auto-fill, var(--icon-tile-size));
   gap: var(--sp-xs) var(--sp-m);
   justify-content: start;
+  width: 100%;
   max-width: 100%;
 }
 

@@ -33,12 +33,15 @@
 
 .left-header {
   grid-area: header;
+  position: static;
   overflow: visible;
   z-index: deprecated.$z-index-2;
 }
 
 .settings-bar-content {
   grid-area: content;
+  position: static;
+  z-index: deprecated.$z-index-1;
   right: calc(-1 * deprecated.$s-8);
 }
 

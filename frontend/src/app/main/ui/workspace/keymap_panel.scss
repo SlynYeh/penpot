@@ -148,8 +148,7 @@
   height: deprecated.$s-24;
   padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
-  background-color: var(--menu-shortcut-background-color);
-  border: deprecated.$s-1 solid var(--panel-border-color);
+  background-color: #f3f4f6;
   color: var(--color-foreground-primary);
 }
 
@@ -162,8 +161,7 @@
   height: deprecated.$s-24;
   padding: deprecated.$s-2 deprecated.$s-4;
   border-radius: deprecated.$br-4;
-  background-color: var(--menu-shortcut-background-color);
-  border: deprecated.$s-1 solid var(--panel-border-color);
+  background-color: #f3f4f6;
   color: var(--color-foreground-primary);
   white-space: nowrap;
 }
@@ -185,7 +183,7 @@
 
 .keymap-key-group {
   display: flex;
-  gap: deprecated.$s-2; // 镜像 .keymap-keys 的 gap，包裹层不改变间距
+  gap: deprecated.$s-4; // 镜像 .keymap-keys 的 gap，包裹层不改变间距
 }
 
 .keymap-key-sep {

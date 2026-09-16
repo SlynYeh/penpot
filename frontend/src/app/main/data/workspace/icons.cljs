@@ -409,6 +409,15 @@
 (def default-icon-size 24)
 (def icon-size-presets [12 14 16 20 24 32 36 48 100])
 (def icon-glyph-color "#495e74")
+;; Shared IconPark library is authored at 48px / 2px (= 24px / 1px).
+;; Keep in sync with library/playground/generate-iconpark.mjs.
+(def icon-library-size 48)
+(def icon-library-stroke-width 2)
+;; Sidebar preview and dropped instances use 1.5px at 24px.
+(def icon-canvas-stroke-width 1.5)
+(def icon-instance-stroke-scale
+  (/ (/ icon-canvas-stroke-width default-icon-size)
+     (/ icon-library-stroke-width icon-library-size)))
 
 (defn- recolor-paint
   [paint attr color]
@@ -433,6 +442,30 @@
     (seq (:strokes shape))
     (update :strokes (fn [strokes]
                        (mapv #(recolor-paint % :stroke-color color) strokes)))))
+
+(defn icon-stroke-width-at-size
+  "Stroke width that matches the 24px / 1.5px rule at `size`."
+  [size]
+  (* icon-canvas-stroke-width (icon-stroke-scale default-icon-size size)))
+
+(defn apply-icon-canvas-strokes
+  "Set instance strokes to the canvas spec for `size` without editing the library."
+  [shape size]
+  (let [target (icon-stroke-width-at-size (or size default-icon-size))]
+    (if (empty? (:strokes shape))
+      shape
+      (update shape :strokes
+              (fn [strokes]
+                (mapv #(assoc % :stroke-width target) strokes))))))
+
+(defn style-dropped-icon-shape
+  "Recolor a copy and set its strokes to the 24px / 1.5px canvas spec."
+  ([shape color]
+   (style-dropped-icon-shape shape color default-icon-size))
+  ([shape color size]
+   (-> shape
+       (recolor-icon-shape color)
+       (apply-icon-canvas-strokes size))))
 
 (defn format-icon-size
   [n]

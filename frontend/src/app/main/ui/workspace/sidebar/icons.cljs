@@ -81,7 +81,7 @@
               stroke-opacity  (:stroke-opacity paint)
               stroke-width    (if (= stroke "none")
                                 (:stroke-width paint)
-                                1.5)
+                                dwi/icon-canvas-stroke-width)
               stroke-linecap  (:stroke-linecap paint)
               stroke-linejoin (:stroke-linejoin paint)
               x               (or (:x shape) 0)

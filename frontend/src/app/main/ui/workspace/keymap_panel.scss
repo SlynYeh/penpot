@@ -222,7 +222,7 @@
 }
 
 .keymap-important-desc {
-  @include use-typography("body-small"); // 12px/400，正合需求
+  @include use-typography("body-medium"); // 14px/400
 
   color: #495e74; // 需求指定色；硬编码先例：.keymap-column 的 #e8eaee
   white-space: nowrap;

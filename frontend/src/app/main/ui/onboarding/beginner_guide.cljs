@@ -103,14 +103,15 @@
      :title       (tr "workspace.beginner-guide.items.click-through.title")
      :description (tr "workspace.beginner-guide.items.click-through.description")
      :video-url   (get videos "click-through")}
+    {:id          "component-library"
+     :title       (tr "workspace.beginner-guide.items.component-library.title")
+     :description (tr "workspace.beginner-guide.items.component-library.description")
+     :video-url   (get videos "component-library")}
     {:id          "table-shortcuts"
      :title       (tr "workspace.beginner-guide.items.table-shortcuts.title")
      :description (tr "workspace.beginner-guide.items.table-shortcuts.description")
      :video-url   (get videos "table-shortcuts")}
-    {:id          "component-library"
-     :title       (tr "workspace.beginner-guide.items.component-library.title")
-     :description (tr "workspace.beginner-guide.items.component-library.description")
-     :video-url   (get videos "component-library")}]))
+    ]))
 
 (defn- dismiss!
   []

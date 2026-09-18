@@ -170,7 +170,7 @@ msgstr "设计与原型的开源解决方案。"
 msgid "auth.terms-and-privacy-agreement"
 msgstr "我同意 [服务条款](%s) 与 [隐私政策](%s)。"
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:184
 msgid "auth.terms-of-service"
 msgstr "服务协议"
 
@@ -336,7 +336,7 @@ msgstr "（复制）"
 msgid "dashboard.create-new-team"
 msgstr "创建新团队"
 
-#: src/app/main/ui/workspace/main_menu.cljs:626
+#: src/app/main/ui/workspace/main_menu.cljs:624
 msgid "dashboard.create-version-menu"
 msgstr "固定此版本"
 
@@ -479,6 +479,7 @@ msgid "dashboard.export-standard-multi"
 msgstr "下载 %s 标准文件 (.svg + .json)"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:361
+#, unused
 msgid "dashboard.fonts.deleted-placeholder"
 msgstr "字体已删除"
 
@@ -871,7 +872,7 @@ msgstr "通知"
 msgid "dashboard.show-all-files"
 msgstr "显示全部文档"
 
-#: src/app/main/ui/workspace/main_menu.cljs:633
+#: src/app/main/ui/workspace/main_menu.cljs:631
 msgid "dashboard.show-version-history"
 msgstr "版本历史"
 
@@ -1071,7 +1072,7 @@ msgstr "活动集合或主题中无可用变量。"
 msgid "ds.inputs.numeric-input.no-matches"
 msgstr "无匹配项。"
 
-#: src/app/main/ui/ds/controls/numeric_input.cljs:728, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:511, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:176, src/app/main/ui/workspace/tokens/management/forms/controls/combobox.cljs:270
+#: src/app/main/ui/ds/controls/numeric_input.cljs:728, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:547, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:180, src/app/main/ui/workspace/tokens/management/forms/controls/combobox.cljs:270
 msgid "ds.inputs.numeric-input.open-token-list-dropdown"
 msgstr "打开变量列表"
 
@@ -1192,7 +1193,7 @@ msgstr "名称必须包含除空格外的其他字符。"
 msgid "errors.file-feature-mismatch"
 msgstr "看起来当前启用的功能，与正在打开的文件所依赖的功能不匹配。在打开文件前，需要应用对“%s”修改。"
 
-#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:231
+#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:229
 msgid "errors.generic"
 msgstr "发生了某种错误。"
 
@@ -1738,15 +1739,15 @@ msgstr "排版"
 msgid "inspect.attributes.typography.font-color"
 msgstr "字体颜色"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:447
 msgid "inspect.attributes.typography.font-family"
 msgstr "字体"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:464, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
 msgid "inspect.attributes.typography.font-size"
 msgstr "字号"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:456
 msgid "inspect.attributes.typography.font-style"
 msgstr "文字风格"
 
@@ -1754,15 +1755,15 @@ msgstr "文字风格"
 msgid "inspect.attributes.typography.font-weight"
 msgstr "字体粗细"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:446
+#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:513, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:524
 msgid "inspect.attributes.typography.letter-spacing"
 msgstr "字距"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:417, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:427
+#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:494, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:504
 msgid "inspect.attributes.typography.line-height"
 msgstr "行高"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:347
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:389
 msgid "inspect.attributes.typography.mixed-font-family"
 msgstr "混合字体"
 
@@ -1791,11 +1792,11 @@ msgstr "下划线"
 msgid "inspect.attributes.typography.text-transform"
 msgstr "文本变换"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:476
+#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:554
 msgid "inspect.attributes.typography.text-transform.capitalize"
 msgstr "首字母大写"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:480
+#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:558
 msgid "inspect.attributes.typography.text-transform.lowercase"
 msgstr "小写"
 
@@ -1807,7 +1808,7 @@ msgstr "无"
 msgid "inspect.attributes.typography.text-transform.unset"
 msgstr "取消设置"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
+#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548
 msgid "inspect.attributes.typography.text-transform.uppercase"
 msgstr "大写"
 
@@ -2165,115 +2166,135 @@ msgstr "解析值："
 msgid "inspect.tabs.styles.variants-panel"
 msgstr "变体属性"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:156
 msgid "keymap.edit.edit-shape-or-text"
 msgstr "编辑形状或文字"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:157
+msgid "keymap.gesture.click"
+msgstr "点击"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:158
+msgid "keymap.gesture.drag"
+msgstr "拖动"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:159
+msgid "keymap.gesture.hover-layers"
+msgstr "悬停目标图层"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:160
+msgid "keymap.gesture.scroll"
+msgstr "滚轮"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:161
+msgid "keymap.gesture.space"
+msgstr "空格"
+
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr "穿透选择"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr "可直接选中目标元素/文字，无需连续双击"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr "拖动画布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr "鼠标指针变成小手即可拖动啦"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr "画板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr "快速绘制一个画板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr "新建文本"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr "直接点击或自定义绘制文本框大小"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr "取消选择/退出编辑"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr "适用于编辑文本框/形状/线条等"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr "创建编组"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr "将多个选中图层合并为一个编组"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr "多选图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr "同时按住 Ctrl + Shift 可实现穿透多选"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr "放大/缩小画布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr "按住 Ctrl 滚动滚轮即可快速缩放画布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:178
 msgid "keymap.selection.deselect"
 msgstr "取消选择"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:179
 msgid "keymap.selection.select-child"
 msgstr "选择子级"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:134
 msgid "keymap.tab.arrange"
 msgstr "排列"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:133
 msgid "keymap.tab.edit"
 msgstr "编辑"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:127
 msgid "keymap.tab.important"
 msgstr "重要快捷键"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:132
 msgid "keymap.tab.layers"
 msgstr "图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:130
 msgid "keymap.tab.selection"
 msgstr "选择"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:129
 msgid "keymap.tab.text"
 msgstr "文本"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:128
 msgid "keymap.tab.tools-view"
 msgstr "工具&视图"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:131
 msgid "keymap.tab.zoom"
 msgstr "缩放"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:180
 msgid "keymap.text.exit-edit"
 msgstr "退出文本编辑"
 
@@ -2281,7 +2302,7 @@ msgstr "退出文本编辑"
 msgid "label.mark-all-as-read"
 msgstr "标记全部为已读"
 
-#: src/app/main/ui/workspace/main_menu.cljs:194
+#: src/app/main/ui/workspace/main_menu.cljs:192
 msgid "label.shortcuts"
 msgstr "快捷方式"
 
@@ -2326,8 +2347,7 @@ msgstr "全部"
 msgid "labels.and"
 msgstr "和"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:287
 msgid "labels.back"
 msgstr "后退"
 
@@ -2355,7 +2375,7 @@ msgstr "取消"
 msgid "labels.canva"
 msgstr "Canva"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:107, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:262, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/onboarding/beginner_guide.cljs:256, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/colorpicker.cljs:864, src/app/main/ui/workspace/colorpicker.cljs:865, src/app/main/ui/workspace/help_center_menu.cljs:213, src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:653, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:306, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "关闭"
 
@@ -2367,7 +2387,7 @@ msgstr "代码"
 msgid "labels.collapse"
 msgstr "折叠"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:427
+#: src/app/main/ui/workspace/colorpicker.cljs:445
 msgid "labels.color"
 msgstr "颜色"
 
@@ -2383,7 +2403,7 @@ msgstr "标记为已解决"
 msgid "labels.comments"
 msgstr "评论"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:146
+#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:144
 msgid "labels.community"
 msgstr "社区"
 
@@ -2559,11 +2579,11 @@ msgstr "创始人/副总裁"
 msgid "labels.freelancer"
 msgstr "我是一名自由职业者"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:178
+#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:176
 msgid "labels.github-repo"
 msgstr "Github仓库"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:207
+#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:205
 msgid "labels.give-feedback"
 msgstr "提交反馈"
 
@@ -2579,7 +2599,7 @@ msgstr "平面设计"
 msgid "labels.grid-layout"
 msgstr "网格布局"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/main_menu.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
+#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/help_center_menu.cljs:138, src/app/main/ui/workspace/help_center_menu.cljs:139, src/app/main/ui/workspace/help_center_menu.cljs:142, src/app/main/ui/workspace/main_menu.cljs:136, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
 msgid "labels.help-center"
 msgstr "帮助中心"
 
@@ -2627,11 +2647,11 @@ msgstr "语言"
 msgid "labels.layout"
 msgstr "布局"
 
-#: src/app/main/ui/workspace/main_menu.cljs:170
+#: src/app/main/ui/workspace/main_menu.cljs:168
 msgid "labels.libraries-and-templates"
 msgstr "库&模板"
 
-#: src/app/main/ui/auth/verify_token.cljs:125, src/app/main/ui/dashboard/grid.cljs:127, src/app/main/ui/dashboard/grid.cljs:147, src/app/main/ui/dashboard/import.cljs:255, src/app/main/ui/dashboard/placeholder.cljs:139, src/app/main/ui/ds/product/loader.cljs:85, src/app/main/ui/exports/files.cljs:59, src/app/main/ui/nitrate/entry.cljs:26, src/app/main/ui/static.cljs:607, src/app/main/ui/viewer.cljs:641, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:240, src/app/main/ui/workspace.cljs:135, src/app/main/ui.cljs:71, src/app/main/ui.cljs:109, src/app/main/ui.cljs:128
+#: src/app/main/ui/auth/verify_token.cljs:125, src/app/main/ui/dashboard/grid.cljs:127, src/app/main/ui/dashboard/grid.cljs:147, src/app/main/ui/dashboard/import.cljs:255, src/app/main/ui/dashboard/placeholder.cljs:139, src/app/main/ui/ds/product/loader.cljs:139, src/app/main/ui/exports/files.cljs:59, src/app/main/ui/nitrate/entry.cljs:26, src/app/main/ui/static.cljs:607, src/app/main/ui/viewer.cljs:641, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:241, src/app/main/ui/workspace.cljs:138, src/app/main/ui.cljs:71, src/app/main/ui.cljs:109, src/app/main/ui.cljs:128
 msgid "labels.loading"
 msgstr "加载中…"
 
@@ -2735,11 +2755,11 @@ msgstr "旧密码"
 msgid "labels.only-yours"
 msgstr "仅你的"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:736
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:818
 msgid "labels.open"
 msgstr "打开"
 
-#: src/app/main/ui/comments.cljs:929, src/app/main/ui/comments.cljs:994, src/app/main/ui/settings/integrations.cljs:413, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:411, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:579
+#: src/app/main/ui/comments.cljs:929, src/app/main/ui/comments.cljs:994, src/app/main/ui/settings/integrations.cljs:413, src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:411, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:616
 msgid "labels.options"
 msgstr "选项"
 
@@ -2803,7 +2823,7 @@ msgstr "引用"
 msgid "labels.refresh"
 msgstr "刷新"
 
-#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:162
+#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:160
 msgid "labels.release-notes"
 msgstr "发布说明"
 
@@ -2994,7 +3014,7 @@ msgstr "文本"
 msgid "labels.themes"
 msgstr "主题"
 
-#: src/app/main/ui/workspace/main_menu.cljs:154
+#: src/app/main/ui/workspace/main_menu.cljs:152
 msgid "labels.tutorials"
 msgstr "教程"
 
@@ -3072,98 +3092,119 @@ msgid "labels.youtube"
 msgstr "YouTube"
 
 #: src/app/main/ui/ds/product/loader.cljs
-msgid "loader.tips.label"
-msgstr "Tips"
-
-#: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.01.message"
 msgstr "按住 Ctrl 键并点击元素/文字，可直接选中该元素/文字"
 
 #: src/app/main/ui/ds/product/loader.cljs:20
+#, unused
 msgid "loader.tips.01.title"
 msgstr "可重用组件"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.02.message"
 msgstr "在表格组件上打开右键菜单，可快速新增或删除行与列"
 
 #: src/app/main/ui/ds/product/loader.cljs:22
+#, unused
 msgid "loader.tips.02.title"
 msgstr "实时协作"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.03.message"
 msgstr "选中多个元素后按 Ctrl + G 编组，方便统一移动与管理"
 
 #: src/app/main/ui/ds/product/loader.cljs:24
+#, unused
 msgid "loader.tips.03.title"
 msgstr "像 CSS 一样自动布局"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.04.message"
 msgstr "推荐使用组件搭建页面，组件解绑成实例后即可自由增减元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:26
+#, unused
 msgid "loader.tips.04.title"
 msgstr "导出为代码"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.05.message"
 msgstr "按住 Shift 逐个点击，可同时选中多个元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:28
+#, unused
 msgid "loader.tips.05.title"
 msgstr "设计库"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.06.message"
 msgstr "按住 Alt 并拖动元素，快速复制并移动该元素"
 
 #: src/app/main/ui/ds/product/loader.cljs:30
+#, unused
 msgid "loader.tips.06.title"
 msgstr "交互式原型"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.07.message"
 msgstr "按住 Ctrl 键并滚动滚轮，可自由放大或缩小画布"
 
 #: src/app/main/ui/ds/product/loader.cljs:32
+#, unused
 msgid "loader.tips.07.title"
 msgstr "Web 标准格式"
 
 #: src/app/main/ui/ds/product/loader.cljs
+#, unused
 msgid "loader.tips.08.message"
 msgstr "按住空格键并拖动鼠标，平移画布查看其他区域"
 
 #: src/app/main/ui/ds/product/loader.cljs:34
+#, unused
 msgid "loader.tips.08.title"
 msgstr "键盘快捷键"
 
 #: src/app/main/ui/ds/product/loader.cljs:37
+#, unused
 msgid "loader.tips.09.message"
 msgstr "选择适合您风格的主题。"
 
 #: src/app/main/ui/ds/product/loader.cljs:36
+#, unused
 msgid "loader.tips.09.title"
 msgstr "暗黑和浅色模式"
 
 #: src/app/main/ui/ds/product/loader.cljs:39
+#, unused
 msgid "loader.tips.10.message"
 msgstr "使用社区构建的插件扩展 Penpot 以获得额外的功能。"
 
 #: src/app/main/ui/ds/product/loader.cljs:38
+#, unused
 msgid "loader.tips.10.title"
 msgstr "插件支持"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:486, src/app/main/ui/workspace/colorpicker.cljs:487, src/app/main/ui/workspace/colorpicker.cljs:489
+#: src/app/main/ui/ds/product/loader.cljs
+#, unused
+msgid "loader.tips.label"
+msgstr "Tips"
+
+#: src/app/main/ui/workspace/colorpicker.cljs:504, src/app/main/ui/workspace/colorpicker.cljs:505, src/app/main/ui/workspace/colorpicker.cljs:507
 msgid "media.choose-image"
 msgstr "选择图片"
 
-#: src/app/main/ui/workspace/colorpicker/libraries.cljs:106, src/app/main/ui/workspace/colorpicker.cljs:271
+#: src/app/main/ui/workspace/colorpicker/libraries.cljs:106, src/app/main/ui/workspace/colorpicker.cljs:279
 msgid "media.gradient"
 msgstr "渐变"
 
-#: src/app/main/data/workspace/media.cljs:302, src/app/main/ui/components/color_bullet.cljs:42, src/app/main/ui/components/color_bullet.cljs:55, src/app/main/ui/ds/utilities/swatch.cljs:52, src/app/main/ui/ds/utilities/swatch.cljs:68, src/app/main/ui/inspect/attributes/common.cljs:48, src/app/main/ui/inspect/styles/rows/color_properties_row.cljs:67, src/app/main/ui/workspace/colorpicker/libraries.cljs:111, src/app/main/ui/workspace/colorpicker.cljs:273, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:448
+#: src/app/main/data/workspace/media.cljs:302, src/app/main/ui/components/color_bullet.cljs:42, src/app/main/ui/components/color_bullet.cljs:55, src/app/main/ui/ds/utilities/swatch.cljs:52, src/app/main/ui/ds/utilities/swatch.cljs:68, src/app/main/ui/inspect/attributes/common.cljs:48, src/app/main/ui/inspect/styles/rows/color_properties_row.cljs:67, src/app/main/ui/workspace/colorpicker/libraries.cljs:111, src/app/main/ui/workspace/colorpicker.cljs:281, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:452
 msgid "media.image"
 msgstr "图片"
 
@@ -3171,7 +3212,7 @@ msgstr "图片"
 msgid "media.image.short"
 msgstr "img"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:479
+#: src/app/main/ui/workspace/colorpicker.cljs:497
 msgid "media.keep-aspect-ratio"
 msgstr "保持宽高比"
 
@@ -3189,7 +3230,7 @@ msgstr "正在加载图片…"
 msgid "media.radial"
 msgstr "径向"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:269
+#: src/app/main/ui/workspace/colorpicker.cljs:277
 msgid "media.solid"
 msgstr "纯色"
 
@@ -3520,7 +3561,7 @@ msgid_plural "modals.move-shared-confirm.title"
 msgstr[0] "移动共享库"
 msgstr[1] "移动多个共享库"
 
-#: src/app/main/ui/workspace/main_menu.cljs:324, src/app/main/ui/workspace/nudge.cljs:46
+#: src/app/main/ui/workspace/main_menu.cljs:322, src/app/main/ui/workspace/nudge.cljs:46
 msgid "modals.nudge-title"
 msgstr "微调量"
 
@@ -4081,501 +4122,507 @@ msgstr "{%s} 变量不存在或已被删除。"
 msgid "profile.recovery.go-to-login"
 msgstr "去登录"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:732, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:814, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:423
 msgid "settings.detach"
 msgstr "分离"
 
-#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:549, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:572, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:583, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:611, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:624, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:644, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:665, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
+#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:605, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:646, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:655, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:666, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:687, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:474, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:506, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:526, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:472, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
 msgid "settings.multiple"
 msgstr "混合"
 
-#: src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:477
+#: src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:481
 msgid "settings.remove-color"
 msgstr "移除颜色"
 
-#: src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:482
+#: src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:486
 msgid "settings.select-this-color"
 msgstr "选择使用此样式的项目"
 
 # SECTIONS
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:412
+#, unused
 msgid "shortcut-section.basics"
 msgstr "基础"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:418
+#, unused
 msgid "shortcut-section.dashboard"
 msgstr "仪表盘"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:421
+#, unused
 msgid "shortcut-section.viewer"
 msgstr "观察者"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:415
+#, unused
 msgid "shortcut-section.workspace"
 msgstr "工作区"
 
 # SUBSECTIONS
-#: src/app/main/ui/workspace/keymap_panel.cljs:115, src/app/main/ui/workspace/sidebar/shortcuts.cljs:58
+#: src/app/main/ui/workspace/keymap_panel.cljs:181
 msgid "shortcut-subsection.alignment"
 msgstr "对准"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:116, src/app/main/ui/workspace/sidebar/shortcuts.cljs:59
+#: src/app/main/ui/workspace/keymap_panel.cljs:182
 msgid "shortcut-subsection.edit"
 msgstr "编辑"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:117, src/app/main/ui/workspace/sidebar/shortcuts.cljs:60
+#: src/app/main/ui/workspace/keymap_panel.cljs:183
 msgid "shortcut-subsection.general-dashboard"
 msgstr "通用"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:118, src/app/main/ui/workspace/sidebar/shortcuts.cljs:61
+#: src/app/main/ui/workspace/keymap_panel.cljs:184
 msgid "shortcut-subsection.general-viewer"
 msgstr "通用"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:119, src/app/main/ui/workspace/main_menu.cljs:789, src/app/main/ui/workspace/sidebar/shortcuts.cljs:62
+#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/main_menu.cljs:788, src/app/main/ui/workspace/main_menu.cljs:789
 msgid "shortcut-subsection.main-menu"
 msgstr "主菜单"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:120, src/app/main/ui/workspace/sidebar/shortcuts.cljs:63
+#: src/app/main/ui/workspace/keymap_panel.cljs:186
 msgid "shortcut-subsection.modify-layers"
 msgstr "修改图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:121, src/app/main/ui/workspace/sidebar/shortcuts.cljs:64
+#: src/app/main/ui/workspace/keymap_panel.cljs:187
 msgid "shortcut-subsection.navigation-dashboard"
 msgstr "导航"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:122, src/app/main/ui/workspace/sidebar/shortcuts.cljs:65
+#: src/app/main/ui/workspace/keymap_panel.cljs:188
 msgid "shortcut-subsection.navigation-viewer"
 msgstr "导航"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:123, src/app/main/ui/workspace/sidebar/shortcuts.cljs:66
+#: src/app/main/ui/workspace/keymap_panel.cljs:189
 msgid "shortcut-subsection.navigation-workspace"
 msgstr "导航"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/sidebar/shortcuts.cljs:67
+#: src/app/main/ui/workspace/keymap_panel.cljs:190
 msgid "shortcut-subsection.panels"
 msgstr "面板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:125, src/app/main/ui/workspace/sidebar/shortcuts.cljs:68
+#: src/app/main/ui/workspace/keymap_panel.cljs:191
 msgid "shortcut-subsection.path-editor"
 msgstr "路径"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:126, src/app/main/ui/workspace/sidebar/shortcuts.cljs:69
+#: src/app/main/ui/workspace/keymap_panel.cljs:192
 msgid "shortcut-subsection.shape"
 msgstr "形状"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:127, src/app/main/ui/workspace/sidebar/shortcuts.cljs:70
+#: src/app/main/ui/workspace/keymap_panel.cljs:193
 msgid "shortcut-subsection.text-editor"
 msgstr "文本"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:128, src/app/main/ui/workspace/sidebar/shortcuts.cljs:71
+#: src/app/main/ui/workspace/keymap_panel.cljs:194
 msgid "shortcut-subsection.tools"
 msgstr "工具"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:129, src/app/main/ui/workspace/sidebar/shortcuts.cljs:72
+#: src/app/main/ui/workspace/keymap_panel.cljs:195
 msgid "shortcut-subsection.zoom-viewer"
 msgstr "缩放"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:130, src/app/main/ui/workspace/sidebar/shortcuts.cljs:73
+#: src/app/main/ui/workspace/keymap_panel.cljs:196
 msgid "shortcut-subsection.zoom-workspace"
 msgstr "缩放"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
+#: src/app/main/ui/workspace/keymap_panel.cljs:197
 msgid "shortcuts.add-comment"
 msgstr "添加评论"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
+#: src/app/main/ui/workspace/keymap_panel.cljs:198
 msgid "shortcuts.add-node"
 msgstr "添加节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
+#: src/app/main/ui/workspace/keymap_panel.cljs:199
 msgid "shortcuts.align-bottom"
 msgstr "底对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
+#: src/app/main/ui/workspace/keymap_panel.cljs:200
 msgid "shortcuts.align-center"
 msgstr "居中对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:135, src/app/main/ui/workspace/sidebar/shortcuts.cljs:78
+#: src/app/main/ui/workspace/keymap_panel.cljs:201
 msgid "shortcuts.align-hcenter"
 msgstr "水平居中对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:136, src/app/main/ui/workspace/sidebar/shortcuts.cljs:79
+#: src/app/main/ui/workspace/keymap_panel.cljs:202
 msgid "shortcuts.align-justify"
 msgstr "两端对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
+#: src/app/main/ui/workspace/keymap_panel.cljs:203
 msgid "shortcuts.align-left"
 msgstr "左对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
+#: src/app/main/ui/workspace/keymap_panel.cljs:204
 msgid "shortcuts.align-right"
 msgstr "右对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
+#: src/app/main/ui/workspace/keymap_panel.cljs:205
 msgid "shortcuts.align-top"
 msgstr "顶对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
+#: src/app/main/ui/workspace/keymap_panel.cljs:206
 msgid "shortcuts.align-vcenter"
 msgstr "垂直居中对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
+#: src/app/main/ui/workspace/keymap_panel.cljs:207
 msgid "shortcuts.artboard-selection"
 msgstr "转为画板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
+#: src/app/main/ui/workspace/keymap_panel.cljs:208
 msgid "shortcuts.bold"
 msgstr "加粗"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
+#: src/app/main/ui/workspace/keymap_panel.cljs:209
 msgid "shortcuts.bool-difference"
 msgstr "布尔差"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:144, src/app/main/ui/workspace/sidebar/shortcuts.cljs:87
+#: src/app/main/ui/workspace/keymap_panel.cljs:210
 msgid "shortcuts.bool-exclude"
 msgstr "布尔排除"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:145, src/app/main/ui/workspace/sidebar/shortcuts.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:211
 msgid "shortcuts.bool-intersection"
 msgstr "布尔交集"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/sidebar/shortcuts.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:212
 msgid "shortcuts.bool-union"
 msgstr "布尔合并"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:213
 msgid "shortcuts.bring-back"
 msgstr "移至底层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:214
 msgid "shortcuts.bring-backward"
 msgstr "下移一层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:215
 msgid "shortcuts.bring-forward"
 msgstr "上移一层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:216
 msgid "shortcuts.bring-front"
 msgstr "移至顶层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:217
 msgid "shortcuts.clear-undo"
 msgstr "清除回退内容"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:218
 msgid "shortcuts.click-through"
 msgstr "穿透选择"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:219
 msgid "shortcuts.copy"
 msgstr "复制"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153, src/app/main/ui/workspace/sidebar/shortcuts.cljs:96
+#: src/app/main/ui/workspace/keymap_panel.cljs:220
 msgid "shortcuts.copy-link"
 msgstr "复制链接"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:221
 msgid "shortcuts.copy-props"
 msgstr "复制属性"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155, src/app/main/ui/workspace/sidebar/shortcuts.cljs:97
+#: src/app/main/ui/workspace/keymap_panel.cljs:222
 msgid "shortcuts.create-component-variant"
 msgstr "创建组件 / 变体"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156, src/app/main/ui/workspace/sidebar/shortcuts.cljs:98
+#: src/app/main/ui/workspace/keymap_panel.cljs:223
 msgid "shortcuts.create-new-project"
 msgstr "创建新的"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157, src/app/main/ui/workspace/sidebar/shortcuts.cljs:99
+#: src/app/main/ui/workspace/keymap_panel.cljs:224
 msgid "shortcuts.cut"
 msgstr "剪切"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158, src/app/main/ui/workspace/right_header.cljs:85, src/app/main/ui/workspace/sidebar/shortcuts.cljs:100
+#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/right_header.cljs:85
 msgid "shortcuts.decrease-zoom"
 msgstr "缩小"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159, src/app/main/ui/workspace/sidebar/shortcuts.cljs:101
+#: src/app/main/ui/workspace/keymap_panel.cljs:226
 msgid "shortcuts.delete"
 msgstr "删除"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160, src/app/main/ui/workspace/sidebar/shortcuts.cljs:102
+#: src/app/main/ui/workspace/keymap_panel.cljs:227
 msgid "shortcuts.delete-node"
 msgstr "删除节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
+#: src/app/main/ui/workspace/keymap_panel.cljs:228
 msgid "shortcuts.detach-component"
 msgstr "解绑实例"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:229
 msgid "shortcuts.drag-canvas"
 msgstr "拖动画布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
+#: src/app/main/ui/workspace/keymap_panel.cljs:230
 msgid "shortcuts.draw-curve"
 msgstr "铅笔/曲线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
+#: src/app/main/ui/workspace/keymap_panel.cljs:231
 msgid "shortcuts.draw-ellipse"
 msgstr "椭圆"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164, src/app/main/ui/workspace/sidebar/shortcuts.cljs:106
+#: src/app/main/ui/workspace/keymap_panel.cljs:232
 msgid "shortcuts.draw-frame"
 msgstr "画板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:165, src/app/main/ui/workspace/sidebar/shortcuts.cljs:107
+#: src/app/main/ui/workspace/keymap_panel.cljs:233
 msgid "shortcuts.draw-nodes"
 msgstr "绘制路径"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
+#: src/app/main/ui/workspace/keymap_panel.cljs:234
 msgid "shortcuts.draw-path"
 msgstr "钢笔/路径"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
+#: src/app/main/ui/workspace/keymap_panel.cljs:235
 msgid "shortcuts.draw-rect"
 msgstr "矩形"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
+#: src/app/main/ui/workspace/keymap_panel.cljs:236
 msgid "shortcuts.draw-text"
 msgstr "文本"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:237
 msgid "shortcuts.duplicate"
 msgstr "复制"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:170, src/app/main/ui/workspace/sidebar/shortcuts.cljs:112
+#: src/app/main/ui/workspace/keymap_panel.cljs:238
 msgid "shortcuts.escape"
 msgstr "取消"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:171, src/app/main/ui/workspace/sidebar/shortcuts.cljs:113
+#: src/app/main/ui/workspace/keymap_panel.cljs:239
 msgid "shortcuts.export-shapes"
 msgstr "导出形状"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:172, src/app/main/ui/workspace/sidebar/shortcuts.cljs:114
+#: src/app/main/ui/workspace/keymap_panel.cljs:240
 msgid "shortcuts.find"
 msgstr "搜索图层名称"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:173, src/app/main/ui/workspace/sidebar/shortcuts.cljs:115
+#: src/app/main/ui/workspace/keymap_panel.cljs:241
 msgid "shortcuts.find-and-replace"
 msgstr "查找并替换"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
+#: src/app/main/ui/workspace/keymap_panel.cljs:242
 msgid "shortcuts.fit-all"
 msgstr "全览"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
+#: src/app/main/ui/workspace/keymap_panel.cljs:243
 msgid "shortcuts.flip-horizontal"
 msgstr "水平翻转"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:176, src/app/main/ui/workspace/sidebar/shortcuts.cljs:118
+#: src/app/main/ui/workspace/keymap_panel.cljs:244
 msgid "shortcuts.flip-vertical"
 msgstr "垂直翻转"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
+#: src/app/main/ui/workspace/keymap_panel.cljs:245
 msgid "shortcuts.font-size-dec"
 msgstr "减小字号"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
+#: src/app/main/ui/workspace/keymap_panel.cljs:246
 msgid "shortcuts.font-size-inc"
 msgstr "增大字号"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
+#: src/app/main/ui/workspace/keymap_panel.cljs:247
 msgid "shortcuts.go-to-drafts"
 msgstr "前往草稿"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:180, src/app/main/ui/workspace/sidebar/shortcuts.cljs:122
+#: src/app/main/ui/workspace/keymap_panel.cljs:248
 msgid "shortcuts.go-to-libs"
 msgstr "前往共享库"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:181, src/app/main/ui/workspace/sidebar/shortcuts.cljs:123
+#: src/app/main/ui/workspace/keymap_panel.cljs:249
 msgid "shortcuts.go-to-search"
 msgstr "搜索"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
+#: src/app/main/ui/workspace/keymap_panel.cljs:250
 msgid "shortcuts.group"
 msgstr "创建编组"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
+#: src/app/main/ui/workspace/keymap_panel.cljs:251
 msgid "shortcuts.h-distribute"
 msgstr "水平分布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
+#: src/app/main/ui/workspace/keymap_panel.cljs:252
 msgid "shortcuts.hide-ui"
 msgstr "显示/隐藏界面"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
+#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/right_header.cljs:90
 msgid "shortcuts.increase-zoom"
 msgstr "放大"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:186, src/app/main/ui/workspace/sidebar/shortcuts.cljs:128
+#: src/app/main/ui/workspace/keymap_panel.cljs:254
 msgid "shortcuts.insert-image"
 msgstr "插入图片"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:187, src/app/main/ui/workspace/sidebar/shortcuts.cljs:129
+#: src/app/main/ui/workspace/keymap_panel.cljs:255
 msgid "shortcuts.italic"
 msgstr "切换斜体"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:188, src/app/main/ui/workspace/sidebar/shortcuts.cljs:130
+#: src/app/main/ui/workspace/keymap_panel.cljs:256
 msgid "shortcuts.join-nodes"
 msgstr "链接节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:189, src/app/main/ui/workspace/sidebar/shortcuts.cljs:131
+#: src/app/main/ui/workspace/keymap_panel.cljs:257
 msgid "shortcuts.line-through"
 msgstr "切换删除线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:190, src/app/main/ui/workspace/sidebar/shortcuts.cljs:132
+#: src/app/main/ui/workspace/keymap_panel.cljs:258
 msgid "shortcuts.make-corner"
 msgstr "制作圆角"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:191, src/app/main/ui/workspace/sidebar/shortcuts.cljs:133
+#: src/app/main/ui/workspace/keymap_panel.cljs:259
 msgid "shortcuts.make-curve"
 msgstr "制作曲线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/sidebar/shortcuts.cljs:134
+#: src/app/main/ui/workspace/keymap_panel.cljs:260
 msgid "shortcuts.mask"
 msgstr "遮罩"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/sidebar/shortcuts.cljs:134
+#: src/app/main/ui/workspace/keymap_panel.cljs:261
 msgid "shortcuts.measure-distance"
 msgstr "测量距离"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:193, src/app/main/ui/workspace/sidebar/shortcuts.cljs:135
+#: src/app/main/ui/workspace/keymap_panel.cljs:262
 msgid "shortcuts.merge-nodes"
 msgstr "合并节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:194, src/app/main/ui/workspace/sidebar/shortcuts.cljs:136
+#: src/app/main/ui/workspace/keymap_panel.cljs:263
 msgid "shortcuts.move"
 msgstr "移动"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:195, src/app/main/ui/workspace/sidebar/shortcuts.cljs:137
+#: src/app/main/ui/workspace/keymap_panel.cljs:264
 msgid "shortcuts.move-fast-down"
 msgstr "快速下移"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:196, src/app/main/ui/workspace/sidebar/shortcuts.cljs:138
+#: src/app/main/ui/workspace/keymap_panel.cljs:265
 msgid "shortcuts.move-fast-left"
 msgstr "快速向左移动"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:197, src/app/main/ui/workspace/sidebar/shortcuts.cljs:139
+#: src/app/main/ui/workspace/keymap_panel.cljs:266
 msgid "shortcuts.move-fast-right"
 msgstr "快速向右移动"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:198, src/app/main/ui/workspace/sidebar/shortcuts.cljs:140
+#: src/app/main/ui/workspace/keymap_panel.cljs:267
 msgid "shortcuts.move-fast-up"
 msgstr "快速上移"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:199, src/app/main/ui/workspace/sidebar/shortcuts.cljs:141
+#: src/app/main/ui/workspace/keymap_panel.cljs:268
 msgid "shortcuts.move-nodes"
 msgstr "移动节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:200, src/app/main/ui/workspace/sidebar/shortcuts.cljs:142
+#: src/app/main/ui/workspace/keymap_panel.cljs:269
 msgid "shortcuts.move-unit-down"
 msgstr "向下移动"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:201, src/app/main/ui/workspace/sidebar/shortcuts.cljs:143
+#: src/app/main/ui/workspace/keymap_panel.cljs:270
 msgid "shortcuts.move-unit-left"
 msgstr "左移"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:202, src/app/main/ui/workspace/sidebar/shortcuts.cljs:144
+#: src/app/main/ui/workspace/keymap_panel.cljs:271
 msgid "shortcuts.move-unit-right"
 msgstr "右移"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:203, src/app/main/ui/workspace/sidebar/shortcuts.cljs:145
+#: src/app/main/ui/workspace/keymap_panel.cljs:272
 msgid "shortcuts.move-unit-up"
 msgstr "上移"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:199, src/app/main/ui/workspace/sidebar/shortcuts.cljs:141
+#: src/app/main/ui/workspace/keymap_panel.cljs:273
 msgid "shortcuts.multi-select"
 msgstr "多选图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:204, src/app/main/ui/workspace/sidebar/shortcuts.cljs:146
+#: src/app/main/ui/workspace/keymap_panel.cljs:274
 msgid "shortcuts.next-frame"
 msgstr "下个画板"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:510
+#, unused
 msgid "shortcuts.not-found"
 msgstr "没找到快捷方式"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:205, src/app/main/ui/workspace/sidebar/shortcuts.cljs:147
+#: src/app/main/ui/workspace/keymap_panel.cljs:275
 msgid "shortcuts.opacity-0"
 msgstr "透明度100%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:206, src/app/main/ui/workspace/sidebar/shortcuts.cljs:148
+#: src/app/main/ui/workspace/keymap_panel.cljs:276
 msgid "shortcuts.opacity-1"
 msgstr "透明度10%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:207, src/app/main/ui/workspace/sidebar/shortcuts.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:277
 msgid "shortcuts.opacity-2"
 msgstr "设置不透明度为20%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:208, src/app/main/ui/workspace/sidebar/shortcuts.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:278
 msgid "shortcuts.opacity-3"
 msgstr "设置不透明度为30%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:209, src/app/main/ui/workspace/sidebar/shortcuts.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:279
 msgid "shortcuts.opacity-4"
 msgstr "设置不透明度为40%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:210, src/app/main/ui/workspace/sidebar/shortcuts.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:280
 msgid "shortcuts.opacity-5"
 msgstr "透明度50%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:211, src/app/main/ui/workspace/sidebar/shortcuts.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:281
 msgid "shortcuts.opacity-6"
 msgstr "设置不透明度为60%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:212, src/app/main/ui/workspace/sidebar/shortcuts.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:282
 msgid "shortcuts.opacity-7"
 msgstr "设置不透明度为70%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:213, src/app/main/ui/workspace/sidebar/shortcuts.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:283
 msgid "shortcuts.opacity-8"
 msgstr "设置不透明度为80%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:214, src/app/main/ui/workspace/sidebar/shortcuts.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:284
 msgid "shortcuts.opacity-9"
 msgstr "设置不透明度为90%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:215, src/app/main/ui/workspace/sidebar/shortcuts.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:285
 msgid "shortcuts.open-color-picker"
 msgstr "取色器"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:216, src/app/main/ui/workspace/sidebar/shortcuts.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:286
 msgid "shortcuts.open-comments"
 msgstr "前往查阅者评论区"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:217, src/app/main/ui/workspace/sidebar/shortcuts.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:287
 msgid "shortcuts.open-dashboard"
 msgstr "前往看板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:218, src/app/main/ui/workspace/sidebar/shortcuts.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:288
 msgid "shortcuts.open-inspect"
 msgstr "转到查看器检查部分"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:219, src/app/main/ui/workspace/sidebar/shortcuts.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:289
 msgid "shortcuts.open-interactions"
 msgstr "转往阅读器交互部分"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:220, src/app/main/ui/workspace/sidebar/shortcuts.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:290
 msgid "shortcuts.open-viewer"
 msgstr "转往阅读器交互部分"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:221, src/app/main/ui/workspace/sidebar/shortcuts.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:291
 msgid "shortcuts.open-workspace"
 msgstr "前往工作区"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:258
+#, unused
 msgid "shortcuts.or"
 msgstr " 或 "
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:222, src/app/main/ui/workspace/sidebar/shortcuts.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:292
 msgid "shortcuts.paste"
 msgstr "粘贴"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:223
+#: src/app/main/ui/workspace/keymap_panel.cljs:293
 msgid "shortcuts.paste-props"
 msgstr "粘贴属性"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:224, src/app/main/ui/workspace/sidebar/shortcuts.cljs:165
+#: src/app/main/ui/workspace/keymap_panel.cljs:294
 msgid "shortcuts.paste-replace"
 msgstr "粘贴替换"
 
@@ -4584,195 +4631,196 @@ msgstr "粘贴替换"
 msgid "shortcuts.plugins"
 msgstr "插件管理器"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/sidebar/shortcuts.cljs:166
+#: src/app/main/ui/workspace/keymap_panel.cljs:295
 msgid "shortcuts.prev-frame"
 msgstr "前一画板"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:226, src/app/main/ui/workspace/sidebar/shortcuts.cljs:167
+#: src/app/main/ui/workspace/keymap_panel.cljs:296
 msgid "shortcuts.redo"
 msgstr "重做"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:227, src/app/main/ui/workspace/sidebar/shortcuts.cljs:168
+#: src/app/main/ui/workspace/keymap_panel.cljs:297
 msgid "shortcuts.rename"
 msgstr "重命名图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:228, src/app/main/ui/workspace/sidebar/shortcuts.cljs:169
+#: src/app/main/ui/workspace/keymap_panel.cljs:298
 msgid "shortcuts.reset-zoom"
 msgstr "缩放至100%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:229, src/app/main/ui/workspace/sidebar/shortcuts.cljs:170
+#: src/app/main/ui/workspace/keymap_panel.cljs:299
 msgid "shortcuts.scale"
 msgstr "缩放"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:230, src/app/main/ui/workspace/sidebar/shortcuts.cljs:171
+#: src/app/main/ui/workspace/keymap_panel.cljs:300
 msgid "shortcuts.search-placeholder"
 msgstr "搜索快捷方式"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:231, src/app/main/ui/workspace/sidebar/shortcuts.cljs:172
+#: src/app/main/ui/workspace/keymap_panel.cljs:301
 msgid "shortcuts.select-all"
 msgstr "全选"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:232, src/app/main/ui/workspace/sidebar/shortcuts.cljs:173
+#: src/app/main/ui/workspace/keymap_panel.cljs:302
 msgid "shortcuts.select-next"
 msgstr "选择下一个图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:233, src/app/main/ui/workspace/sidebar/shortcuts.cljs:174
+#: src/app/main/ui/workspace/keymap_panel.cljs:303
 msgid "shortcuts.select-parent-layer"
 msgstr "选择父级"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:234, src/app/main/ui/workspace/sidebar/shortcuts.cljs:175
+#: src/app/main/ui/workspace/keymap_panel.cljs:304
 msgid "shortcuts.select-prev"
 msgstr "选择上一个图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:235, src/app/main/ui/workspace/sidebar/shortcuts.cljs:176
+#: src/app/main/ui/workspace/keymap_panel.cljs:305
 msgid "shortcuts.separate-nodes"
 msgstr "分离节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:236, src/app/main/ui/workspace/sidebar/shortcuts.cljs:177
+#: src/app/main/ui/workspace/keymap_panel.cljs:306
 msgid "shortcuts.show-pixel-grid"
 msgstr "显示/隐藏像素网格"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:237, src/app/main/ui/workspace/sidebar/shortcuts.cljs:178
+#: src/app/main/ui/workspace/keymap_panel.cljs:307
 msgid "shortcuts.show-shortcuts"
 msgstr "显示/隐藏快捷方式"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:238, src/app/main/ui/workspace/sidebar/shortcuts.cljs:179
+#: src/app/main/ui/workspace/keymap_panel.cljs:308
 msgid "shortcuts.snap-nodes"
 msgstr "对齐到节点"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:239, src/app/main/ui/workspace/sidebar/shortcuts.cljs:180
+#: src/app/main/ui/workspace/keymap_panel.cljs:309
 msgid "shortcuts.snap-pixel-grid"
 msgstr "对齐像素网格"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:240, src/app/main/ui/workspace/sidebar/shortcuts.cljs:181
+#: src/app/main/ui/workspace/keymap_panel.cljs:310
 msgid "shortcuts.start-editing"
 msgstr "启用编辑"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:241, src/app/main/ui/workspace/sidebar/shortcuts.cljs:182
+#: src/app/main/ui/workspace/keymap_panel.cljs:311
 msgid "shortcuts.start-measure"
 msgstr "启用测量"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:242, src/app/main/ui/workspace/sidebar/shortcuts.cljs:183
+#: src/app/main/ui/workspace/keymap_panel.cljs:312
 msgid "shortcuts.stop-measure"
 msgstr "停止测量"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:243, src/app/main/ui/workspace/sidebar/shortcuts.cljs:184
+#: src/app/main/ui/workspace/keymap_panel.cljs:313
 msgid "shortcuts.thumbnail-set"
 msgstr "设置缩略图"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:102, src/app/main/ui/workspace/sidebar/shortcuts.cljs:491, src/app/main/ui/workspace/sidebar/shortcuts.cljs:498
+#: src/app/main/ui/workspace/keymap_panel.cljs:141
 msgid "shortcuts.title"
 msgstr "快捷键"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:244, src/app/main/ui/workspace/sidebar/shortcuts.cljs:185
+#: src/app/main/ui/workspace/keymap_panel.cljs:314
 msgid "shortcuts.toggle-alignment"
 msgstr "切换动态对齐"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:245, src/app/main/ui/workspace/sidebar/shortcuts.cljs:186
+#: src/app/main/ui/workspace/keymap_panel.cljs:315
 msgid "shortcuts.toggle-assets"
 msgstr "切换资产"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:246, src/app/main/ui/workspace/sidebar/shortcuts.cljs:187
+#: src/app/main/ui/workspace/keymap_panel.cljs:316
 msgid "shortcuts.toggle-colorpalette"
 msgstr "显示/隐藏调色盘"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:247, src/app/main/ui/workspace/sidebar/shortcuts.cljs:188
+#: src/app/main/ui/workspace/keymap_panel.cljs:317
 msgid "shortcuts.toggle-focus-mode"
 msgstr "切换焦点模式"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:248, src/app/main/ui/workspace/sidebar/shortcuts.cljs:189
+#: src/app/main/ui/workspace/keymap_panel.cljs:318
 msgid "shortcuts.toggle-fullscreen"
 msgstr "切换全屏"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:249, src/app/main/ui/workspace/sidebar/shortcuts.cljs:190
+#: src/app/main/ui/workspace/keymap_panel.cljs:319
 msgid "shortcuts.toggle-guides"
 msgstr "显示/隐藏参考线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:250, src/app/main/ui/workspace/sidebar/shortcuts.cljs:191
+#: src/app/main/ui/workspace/keymap_panel.cljs:320
 msgid "shortcuts.toggle-history"
 msgstr "切换历史"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:251, src/app/main/ui/workspace/sidebar/shortcuts.cljs:192
+#: src/app/main/ui/workspace/keymap_panel.cljs:321
 msgid "shortcuts.toggle-layers"
 msgstr "切换层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:252, src/app/main/ui/workspace/sidebar/shortcuts.cljs:193
+#: src/app/main/ui/workspace/keymap_panel.cljs:322
 msgid "shortcuts.toggle-layout-flex"
 msgstr "添加/删除弹性布局"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/sidebar/shortcuts.cljs:194
+#: src/app/main/ui/workspace/keymap_panel.cljs:323
 msgid "shortcuts.toggle-layout-grid"
 msgstr "添加/移除网格布局"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:254, src/app/main/ui/workspace/sidebar/shortcuts.cljs:195
+#: src/app/main/ui/workspace/keymap_panel.cljs:324
 msgid "shortcuts.toggle-lock"
 msgstr "锁定/解锁图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:255, src/app/main/ui/workspace/sidebar/shortcuts.cljs:196
+#: src/app/main/ui/workspace/keymap_panel.cljs:325
 msgid "shortcuts.toggle-lock-size"
 msgstr "锁定比例"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:256, src/app/main/ui/workspace/sidebar/shortcuts.cljs:197
+#: src/app/main/ui/workspace/keymap_panel.cljs:326
 msgid "shortcuts.toggle-rulers"
 msgstr "显示/隐藏标尺"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:257, src/app/main/ui/workspace/sidebar/shortcuts.cljs:198
+#: src/app/main/ui/workspace/keymap_panel.cljs:327
 msgid "shortcuts.toggle-snap-guides"
 msgstr "吸附到参考线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:258, src/app/main/ui/workspace/sidebar/shortcuts.cljs:199
+#: src/app/main/ui/workspace/keymap_panel.cljs:328
 msgid "shortcuts.toggle-snap-ruler-guide"
 msgstr "吸附到标尺参考线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:259, src/app/main/ui/workspace/sidebar/shortcuts.cljs:200
+#: src/app/main/ui/workspace/keymap_panel.cljs:329
 msgid "shortcuts.toggle-textpalette"
 msgstr "显示/隐藏字体调色盘"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:260, src/app/main/ui/workspace/sidebar/shortcuts.cljs:201
+#: src/app/main/ui/workspace/keymap_panel.cljs:330
 msgid "shortcuts.toggle-theme"
 msgstr "更改主题"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:261, src/app/main/ui/workspace/sidebar/shortcuts.cljs:202
+#: src/app/main/ui/workspace/keymap_panel.cljs:331
 msgid "shortcuts.toggle-visibility"
 msgstr "显示/隐藏图层"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:262, src/app/main/ui/workspace/sidebar/shortcuts.cljs:203
+#: src/app/main/ui/workspace/keymap_panel.cljs:332
 msgid "shortcuts.toggle-zoom-style"
 msgstr "切换缩放样式"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:263, src/app/main/ui/workspace/sidebar/shortcuts.cljs:204
+#: src/app/main/ui/workspace/keymap_panel.cljs:333
 msgid "shortcuts.underline"
 msgstr "下划线"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:264, src/app/main/ui/workspace/sidebar/shortcuts.cljs:205
+#: src/app/main/ui/workspace/keymap_panel.cljs:334
 msgid "shortcuts.undo"
 msgstr "撤销"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:265, src/app/main/ui/workspace/sidebar/shortcuts.cljs:206
+#: src/app/main/ui/workspace/keymap_panel.cljs:335
 msgid "shortcuts.ungroup"
 msgstr "取消编组"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:266, src/app/main/ui/workspace/sidebar/shortcuts.cljs:207
+#: src/app/main/ui/workspace/keymap_panel.cljs:336
 msgid "shortcuts.unmask"
 msgstr "取消遮罩"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:267, src/app/main/ui/workspace/sidebar/shortcuts.cljs:208
+#: src/app/main/ui/workspace/keymap_panel.cljs:337
 msgid "shortcuts.v-distribute"
 msgstr "垂直分布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
+#: src/app/main/ui/workspace/keymap_panel.cljs:338
 msgid "shortcuts.zoom-canvas"
 msgstr "放大/缩小画布"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
+#: src/app/main/ui/workspace/keymap_panel.cljs:339
 msgid "shortcuts.zoom-lense-decrease"
 msgstr "缩小特定位置"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:269, src/app/main/ui/workspace/sidebar/shortcuts.cljs:210
+#: src/app/main/ui/workspace/keymap_panel.cljs:340
 msgid "shortcuts.zoom-lense-increase"
 msgstr "放大特定位置"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:270, src/app/main/ui/workspace/sidebar/shortcuts.cljs:211
+#, unused
 msgid "shortcuts.zoom-selected"
 msgstr "缩放至选中图层"
 
@@ -5062,7 +5110,7 @@ msgstr "Webhooks - %s - Penpot"
 msgid "title.viewer"
 msgstr "%s - 预览模式）- Penpot"
 
-#: src/app/main/ui/workspace.cljs:243
+#: src/app/main/ui/workspace.cljs:246
 msgid "title.workspace"
 msgstr "%s - Penpot"
 
@@ -5208,7 +5256,8 @@ msgstr "垂直均匀分布 (%s)"
 msgid "workspace.align.vtop"
 msgstr "顶部对齐 (%s)"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:181
+#: src/app/main/ui/workspace/sidebar/assets.cljs:184
+#, unused
 msgid "workspace.assets.add-library"
 msgstr "新增库"
 
@@ -5217,15 +5266,15 @@ msgstr "新增库"
 msgid "workspace.assets.assets"
 msgstr "素材"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:158
+#: src/app/main/ui/workspace/sidebar/assets.cljs:209
 msgid "workspace.assets.box-filter-all"
 msgstr "全部"
 
-#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
+#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:521, src/app/main/ui/workspace/sidebar/assets.cljs:215
 msgid "workspace.assets.colors"
 msgstr "颜色"
 
-#: src/app/main/ui/workspace/sidebar/assets/colors.cljs:520
+#: src/app/main/ui/workspace/sidebar/assets/colors.cljs:529
 msgid "workspace.assets.colors.add-color"
 msgstr "新增颜色"
 
@@ -5233,7 +5282,7 @@ msgstr "新增颜色"
 msgid "workspace.assets.component-group-options"
 msgstr "组件编组选项"
 
-#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:161
+#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:212
 msgid "workspace.assets.components"
 msgstr "组件"
 
@@ -5253,7 +5302,7 @@ msgstr "创建组"
 msgid "workspace.assets.create-group-hint"
 msgstr "这些物件将按照“组名/物件名”的格式自动命名"
 
-#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:567
+#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:649
 msgid "workspace.assets.delete"
 msgstr "删除"
 
@@ -5261,7 +5310,7 @@ msgstr "删除"
 msgid "workspace.assets.delete-group"
 msgstr "删除编组"
 
-#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:563
+#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:645
 msgid "workspace.assets.duplicate"
 msgstr "创建副本"
 
@@ -5273,7 +5322,7 @@ msgstr "重复主体"
 msgid "workspace.assets.edit"
 msgstr "编辑"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:195
+#: src/app/main/ui/workspace/sidebar/assets.cljs:237
 msgid "workspace.assets.filter"
 msgstr "筛选"
 
@@ -5298,15 +5347,15 @@ msgstr "组名"
 msgid "workspace.assets.list-view"
 msgstr "列表视图"
 
-#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:106, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
+#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:107, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
 msgid "workspace.assets.local-library"
 msgstr "本地库"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:186
+#: src/app/main/ui/workspace/sidebar/assets.cljs:245
 msgid "workspace.assets.manage-library"
 msgstr "管理组件库"
 
-#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:298
+#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:299
 msgid "workspace.assets.not-found"
 msgstr "未找到"
 
@@ -5323,7 +5372,7 @@ msgstr "重命名"
 msgid "workspace.assets.rename-group"
 msgstr "重命名组"
 
-#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
+#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:230
 msgid "workspace.assets.search"
 msgstr "搜索组件/颜色/文本"
 
@@ -5345,11 +5394,12 @@ msgid_plural "workspace.assets.sidebar.components"
 msgstr[0] "1个组件"
 msgstr[1] "%s个组件"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:213
+#: src/app/main/ui/workspace/sidebar/assets.cljs:216
+#, unused
 msgid "workspace.assets.sort"
 msgstr "排序"
 
-#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:167
+#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:218
 msgid "workspace.assets.typography"
 msgstr "文本"
 
@@ -5362,27 +5412,27 @@ msgstr "新增文本"
 msgid "workspace.assets.typography.font-id"
 msgstr "字体"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:603
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:685
 msgid "workspace.assets.typography.font-size"
 msgstr "尺寸"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:599
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:681
 msgid "workspace.assets.typography.font-style"
 msgstr "文字风格"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:621
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:703
 msgid "workspace.assets.typography.go-to-edit"
 msgstr "前往样式库文件进行编辑"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:611
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:693
 msgid "workspace.assets.typography.letter-spacing"
 msgstr "字距"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:607
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:689
 msgid "workspace.assets.typography.line-height"
 msgstr "行高"
 
-#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:718
+#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:630, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:668, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:780, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:800
 msgid "workspace.assets.typography.sample"
 msgstr "Ag"
 
@@ -5390,7 +5440,7 @@ msgstr "Ag"
 msgid "workspace.assets.typography.text-styles"
 msgstr "文本样式"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:615
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:697
 msgid "workspace.assets.typography.text-transform"
 msgstr "文本变换"
 
@@ -5398,36 +5448,47 @@ msgstr "文本变换"
 msgid "workspace.assets.ungroup"
 msgstr "解组"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:284
 msgid "workspace.beginner-guide.done"
 msgstr "完成"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:104
 msgid "workspace.beginner-guide.items.click-through.description"
 msgstr "按住 Ctrl / Command 键并点击元素/文字，可直接选中该元素/文字无需连续双击，操作更高效"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:103
 msgid "workspace.beginner-guide.items.click-through.title"
 msgstr "穿透选择"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:112
 msgid "workspace.beginner-guide.items.component-library.description"
 msgstr "推荐使用 FTD通用组件库/典型页面快速搭建页面，右侧菜单可切换组件属性，组件解绑实例后即可自由增减元素"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:111
 msgid "workspace.beginner-guide.items.component-library.title"
 msgstr "使用组件库"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:108
 msgid "workspace.beginner-guide.items.table-shortcuts.description"
 msgstr "从FTD通用组件库拖拽表格组件至画布中，在表格组件上打开右键菜单，可快速新增或删除行与列"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:107
 msgid "workspace.beginner-guide.items.table-shortcuts.title"
 msgstr "表格的快捷操作"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:285
 msgid "workspace.beginner-guide.next"
 msgstr "下一个"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:279
 msgid "workspace.beginner-guide.skip"
 msgstr "跳过"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:251
 msgid "workspace.beginner-guide.title"
 msgstr "新手基础操作"
 
+#: src/app/main/ui/onboarding/beginner_guide.cljs:264
 msgid "workspace.beginner-guide.video"
 msgstr "视频%s"
 
@@ -5455,25 +5516,25 @@ msgstr "图片已复制到剪贴板"
 msgid "workspace.clipboard.image-copy-failed"
 msgstr "复制图片失败"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:431, src/app/main/ui/workspace/colorpicker.cljs:443
+#: src/app/main/ui/workspace/colorpicker.cljs:449, src/app/main/ui/workspace/colorpicker.cljs:461
 msgid "workspace.colorpicker.color-tokens"
 msgstr "颜色变量"
 
-#: src/app/main/ui/workspace/colorpicker.cljs
-msgid "workspace.colorpicker.tabs.palette"
-msgstr "色板"
-
-#: src/app/main/ui/workspace/colorpicker.cljs
-msgid "workspace.colorpicker.tabs.customize"
-msgstr "自定义"
-
-#: src/app/main/ui/workspace/colorpicker/palette.cljs
+#: src/app/main/ui/workspace/colorpicker/palette.cljs:186
 msgid "workspace.colorpicker.palette.grid"
 msgstr "颜色色板"
 
-#: src/app/main/ui/workspace/colorpicker/palette.cljs
+#: src/app/main/ui/workspace/colorpicker/palette.cljs:197, src/app/main/ui/workspace/colorpicker/palette.cljs:198
 msgid "workspace.colorpicker.picker.tooltip"
 msgstr "取色器"
+
+#: src/app/main/ui/workspace/colorpicker.cljs:815, src/app/main/ui/workspace/colorpicker.cljs:816
+msgid "workspace.colorpicker.tabs.customize"
+msgstr "自定义"
+
+#: src/app/main/ui/workspace/colorpicker.cljs:812, src/app/main/ui/workspace/colorpicker.cljs:813
+msgid "workspace.colorpicker.tabs.palette"
+msgstr "色板"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/component.cljs:509
 msgid "workspace.component.swap.loop-error"
@@ -5587,59 +5648,59 @@ msgstr "关注"
 msgid "workspace.focus.selection"
 msgstr "选择"
 
-#: src/app/util/font_style.cljs:79
+#: src/app/util/font_style.cljs:80
 msgid "workspace.fonts.style.black"
 msgstr "超粗"
 
-#: src/app/util/font_style.cljs:80
+#: src/app/util/font_style.cljs:81
 msgid "workspace.fonts.style.bold"
 msgstr "粗体"
 
-#: src/app/util/font_style.cljs:81
+#: src/app/util/font_style.cljs:82
 msgid "workspace.fonts.style.bold-italic"
 msgstr "粗斜体"
 
-#: src/app/util/font_style.cljs:82
+#: src/app/util/font_style.cljs:83
 msgid "workspace.fonts.style.extra-black"
 msgstr "超粗"
 
-#: src/app/util/font_style.cljs:83
+#: src/app/util/font_style.cljs:84
 msgid "workspace.fonts.style.extra-bold"
 msgstr "特粗"
 
-#: src/app/util/font_style.cljs:84
+#: src/app/util/font_style.cljs:85
 msgid "workspace.fonts.style.extra-light"
 msgstr "特细"
 
-#: src/app/util/font_style.cljs:85
+#: src/app/util/font_style.cljs:86
 msgid "workspace.fonts.style.hairline"
 msgstr "极细"
 
-#: src/app/util/font_style.cljs:86
+#: src/app/util/font_style.cljs:87
 msgid "workspace.fonts.style.italic"
 msgstr "斜体"
 
-#: src/app/util/font_style.cljs:87
+#: src/app/util/font_style.cljs:88
 msgid "workspace.fonts.style.light"
 msgstr "细体"
 
-#: src/app/util/font_style.cljs:88
+#: src/app/util/font_style.cljs:89
 msgid "workspace.fonts.style.medium"
 msgstr "中等"
 
-#: src/app/util/font_style.cljs:89
+#: src/app/util/font_style.cljs:90
 msgid "workspace.fonts.style.regular"
 msgstr "常规"
 
-#: src/app/util/font_style.cljs:90
+#: src/app/util/font_style.cljs:91
 msgid "workspace.fonts.style.regular-italic"
 msgstr "常规斜体"
 
-#: src/app/util/font_style.cljs:91
+#: src/app/util/font_style.cljs:92
 msgid "workspace.fonts.style.semi-bold"
 msgstr "半粗体"
 
-#: src/app/util/font_style.cljs:92
+#: src/app/util/font_style.cljs:93
 msgid "workspace.fonts.style.thin"
 msgstr "极细"
 
@@ -5651,42 +5712,43 @@ msgstr "线性渐变"
 msgid "workspace.gradients.radial"
 msgstr "放射渐变"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:108
+#: src/app/main/ui/workspace/help_center_menu.cljs:219
 msgid "workspace.header.help.guide.body"
 msgstr "查看常用快捷键，获取新手教程，快速掌握penpot使用方法"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:113
+#: src/app/main/ui/workspace/help_center_menu.cljs:160, src/app/main/ui/workspace/help_center_menu.cljs:224
 msgid "workspace.header.help.guide.got-it"
 msgstr "知道了"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:106
+#: src/app/main/ui/workspace/help_center_menu.cljs:217
 msgid "workspace.header.help.guide.title"
 msgstr "帮助中心"
 
+#: src/app/main/ui/workspace/help_center_menu.cljs:154
 msgid "workspace.header.help.hint.body"
 msgstr "在这里再次查看引导视频，获取快捷键指南和常见问题解答"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:30
+#: src/app/main/ui/workspace/help_center_menu.cljs:183
 msgid "workspace.header.help.option.beginner-guide"
 msgstr "新手引导视频"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:30
+#: src/app/main/ui/workspace/help_center_menu.cljs:203
 msgid "workspace.header.help.option.faq"
 msgstr "常见问题"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:30
+#: src/app/main/ui/workspace/help_center_menu.cljs:173
 msgid "workspace.header.help.option.shortcuts"
 msgstr "快捷键指南"
 
-#: src/app/main/ui/workspace/help_center_menu.cljs:30
+#: src/app/main/ui/workspace/help_center_menu.cljs:193
 msgid "workspace.header.help.option.tutorials"
 msgstr "新手教程"
 
-#: src/app/main/ui/workspace/main_menu.cljs:296
+#: src/app/main/ui/workspace/main_menu.cljs:294
 msgid "workspace.header.menu.disable-dynamic-alignment"
 msgstr "禁用动态对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:250
+#: src/app/main/ui/workspace/main_menu.cljs:248
 msgid "workspace.header.menu.disable-scale-content"
 msgstr "禁用比例尺"
 
@@ -5695,27 +5757,27 @@ msgstr "禁用比例尺"
 msgid "workspace.header.menu.disable-scale-text"
 msgstr "禁用缩放文本"
 
-#: src/app/main/ui/workspace/main_menu.cljs:281
+#: src/app/main/ui/workspace/main_menu.cljs:279
 msgid "workspace.header.menu.disable-snap-guides"
 msgstr "禁用与参考线对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:311
+#: src/app/main/ui/workspace/main_menu.cljs:309
 msgid "workspace.header.menu.disable-snap-pixel-grid"
 msgstr "禁用像素对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:265
+#: src/app/main/ui/workspace/main_menu.cljs:263
 msgid "workspace.header.menu.disable-snap-ruler-guides"
 msgstr "禁用“吸附到标尺参考线”"
 
-#: src/app/main/ui/workspace/main_menu.cljs:335
+#: src/app/main/ui/workspace/main_menu.cljs:333
 msgid "workspace.header.menu.disable-webgl"
 msgstr "关闭 WebGL 渲染（Beta）"
 
-#: src/app/main/ui/workspace/main_menu.cljs:297
+#: src/app/main/ui/workspace/main_menu.cljs:295
 msgid "workspace.header.menu.enable-dynamic-alignment"
 msgstr "启用动态对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:251
+#: src/app/main/ui/workspace/main_menu.cljs:249
 msgid "workspace.header.menu.enable-scale-content"
 msgstr "启用比例尺"
 
@@ -5724,19 +5786,19 @@ msgstr "启用比例尺"
 msgid "workspace.header.menu.enable-scale-text"
 msgstr "启用缩放文本"
 
-#: src/app/main/ui/workspace/main_menu.cljs:282
+#: src/app/main/ui/workspace/main_menu.cljs:280
 msgid "workspace.header.menu.enable-snap-guides"
 msgstr "与参考线对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:312
+#: src/app/main/ui/workspace/main_menu.cljs:310
 msgid "workspace.header.menu.enable-snap-pixel-grid"
 msgstr "启用像素对齐"
 
-#: src/app/main/ui/workspace/main_menu.cljs:266
+#: src/app/main/ui/workspace/main_menu.cljs:264
 msgid "workspace.header.menu.enable-snap-ruler-guides"
 msgstr "启用“吸附到标尺参考线”"
 
-#: src/app/main/ui/workspace/main_menu.cljs:336
+#: src/app/main/ui/workspace/main_menu.cljs:334
 msgid "workspace.header.menu.enable-webgl"
 msgstr "启用 WebGL 渲染（Beta）"
 
@@ -5750,7 +5812,7 @@ msgstr "查找"
 msgid "workspace.header.menu.find-and-replace"
 msgstr "查找和替换"
 
-#: src/app/main/ui/workspace/main_menu.cljs:441
+#: src/app/main/ui/workspace/main_menu.cljs:439
 msgid "workspace.header.menu.hide-artboard-names"
 msgstr "隐藏画板名称"
 
@@ -5759,23 +5821,23 @@ msgstr "隐藏画板名称"
 msgid "workspace.header.menu.hide-comments"
 msgstr "隐藏评论"
 
-#: src/app/main/ui/workspace/main_menu.cljs:395
+#: src/app/main/ui/workspace/main_menu.cljs:393
 msgid "workspace.header.menu.hide-guides"
 msgstr "隐藏参考线"
 
-#: src/app/main/ui/workspace/main_menu.cljs:412
+#: src/app/main/ui/workspace/main_menu.cljs:410
 msgid "workspace.header.menu.hide-palette"
 msgstr "隐藏调色盘"
 
-#: src/app/main/ui/workspace/main_menu.cljs:453
+#: src/app/main/ui/workspace/main_menu.cljs:451
 msgid "workspace.header.menu.hide-pixel-grid"
 msgstr "隐藏像素网格"
 
-#: src/app/main/ui/workspace/main_menu.cljs:379
+#: src/app/main/ui/workspace/main_menu.cljs:377
 msgid "workspace.header.menu.hide-rules"
 msgstr "隐藏标尺"
 
-#: src/app/main/ui/workspace/main_menu.cljs:426
+#: src/app/main/ui/workspace/main_menu.cljs:424
 msgid "workspace.header.menu.hide-textpalette"
 msgstr "隐藏字体调色板"
 
@@ -5834,15 +5896,15 @@ msgstr "首选项"
 msgid "workspace.header.menu.option.view"
 msgstr "视图"
 
-#: src/app/main/ui/workspace/main_menu.cljs:525
+#: src/app/main/ui/workspace/main_menu.cljs:523
 msgid "workspace.header.menu.redo"
 msgstr "重做"
 
-#: src/app/main/ui/workspace/main_menu.cljs:496
+#: src/app/main/ui/workspace/main_menu.cljs:494
 msgid "workspace.header.menu.select-all"
 msgstr "全选"
 
-#: src/app/main/ui/workspace/main_menu.cljs:442
+#: src/app/main/ui/workspace/main_menu.cljs:440
 msgid "workspace.header.menu.show-artboard-names"
 msgstr "显示画板名称"
 
@@ -5851,23 +5913,23 @@ msgstr "显示画板名称"
 msgid "workspace.header.menu.show-comments"
 msgstr "显示评论"
 
-#: src/app/main/ui/workspace/main_menu.cljs:396
+#: src/app/main/ui/workspace/main_menu.cljs:394
 msgid "workspace.header.menu.show-guides"
 msgstr "显示参考线"
 
-#: src/app/main/ui/workspace/main_menu.cljs:413
+#: src/app/main/ui/workspace/main_menu.cljs:411
 msgid "workspace.header.menu.show-palette"
 msgstr "显示调色盘"
 
-#: src/app/main/ui/workspace/main_menu.cljs:454
+#: src/app/main/ui/workspace/main_menu.cljs:452
 msgid "workspace.header.menu.show-pixel-grid"
 msgstr "显示像素网格"
 
-#: src/app/main/ui/workspace/main_menu.cljs:380
+#: src/app/main/ui/workspace/main_menu.cljs:378
 msgid "workspace.header.menu.show-rules"
 msgstr "显示标尺"
 
-#: src/app/main/ui/workspace/main_menu.cljs:427
+#: src/app/main/ui/workspace/main_menu.cljs:425
 msgid "workspace.header.menu.show-textpalette"
 msgstr "显示字体调色板"
 
@@ -5886,7 +5948,7 @@ msgstr "切换到浅色主题"
 msgid "workspace.header.menu.toggle-system-theme"
 msgstr "切换至系统主题"
 
-#: src/app/main/ui/workspace/main_menu.cljs:511
+#: src/app/main/ui/workspace/main_menu.cljs:509
 msgid "workspace.header.menu.undo"
 msgstr "撤销"
 
@@ -6020,19 +6082,6 @@ msgstr[1] "%s 种颜色"
 msgid "workspace.libraries.colors.add-library-color"
 msgstr "添加颜色至库"
 
-msgid "workspace.options.size-preset.category.web"
-msgstr "网页"
-
-msgid "workspace.options.size-preset.category.phone"
-msgstr "手机"
-
-msgid "workspace.options.size-preset.category.print"
-msgstr "印刷品"
-
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:587
-msgid "workspace.options.size.lock"
-msgstr "锁定比率"
-
 #: src/app/main/ui/workspace/color_palette.cljs:203, src/app/main/ui/workspace/colorpicker/libraries.cljs:372, src/app/main/ui/workspace/colorpicker/libraries.cljs:403
 msgid "workspace.libraries.colors.empty-palette"
 msgstr "你的库中还没有颜色风格"
@@ -6054,7 +6103,7 @@ msgstr "文档库"
 msgid "workspace.libraries.colors.hsv"
 msgstr "HSV"
 
-#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219
+#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219, src/app/main/ui/workspace/colorpicker/palette.cljs:228, src/app/main/ui/workspace/colorpicker/palette.cljs:230
 msgid "workspace.libraries.colors.recent-colors"
 msgstr "最近使用的颜色"
 
@@ -6063,11 +6112,11 @@ msgstr "最近使用的颜色"
 msgid "workspace.libraries.colors.rgb-complementary"
 msgstr "RGB互补"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:364
+#: src/app/main/ui/workspace/colorpicker.cljs:372
 msgid "workspace.libraries.colors.rgba"
 msgstr "RGBA"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:562
+#: src/app/main/ui/workspace/colorpicker.cljs:574
 msgid "workspace.libraries.colors.save-color"
 msgstr "保存颜色风格"
 
@@ -6156,19 +6205,19 @@ msgstr "共享库"
 msgid "workspace.libraries.shared-library-btn"
 msgstr "连接共享库"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:541
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:577
 msgid "workspace.libraries.text.mixed-tokens"
 msgstr "混合变量"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:536
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:572
 msgid "workspace.libraries.text.mixed-tokens-and-assets"
 msgstr "混合素材和变量"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:556
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:592
 msgid "workspace.libraries.text.mixed-typography"
 msgstr "混合素材"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:558
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:594
 msgid "workspace.libraries.text.multiple-assets-tooltip"
 msgstr "取消链接全部素材"
 
@@ -6177,7 +6226,7 @@ msgstr "取消链接全部素材"
 msgid "workspace.libraries.text.multiple-token-and-asset-tooltip"
 msgstr "分离全部变量并取消链接全部排版"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:543
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:579
 msgid "workspace.libraries.text.multiple-token-tooltip"
 msgstr "分离全部变量"
 
@@ -6287,7 +6336,7 @@ msgstr "数值"
 msgid "workspace.options.canvas-background"
 msgstr "画布背景"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:699
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:721
 msgid "workspace.options.clip-content"
 msgstr "剪辑内容"
 
@@ -6463,11 +6512,11 @@ msgstr "顶部固定"
 msgid "workspace.options.constraints.topbottom"
 msgstr "上下固定"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:517
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:553
 msgid "workspace.options.convert-to-typography"
 msgstr "创建排版样式"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:203
+#: src/app/main/ui/workspace/sidebar/options.cljs:218
 msgid "workspace.options.design"
 msgstr "设计"
 
@@ -6554,7 +6603,7 @@ msgstr "移除填充"
 msgid "workspace.options.fill.section"
 msgstr "填充"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:530
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:552
 msgid "workspace.options.fit-content"
 msgstr "调整画板适应内容大小"
 
@@ -6704,15 +6753,15 @@ msgstr "参考线"
 msgid "workspace.options.guides.toggle-guide"
 msgstr "切换辅助线"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:560, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:579
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:582, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:601
 msgid "workspace.options.height"
 msgstr "高度"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:580
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:602
 msgid "workspace.options.height.icon"
 msgstr "高"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:207
+#: src/app/main/ui/workspace/sidebar/options.cljs:224
 msgid "workspace.options.inspect"
 msgstr "检查"
 
@@ -6755,58 +6804,6 @@ msgstr "退出"
 #: src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:377
 msgid "workspace.options.interaction-auto"
 msgstr "自动"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons"
-msgstr "图标"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.category.all"
-msgstr "全部"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.category-count"
-msgstr "（%s）"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.view-all"
-msgstr "查看全部"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.drag-hint"
-msgstr "拖到画布中使用"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.empty"
-msgstr "暂时没有找到相关结果"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.search"
-msgstr "搜索图标"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.size"
-msgstr "尺寸"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.size.custom"
-msgstr "自定义"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.theme"
-msgstr "图标样式"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.theme.filled"
-msgstr "填充"
-
-#: src/app/main/ui/workspace/sidebar
-msgid "workspace.sidebar.icons.theme.outline"
-msgstr "线性"
-
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:164
-msgid "workspace.sidebar.layers"
-msgstr "图层"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/interactions.cljs:579
 msgid "workspace.options.interaction-background"
@@ -7529,7 +7526,7 @@ msgstr "层级"
 msgid "workspace.options.layout.z-index.icon"
 msgstr "层"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:469
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:488
 msgid "workspace.options.measures.section"
 msgstr "形状测量"
 
@@ -7545,7 +7542,7 @@ msgstr "更多共享库颜色"
 msgid "workspace.options.more-token-colors"
 msgstr "更多颜色变量"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:117, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:495
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:516
 msgid "workspace.options.no-size-preset-results"
 msgstr "无匹配的尺寸预设"
 
@@ -7563,7 +7560,7 @@ msgstr "像素网格颜色"
 msgid "workspace.options.position"
 msgstr "位置"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:205
+#: src/app/main/ui/workspace/sidebar/options.cljs:221
 msgid "workspace.options.prototype"
 msgstr "原型"
 
@@ -7599,7 +7596,7 @@ msgstr "圆角"
 msgid "workspace.options.radius.show-single-corners"
 msgstr "显示独立的圆角"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:221
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:250, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:390
 msgid "workspace.options.recent-fonts"
 msgstr "最近的"
 
@@ -7607,15 +7604,15 @@ msgstr "最近的"
 msgid "workspace.options.retry"
 msgstr "重试"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:661, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:669
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:683, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:691
 msgid "workspace.options.rotation"
 msgstr "旋转"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:218
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:247
 msgid "workspace.options.search-font"
 msgstr "搜索字体"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:111, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:489
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:117, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:510
 msgid "workspace.options.search-size-preset"
 msgstr "搜索尺寸预设"
 
@@ -7699,7 +7696,7 @@ msgstr "更多选项"
 msgid "workspace.options.show-fill-on-export"
 msgstr "在导出中显示"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:714
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:736
 msgid "workspace.options.show-in-viewer"
 msgstr "在预览模式显示"
 
@@ -7707,15 +7704,28 @@ msgstr "在预览模式显示"
 msgid "workspace.options.size"
 msgstr "尺寸"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:100, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:477
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:128
+msgid "workspace.options.size-preset.category.phone"
+msgstr "手机"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:131
+#, unused
+msgid "workspace.options.size-preset.category.print"
+msgstr "印刷品"
+
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:125
+msgid "workspace.options.size-preset.category.web"
+msgstr "网页"
+
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:105, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:497
 msgid "workspace.options.size-presets"
 msgstr "尺寸预设"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:616
 msgid "workspace.options.size.lock"
 msgstr "锁定比率"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:616
 msgid "workspace.options.size.unlock"
 msgstr "解锁比率"
 
@@ -7849,47 +7859,47 @@ msgstr "实线"
 msgid "workspace.options.stroke.toggle-stroke"
 msgstr "切换描边"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:134
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:161
 msgid "workspace.options.text-options.align-bottom"
 msgstr "底部对齐"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:130
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:157
 msgid "workspace.options.text-options.align-middle"
 msgstr "垂直居中"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:126
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:153
 msgid "workspace.options.text-options.align-top"
 msgstr "顶部对齐"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:301
 msgid "workspace.options.text-options.bold"
 msgstr "加粗"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:99
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:125
 msgid "workspace.options.text-options.direction-ltr"
 msgstr "从左到右"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:103
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:129
 msgid "workspace.options.text-options.direction-rtl"
 msgstr "从右到左"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:166
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:194
 msgid "workspace.options.text-options.grow-auto-height"
 msgstr "自动高度"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:162
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:190
 msgid "workspace.options.text-options.grow-auto-width"
 msgstr "自动宽度"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:158
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:186
 msgid "workspace.options.text-options.grow-fixed"
 msgstr "固定"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:438
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:516
 msgid "workspace.options.text-options.letter-spacing"
 msgstr "字距"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:496
 msgid "workspace.options.text-options.line-height"
 msgstr "行高"
 
@@ -7903,39 +7913,39 @@ msgstr "小写"
 msgid "workspace.options.text-options.none"
 msgstr "无"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:211
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:240
 msgid "workspace.options.text-options.strikethrough"
 msgstr "删除线 (%s)"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:68
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:93
 msgid "workspace.options.text-options.text-align-center"
 msgstr "水平居中"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:76
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:101
 msgid "workspace.options.text-options.text-align-justify"
 msgstr "两端对齐"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:64
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:89
 msgid "workspace.options.text-options.text-align-left"
 msgstr "靠左对齐"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:72
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:97
 msgid "workspace.options.text-options.text-align-right"
 msgstr "靠右对齐"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:501
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:537
 msgid "workspace.options.text-options.text-section"
 msgstr "文本"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:374
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:409
 msgid "workspace.options.text-options.title"
 msgstr "文本"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:373
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:408
 msgid "workspace.options.text-options.title-group"
 msgstr "编组文本"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:372
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:407
 msgid "workspace.options.text-options.title-selection"
 msgstr "选项文本"
 
@@ -7944,7 +7954,7 @@ msgstr "选项文本"
 msgid "workspace.options.text-options.titlecase"
 msgstr "首字母大写"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:206
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:235
 msgid "workspace.options.text-options.underline"
 msgstr "下划线 (%s)"
 
@@ -7957,27 +7967,27 @@ msgstr "大写"
 msgid "workspace.options.use-play-button"
 msgstr "点击页面顶端的播放按钮预览原型。"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:545, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:589
 msgid "workspace.options.width"
 msgstr "宽度"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:568
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:590
 msgid "workspace.options.width.icon"
 msgstr "宽"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:607, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:630
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:629, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:652
 msgid "workspace.options.x"
 msgstr "X轴"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:631
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:653
 msgid "workspace.options.x.icon"
 msgstr "X"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:641
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:663
 msgid "workspace.options.y"
 msgstr "Y轴"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:664
 msgid "workspace.options.y.icon"
 msgstr "Y"
 
@@ -8042,7 +8052,7 @@ msgstr "未安装插件"
 msgid "workspace.plugins.error.manifest"
 msgstr "插件清单不正确。"
 
-#: src/app/main/data/plugins.cljs:128, src/app/main/ui/workspace/main_menu.cljs:704, src/app/main/ui/workspace/plugins.cljs:97
+#: src/app/main/data/plugins.cljs:128, src/app/main/ui/workspace/main_menu.cljs:702, src/app/main/ui/workspace/plugins.cljs:97
 msgid "workspace.plugins.error.need-editor"
 msgstr "需要编辑权限才能使用此插件"
 
@@ -8058,7 +8068,7 @@ msgstr "安装"
 msgid "workspace.plugins.installed-plugins"
 msgstr "已安装的插件"
 
-#: src/app/main/ui/workspace/main_menu.cljs:659
+#: src/app/main/ui/workspace/main_menu.cljs:657
 msgid "workspace.plugins.menu.plugins-manager"
 msgstr "插件管理器"
 
@@ -8339,7 +8349,7 @@ msgstr "编组"
 msgid "workspace.shape.menu.hide"
 msgstr "隐藏"
 
-#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:467
+#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:465
 msgid "workspace.shape.menu.hide-ui"
 msgstr "显示/隐藏界面"
 
@@ -8477,11 +8487,11 @@ msgstr "更新主要组件"
 msgid "workspace.shape.menu.update-main"
 msgstr "更新主组件"
 
-#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:62
+#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:63
 msgid "workspace.sidebar.collapse"
 msgstr "收起侧边栏"
 
-#: src/app/main/ui/workspace/sidebar.cljs:73, src/app/main/ui/workspace/sidebar.cljs:77
+#: src/app/main/ui/workspace/sidebar.cljs:74, src/app/main/ui/workspace/sidebar.cljs:78
 msgid "workspace.sidebar.expand"
 msgstr "展开侧边栏"
 
@@ -8489,7 +8499,58 @@ msgstr "展开侧边栏"
 msgid "workspace.sidebar.history"
 msgstr "历史"
 
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:163
+#: src/app/main/ui/workspace/sidebar.cljs:181
+msgid "workspace.sidebar.icons"
+msgstr "图标"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:248
+msgid "workspace.sidebar.icons.category-count"
+msgstr "（%s）"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:127
+#, unused
+msgid "workspace.sidebar.icons.category.all"
+msgstr "全部"
+
+#: src/app/main/ui/workspace/sidebar
+#, unused
+msgid "workspace.sidebar.icons.drag-hint"
+msgstr "拖到画布中使用"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:302, src/app/main/ui/workspace/sidebar/icons.cljs:323
+msgid "workspace.sidebar.icons.empty"
+msgstr "暂时没有找到相关结果"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:471
+msgid "workspace.sidebar.icons.search"
+msgstr "搜索图标"
+
+#: src/app/main/ui/workspace/sidebar
+#, unused
+msgid "workspace.sidebar.icons.size"
+msgstr "尺寸"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:349
+msgid "workspace.sidebar.icons.size.custom"
+msgstr "自定义"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:368
+msgid "workspace.sidebar.icons.theme"
+msgstr "图标样式"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:356
+msgid "workspace.sidebar.icons.theme.filled"
+msgstr "填充"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:355
+msgid "workspace.sidebar.icons.theme.outline"
+msgstr "线性"
+
+#: src/app/main/ui/workspace/sidebar/icons.cljs:271
+msgid "workspace.sidebar.icons.view-all"
+msgstr "查看全部"
+
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:175, src/app/main/ui/workspace/sidebar.cljs:177
 msgid "workspace.sidebar.layers"
 msgstr "图层"
 
@@ -8574,7 +8635,7 @@ msgstr "页面"
 msgid "workspace.sidebar.sitemap.add-page"
 msgstr "新增页"
 
-#: src/app/main/ui/workspace/sidebar.cljs:161
+#: src/app/main/ui/workspace/sidebar.cljs:184
 msgid "workspace.sidebar.tokens"
 msgstr "变量"
 
@@ -8989,7 +9050,7 @@ msgstr "解析的值：%s"
 msgid "workspace.tokens.save-theme"
 msgstr "保存主题"
 
-#: src/app/main/ui/workspace/colorpicker/color_tokens.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:527
+#: src/app/main/ui/workspace/colorpicker/color_tokens.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/text.cljs:563
 msgid "workspace.tokens.search-by-token"
 msgstr "按变量名称搜索"
 
@@ -9188,11 +9249,11 @@ msgstr "该值无效"
 msgid "workspace.tokens.warning-name-change"
 msgstr "重命名此变量将断开对其旧名称的所有引用"
 
-#: src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:165
+#: src/app/main/ui/workspace/sidebar.cljs:179
 msgid "workspace.toolbar.assets"
 msgstr "组件"
 
-#: src/app/main/ui/workspace/palette.cljs:182, src/app/main/ui/workspace/palette.cljs:183
+#: src/app/main/ui/workspace/palette.cljs:210, src/app/main/ui/workspace/palette.cljs:211
 msgid "workspace.toolbar.color-palette"
 msgstr "调色盘（%s）"
 
@@ -9241,7 +9302,7 @@ msgstr "MCP 已连接"
 msgid "workspace.toolbar.move"
 msgstr "移动 (%s)"
 
-#: src/app/main/ui/workspace/palette.cljs:166
+#: src/app/main/ui/workspace/palette.cljs:194
 msgid "workspace.toolbar.palette-bar"
 msgstr "调色盘"
 
@@ -9249,8 +9310,7 @@ msgstr "调色盘"
 msgid "workspace.toolbar.path"
 msgstr "路径（%s）"
 
-#: src/app/main/ui/workspace/top_toolbar.cljs:267, src/app/main/ui/workspace/top_toolbar.cljs:268
-#, unused
+#: src/app/main/ui/workspace/top_toolbar.cljs:268, src/app/main/ui/workspace/top_toolbar.cljs:269
 msgid "workspace.toolbar.plugins"
 msgstr "插件 (%s)"
 
@@ -9267,11 +9327,11 @@ msgstr "快捷键 （%s）"
 msgid "workspace.toolbar.text"
 msgstr "文本（%s）"
 
-#: src/app/main/ui/workspace/palette.cljs:190, src/app/main/ui/workspace/palette.cljs:191
+#: src/app/main/ui/workspace/palette.cljs:218, src/app/main/ui/workspace/palette.cljs:219
 msgid "workspace.toolbar.text-palette"
 msgstr "排字式样 (%s)"
 
-#: src/app/main/ui/workspace/top_toolbar.cljs:265, src/app/main/ui/workspace/top_toolbar.cljs:266
+#: src/app/main/ui/workspace/top_toolbar.cljs:282, src/app/main/ui/workspace/top_toolbar.cljs:283
 msgid "workspace.toolbar.toggle-toolbar"
 msgstr "切换工具栏"
 
@@ -9441,19 +9501,19 @@ msgstr "操作覆盖%s"
 msgid "workspace.undo.title"
 msgstr "历史"
 
-#: src/app/main/data/workspace/libraries.cljs:1342, src/app/main/data/workspace/versions.cljs:232
+#: src/app/main/data/workspace/libraries.cljs:1361, src/app/main/data/workspace/versions.cljs:232
 msgid "workspace.updates.dismiss"
 msgstr "忽略"
 
-#: src/app/main/data/workspace/libraries.cljs:1340
+#: src/app/main/data/workspace/libraries.cljs:1359
 msgid "workspace.updates.more-info"
 msgstr "更多信息"
 
-#: src/app/main/data/workspace/libraries.cljs:1338
+#: src/app/main/data/workspace/libraries.cljs:1357
 msgid "workspace.updates.there-are-updates"
 msgstr "共享库有更新"
 
-#: src/app/main/data/workspace/libraries.cljs:1344
+#: src/app/main/data/workspace/libraries.cljs:1363
 msgid "workspace.updates.update"
 msgstr "更新"
 
@@ -9533,11 +9593,11 @@ msgstr "你想要恢复此版本吗？"
 msgid "workspace.versions.snapshot-menu"
 msgstr "打开快照菜单"
 
-#: src/app/main/ui/workspace/sidebar.cljs:255
+#: src/app/main/ui/workspace/sidebar.cljs:299
 msgid "workspace.versions.tab.actions"
 msgstr "操作"
 
-#: src/app/main/ui/workspace/sidebar.cljs:253
+#: src/app/main/ui/workspace/sidebar.cljs:297
 msgid "workspace.versions.tab.history"
 msgstr "历史"
 

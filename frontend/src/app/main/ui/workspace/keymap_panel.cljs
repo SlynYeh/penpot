@@ -58,10 +58,11 @@
   [{:keys [kw alternatives]}]
   [:span {:class (stl/css :keymap-keys)}
    (if (km/gesture? kw)
+     ;; 手势词是翻译 token：渲染期查 tr，保证语言切换后跟随当前语言
      (let [[gkey gesture] (km/gesture-parts kw)]
        [:*
-        [:span {:class (stl/css :keymap-key)} gkey]
-        [:span {:class (stl/css :keymap-gesture)} gesture]])
+        [:span {:class (stl/css :keymap-key)} (if (keyword? gkey) (tr (km/gesture-msgids gkey)) gkey)]
+        [:span {:class (stl/css :keymap-gesture)} (tr (km/gesture-msgids gesture))]])
      (let [groups (if alternatives
                     (or (km/display-alternatives kw) [])
                     [(km/display-chars kw)])]
@@ -153,6 +154,11 @@
 ;; Ported from the legacy sidebar shortcuts panel (pruned of old-panel-only strings; copy-props/paste-props added).
 (comment
   (tr "keymap.edit.edit-shape-or-text")
+  (tr "keymap.gesture.click")
+  (tr "keymap.gesture.drag")
+  (tr "keymap.gesture.hover-layers")
+  (tr "keymap.gesture.scroll")
+  (tr "keymap.gesture.space")
   (tr "keymap.important.click-through")
   (tr "keymap.important.click-through.desc")
   (tr "keymap.important.drag-canvas")

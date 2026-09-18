@@ -141,7 +141,7 @@ msgstr "ṣẹ̀dá àkáùntì"
 msgid "auth.sidebar-tagline"
 msgstr "ṣíṣí orísun yíyà àti àwòrán ni yóò fi  lojútùú ."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:184
 msgid "auth.terms-of-service"
 msgstr "òfin ibiṣẹ́"
 
@@ -356,6 +356,7 @@ msgid "dashboard.export-standard-multi"
 msgstr "danlóòdù %s àwọn ojúlówó fáìli  (.svg + .json)"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:361
+#, unused
 msgid "dashboard.fonts.deleted-placeholder"
 msgstr "fọ́ǹtì tó sọnù"
 
@@ -754,7 +755,7 @@ msgstr "Ímeèlì ti  «%s»  ń jábọ̀ gẹ́gẹ́ bí i awúrúju tàbí 
 msgid "errors.feature-not-supported"
 msgstr "Àwọn ẹ̀yà ara ẹ̀rọ  '%s' kò ní àtìlẹ́yìn."
 
-#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:231
+#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:229
 msgid "errors.generic"
 msgstr "Àsìṣe kan ti ṣẹlẹ̀."
 
@@ -1075,15 +1076,15 @@ msgstr "Fífẹ̀"
 msgid "inspect.attributes.typography"
 msgstr "Taipogíráfì"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:447
 msgid "inspect.attributes.typography.font-family"
 msgstr "Ẹbí Fọ́ǹtì"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:464, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
 msgid "inspect.attributes.typography.font-size"
 msgstr "Ìwọ̀n Fọ́ǹtì"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:456
 msgid "inspect.attributes.typography.font-style"
 msgstr "Àrà Fọ́ǹtì"
 
@@ -1091,11 +1092,11 @@ msgstr "Àrà Fọ́ǹtì"
 msgid "inspect.attributes.typography.font-weight"
 msgstr "Ìwúwo Fọ́ǹtì"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:446
+#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:513, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:524
 msgid "inspect.attributes.typography.letter-spacing"
 msgstr "Ìfàyè sí ààrin Lẹ́tà"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:417, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:427
+#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:494, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:504
 msgid "inspect.attributes.typography.line-height"
 msgstr "Gíga Ìlà"
 
@@ -1115,11 +1116,11 @@ msgstr "Fàlà sí"
 msgid "inspect.attributes.typography.text-transform"
 msgstr "ọ̀rọ̀ ti yí padà"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:476
+#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:554
 msgid "inspect.attributes.typography.text-transform.capitalize"
 msgstr "Àkọlé Lẹ́tà"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:480
+#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:558
 msgid "inspect.attributes.typography.text-transform.lowercase"
 msgstr "Lẹ́tà Kékeré"
 
@@ -1127,7 +1128,7 @@ msgstr "Lẹ́tà Kékeré"
 msgid "inspect.attributes.typography.text-transform.none"
 msgstr "Kò sí"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
+#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548
 msgid "inspect.attributes.typography.text-transform.uppercase"
 msgstr "Lẹ́tà ńlá"
 
@@ -1189,71 +1190,71 @@ msgstr "SVG"
 msgid "inspect.tabs.code.selected.text"
 msgstr "Ọ̀rọ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/main_menu.cljs:194
+#: src/app/main/ui/workspace/main_menu.cljs:192
 msgid "label.shortcuts"
 msgstr "Ọ̀nà àbùjá"
 
@@ -1286,8 +1287,7 @@ msgstr "Gbogbo ẹ̀"
 msgid "labels.and"
 msgstr "àti"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:287
 msgid "labels.back"
 msgstr "Padá"
 
@@ -1309,7 +1309,7 @@ msgstr "Párẹ́"
 msgid "labels.canva"
 msgstr "Káńfà"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:107, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:262, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/onboarding/beginner_guide.cljs:256, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/colorpicker.cljs:864, src/app/main/ui/workspace/colorpicker.cljs:865, src/app/main/ui/workspace/help_center_menu.cljs:213, src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:653, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:306, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "Tì í"
 
@@ -1321,7 +1321,7 @@ msgstr "Kóòdù"
 msgid "labels.comments"
 msgstr "dásí i"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:146
+#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:144
 msgid "labels.community"
 msgstr "Agbègbè"
 
@@ -1455,11 +1455,11 @@ msgstr "Olùdásílẹ̀/VP"
 msgid "labels.freelancer"
 msgstr "Oníṣẹ́ ni mí"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:178
+#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:176
 msgid "labels.github-repo"
 msgstr "Báǹkì gítì-ọbù"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:207
+#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:205
 msgid "labels.give-feedback"
 msgstr "Fèsì padà"
 
@@ -1467,7 +1467,7 @@ msgstr "Fèsì padà"
 msgid "labels.go-back"
 msgstr "Padà sẹ́yìn"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/main_menu.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
+#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/help_center_menu.cljs:138, src/app/main/ui/workspace/help_center_menu.cljs:139, src/app/main/ui/workspace/help_center_menu.cljs:142, src/app/main/ui/workspace/main_menu.cljs:136, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
 msgid "labels.help-center"
 msgstr "Ibi ìranilọ́wọ́"
 
@@ -1503,7 +1503,7 @@ msgstr "Ìfiwépè"
 msgid "labels.language"
 msgstr "Èdè"
 
-#: src/app/main/ui/workspace/main_menu.cljs:170
+#: src/app/main/ui/workspace/main_menu.cljs:168
 msgid "labels.libraries-and-templates"
 msgstr "Àwọn yàrá ìkàwé & Tẹ́ńpílétì"
 
@@ -1597,7 +1597,7 @@ msgstr "Pírófáìlì"
 msgid "labels.projects"
 msgstr "Àwọn iṣẹ́ àgbéṣe"
 
-#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:162
+#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:160
 msgid "labels.release-notes"
 msgstr "Fi àkọsílẹ̀ rẹ sílẹ̀"
 
@@ -1702,7 +1702,7 @@ msgstr "Ipò"
 msgid "labels.student-teacher"
 msgstr "Akẹ́kọ̀ọ́ tàbí olùkọ̀ọ́"
 
-#: src/app/main/ui/workspace/main_menu.cljs:154
+#: src/app/main/ui/workspace/main_menu.cljs:152
 msgid "labels.tutorials"
 msgstr "Ìbáṣepọ̀"
 
@@ -2029,7 +2029,7 @@ msgstr "Ṣé ó dá ọ lójú pé o fẹ́ fi ẹgbẹ́ yìí sílẹ̀?"
 msgid "modals.leave-confirm.title"
 msgstr "Ń fi ẹgbẹ́ sílẹ̀"
 
-#: src/app/main/ui/workspace/main_menu.cljs:324, src/app/main/ui/workspace/nudge.cljs:46
+#: src/app/main/ui/workspace/main_menu.cljs:322, src/app/main/ui/workspace/nudge.cljs:46
 msgid "modals.nudge-title"
 msgstr "Fi kún iye tó jẹ́"
 
@@ -2348,549 +2348,555 @@ msgstr "Pẹ́ńpọtì"
 msgid "profile.recovery.go-to-login"
 msgstr "Lọ láti wọlé"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:732, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:814, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:423
 msgid "settings.detach"
 msgstr "Yọ kúrò"
 
-#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:549, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:572, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:583, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:611, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:624, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:644, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:665, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
+#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:605, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:646, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:655, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:666, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:687, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:474, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:506, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:526, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:472, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
 msgid "settings.multiple"
 msgstr "Dàárú"
 
 # SECTIONS
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:412
+#, unused
 msgid "shortcut-section.basics"
 msgstr "Ipìlẹ̀"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:421
+#, unused
 msgid "shortcut-section.viewer"
 msgstr "Ólùwò"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:415
+#, unused
 msgid "shortcut-section.workspace"
 msgstr "Àaye ìṣẹ́"
 
 # SUBSECTIONS
-#: src/app/main/ui/workspace/keymap_panel.cljs:115, src/app/main/ui/workspace/sidebar/shortcuts.cljs:58
+#: src/app/main/ui/workspace/keymap_panel.cljs:181
 msgid "shortcut-subsection.alignment"
 msgstr "Titete"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:116, src/app/main/ui/workspace/sidebar/shortcuts.cljs:59
+#: src/app/main/ui/workspace/keymap_panel.cljs:182
 msgid "shortcut-subsection.edit"
 msgstr "Sàtunkọ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:118, src/app/main/ui/workspace/sidebar/shortcuts.cljs:61
+#: src/app/main/ui/workspace/keymap_panel.cljs:184
 msgid "shortcut-subsection.general-viewer"
 msgstr "àbùdá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:119, src/app/main/ui/workspace/main_menu.cljs:789, src/app/main/ui/workspace/sidebar/shortcuts.cljs:62
+#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/main_menu.cljs:788, src/app/main/ui/workspace/main_menu.cljs:789
 msgid "shortcut-subsection.main-menu"
 msgstr "Akojọ ólórì aṣyn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:120, src/app/main/ui/workspace/sidebar/shortcuts.cljs:63
+#: src/app/main/ui/workspace/keymap_panel.cljs:186
 msgid "shortcut-subsection.modify-layers"
 msgstr "Yípàdá fẹ́lẹ́fẹ́lẹ́"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:121, src/app/main/ui/workspace/sidebar/shortcuts.cljs:64
+#: src/app/main/ui/workspace/keymap_panel.cljs:187
 msgid "shortcut-subsection.navigation-dashboard"
 msgstr "Lìlọ́ kìrì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:122, src/app/main/ui/workspace/sidebar/shortcuts.cljs:65
+#: src/app/main/ui/workspace/keymap_panel.cljs:188
 msgid "shortcut-subsection.navigation-viewer"
 msgstr "Lìlọ́ kìrì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:123, src/app/main/ui/workspace/sidebar/shortcuts.cljs:66
+#: src/app/main/ui/workspace/keymap_panel.cljs:189
 msgid "shortcut-subsection.navigation-workspace"
 msgstr "Lìlọ́ kìrì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/sidebar/shortcuts.cljs:67
+#: src/app/main/ui/workspace/keymap_panel.cljs:190
 msgid "shortcut-subsection.panels"
 msgstr "Àwọ̀n pánẹ̀lí"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:125, src/app/main/ui/workspace/sidebar/shortcuts.cljs:68
+#: src/app/main/ui/workspace/keymap_panel.cljs:191
 msgid "shortcut-subsection.path-editor"
 msgstr "Àwọ́n ọna"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:126, src/app/main/ui/workspace/sidebar/shortcuts.cljs:69
+#: src/app/main/ui/workspace/keymap_panel.cljs:192
 msgid "shortcut-subsection.shape"
 msgstr "Àwọ́n apẹ́rẹ́"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:127, src/app/main/ui/workspace/sidebar/shortcuts.cljs:70
+#: src/app/main/ui/workspace/keymap_panel.cljs:193
 msgid "shortcut-subsection.text-editor"
 msgstr "Àwọ́n ọ́rọ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:128, src/app/main/ui/workspace/sidebar/shortcuts.cljs:71
+#: src/app/main/ui/workspace/keymap_panel.cljs:194
 msgid "shortcut-subsection.tools"
 msgstr "Àwọ́n irínṣẹ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:129, src/app/main/ui/workspace/sidebar/shortcuts.cljs:72
+#: src/app/main/ui/workspace/keymap_panel.cljs:195
 msgid "shortcut-subsection.zoom-viewer"
 msgstr "Sun-un"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:130, src/app/main/ui/workspace/sidebar/shortcuts.cljs:73
+#: src/app/main/ui/workspace/keymap_panel.cljs:196
 msgid "shortcut-subsection.zoom-workspace"
 msgstr "Sun-un"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
+#: src/app/main/ui/workspace/keymap_panel.cljs:197
 msgid "shortcuts.add-comment"
 msgstr "Ọ́rọ̀íwòye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
+#: src/app/main/ui/workspace/keymap_panel.cljs:198
 msgid "shortcuts.add-node"
 msgstr "Fí ípàdé kùn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
+#: src/app/main/ui/workspace/keymap_panel.cljs:199
 msgid "shortcuts.align-bottom"
 msgstr "Sópọ sí ísàle"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
+#: src/app/main/ui/workspace/keymap_panel.cljs:200
 msgid "shortcuts.align-center"
 msgstr "Parapọ àárin"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:135, src/app/main/ui/workspace/sidebar/shortcuts.cljs:78
+#: src/app/main/ui/workspace/keymap_panel.cljs:201
 msgid "shortcuts.align-hcenter"
 msgstr "Páràpọ àárin naa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:136, src/app/main/ui/workspace/sidebar/shortcuts.cljs:79
+#: src/app/main/ui/workspace/keymap_panel.cljs:202
 msgid "shortcuts.align-justify"
 msgstr "Ṣe dèédé si ìdálárè"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
+#: src/app/main/ui/workspace/keymap_panel.cljs:203
 msgid "shortcuts.align-left"
 msgstr "Sosi ósì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
+#: src/app/main/ui/workspace/keymap_panel.cljs:204
 msgid "shortcuts.align-right"
 msgstr "Sosi ọtún"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
+#: src/app/main/ui/workspace/keymap_panel.cljs:205
 msgid "shortcuts.align-top"
 msgstr "Sopo si òké"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
+#: src/app/main/ui/workspace/keymap_panel.cljs:206
 msgid "shortcuts.align-vcenter"
 msgstr "Tẹle àárin ni inàró"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
+#: src/app/main/ui/workspace/keymap_panel.cljs:207
 msgid "shortcuts.artboard-selection"
 msgstr "Ṣẹ̀dá ọ̀kọ̀ lati yìyán"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
+#: src/app/main/ui/workspace/keymap_panel.cljs:208
 msgid "shortcuts.bold"
 msgstr "Yipàdà to han"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
+#: src/app/main/ui/workspace/keymap_panel.cljs:209
 msgid "shortcuts.bool-difference"
 msgstr "Iyàtò Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:144, src/app/main/ui/workspace/sidebar/shortcuts.cljs:87
+#: src/app/main/ui/workspace/keymap_panel.cljs:210
 msgid "shortcuts.bool-exclude"
 msgstr "Boolean tà yọ̀kúro"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:145, src/app/main/ui/workspace/sidebar/shortcuts.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:211
 msgid "shortcuts.bool-intersection"
 msgstr "ikòritá Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/sidebar/shortcuts.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:212
 msgid "shortcuts.bool-union"
 msgstr "Asépọ̀ Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:213
 msgid "shortcuts.bring-back"
 msgstr "Fírànṣẹ́ si ẹ́hin"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:214
 msgid "shortcuts.bring-backward"
 msgstr "Ran pàdà sí ehin"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:215
 msgid "shortcuts.bring-forward"
 msgstr "Mù siwájù"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:216
 msgid "shortcuts.bring-front"
 msgstr "Mù si wájù"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:217
 msgid "shortcuts.clear-undo"
 msgstr "Pa yipàdá rẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:219
 msgid "shortcuts.copy"
 msgstr "Dàákọ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156, src/app/main/ui/workspace/sidebar/shortcuts.cljs:98
+#: src/app/main/ui/workspace/keymap_panel.cljs:223
 msgid "shortcuts.create-new-project"
 msgstr "Ṣẹ̀dá títún"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157, src/app/main/ui/workspace/sidebar/shortcuts.cljs:99
+#: src/app/main/ui/workspace/keymap_panel.cljs:224
 msgid "shortcuts.cut"
 msgstr "Ge"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158, src/app/main/ui/workspace/right_header.cljs:85, src/app/main/ui/workspace/sidebar/shortcuts.cljs:100
+#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/right_header.cljs:85
 msgid "shortcuts.decrease-zoom"
 msgstr "Sun-un jàdé"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159, src/app/main/ui/workspace/sidebar/shortcuts.cljs:101
+#: src/app/main/ui/workspace/keymap_panel.cljs:226
 msgid "shortcuts.delete"
 msgstr "Pàrẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160, src/app/main/ui/workspace/sidebar/shortcuts.cljs:102
+#: src/app/main/ui/workspace/keymap_panel.cljs:227
 msgid "shortcuts.delete-node"
 msgstr "Pa ipàdé"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
+#: src/app/main/ui/workspace/keymap_panel.cljs:228
 msgid "shortcuts.detach-component"
 msgstr "Yà paati"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
+#: src/app/main/ui/workspace/keymap_panel.cljs:230
 msgid "shortcuts.draw-curve"
 msgstr "Yìyí"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
+#: src/app/main/ui/workspace/keymap_panel.cljs:231
 msgid "shortcuts.draw-ellipse"
 msgstr "Ẹ́lipsì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:165, src/app/main/ui/workspace/sidebar/shortcuts.cljs:107
+#: src/app/main/ui/workspace/keymap_panel.cljs:233
 msgid "shortcuts.draw-nodes"
 msgstr "Fà ọnà"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
+#: src/app/main/ui/workspace/keymap_panel.cljs:234
 msgid "shortcuts.draw-path"
 msgstr "Ọnà"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
+#: src/app/main/ui/workspace/keymap_panel.cljs:235
 msgid "shortcuts.draw-rect"
 msgstr "Ònìgún mèrìn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
+#: src/app/main/ui/workspace/keymap_panel.cljs:236
 msgid "shortcuts.draw-text"
 msgstr "Ọ́rọ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:237
 msgid "shortcuts.duplicate"
 msgstr "Ṣe pidánpidán"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:170, src/app/main/ui/workspace/sidebar/shortcuts.cljs:112
+#: src/app/main/ui/workspace/keymap_panel.cljs:238
 msgid "shortcuts.escape"
 msgstr "Fàgílèè"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:171, src/app/main/ui/workspace/sidebar/shortcuts.cljs:113
+#: src/app/main/ui/workspace/keymap_panel.cljs:239
 msgid "shortcuts.export-shapes"
 msgstr "Ókèéré apẹ̀rẹ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
+#: src/app/main/ui/workspace/keymap_panel.cljs:242
 msgid "shortcuts.fit-all"
 msgstr "Sun-un látì ba gbògbò rẹ̀ mú"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
+#: src/app/main/ui/workspace/keymap_panel.cljs:243
 msgid "shortcuts.flip-horizontal"
 msgstr "Yipadà ní pẹ̀tẹ̀lẹ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:176, src/app/main/ui/workspace/sidebar/shortcuts.cljs:118
+#: src/app/main/ui/workspace/keymap_panel.cljs:244
 msgid "shortcuts.flip-vertical"
 msgstr "Yipadà ní ínàró"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
+#: src/app/main/ui/workspace/keymap_panel.cljs:245
 msgid "shortcuts.font-size-dec"
 msgstr "Dìn íwọ̀n fonti kù"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
+#: src/app/main/ui/workspace/keymap_panel.cljs:246
 msgid "shortcuts.font-size-inc"
 msgstr "Alekun iwọn fonti"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
+#: src/app/main/ui/workspace/keymap_panel.cljs:247
 msgid "shortcuts.go-to-drafts"
 msgstr "Lọ sí iyáwòran"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:180, src/app/main/ui/workspace/sidebar/shortcuts.cljs:122
+#: src/app/main/ui/workspace/keymap_panel.cljs:248
 msgid "shortcuts.go-to-libs"
 msgstr "Lọ si awọn ílé-Ikàwé tí a pín"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:181, src/app/main/ui/workspace/sidebar/shortcuts.cljs:123
+#: src/app/main/ui/workspace/keymap_panel.cljs:249
 msgid "shortcuts.go-to-search"
 msgstr "Wàá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
+#: src/app/main/ui/workspace/keymap_panel.cljs:250
 msgid "shortcuts.group"
 msgstr "Ẹgbẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
+#: src/app/main/ui/workspace/keymap_panel.cljs:251
 msgid "shortcuts.h-distribute"
 msgstr "Pinpín kàákírì pètèlè"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
+#: src/app/main/ui/workspace/keymap_panel.cljs:252
 msgid "shortcuts.hide-ui"
 msgstr "Ífìhan / Tọju UI"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
+#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/right_header.cljs:90
 msgid "shortcuts.increase-zoom"
 msgstr "Sùn-un sínú"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:186, src/app/main/ui/workspace/sidebar/shortcuts.cljs:128
+#: src/app/main/ui/workspace/keymap_panel.cljs:254
 msgid "shortcuts.insert-image"
 msgstr "Fí àwóran sii"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:187, src/app/main/ui/workspace/sidebar/shortcuts.cljs:129
+#: src/app/main/ui/workspace/keymap_panel.cljs:255
 msgid "shortcuts.italic"
 msgstr "Yipàdà ítalikì"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:188, src/app/main/ui/workspace/sidebar/shortcuts.cljs:130
+#: src/app/main/ui/workspace/keymap_panel.cljs:256
 msgid "shortcuts.join-nodes"
 msgstr "Dàràpọ̀ awọn ipàdé"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:189, src/app/main/ui/workspace/sidebar/shortcuts.cljs:131
+#: src/app/main/ui/workspace/keymap_panel.cljs:257
 msgid "shortcuts.line-through"
 msgstr "Íyìpàdà ílà to yọ̀rí"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:190, src/app/main/ui/workspace/sidebar/shortcuts.cljs:132
+#: src/app/main/ui/workspace/keymap_panel.cljs:258
 msgid "shortcuts.make-corner"
 msgstr "Ṣè ígùn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:191, src/app/main/ui/workspace/sidebar/shortcuts.cljs:133
+#: src/app/main/ui/workspace/keymap_panel.cljs:259
 msgid "shortcuts.make-curve"
 msgstr "Ṣe ìsépọ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/sidebar/shortcuts.cljs:134
+#: src/app/main/ui/workspace/keymap_panel.cljs:260
 msgid "shortcuts.mask"
 msgstr "Ibòjú"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:193, src/app/main/ui/workspace/sidebar/shortcuts.cljs:135
+#: src/app/main/ui/workspace/keymap_panel.cljs:262
 msgid "shortcuts.merge-nodes"
 msgstr "Dàpọ̀ awọ́n apa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:194, src/app/main/ui/workspace/sidebar/shortcuts.cljs:136
+#: src/app/main/ui/workspace/keymap_panel.cljs:263
 msgid "shortcuts.move"
 msgstr "Gbé"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:195, src/app/main/ui/workspace/sidebar/shortcuts.cljs:137
+#: src/app/main/ui/workspace/keymap_panel.cljs:264
 msgid "shortcuts.move-fast-down"
 msgstr "Sàré lọ́ sí isàlẹ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:196, src/app/main/ui/workspace/sidebar/shortcuts.cljs:138
+#: src/app/main/ui/workspace/keymap_panel.cljs:265
 msgid "shortcuts.move-fast-left"
 msgstr "Gbé sí osi kiákiá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:197, src/app/main/ui/workspace/sidebar/shortcuts.cljs:139
+#: src/app/main/ui/workspace/keymap_panel.cljs:266
 msgid "shortcuts.move-fast-right"
 msgstr "Gbé si ọ̀tún kiákiá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:198, src/app/main/ui/workspace/sidebar/shortcuts.cljs:140
+#: src/app/main/ui/workspace/keymap_panel.cljs:267
 msgid "shortcuts.move-fast-up"
 msgstr "Gbé si òké kiákiá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:199, src/app/main/ui/workspace/sidebar/shortcuts.cljs:141
+#: src/app/main/ui/workspace/keymap_panel.cljs:268
 msgid "shortcuts.move-nodes"
 msgstr "Gbé ipàdé"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:200, src/app/main/ui/workspace/sidebar/shortcuts.cljs:142
+#: src/app/main/ui/workspace/keymap_panel.cljs:269
 msgid "shortcuts.move-unit-down"
 msgstr "Gbé sílè"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:201, src/app/main/ui/workspace/sidebar/shortcuts.cljs:143
+#: src/app/main/ui/workspace/keymap_panel.cljs:270
 msgid "shortcuts.move-unit-left"
 msgstr "Gbé osi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:202, src/app/main/ui/workspace/sidebar/shortcuts.cljs:144
+#: src/app/main/ui/workspace/keymap_panel.cljs:271
 msgid "shortcuts.move-unit-right"
 msgstr "Gbé sọtùn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:203, src/app/main/ui/workspace/sidebar/shortcuts.cljs:145
+#: src/app/main/ui/workspace/keymap_panel.cljs:272
 msgid "shortcuts.move-unit-up"
 msgstr "Gbé sóke"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:204, src/app/main/ui/workspace/sidebar/shortcuts.cljs:146
+#: src/app/main/ui/workspace/keymap_panel.cljs:274
 msgid "shortcuts.next-frame"
 msgstr "Ọ̀kọ̀ tókan"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:510
+#, unused
 msgid "shortcuts.not-found"
 msgstr "Kò sí awọ́n ọ̀nà abùjá ti à rii"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:205, src/app/main/ui/workspace/sidebar/shortcuts.cljs:147
+#: src/app/main/ui/workspace/keymap_panel.cljs:275
 msgid "shortcuts.opacity-0"
 msgstr "Fí akomo sí ipò 100%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:206, src/app/main/ui/workspace/sidebar/shortcuts.cljs:148
+#: src/app/main/ui/workspace/keymap_panel.cljs:276
 msgid "shortcuts.opacity-1"
 msgstr "Fi akomo si ipo 10%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:207, src/app/main/ui/workspace/sidebar/shortcuts.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:277
 msgid "shortcuts.opacity-2"
 msgstr "Fi akomo si ipo 20%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:208, src/app/main/ui/workspace/sidebar/shortcuts.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:278
 msgid "shortcuts.opacity-3"
 msgstr "Fi akomo si ipo 30%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:209, src/app/main/ui/workspace/sidebar/shortcuts.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:279
 msgid "shortcuts.opacity-4"
 msgstr "Fi akomo si ipo 40%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:210, src/app/main/ui/workspace/sidebar/shortcuts.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:280
 msgid "shortcuts.opacity-5"
 msgstr "Fi akomo si ipo 50%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:211, src/app/main/ui/workspace/sidebar/shortcuts.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:281
 msgid "shortcuts.opacity-6"
 msgstr "Fi akomo si ipo 60%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:212, src/app/main/ui/workspace/sidebar/shortcuts.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:282
 msgid "shortcuts.opacity-7"
 msgstr "Fi akomo si ipo 70%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:213, src/app/main/ui/workspace/sidebar/shortcuts.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:283
 msgid "shortcuts.opacity-8"
 msgstr "Fi akomo si ipo 80%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:214, src/app/main/ui/workspace/sidebar/shortcuts.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:284
 msgid "shortcuts.opacity-9"
 msgstr "Fi akomo si ipo 90%"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:215, src/app/main/ui/workspace/sidebar/shortcuts.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:285
 msgid "shortcuts.open-color-picker"
 msgstr "Ólùṣà àwọ̀"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:217, src/app/main/ui/workspace/sidebar/shortcuts.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:287
 msgid "shortcuts.open-dashboard"
 msgstr "Lọ si dasibodu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:218, src/app/main/ui/workspace/sidebar/shortcuts.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:288
 msgid "shortcuts.open-inspect"
 msgstr "Lọ si apaa ayewo olùwò"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:220, src/app/main/ui/workspace/sidebar/shortcuts.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:290
 msgid "shortcuts.open-viewer"
 msgstr "Lọ si apaa ibaraẹnisọrọ olùwò"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:258
+#, unused
 msgid "shortcuts.or"
 msgstr " tabi "
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:222, src/app/main/ui/workspace/sidebar/shortcuts.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:292
 msgid "shortcuts.paste"
 msgstr "Lẹẹmọ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/sidebar/shortcuts.cljs:166
+#: src/app/main/ui/workspace/keymap_panel.cljs:295
 msgid "shortcuts.prev-frame"
 msgstr "Ọkọ ti tẹlẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:226, src/app/main/ui/workspace/sidebar/shortcuts.cljs:167
+#: src/app/main/ui/workspace/keymap_panel.cljs:296
 msgid "shortcuts.redo"
 msgstr "Tunṣe"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:228, src/app/main/ui/workspace/sidebar/shortcuts.cljs:169
+#: src/app/main/ui/workspace/keymap_panel.cljs:298
 msgid "shortcuts.reset-zoom"
 msgstr "tun sun"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:230, src/app/main/ui/workspace/sidebar/shortcuts.cljs:171
+#: src/app/main/ui/workspace/keymap_panel.cljs:300
 msgid "shortcuts.search-placeholder"
 msgstr "Wa awọn ọna abuja"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:231, src/app/main/ui/workspace/sidebar/shortcuts.cljs:172
+#: src/app/main/ui/workspace/keymap_panel.cljs:301
 msgid "shortcuts.select-all"
 msgstr "Ṣa gbogbo re"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:233, src/app/main/ui/workspace/sidebar/shortcuts.cljs:174
+#: src/app/main/ui/workspace/keymap_panel.cljs:303
 msgid "shortcuts.select-parent-layer"
 msgstr "Yan Obii pẹlẹbẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:237, src/app/main/ui/workspace/sidebar/shortcuts.cljs:178
+#: src/app/main/ui/workspace/keymap_panel.cljs:307
 msgid "shortcuts.show-shortcuts"
 msgstr "Ifihan / Itọju ọna abùjá"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:238, src/app/main/ui/workspace/sidebar/shortcuts.cljs:179
+#: src/app/main/ui/workspace/keymap_panel.cljs:308
 msgid "shortcuts.snap-nodes"
 msgstr "Yaa si awon apa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:239, src/app/main/ui/workspace/sidebar/shortcuts.cljs:180
+#: src/app/main/ui/workspace/keymap_panel.cljs:309
 msgid "shortcuts.snap-pixel-grid"
 msgstr "Yaa si pikseli ilana"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:241, src/app/main/ui/workspace/sidebar/shortcuts.cljs:182
+#: src/app/main/ui/workspace/keymap_panel.cljs:311
 msgid "shortcuts.start-measure"
 msgstr "Bẹ̀rẹ̀ wíwọ̀n"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:242, src/app/main/ui/workspace/sidebar/shortcuts.cljs:183
+#: src/app/main/ui/workspace/keymap_panel.cljs:312
 msgid "shortcuts.stop-measure"
 msgstr "da wíwọ̀n duro"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:243, src/app/main/ui/workspace/sidebar/shortcuts.cljs:184
+#: src/app/main/ui/workspace/keymap_panel.cljs:313
 msgid "shortcuts.thumbnail-set"
 msgstr "Se étò awòn áwòran fun fidio"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:244, src/app/main/ui/workspace/sidebar/shortcuts.cljs:185
+#: src/app/main/ui/workspace/keymap_panel.cljs:314
 msgid "shortcuts.toggle-alignment"
 msgstr "Iyipada titete ìmúdàgba"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:245, src/app/main/ui/workspace/sidebar/shortcuts.cljs:186
+#: src/app/main/ui/workspace/keymap_panel.cljs:315
 msgid "shortcuts.toggle-assets"
 msgstr "Yi dukia pada"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:246, src/app/main/ui/workspace/sidebar/shortcuts.cljs:187
+#: src/app/main/ui/workspace/keymap_panel.cljs:316
 msgid "shortcuts.toggle-colorpalette"
 msgstr "Yi paleti awọ pada"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:247, src/app/main/ui/workspace/sidebar/shortcuts.cljs:188
+#: src/app/main/ui/workspace/keymap_panel.cljs:317
 msgid "shortcuts.toggle-focus-mode"
 msgstr "Yi ipo idojukọ pada"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:248, src/app/main/ui/workspace/sidebar/shortcuts.cljs:189
+#: src/app/main/ui/workspace/keymap_panel.cljs:318
 msgid "shortcuts.toggle-fullscreen"
 msgstr "Yi kuro ni fulscrin"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:251, src/app/main/ui/workspace/sidebar/shortcuts.cljs:192
+#: src/app/main/ui/workspace/keymap_panel.cljs:321
 msgid "shortcuts.toggle-layers"
 msgstr "Yi awon pelebe yii pada"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:254, src/app/main/ui/workspace/sidebar/shortcuts.cljs:195
+#: src/app/main/ui/workspace/keymap_panel.cljs:324
 msgid "shortcuts.toggle-lock"
 msgstr "Tiipa / Siilẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:255, src/app/main/ui/workspace/sidebar/shortcuts.cljs:196
+#: src/app/main/ui/workspace/keymap_panel.cljs:325
 msgid "shortcuts.toggle-lock-size"
 msgstr "títìipa lápàkàn"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:259, src/app/main/ui/workspace/sidebar/shortcuts.cljs:200
+#: src/app/main/ui/workspace/keymap_panel.cljs:329
 msgid "shortcuts.toggle-textpalette"
 msgstr "Yíípàda ọrọ paleti"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:261, src/app/main/ui/workspace/sidebar/shortcuts.cljs:202
+#: src/app/main/ui/workspace/keymap_panel.cljs:331
 msgid "shortcuts.toggle-visibility"
 msgstr "Fihan / Toju re"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:262, src/app/main/ui/workspace/sidebar/shortcuts.cljs:203
+#: src/app/main/ui/workspace/keymap_panel.cljs:332
 msgid "shortcuts.toggle-zoom-style"
 msgstr "Yiipada asa sun-un"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:263, src/app/main/ui/workspace/sidebar/shortcuts.cljs:204
+#: src/app/main/ui/workspace/keymap_panel.cljs:333
 msgid "shortcuts.underline"
 msgstr "Yii abẹlẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:264, src/app/main/ui/workspace/sidebar/shortcuts.cljs:205
+#: src/app/main/ui/workspace/keymap_panel.cljs:334
 msgid "shortcuts.undo"
 msgstr "Yi pada"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:265, src/app/main/ui/workspace/sidebar/shortcuts.cljs:206
+#: src/app/main/ui/workspace/keymap_panel.cljs:335
 msgid "shortcuts.ungroup"
 msgstr "Tu ẹgbẹ"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:266, src/app/main/ui/workspace/sidebar/shortcuts.cljs:207
+#: src/app/main/ui/workspace/keymap_panel.cljs:336
 msgid "shortcuts.unmask"
 msgstr "Aiboju"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:267, src/app/main/ui/workspace/sidebar/shortcuts.cljs:208
+#: src/app/main/ui/workspace/keymap_panel.cljs:337
 msgid "shortcuts.v-distribute"
 msgstr "Pin ni inaro"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
+#: src/app/main/ui/workspace/keymap_panel.cljs:339
 msgid "shortcuts.zoom-lense-decrease"
 msgstr "Dín lẹnsì sisun kù"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:269, src/app/main/ui/workspace/sidebar/shortcuts.cljs:210
+#: src/app/main/ui/workspace/keymap_panel.cljs:340
 msgid "shortcuts.zoom-lense-increase"
 msgstr "Lílọ̀soké lẹnsi sisun"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:270, src/app/main/ui/workspace/sidebar/shortcuts.cljs:211
+#, unused
 msgid "shortcuts.zoom-selected"
 msgstr "Yiyan pelu sun-un"
 
@@ -2954,7 +2960,7 @@ msgstr "Webhooks - %s - Penpot"
 msgid "title.viewer"
 msgstr "%s –Ipo wíwò - Penpot"
 
-#: src/app/main/ui/workspace.cljs:243
+#: src/app/main/ui/workspace.cljs:246
 msgid "title.workspace"
 msgstr "%s - Penpot"
 
@@ -3039,15 +3045,15 @@ msgstr "Párápọ̀ sóké (%s)"
 msgid "workspace.assets.assets"
 msgstr "Awọ̀n dukia"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:158
+#: src/app/main/ui/workspace/sidebar/assets.cljs:209
 msgid "workspace.assets.box-filter-all"
 msgstr "Gbọ̀gbọ̀ awọ̀n dukia"
 
-#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
+#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:521, src/app/main/ui/workspace/sidebar/assets.cljs:215
 msgid "workspace.assets.colors"
 msgstr "Áwò"
 
-#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:161
+#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:212
 msgid "workspace.assets.components"
 msgstr "Awọ̀n eroja"
 
@@ -3059,7 +3065,7 @@ msgstr "Ṣẹ̀dá ẹ̀gbẹ̀ kan"
 msgid "workspace.assets.create-group-hint"
 msgstr "páarẹ̀"
 
-#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:563
+#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:645
 msgid "workspace.assets.duplicate"
 msgstr "ẹẹdà"
 
@@ -3080,11 +3086,11 @@ msgstr "Ẹgbẹ"
 msgid "workspace.assets.group-name"
 msgstr "Orúkọ̀ ẹgbẹ"
 
-#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:106, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
+#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:107, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
 msgid "workspace.assets.local-library"
 msgstr "Ílè-iwè agbegbe"
 
-#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:298
+#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:299
 msgid "workspace.assets.not-found"
 msgstr "Ko si ohun-ini ti a rii"
 
@@ -3101,7 +3107,7 @@ msgstr "Lo oruko imiran"
 msgid "workspace.assets.rename-group"
 msgstr "Lo oruko imiran fun ẹgbẹ"
 
-#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
+#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:230
 msgid "workspace.assets.search"
 msgstr "Wa dukia"
 
@@ -3110,7 +3116,7 @@ msgstr "Wa dukia"
 msgid "workspace.assets.shared-library"
 msgstr "Iĺẹ̀ iwekika ti a pln"
 
-#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:167
+#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:218
 msgid "workspace.assets.typography"
 msgstr "Iwe itẹwe"
 
@@ -3119,23 +3125,23 @@ msgstr "Iwe itẹwe"
 msgid "workspace.assets.typography.font-id"
 msgstr "Fonti"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:603
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:685
 msgid "workspace.assets.typography.font-size"
 msgstr "Iwon"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:599
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:681
 msgid "workspace.assets.typography.font-style"
 msgstr "Àrà Fọ́ǹtì"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:611
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:693
 msgid "workspace.assets.typography.letter-spacing"
 msgstr "Aaye leta"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:607
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:689
 msgid "workspace.assets.typography.line-height"
 msgstr "Giga ila"
 
-#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:718
+#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:630, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:668, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:780, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:800
 msgid "workspace.assets.typography.sample"
 msgstr "Ag"
 
@@ -3143,7 +3149,7 @@ msgstr "Ag"
 msgid "workspace.assets.typography.text-styles"
 msgstr "Oniru ọrọ"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:615
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:697
 msgid "workspace.assets.typography.text-transform"
 msgstr "Iyipádà ọrọ"
 
@@ -3175,7 +3181,7 @@ msgstr "Itesiwaju gerege"
 msgid "workspace.gradients.radial"
 msgstr "Itesiwaju Radial"
 
-#: src/app/main/ui/workspace/main_menu.cljs:250
+#: src/app/main/ui/workspace/main_menu.cljs:248
 msgid "workspace.header.menu.disable-scale-content"
 msgstr "Pa asèkalẹ̀ iwọnbà"
 
@@ -3184,15 +3190,15 @@ msgstr "Pa asèkalẹ̀ iwọnbà"
 msgid "workspace.header.menu.disable-scale-text"
 msgstr "Pa ọrọ iwọnba"
 
-#: src/app/main/ui/workspace/main_menu.cljs:311
+#: src/app/main/ui/workspace/main_menu.cljs:309
 msgid "workspace.header.menu.disable-snap-pixel-grid"
 msgstr "Pa yipada si piseli"
 
-#: src/app/main/ui/workspace/main_menu.cljs:297
+#: src/app/main/ui/workspace/main_menu.cljs:295
 msgid "workspace.header.menu.enable-dynamic-alignment"
 msgstr "Tan imudagba to Sedede"
 
-#: src/app/main/ui/workspace/main_menu.cljs:251
+#: src/app/main/ui/workspace/main_menu.cljs:249
 msgid "workspace.header.menu.enable-scale-content"
 msgstr "Tan asèkalẹ̀ iwọnbà"
 
@@ -3201,27 +3207,27 @@ msgstr "Tan asèkalẹ̀ iwọnbà"
 msgid "workspace.header.menu.enable-scale-text"
 msgstr "Tan iwọnbà ọrọ"
 
-#: src/app/main/ui/workspace/main_menu.cljs:282
+#: src/app/main/ui/workspace/main_menu.cljs:280
 msgid "workspace.header.menu.enable-snap-guides"
 msgstr "Yipada si itọ̀nìsọna"
 
-#: src/app/main/ui/workspace/main_menu.cljs:312
+#: src/app/main/ui/workspace/main_menu.cljs:310
 msgid "workspace.header.menu.enable-snap-pixel-grid"
 msgstr "Tan Yipada si piseli"
 
-#: src/app/main/ui/workspace/main_menu.cljs:412
+#: src/app/main/ui/workspace/main_menu.cljs:410
 msgid "workspace.header.menu.hide-palette"
 msgstr "Tọ̀jú awọ palẹti"
 
-#: src/app/main/ui/workspace/main_menu.cljs:453
+#: src/app/main/ui/workspace/main_menu.cljs:451
 msgid "workspace.header.menu.hide-pixel-grid"
 msgstr "Tọ̀jú pisẹli ilana"
 
-#: src/app/main/ui/workspace/main_menu.cljs:379
+#: src/app/main/ui/workspace/main_menu.cljs:377
 msgid "workspace.header.menu.hide-rules"
 msgstr "Tọ̀jú awọn ólòrí"
 
-#: src/app/main/ui/workspace/main_menu.cljs:426
+#: src/app/main/ui/workspace/main_menu.cljs:424
 msgid "workspace.header.menu.hide-textpalette"
 msgstr "Tọ̀jú awọn fọnti paleti"
 
@@ -3245,31 +3251,31 @@ msgstr "Awọn àyánfẹ̀"
 msgid "workspace.header.menu.option.view"
 msgstr "Wiwo"
 
-#: src/app/main/ui/workspace/main_menu.cljs:525
+#: src/app/main/ui/workspace/main_menu.cljs:523
 msgid "workspace.header.menu.redo"
 msgstr "Tun ṣe"
 
-#: src/app/main/ui/workspace/main_menu.cljs:496
+#: src/app/main/ui/workspace/main_menu.cljs:494
 msgid "workspace.header.menu.select-all"
 msgstr "Sa gbogbo rẹ"
 
-#: src/app/main/ui/workspace/main_menu.cljs:413
+#: src/app/main/ui/workspace/main_menu.cljs:411
 msgid "workspace.header.menu.show-palette"
 msgstr "Fi awo paleti han"
 
-#: src/app/main/ui/workspace/main_menu.cljs:454
+#: src/app/main/ui/workspace/main_menu.cljs:452
 msgid "workspace.header.menu.show-pixel-grid"
 msgstr "Fi piseli ilana han"
 
-#: src/app/main/ui/workspace/main_menu.cljs:380
+#: src/app/main/ui/workspace/main_menu.cljs:378
 msgid "workspace.header.menu.show-rules"
 msgstr "Ifihan awọ̀n ólórí"
 
-#: src/app/main/ui/workspace/main_menu.cljs:427
+#: src/app/main/ui/workspace/main_menu.cljs:425
 msgid "workspace.header.menu.show-textpalette"
 msgstr "Ifihan fonti paleti"
 
-#: src/app/main/ui/workspace/main_menu.cljs:511
+#: src/app/main/ui/workspace/main_menu.cljs:509
 msgid "workspace.header.menu.undo"
 msgstr "Yi pada"
 
@@ -3348,7 +3354,7 @@ msgstr "Ko si oniruiru iwé itẹ̀wé ni ilé ikàwé rẹ̀"
 msgid "workspace.libraries.colors.hsv"
 msgstr "HSV"
 
-#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219
+#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219, src/app/main/ui/workspace/colorpicker/palette.cljs:228, src/app/main/ui/workspace/colorpicker/palette.cljs:230
 msgid "workspace.libraries.colors.recent-colors"
 msgstr "Awọn àwò tálò láipẹ̀"
 
@@ -3357,11 +3363,11 @@ msgstr "Awọn àwò tálò láipẹ̀"
 msgid "workspace.libraries.colors.rgb-complementary"
 msgstr "RGB Ibáramù"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:364
+#: src/app/main/ui/workspace/colorpicker.cljs:372
 msgid "workspace.libraries.colors.rgba"
 msgstr "RGBA"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:562
+#: src/app/main/ui/workspace/colorpicker.cljs:574
 msgid "workspace.libraries.colors.save-color"
 msgstr "Fi awọn oniru awọ pamọ"
 
@@ -3433,7 +3439,7 @@ msgstr "Asayan Baìbaì"
 msgid "workspace.options.canvas-background"
 msgstr "Kánfásì abẹ́le"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:699
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:721
 msgid "workspace.options.clip-content"
 msgstr "Ábẹrẹ́ ákoonù"
 
@@ -3489,7 +3495,7 @@ msgstr "Ókè"
 msgid "workspace.options.constraints.topbottom"
 msgstr "Ókè ati Ídí"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:203
+#: src/app/main/ui/workspace/sidebar/options.cljs:218
 msgid "workspace.options.design"
 msgstr "Ónirú"
 
@@ -3626,11 +3632,11 @@ msgstr "Ẹ̀kún ẹgbẹ́"
 msgid "workspace.options.group-stroke"
 msgstr "Ẹgba ẹgbẹ́"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:560, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:579
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:582, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:601
 msgid "workspace.options.height"
 msgstr "Gíga"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:207
+#: src/app/main/ui/workspace/sidebar/options.cljs:224
 msgid "workspace.options.inspect"
 msgstr "Ṣàyẹ̀wò"
 
@@ -4075,7 +4081,7 @@ msgstr "Àìríran"
 msgid "workspace.options.position"
 msgstr "Ipò"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:205
+#: src/app/main/ui/workspace/sidebar/options.cljs:221
 msgid "workspace.options.prototype"
 msgstr "Ìtẹ̀lé ìlànà"
 
@@ -4099,7 +4105,7 @@ msgstr "Òkè òsì"
 msgid "workspace.options.radius-top-right"
 msgstr "Òkè ọ̀tún"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:221
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:250, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:390
 msgid "workspace.options.recent-fonts"
 msgstr "Àìpẹ́"
 
@@ -4107,11 +4113,11 @@ msgstr "Àìpẹ́"
 msgid "workspace.options.retry"
 msgstr "Tún gbìyànjú"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:661, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:669
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:683, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:691
 msgid "workspace.options.rotation"
 msgstr "Yíyípo"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:218
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:247
 msgid "workspace.options.search-font"
 msgstr "Àdàkọ ìwádìí"
 
@@ -4177,7 +4183,7 @@ msgstr "Òjìjí tí a yàn"
 msgid "workspace.options.show-fill-on-export"
 msgstr "Fihàn  nínụ àgbéjáde"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:714
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:736
 msgid "workspace.options.show-in-viewer"
 msgstr "Fihàn nínú ipò wíwò"
 
@@ -4185,7 +4191,7 @@ msgstr "Fihàn nínú ipò wíwò"
 msgid "workspace.options.size"
 msgstr "Ìwọ̀n"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:100, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:477
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:105, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:497
 msgid "workspace.options.size-presets"
 msgstr "Àwọn àtòjọ"
 
@@ -4287,43 +4293,43 @@ msgstr "Ìta"
 msgid "workspace.options.stroke.solid"
 msgstr "Ṣinsin"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:134
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:161
 msgid "workspace.options.text-options.align-bottom"
 msgstr "Mú dọ́gba abẹ́"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:130
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:157
 msgid "workspace.options.text-options.align-middle"
 msgstr "Mú dọgba àárín"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:126
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:153
 msgid "workspace.options.text-options.align-top"
 msgstr "Mú dọ́gba òkè"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:99
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:125
 msgid "workspace.options.text-options.direction-ltr"
 msgstr "LTR"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:103
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:129
 msgid "workspace.options.text-options.direction-rtl"
 msgstr "RTL"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:166
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:194
 msgid "workspace.options.text-options.grow-auto-height"
 msgstr "Gíga aládàáṣiṣẹ́"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:162
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:190
 msgid "workspace.options.text-options.grow-auto-width"
 msgstr "Gbígbòòrò aládáàṣiṣé"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:158
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:186
 msgid "workspace.options.text-options.grow-fixed"
 msgstr "Tí kò yíyadà"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:438
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:516
 msgid "workspace.options.text-options.letter-spacing"
 msgstr "Àlàfo lẹ́tà"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:496
 msgid "workspace.options.text-options.line-height"
 msgstr "Gíga ìlà"
 
@@ -4337,35 +4343,35 @@ msgstr "Lẹ́tà kékeré"
 msgid "workspace.options.text-options.none"
 msgstr "Kòsí"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:211
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:240
 msgid "workspace.options.text-options.strikethrough"
 msgstr "Ìfọwọ́bàyíká (%s)"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:68
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:93
 msgid "workspace.options.text-options.text-align-center"
 msgstr "Mú dọ́gba àárín"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:76
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:101
 msgid "workspace.options.text-options.text-align-justify"
 msgstr "Ìdálàre"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:64
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:89
 msgid "workspace.options.text-options.text-align-left"
 msgstr "Mú dọ́gba òsì"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:72
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:97
 msgid "workspace.options.text-options.text-align-right"
 msgstr "Mú dọ́gba ọ̀tún"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:374
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:409
 msgid "workspace.options.text-options.title"
 msgstr "Àyọkà"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:373
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:408
 msgid "workspace.options.text-options.title-group"
 msgstr "Àwùjọ àyọkà"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:372
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:407
 msgid "workspace.options.text-options.title-selection"
 msgstr "Àṣàyàn ọ̀rọ̀"
 
@@ -4374,7 +4380,7 @@ msgstr "Àṣàyàn ọ̀rọ̀"
 msgid "workspace.options.text-options.titlecase"
 msgstr "ipò ọ̀rọ̀ àkórí"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:206
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:235
 msgid "workspace.options.text-options.underline"
 msgstr "Fífàlà (%s)"
 
@@ -4389,15 +4395,15 @@ msgstr ""
 "Lo bọ́tìnì ìṣe tó wà lóori àkọsórí náà láti ṣakóso ìwò "
 "àkàwé."
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:545, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:589
 msgid "workspace.options.width"
 msgstr "Ìgbòrò"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:607, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:630
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:629, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:652
 msgid "workspace.options.x"
 msgstr "Ipò X"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:641
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:663
 msgid "workspace.options.y"
 msgstr "Ipò Y"
 
@@ -4550,7 +4556,7 @@ msgstr "Àwùjọ"
 msgid "workspace.shape.menu.hide"
 msgstr "Tọ́jú"
 
-#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:467
+#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:465
 msgid "workspace.shape.menu.hide-ui"
 msgstr "Fihàn/ Tọ́jú UI"
 
@@ -4636,11 +4642,11 @@ msgstr "Sí ìbòjú"
 msgid "workspace.shape.menu.update-components-in-bulk"
 msgstr "Mímú àwọn ọ̀rọ̀ àkóónú pàtàkì dójú ìwọ̀n"
 
-#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:62
+#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:63
 msgid "workspace.sidebar.collapse"
 msgstr "Wó òpó ègbẹ́"
 
-#: src/app/main/ui/workspace/sidebar.cljs:73, src/app/main/ui/workspace/sidebar.cljs:77
+#: src/app/main/ui/workspace/sidebar.cljs:74, src/app/main/ui/workspace/sidebar.cljs:78
 msgid "workspace.sidebar.expand"
 msgstr "Fẹ òpó ẹ̀gbẹ́"
 
@@ -4648,7 +4654,7 @@ msgstr "Fẹ òpó ẹ̀gbẹ́"
 msgid "workspace.sidebar.history"
 msgstr "Ìtàn"
 
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:163
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:175, src/app/main/ui/workspace/sidebar.cljs:177
 msgid "workspace.sidebar.layers"
 msgstr "Àwọn ìpele"
 
@@ -4697,11 +4703,11 @@ msgstr "Àwọn abala"
 msgid "workspace.sitemap"
 msgstr "Máàpù ojú ìlà"
 
-#: src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:165
+#: src/app/main/ui/workspace/sidebar.cljs:179
 msgid "workspace.toolbar.assets"
 msgstr "Àwọn ohun  ìní"
 
-#: src/app/main/ui/workspace/palette.cljs:182, src/app/main/ui/workspace/palette.cljs:183
+#: src/app/main/ui/workspace/palette.cljs:210, src/app/main/ui/workspace/palette.cljs:211
 msgid "workspace.toolbar.color-palette"
 msgstr "Pálètì àwọ̀ (%s)"
 
@@ -4746,7 +4752,7 @@ msgstr "Àwón ọ̀nà  àbùjá (%s)"
 msgid "workspace.toolbar.text"
 msgstr "Àyọkà (%s)"
 
-#: src/app/main/ui/workspace/palette.cljs:190, src/app/main/ui/workspace/palette.cljs:191
+#: src/app/main/ui/workspace/palette.cljs:218, src/app/main/ui/workspace/palette.cljs:219
 msgid "workspace.toolbar.text-palette"
 msgstr "Àwọn ohun ìtẹ̀wé (%s)"
 
@@ -4895,19 +4901,19 @@ msgstr "Iṣẹ́ parí %s"
 msgid "workspace.undo.title"
 msgstr "Ìtàn"
 
-#: src/app/main/data/workspace/libraries.cljs:1342, src/app/main/data/workspace/versions.cljs:232
+#: src/app/main/data/workspace/libraries.cljs:1361, src/app/main/data/workspace/versions.cljs:232
 msgid "workspace.updates.dismiss"
 msgstr "Ta nù"
 
-#: src/app/main/data/workspace/libraries.cljs:1340
+#: src/app/main/data/workspace/libraries.cljs:1359
 msgid "workspace.updates.more-info"
 msgstr "Àlàyé síi"
 
-#: src/app/main/data/workspace/libraries.cljs:1338
+#: src/app/main/data/workspace/libraries.cljs:1357
 msgid "workspace.updates.there-are-updates"
 msgstr "Àwọn imúdójúìwọ̀n wà nínú àwọn yàrá ìkàwẹ tí a pín"
 
-#: src/app/main/data/workspace/libraries.cljs:1344
+#: src/app/main/data/workspace/libraries.cljs:1363
 msgid "workspace.updates.update"
 msgstr "Ìmúdójúìwọ̀n"
 

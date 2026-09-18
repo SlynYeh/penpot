@@ -20,20 +20,30 @@
 (def all-shortcuts
   (d/deep-merge psc/shortcuts tsc/shortcuts wsc/shortcuts))
 
+;; 手势 token → 翻译 msgid：手势词需要国际化，由渲染层在运行期查翻译；
+;; 修饰键/键帽符号（Ctrl、⌘、空格以外的字面量）是通用符号，不进翻译
+(def gesture-msgids
+  {:click        "keymap.gesture.click"
+   :drag         "keymap.gesture.drag"
+   :hover-layers "keymap.gesture.hover-layers"
+   :scroll       "keymap.gesture.scroll"
+   :space        "keymap.gesture.space"})
+
 (def ^:private gesture-shortcuts
-  {:click-through    {:windows ["Ctrl" "点击"]       :macos ["⌘" "点击"]}
-   :multi-select     {:windows ["Shift" "点击"]      :macos ["⇧" "点击"]}
-   :drag-canvas      {:windows ["空格" "拖动"]       :macos ["空格" "拖动"]}
-   :zoom-canvas      {:windows ["Ctrl" "滚轮"]       :macos ["⌘" "滚轮"]}
-   :measure-distance {:windows ["Alt" "悬停目标图层"] :macos ["⌥" "悬停目标图层"]}})
+  {:click-through    {:windows ["Ctrl" :click]        :macos ["⌘" :click]}
+   :multi-select     {:windows ["Shift" :click]       :macos ["⇧" :click]}
+   :drag-canvas      {:windows [:space :drag]         :macos [:space :drag]}
+   :zoom-canvas      {:windows ["Ctrl" :scroll]       :macos ["⌘" :scroll]}
+   :measure-distance {:windows ["Alt" :hover-layers]  :macos ["⌥" :hover-layers]}})
 
 (defn gesture?
   [kw]
   (contains? gesture-shortcuts kw))
 
 (defn gesture-parts
-  "手势条目的 [按键 手势词] 显示文本（按当前平台取值）；
-   两段均为可直接渲染的显示文本，不再过 convert-char"
+  "手势条目的 [按键 手势词] 显示段（按当前平台取值）；
+   手势词为 gesture-msgids 中的 keyword token，渲染层负责翻译；
+   修饰键/键帽为可直接渲染的字面量，不再过 convert-char"
   [kw]
   (when-let [entry (get gesture-shortcuts kw)]
     (if (cf/check-platform? :macos)

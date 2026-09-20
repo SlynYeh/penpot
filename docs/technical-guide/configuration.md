@@ -712,13 +712,12 @@ PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS: '[{"libraryId":"40e06342-8830-80d6-8008-9b
 - The value contains double quotes, so in YAML it **must** be single quoted.
 - When unset **or empty**, the default baked into `js/config.js` is used.
   Use `[]` to disable the feature.
-- The value is validated with `jq` before being written. Anything that is not
-  an array of `{"libraryId": <string>, "groups": [<string>...]}` is rejected:
-  a warning is printed and the `js/config.js` default is kept. A malformed
-  entry would otherwise be built at frontend startup and could prevent the
-  whole application from booting, not just this feature.
-- This variable requires `jq` inside the frontend image. On an image that does
-  not provide it, the write is skipped with a warning and the default is kept.
+- The value is not validated in the container: it is escaped and emitted as a
+  `JSON.parse` payload, so it is parsed in the browser when `js/config.js`
+  loads. Invalid JSON keeps the `js/config.js` default (with a warning in the
+  browser console); parseable but malformed entries (wrong key types, missing
+  `libraryId`/`groups`) are silently dropped by the frontend, so only the
+  valid entries apply.
 - This is only a pre-set expand state: it does not switch the sidebar to the
   assets tab, and a group collapsed manually stays collapsed until the page is
   reloaded.

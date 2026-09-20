@@ -10,6 +10,21 @@ is_falsy() {
   [[ "$value" == "false" || "$value" == "f" || "$value" == "0" ]]
 }
 
+js_escape() {
+  # Escape $1 so it can be embedded verbatim inside a double quoted JS string
+  # literal (the JSON.parse payloads emitted below). Backslash must be escaped
+  # first or the escapes added after it would be double-escaped. Raw newlines
+  # become the two-char \n, so the emitted assignment always stays on a single
+  # line and command substitution cannot strip them.
+  local s=$1
+  s=${s//\\/\\\\}
+  s=${s//\"/\\\"}
+  s=${s//$'\n'/\\n}
+  s=${s//$'\r'/\\r}
+  s=${s//$'\t'/\\t}
+  printf '%s' "$s"
+}
+
 
 #########################################
 ## Air Gapped config
@@ -134,29 +149,18 @@ update_default_expanded_asset_groups() {
   # JSON array in $PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS (highest priority:
   # appended assignments run last, after the defaults in the file).
   #
-  # The value is validated with jq before being written. js/config.js is a
-  # classic script and app.config builds the expanded-groups value while the
-  # namespace is loaded, so a malformed entry (eg. "groups" being a number)
-  # throws there and the whole UI fails to boot -- not just this feature.
-  # On any invalid input we warn and keep the default from js/config.js, so a
-  # missing jq in the image degrades to "default kept" rather than a broken file.
+  # The value is NOT validated here (the image no longer ships jq): js_escape
+  # guarantees it can never break the js/config.js syntax, and it is parsed in
+  # the browser via JSON.parse. On a parse error the wrapper keeps the default
+  # already assigned by the IIFE above in config.js and warns in the browser
+  # console (not in docker logs); the try/catch also keeps a bad value from
+  # aborting the override lines appended after this one. Parseable but
+  # malformed entries (wrong key types, missing libraryId/groups) are
+  # silently dropped by app.config (config.cljs).
   if [ -n "${PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS:-}" ]; then
-    local check='select(type == "array" and all(.[]; type == "object" and (.libraryId | type == "string") and (.groups | type == "array") and all(.groups[]; type == "string")))'
-    local value="";
-
-    # select() is required: what follows it is a predicate, so a bare
-    # `jq -e "<predicate>"` would emit the boolean `true` and write
-    # "x = true;". With select() a rejected value produces no output at all.
-    # -e is required as well: without it that empty output still exits 0 and
-    # "x = ;" would be emitted -- a syntax error that would break every other
-    # global in js/config.js too. -c keeps the output on a single line.
-    if ! value=$(printf '%s' "$PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS" | jq -ec "$check" 2>/dev/null) \
-       || [ -z "$value" ]; then
-      echo "nginx-entrypoint: PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS must be a JSON array of {libraryId: string, groups: [string]}; keeping the js/config.js default" >&2;
-      return;
-    fi
-
-    printf 'globalThis.penpotDefaultExpandedAssetGroups = %s;\n' "$value" >> "$1";
+    local payload;
+    payload=$(js_escape "${PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS}");
+    printf 'globalThis.penpotDefaultExpandedAssetGroups = (function (v) { try { return JSON.parse(v); } catch (e) { console.warn("penpot: PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS is not valid JSON; keeping the js/config.js default"); return globalThis.penpotDefaultExpandedAssetGroups; } })("%s");\n' "$payload" >> "$1";
   fi
 }
 
@@ -300,18 +304,14 @@ update_beginner_guide_videos() {
   # the JSON object in $PENPOT_BEGINNER_GUIDE_VIDEOS (highest priority:
   # appended assignments run last, after the defaults in the file).
   #
-  # On any invalid input we warn and keep the default from js/config.js.
+  # Not validated in shell either (same policy as
+  # update_default_expanded_asset_groups above): escaped payload, parsed in
+  # the browser via JSON.parse, parse errors keep the config.js default with
+  # a browser-console warning, non-string entries are dropped by app.config.
   if [ -n "${PENPOT_BEGINNER_GUIDE_VIDEOS:-}" ]; then
-    local check='select(type == "object" and all(to_entries[]; (.key | type == "string") and (.value | type == "string")))'
-    local value="";
-
-    if ! value=$(printf '%s' "$PENPOT_BEGINNER_GUIDE_VIDEOS" | jq -ec "$check" 2>/dev/null) \
-       || [ -z "$value" ]; then
-      echo "nginx-entrypoint: PENPOT_BEGINNER_GUIDE_VIDEOS must be a JSON object of {id: url}; keeping the js/config.js default" >&2;
-      return;
-    fi
-
-    printf 'globalThis.penpotBeginnerGuideVideos = %s;\n' "$value" >> "$1";
+    local payload;
+    payload=$(js_escape "${PENPOT_BEGINNER_GUIDE_VIDEOS}");
+    printf 'globalThis.penpotBeginnerGuideVideos = (function (v) { try { return JSON.parse(v); } catch (e) { console.warn("penpot: PENPOT_BEGINNER_GUIDE_VIDEOS is not valid JSON; keeping the js/config.js default"); return globalThis.penpotBeginnerGuideVideos; } })("%s");\n' "$payload" >> "$1";
   fi
 }
 

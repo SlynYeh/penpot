@@ -135,8 +135,9 @@
    :del "⌫"
    :shift "⇧"
    :control "⌃"
-   :esc "⎋"
-   :escape "⎋"
+   ;; Esc 键帽不用 ⎋ 图标，按需求显示文案 Esc（与 windows 显示风格一致）
+   :esc "Esc"
+   :escape "Esc"
    :enter "⏎"})
 
 (defn convert-char

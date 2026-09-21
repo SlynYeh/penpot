@@ -292,6 +292,7 @@
   min-inline-size: 0;
   block-size: 100%;
   overflow: visible;
+  padding-inline: var(--sp-xs);
   border: none;
   border-radius: 0;
   border-start-end-radius: $br-8;
@@ -313,7 +314,6 @@
 
 .font-size-options,
 .font-variant-options {
-  flex: 1 1 0;
   min-inline-size: 0;
 }
 
@@ -321,6 +321,7 @@
   @extend %asset-element;
   @include t.use-typography("body-small");
 
+  flex: 0 0 $sz-96;
   margin: 0;
   padding: 0;
   border: $b-1 solid var(--color-background-tertiary);
@@ -330,6 +331,7 @@
 .font-variant-options {
   position: relative;
   z-index: 1;
+  flex: 1 1 0;
   overflow: visible;
   padding: 0;
 }

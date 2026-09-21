@@ -145,9 +145,56 @@
           (str prefix (localized-font-style suffix)))
         s))))
 
+(def weight-style-names
+  "CSS font-weight → dropdown style name."
+  {100 "Thin"
+   200 "ExtraLight"
+   300 "Light"
+   400 "Regular"
+   500 "Medium"
+   600 "SemiBold"
+   700 "Bold"
+   800 "ExtraBold"
+   900 "Black"})
+
 (def custom-font-style-labels
   "Canonical custom-font style dropdown labels, in display order."
   ["Light" "Regular" "Medium" "SemiBold" "Bold"])
+
+(def custom-style-weights
+  "Canonical custom-font style → CSS font-weight."
+  {"Light" 300
+   "Regular" 400
+   "Medium" 500
+   "SemiBold" 600
+   "Bold" 700})
+
+(defn font-weight-display-label
+  "Thin-100, ExtraLight-200, Regular-400, … Unmapped weights stay numeric."
+  [weight]
+  (let [n (d/parse-integer weight)]
+    (when (some? n)
+      (if-let [style-name (get weight-style-names n)]
+        (str style-name "-" n)
+        (str n)))))
+
+(defn custom-style-display-label
+  "Light-300, Regular-400, Medium-500, SemiBold-600, Bold-700."
+  [style]
+  (if-let [weight (get custom-style-weights style)]
+    (str style "-" weight)
+    style))
+
+(defn variant-style-label
+  "Builtin variant dropdown label. Numeric weights become Thin-100;
+   italic/oblique variants keep that suffix after the weight label."
+  [variant]
+  (let [weight (or (:weight variant) (:name variant))
+        name   (str (or (:name variant) ""))
+        base   (or (font-weight-display-label weight) name)]
+    (if (re-find #"(?i)italic|oblique" name)
+      (str base " Italic")
+      base)))
 
 (def ^:private excluded-style
   ::excluded)
@@ -220,7 +267,7 @@
                 (when (contains? style-index label)
                   {:value label
                    :key   label
-                   :label label})))
+                   :label (custom-style-display-label label)})))
         custom-font-style-labels))
 
 (defn variant-id->custom-style

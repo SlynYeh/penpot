@@ -283,6 +283,10 @@
   max-height: calc((3 * var(--icon-tile-size)) + (2 * var(--sp-xs)));
 }
 
+.icon-group .icon-grid-placeholder {
+  min-height: calc((3 * var(--icon-tile-size)) + (2 * var(--sp-xs)));
+}
+
 .icon-cell {
   position: relative;
   width: var(--icon-tile-size);

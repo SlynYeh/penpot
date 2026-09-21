@@ -9,6 +9,7 @@
   (:require
    [app.common.data :as d]
    [app.common.data.macros :as dm]
+   [app.common.uri :as uri]
    [app.config :as cf]
    [app.main.data.modal :as modal]
    [app.main.store :as st]
@@ -80,6 +81,24 @@
   [watched item-id]
   (conj (or watched #{}) item-id))
 
+(defn restart-video!
+  "Replay from the start. Native `loop` skips the `ended` event, so the
+   first playthrough can mark the card watched before this restart."
+  [node]
+  (when (some? node)
+    (set! (.-currentTime node) 0)
+    (let [playing (.play node)]
+      (when (some? playing)
+        (.catch playing (fn [_]))))))
+
+(defn on-video-ended
+  "First `ended` marks the current card watched; then replay so the video
+   loops without using the native `loop` attribute."
+  [on-first-ended node]
+  (when on-first-ended
+    (on-first-ended))
+  (restart-video! node))
+
 (defn item-video-url
   [item]
   (let [url (:video-url item)]
@@ -87,13 +106,52 @@
                (not (str/blank? url)))
       url)))
 
+(defn href-has-mode-view?
+  "True when the URL query contains mode=view. Empty mode= does not match."
+  [href]
+  (boolean
+   (when (and (string? href)
+              (not (str/blank? href)))
+     (try
+       (let [query (:query (uri/uri href))
+             mode  (when (and (string? query)
+                              (not (str/blank? query)))
+                     (let [value (get (uri/query-string->map query) :mode)]
+                       (if (sequential? value)
+                         (peek value)
+                         value)))]
+         (= "view" mode))
+       (catch :default _
+         false)))))
+
+(defn view-mode-in-hrefs?
+  "True when the current URL or the parent URL has mode=view."
+  [current-href parent-href]
+  (or (href-has-mode-view? current-href)
+      (href-has-mode-view? parent-href)))
+
+(defn- location-href
+  [win]
+  (when (some? win)
+    (try
+      (some-> (.-location win) (.-href))
+      (catch :default _
+        nil))))
+
+(defn current-view-mode?
+  []
+  (view-mode-in-hrefs? (location-href js/window)
+                       (location-href js/parent)))
+
 (defn should-auto-show?
   "First-visit modal opens only when the config switch is on, the user has
-   not already dismissed it, and the modal is not already on screen."
-  [enabled? already-viewed modal-type]
+   not already dismissed it, the modal is not already on screen, and neither
+   the current URL nor window.parent has mode=view."
+  [enabled? already-viewed modal-type view-mode?]
   (and enabled?
        (not already-viewed)
-       (not= :beginner-guide modal-type)))
+       (not= :beginner-guide modal-type)
+       (not view-mode?)))
 
 (defn guide-items
   ([]
@@ -130,7 +188,8 @@
   []
   (when (should-auto-show? cf/show-beginner-guide
                            (viewed?)
-                           (:type (get @st/state ::modal/modal)))
+                           (:type (get @st/state ::modal/modal))
+                           (current-view-mode?))
     (show!)))
 
 (mf/defc guide-card*
@@ -165,8 +224,13 @@
 
 (mf/defc guide-video*
   {::mf/private true}
-  [{:keys [src title]}]
-  (let [video-ref (mf/use-ref nil)]
+  [{:keys [src title on-ended]}]
+  (let [video-ref (mf/use-ref nil)
+        handle-ended
+        (mf/use-fn
+         (mf/deps on-ended)
+         (fn [event]
+           (on-video-ended on-ended (.-currentTarget event))))]
     (mf/with-effect [src]
       (when-let [node (mf/ref-val video-ref)]
         (let [can-unmute? (boolean (some-> (.-userActivation js/navigator)
@@ -187,6 +251,7 @@
              :muted true
              :plays-inline true
              :preload "auto"
+             :on-ended handle-ended
              :aria-label title}]))
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
@@ -214,6 +279,12 @@
         (mf/use-fn
          (fn [index]
            (reset! selected* index)))
+
+        mark-current-watched
+        (mf/use-fn
+         (mf/deps current)
+         (fn []
+           (swap! watched* watch-item (:id current))))
 
         go-next
         (mf/use-fn
@@ -260,7 +331,8 @@
        [:div {:class (stl/css :video-pane)}
         (if media-url
           [:> guide-video* {:src media-url
-                            :title (:title current)}]
+                            :title (:title current)
+                            :on-ended mark-current-watched}]
           [:div {:class (stl/css :video-placeholder)}
            (tr "workspace.beginner-guide.video" (inc selected))])]
        [:div {:ref list-ref

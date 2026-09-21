@@ -164,7 +164,7 @@
 (mf/defc icon-component-tile*
   {::mf/private true
    ::mf/memo true}
-  [{:keys [file-id component is-local placement-size active]}]
+  [{:keys [file-id component is-local placement-size active visible]}]
   (let [on-drag-start
         (mf/use-fn
          (mf/deps file-id is-local placement-size)
@@ -182,8 +182,8 @@
              (dnd/set-allowed-effect! event "move"))))
 
         preview
-        (mf/with-memo [file-id component active]
-          (when active
+        (mf/with-memo [file-id component active visible]
+          (when (dwi/show-icon-glyph? active visible)
             (let [file-data  (dm/get-in @refs/files [file-id :data])
                   root-shape (ctf/get-component-root file-data component)
                   container  (ctf/get-component-page file-data component)]
@@ -206,9 +206,12 @@
   {::mf/private true
    ::mf/memo true}
   [{:keys [outline filled placement-size theme]}]
-  (let [has-outline? (some? outline)
+  (let [cell-ref     (mf/use-ref nil)
+        visible      (hooks/use-visible cell-ref :once? true)
+        has-outline? (some? outline)
         has-filled?  (some? filled)]
-    [:div {:class (stl/css :icon-cell)}
+    [:div {:ref cell-ref
+           :class (stl/css :icon-cell)}
      (when outline
        [:div {:class (stl/css :icon-face :icon-face-outline)}
         [:> icon-component-tile*
@@ -216,7 +219,8 @@
           :component (:component outline)
           :is-local (:is-local outline)
           :placement-size placement-size
-          :active (dwi/icon-face-active? theme has-outline? has-filled? :outline)}]])
+          :active (dwi/icon-face-active? theme has-outline? has-filled? :outline)
+          :visible visible}]])
      (when filled
        [:div {:class (stl/css :icon-face :icon-face-filled)}
         [:> icon-component-tile*
@@ -224,7 +228,8 @@
           :component (:component filled)
           :is-local (:is-local filled)
           :placement-size placement-size
-          :active (dwi/icon-face-active? theme has-outline? has-filled? :filled)}]])]))
+          :active (dwi/icon-face-active? theme has-outline? has-filled? :filled)
+          :visible visible}]])]))
 
 (mf/defc icon-grid*
   {::mf/private true}
@@ -251,7 +256,9 @@
   {::mf/private true
    ::mf/memo true}
   [{:keys [category entries placement-size theme preview-limit on-view-all]}]
-  (let [total      (count entries)
+  (let [group-ref  (mf/use-ref nil)
+        visible    (hooks/use-visible group-ref :once? true)
+        total      (count entries)
         limit      (or preview-limit dwi/icon-preview-limit)
         preview    (dwi/preview-icon-entries entries dwi/icon-preview-fill-limit)
         overflows? (dwi/icon-category-overflows? entries limit)
@@ -259,7 +266,8 @@
                     (mf/deps category on-view-all)
                     (fn []
                       (on-view-all category)))]
-    [:section {:class (stl/css :icon-group)}
+    [:section {:ref group-ref
+               :class (stl/css :icon-group)}
      [:div {:class (stl/css :icon-group-header)}
       [:> icon-category-title*
        {:category category
@@ -270,10 +278,14 @@
                   :on-click on-open}
          (tr "workspace.sidebar.icons.view-all")])]
 
-     [:> icon-grid*
-      {:entries preview
-       :placement-size placement-size
-       :theme theme}]]))
+     (if (dwi/mount-icon-preview-grid? visible)
+       [:> icon-grid*
+        {:entries preview
+         :placement-size placement-size
+         :theme theme}]
+       [:div {:class (stl/css :icon-grid :icon-grid-placeholder)
+              :data-icon-grid "true"
+              :aria-hidden true}])]))
 
 (mf/defc icon-category-detail*
   {::mf/private true

@@ -286,7 +286,8 @@
 (mf/defc font-variant-control*
   {::mf/private true}
   [{:keys [font font-variant-id on-apply-variant on-blur]}]
-  ;; Custom fonts: B toggle + style dropdown; builtin fonts: variant select only.
+  ;; B toggle + style dropdown for both custom and builtin/default fonts.
+  ;; Bold still maps SemiBold/Bold → Regular, otherwise → Bold.
   (let [custom-font?   (= :custom (:backend font))
         mixed?         (or (= font-variant-id :multiple)
                            (= font-variant-id "mixed"))
@@ -306,7 +307,7 @@
                            (mapv (fn [variant]
                                    {:value (:id variant)
                                     :key   (pr-str variant)
-                                    :label (font-style/localized-font-style (:name variant))})))
+                                    :label (font-style/variant-style-label variant)})))
                 mixed-row {:value ""
                            :key   :multiple-variants
                            :label "--"}]
@@ -344,33 +345,31 @@
            (when can-toggle?
              (on-apply-variant (get style-index toggle-style)))))]
 
-    (if custom-font?
-      [:div {:class (stl/css :font-style-combo)}
-       [:button {:type "button"
-                 :class (stl/css-case :font-bold-toggle true
-                                      :is-selected bold-selected?)
-                 :aria-pressed (boolean bold-selected?)
-                 :aria-label bold-label
-                 :disabled (not can-toggle?)
-                 :on-click on-bold-click}
-        "B"]
-       [:span {:class (stl/css :font-style-divider)
-               :aria-hidden true}]
+    [:div {:class (stl/css :font-style-combo)}
+     [:button {:type "button"
+               :class (stl/css-case :font-bold-toggle true
+                                    :is-selected bold-selected?)
+               :aria-pressed (boolean bold-selected?)
+               :aria-label bold-label
+               :disabled (not can-toggle?)
+               :on-click on-bold-click}
+      "B"]
+     [:span {:class (stl/css :font-style-divider)
+             :aria-hidden true}]
+     (if custom-font?
        [:& select
         {:class (stl/css :font-variant-select-combo)
          :default-value (if mixed? "" (or current-style ""))
          :options custom-options
          :on-change on-custom-change
-         :on-blur on-blur}]]
-
-      ;; TODO Add disabled mode
-      [:& select
-       {:class (stl/css :font-variant-select)
-        :default-value (let [value (attr->string font-variant-id)]
-                         (if (= value "mixed") "" value))
-        :options builtin-options
-        :on-change on-builtin-change
-        :on-blur on-blur}])))
+         :on-blur on-blur}]
+       [:& select
+        {:class (stl/css :font-variant-select-combo)
+         :default-value (let [value (attr->string font-variant-id)]
+                          (if (= value "mixed") "" value))
+         :options builtin-options
+         :on-change on-builtin-change
+         :on-blur on-blur}])]))
 
 (mf/defc font-options*
   [{:keys [values on-change on-blur show-recent]}]

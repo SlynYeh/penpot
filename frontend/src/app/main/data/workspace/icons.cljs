@@ -147,6 +147,16 @@
              (= theme :outline)
              (not has-outline?)))))
 
+(defn show-icon-glyph?
+  "Draw the sidebar SVG only when this face is active and on screen."
+  [active visible]
+  (and (true? active) (true? visible)))
+
+(defn mount-icon-preview-grid?
+  "Overview category grids wait until the section is on screen."
+  [visible]
+  (true? visible))
+
 (defn- icon-entry-identity
   [entry]
   [(str/lower (or (:name (:component entry)) ""))

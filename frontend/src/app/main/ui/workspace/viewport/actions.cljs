@@ -480,9 +480,10 @@
          (let [point (gpt/point (.-clientX e) (.-clientY e))
                viewport-coord (uwvv/point->viewport point)
                {:keys [component file-id shape placement-size glyph-color]} @wsac/drag-data*
-               drop-size (or placement-size (:width shape))
-               final-x (- (:x viewport-coord) (/ drop-size 2))
-               final-y (- (:y viewport-coord) (/ drop-size 2))]
+               drop-w (or placement-size (:width shape))
+               drop-h (or placement-size (:height shape))
+               final-x (- (:x viewport-coord) (/ drop-w 2))
+               final-y (- (:y viewport-coord) (/ drop-h 2))]
 
            (mf/set-ref-val! comp-inst-ref true)
            (st/emit! (dwl/instantiate-component

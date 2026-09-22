@@ -579,6 +579,8 @@
   (let [;; picker size in pixels
         h (if gradient? 820 510)
         w 308
+        ;; gap between the tooltip and the adjacent workspace panel
+        gap 12
         ;; Checks for overflow outside the viewport height
         max-y   (- vh h)
         rulers? (mf/deref refs/rulers?)
@@ -587,28 +589,43 @@
         top-offset (dm/str (- y 70) "px")
         bottom-offset "1rem"
         max-height-top (str "calc(100vh - " top-offset)
-        max-height-bottom (str "calc(100vh -" bottom-offset)]
+        max-height-bottom (str "calc(100vh -" bottom-offset)
+        ;; Both sidebars are user-resizable at runtime, so their edges are
+        ;; measured from the DOM instead of using constants. The tooltip is
+        ;; portaled to `body` with no positioned ancestor, so CSS `right`
+        ;; resolves against the window edge: a `right` of
+        ;; `vw - right-sidebar.left + gap` keeps the tooltip's right edge
+        ;; `gap` px to the LEFT of the right sidebar.
+        vw (-> (dom/get-window-size) :width)
+        anchor-right
+        (when-let [rect (some-> (dom/get-element "right-sidebar-aside")
+                                dom/get-bounding-rect)]
+          (dm/str (- (+ vw gap) (:left rect)) "px"))
+        ;; `left` is in client coordinates: left-sidebar.right + gap keeps
+        ;; the tooltip's left edge `gap` px to the RIGHT of the left sidebar.
+        anchor-left
+        (when-let [rect (some-> (dom/get-element "left-sidebar-aside")
+                                dom/get-bounding-rect)]
+          (dm/str (+ (:right rect) gap) "px"))]
     (cond
       (or (nil? x) (nil? y))
-      #js {:left "auto" :right "16rem" :top "4rem" :maxHeight "calc(100vh - 4rem)"}
+      #js {:left "auto"
+           :right (or anchor-right "16rem")
+           :top "4rem"
+           :maxHeight "calc(100vh - 4rem)"}
 
       (= position :left)
-      (if (> y max-y)
-        #js {:left (dm/str (- x right-offset) "px")
-             :bottom bottom-offset
-             :maxHeight max-height-bottom}
-        #js {:left (dm/str (- x right-offset) "px")
-             :top top-offset
-             :maxHeight max-height-top})
+      (let [l (if anchor-right "auto" (dm/str (- x right-offset) "px"))
+            r (or anchor-right "auto")]
+        (if (> y max-y)
+          #js {:left l :right r :bottom bottom-offset :maxHeight max-height-bottom}
+          #js {:left l :right r :top top-offset :maxHeight max-height-top}))
 
       (= position :right)
-      (if (> y max-y)
-        #js {:left (dm/str (+ x 80) "px")
-             :bottom bottom-offset
-             :maxHeight max-height-bottom}
-        #js {:left (dm/str (+ x 80) "px")
-             :top top-offset
-             :maxHeight max-height-top})
+      (let [l (or anchor-left (dm/str (+ x 80) "px"))]
+        (if (> y max-y)
+          #js {:left l :bottom bottom-offset :maxHeight max-height-bottom}
+          #js {:left l :top top-offset :maxHeight max-height-top}))
 
       :else
       (if (> y max-y)

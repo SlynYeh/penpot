@@ -6514,7 +6514,7 @@ msgstr "上下固定"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:553
 msgid "workspace.options.convert-to-typography"
-msgstr "创建排版样式"
+msgstr "创建文字样式"
 
 #: src/app/main/ui/workspace/sidebar/options.cljs:218
 msgid "workspace.options.design"

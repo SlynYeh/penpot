@@ -28,7 +28,9 @@
 
 .layers-tab {
   padding-top: deprecated.$s-4;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .left-header {
@@ -43,6 +45,8 @@
   position: static;
   z-index: deprecated.$z-index-1;
   right: calc(-1 * deprecated.$s-8);
+  inset-inline-end: calc(-1 * var(--sp-s));
+  min-block-size: 0;
 }
 
 .resize-area {
@@ -103,6 +107,8 @@
 .left-sidebar-tabs {
   --tabs-nav-padding-inline-start: var(--sp-m);
   --tabs-nav-padding-inline-end: var(--sp-m);
+
+  block-size: 100%;
 }
 
 .sidebar-tab-panels {
@@ -111,6 +117,7 @@
 }
 
 .sidebar-tab-panel {
+  display: grid;
   height: 100%;
   min-height: 0;
 }

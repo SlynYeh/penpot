@@ -48,7 +48,9 @@
         (mf/with-memo [libraries file-id]
           (->> (dissoc libraries file-id)
                (vals)
-               (mapv extract-colors)))
+               (mapv extract-colors)
+               ;; hide libraries without colors
+               (filterv #(pos? (:total-colors %)))))
 
         recent-colors
         (mf/with-memo [recent-colors]
@@ -83,51 +85,53 @@
                                    :mini true
                                    :color color}])]]])
 
-      [:li {:class (stl/css-case
-                    :file-library true
-                    :selected (= selected :file))
-            :on-click on-select
-            :data-palette "file"}
+      (when (pos? local-colors-count)
+        [:li {:class (stl/css-case
+                      :file-library true
+                      :selected (= selected :file))
+              :on-click on-select
+              :data-palette "file"}
 
-       [:div {:class (stl/css :option-wrapper)}
-        [:div {:class (stl/css :library-name)}
+        [:div {:class (stl/css :option-wrapper)}
+         [:div {:class (stl/css :library-name)}
 
-         [:div {:class (stl/css :lib-name-wrapper)}
-          [:span {:class (stl/css :lib-name)}
-           (dm/str (tr "workspace.libraries.colors.file-library"))]
-          [:span {:class (stl/css :lib-num)}
-           (dm/str "(" local-colors-count ")")]]
+          [:div {:class (stl/css :lib-name-wrapper)}
+           [:span {:class (stl/css :lib-name)}
+            (dm/str (tr "workspace.libraries.colors.file-library"))]
+           [:span {:class (stl/css :lib-num)}
+            (dm/str "(" local-colors-count ")")]]
 
-         (when (= selected :file)
-           [:span {:class (stl/css :icon-wrapper)}
-            deprecated-icon/tick])]
-        [:div {:class (stl/css :color-sample)
-               :style {:--bullet-size "20px"}}
-         (for [color local-colors]
-           [:> cb/color-bullet* {:key (dm/str (:id color))
-                                 :mini true
-                                 :color color}])]]]
+          (when (= selected :file)
+            [:span {:class (stl/css :icon-wrapper)}
+             deprecated-icon/tick])]
+         [:div {:class (stl/css :color-sample)
+                :style {:--bullet-size "20px"}}
+          (for [color local-colors]
+            [:> cb/color-bullet* {:key (dm/str (:id color))
+                                  :mini true
+                                  :color color}])]]])
 
-      [:li {:class (stl/css
-                    :recent-colors true
-                    :selected (= selected :recent))
-            :on-click on-select
-            :data-palette "recent"}
-       [:div {:class (stl/css :option-wrapper)}
-        [:div {:class (stl/css :library-name)}
-         [:div {:class (stl/css :lib-name-wrapper)}
-          [:span {:class (stl/css :lib-name)}
-           (dm/str (tr "workspace.libraries.colors.recent-colors"))]
-          [:span {:class (stl/css :lib-num)}
-           (dm/str "(" (count recent-colors) ")")]]
+      (when (pos? (count recent-colors))
+        [:li {:class (stl/css
+                      :recent-colors true
+                      :selected (= selected :recent))
+              :on-click on-select
+              :data-palette "recent"}
+         [:div {:class (stl/css :option-wrapper)}
+          [:div {:class (stl/css :library-name)}
+           [:div {:class (stl/css :lib-name-wrapper)}
+            [:span {:class (stl/css :lib-name)}
+             (dm/str (tr "workspace.libraries.colors.recent-colors"))]
+            [:span {:class (stl/css :lib-num)}
+             (dm/str "(" (count recent-colors) ")")]]
 
-         (when (= selected :recent)
-           [:span {:class (stl/css :icon-wrapper)}
-            deprecated-icon/tick])]
-        [:div {:class (stl/css :color-sample)
-               :style {:--bullet-size "20px"}}
+           (when (= selected :recent)
+             [:span {:class (stl/css :icon-wrapper)}
+              deprecated-icon/tick])]
+          [:div {:class (stl/css :color-sample)
+                 :style {:--bullet-size "20px"}}
 
-         (for [color recent-colors]
-           [:> cb/color-bullet* {:key (dm/str (::id color))
-                                 :mini true
-                                 :color color}])]]]]]))
+           (for [color recent-colors]
+             [:> cb/color-bullet* {:key (dm/str (::id color))
+                                   :mini true
+                                   :color color}])]]])]]))

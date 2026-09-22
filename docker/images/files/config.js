@@ -5,6 +5,7 @@
 //var penpotPluginsListURI = "";
 //var penpotHelpCenterURI = "";
 //var penpotLearningCenterURI = "";
+//var penpotFaqURI = "";
 //var penpotHubURI = "";
 
 // ---------------------------------------------------------------------------

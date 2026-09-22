@@ -162,6 +162,7 @@
 (def privacy-policy-uri   (obj/get global "penpotPrivacyPolicyURI"))
 (def help-center-uri      (obj/get global "penpotHelpCenterURI"))
 (def learning-center-uri  (obj/get global "penpotLearningCenterURI"))
+(def faq-uri              (obj/get global "penpotFaqURI"))
 (def penpot-hub-uri       (obj/get global "penpotHubURI"))
 (def flex-help-uri        (obj/get global "penpotGridHelpURI"))
 (def grid-help-uri        (obj/get global "penpotGridHelpURI"))

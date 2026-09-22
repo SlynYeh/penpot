@@ -100,20 +100,12 @@
            (hide-menu!)
            (beginner-guide/show!)))
 
-        ;; The label -> destination crossover below is intentional per the
-        ;; design doc: Tutorials (新手教程) -> PENPOT_HELP_CENTER_URI and FAQ
-        ;; (常见问题) -> PENPOT_LEARNING_CENTER_URI; do not "fix" the naming.
+        ;; Menu wiring: Tutorials (新手教程) -> PENPOT_LEARNING_CENTER_URI and
+        ;; FAQ (常见问题) -> PENPOT_FAQ_URI; each item is shown only when its
+        ;; env var is configured. Re-aligned 2026-09-22: before that the two
+        ;; destinations were deliberately crossed (tutorials opened
+        ;; PENPOT_HELP_CENTER_URI); do not re-cross them.
         open-tutorials
-        (mf/use-fn
-         (mf/deps hide-menu!)
-         (fn [event]
-           (dom/stop-propagation event)
-           (st/emit! (ptk/event ::ev/event {::ev/name "explore-help-center-click"
-                                            ::ev/origin "workspace-help-menu"}))
-           (dom/open-new-window cf/help-center-uri)
-           (hide-menu!)))
-
-        open-faq
         (mf/use-fn
          (mf/deps hide-menu!)
          (fn [event]
@@ -121,6 +113,16 @@
            (st/emit! (ptk/event ::ev/event {::ev/name "explore-learning-center-click"
                                             ::ev/origin "workspace-help-menu"}))
            (dom/open-new-window cf/learning-center-uri)
+           (hide-menu!)))
+
+        open-faq
+        (mf/use-fn
+         (mf/deps hide-menu!)
+         (fn [event]
+           (dom/stop-propagation event)
+           (st/emit! (ptk/event ::ev/event {::ev/name "explore-faq-click"
+                                            ::ev/origin "workspace-help-menu"}))
+           (dom/open-new-window cf/faq-uri)
            (hide-menu!)))]
 
     (mf/with-effect [hint?]
@@ -182,7 +184,7 @@
              [:span {:class (stl/css :item-name)}
               (tr "workspace.header.help.option.beginner-guide")]])
 
-          (when cf/help-center-uri
+          (when cf/learning-center-uri
             [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
                                      :on-click    open-tutorials
                                      :on-key-down (fn [event]
@@ -192,7 +194,7 @@
              [:span {:class (stl/css :item-name)}
               (tr "workspace.header.help.option.tutorials")]])
 
-          (when cf/learning-center-uri
+          (when cf/faq-uri
             [:> dropdown-menu-item* {:class (stl/css :help-menu-item)
                                      :on-click    open-faq
                                      :on-key-down (fn [event]

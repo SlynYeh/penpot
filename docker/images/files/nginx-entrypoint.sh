@@ -65,6 +65,7 @@ update_help_uris() {
               "penpotPluginsListURI:PENPOT_PLUGINS_LIST_URI" \
               "penpotHelpCenterURI:PENPOT_HELP_CENTER_URI" \
               "penpotLearningCenterURI:PENPOT_LEARNING_CENTER_URI" \
+              "penpotFaqURI:PENPOT_FAQ_URI" \
               "penpotHubURI:PENPOT_HUB_URI"; do
     key="${pair%%:*}"
     envvar="${pair##*:}"

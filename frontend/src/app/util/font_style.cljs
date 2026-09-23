@@ -277,14 +277,27 @@
     (some-> (d/seek #(= (:id %) variant-id) variants)
             variant->custom-style)))
 
+(def bold-selected-weights
+  "Weights that light the 加粗 button: SemiBold / Bold / ExtraBold / Black."
+  #{600 700 800 900})
+
+(defn variant-bold-selected?
+  "加粗 is selected for SemiBold-600, Bold-700, ExtraBold-800, Black-900."
+  [variant]
+  (when (map? variant)
+    (let [n (d/parse-integer (or (:weight variant) (:name variant)))]
+      (if (some? n)
+        (contains? bold-selected-weights n)
+        (contains? #{"SemiBold" "Bold"} (variant->custom-style variant))))))
+
 (defn custom-bold-selected?
   "加粗 is selected when the mapped style is SemiBold or Bold."
   [style]
   (contains? #{"SemiBold" "Bold"} style))
 
 (defn custom-bold-target-style
-  "Toggle target: Bold when 加粗 is off, Regular when it is on."
-  [style]
-  (if (custom-bold-selected? style)
+  "Toggle target: Regular when 加粗 is on, Bold when it is off."
+  [bold-selected?]
+  (if bold-selected?
     "Regular"
     "Bold"))

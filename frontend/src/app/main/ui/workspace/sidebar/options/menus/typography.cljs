@@ -287,19 +287,20 @@
   {::mf/private true}
   [{:keys [font font-variant-id on-apply-variant on-blur]}]
   ;; B toggle + style dropdown for both custom and builtin/default fonts.
-  ;; Bold still maps SemiBold/Bold → Regular, otherwise → Bold.
-  (let [custom-font?   (= :custom (:backend font))
-        mixed?         (or (= font-variant-id :multiple)
-                           (= font-variant-id "mixed"))
-        variants       (:variants font)
-        style-index    (mf/with-memo [variants]
-                         (font-style/custom-style-index variants))
-        current-style  (when-not mixed?
-                         (font-style/variant-id->custom-style variants font-variant-id))
-        bold-selected? (font-style/custom-bold-selected? current-style)
-        toggle-style   (font-style/custom-bold-target-style current-style)
-        can-toggle?    (some? (get style-index toggle-style))
-        bold-label     (tr "workspace.options.text-options.bold")
+  ;; SemiBold/Bold/ExtraBold/Black → Regular; otherwise → Bold.
+  (let [custom-font?    (= :custom (:backend font))
+        mixed?          (or (= font-variant-id :multiple)
+                            (= font-variant-id "mixed"))
+        variants        (:variants font)
+        style-index     (mf/with-memo [variants]
+                          (font-style/custom-style-index variants))
+        current-variant (when-not mixed?
+                          (d/seek #(= (:id %) font-variant-id) variants))
+        current-style   (some-> current-variant font-style/variant->custom-style)
+        bold-selected?  (font-style/variant-bold-selected? current-variant)
+        toggle-style    (font-style/custom-bold-target-style bold-selected?)
+        can-toggle?     (some? (get style-index toggle-style))
+        bold-label      (tr "workspace.options.text-options.bold")
 
         builtin-options
         (mf/with-memo [variants mixed?]

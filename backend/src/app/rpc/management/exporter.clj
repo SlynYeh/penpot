@@ -14,7 +14,8 @@
    [app.rpc :as-alias rpc]
    [app.rpc.doc :as doc]
    [app.storage :as sto]
-   [app.util.services :as sv]))
+   [app.util.services :as sv]
+   [cuerdas.core :as str]))
 
 ;; ---- RPC METHOD: UPLOAD-TEMPFILE
 
@@ -26,6 +27,28 @@
 (def ^:private
   schema:upload-tempfile-result
   [:map {:title "upload-templfile-result"}])
+
+(defn normalize-base-route-path
+  "Ensure the configured base route path has both leading and trailing
+  slashes. Nil, empty and blank values normalize to an empty string."
+  [path]
+  (let [path (str/trim (or path ""))]
+    (if (seq path)
+      (let [path (cond-> path
+                   (not (str/starts-with? path "/"))
+                   (str "/"))]
+        (cond-> path
+          (not (str/ends-with? path "/"))
+          (str "/")))
+      path)))
+
+(defn build-asset-uri
+  "Builds the public uri of a temporary storage object, formed by
+  concatenating public-uri + base-route-path + assets/by-id + object id."
+  [public-uri base-route-path object-id]
+  (-> public-uri
+      (u/join (str (normalize-base-route-path base-route-path) "assets/by-id/"))
+      (u/join (str object-id))))
 
 (sv/defmethod ::upload-tempfile
   {::doc/added "2.12"
@@ -44,6 +67,6 @@
                  :bucket "tempfile"}
         object (sto/put-object! storage content)]
     {:id (:id object)
-     :uri (-> (cf/get :public-uri)
-              (u/join "/assets/by-id/")
-              (u/join (str (:id object))))}))
+     :uri (build-asset-uri (cf/get :public-uri)
+                           (cf/get :base-route-path)
+                           (:id object))}))

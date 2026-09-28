@@ -260,7 +260,24 @@
             :data-tool "path"
             :data-testid "path-btn"}
            deprecated-icon/path]]
-         ]]
+
+         (when (and (features/active-feature? @st/state "plugins/runtime")
+                    (contains? cf/flags :toolbar-plugins-entry))
+           [:li
+            [:button
+             {:title (tr "workspace.toolbar.plugins" (sc/get-tooltip :plugins))
+              :aria-label (tr "workspace.toolbar.plugins" (sc/get-tooltip :plugins))
+              :class (stl/css :main-toolbar-options-button)
+              :on-click #(st/emit!
+                          (ev/event {::ev/name "open-plugins-manager"
+                                     ::ev/origin "workspace:toolbar"})
+                          (modal/show :plugin-management {}))
+              :data-tool "plugins"
+              :data-testid "plugins-btn"}
+             deprecated-icon/puzzle]])
+
+         (when (contains? cf/flags :mcp)
+           [:> mcp-indicator*])]]
 
        [:button {:title (tr "workspace.toolbar.toggle-toolbar")
                  :aria-label (tr "workspace.toolbar.toggle-toolbar")

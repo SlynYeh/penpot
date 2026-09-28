@@ -79,7 +79,9 @@
               fill-opacity    (:fill-opacity paint)
               stroke          (:stroke paint)
               stroke-opacity  (:stroke-opacity paint)
-              stroke-width    (:stroke-width paint)
+              stroke-width    (if (= stroke "none")
+                                (:stroke-width paint)
+                                dwi/icon-canvas-stroke-width)
               stroke-linecap  (:stroke-linecap paint)
               stroke-linejoin (:stroke-linejoin paint)
               x               (or (:x shape) 0)
@@ -95,7 +97,8 @@
                     :stroke-opacity stroke-opacity
                     :stroke-width stroke-width
                     :stroke-linecap stroke-linecap
-                    :stroke-linejoin stroke-linejoin}]
+                    :stroke-linejoin stroke-linejoin
+                    :vector-effect "non-scaling-stroke"}]
 
             (= type :rect)
             [:rect {:x x
@@ -109,7 +112,8 @@
                     :stroke-opacity stroke-opacity
                     :stroke-width stroke-width
                     :stroke-linecap stroke-linecap
-                    :stroke-linejoin stroke-linejoin}]
+                    :stroke-linejoin stroke-linejoin
+                    :vector-effect "non-scaling-stroke"}]
 
             (= type :circle)
             [:circle {:cx (+ x (/ w 2))
@@ -121,7 +125,8 @@
                       :stroke-opacity stroke-opacity
                       :stroke-width stroke-width
                       :stroke-linecap stroke-linecap
-                      :stroke-linejoin stroke-linejoin}]
+                      :stroke-linejoin stroke-linejoin
+                      :vector-effect "non-scaling-stroke"}]
 
             (= type :ellipse)
             [:ellipse {:cx (+ x (/ w 2))
@@ -134,7 +139,8 @@
                        :stroke-opacity stroke-opacity
                        :stroke-width stroke-width
                        :stroke-linecap stroke-linecap
-                       :stroke-linejoin stroke-linejoin}]
+                       :stroke-linejoin stroke-linejoin
+                       :vector-effect "non-scaling-stroke"}]
 
             :else
             nil))))))
@@ -158,7 +164,7 @@
 (mf/defc icon-component-tile*
   {::mf/private true
    ::mf/memo true}
-  [{:keys [file-id component is-local placement-size active]}]
+  [{:keys [file-id component is-local placement-size active visible]}]
   (let [on-drag-start
         (mf/use-fn
          (mf/deps file-id is-local placement-size)
@@ -176,8 +182,8 @@
              (dnd/set-allowed-effect! event "move"))))
 
         preview
-        (mf/with-memo [file-id component active]
-          (when active
+        (mf/with-memo [file-id component active visible]
+          (when (dwi/show-icon-glyph? active visible)
             (let [file-data  (dm/get-in @refs/files [file-id :data])
                   root-shape (ctf/get-component-root file-data component)
                   container  (ctf/get-component-page file-data component)]
@@ -200,9 +206,12 @@
   {::mf/private true
    ::mf/memo true}
   [{:keys [outline filled placement-size theme]}]
-  (let [has-outline? (some? outline)
+  (let [cell-ref     (mf/use-ref nil)
+        visible      (hooks/use-visible cell-ref :once? true)
+        has-outline? (some? outline)
         has-filled?  (some? filled)]
-    [:div {:class (stl/css :icon-cell)}
+    [:div {:ref cell-ref
+           :class (stl/css :icon-cell)}
      (when outline
        [:div {:class (stl/css :icon-face :icon-face-outline)}
         [:> icon-component-tile*
@@ -210,7 +219,8 @@
           :component (:component outline)
           :is-local (:is-local outline)
           :placement-size placement-size
-          :active (dwi/icon-face-active? theme has-outline? has-filled? :outline)}]])
+          :active (dwi/icon-face-active? theme has-outline? has-filled? :outline)
+          :visible visible}]])
      (when filled
        [:div {:class (stl/css :icon-face :icon-face-filled)}
         [:> icon-component-tile*
@@ -218,12 +228,14 @@
           :component (:component filled)
           :is-local (:is-local filled)
           :placement-size placement-size
-          :active (dwi/icon-face-active? theme has-outline? has-filled? :filled)}]])]))
+          :active (dwi/icon-face-active? theme has-outline? has-filled? :filled)
+          :visible visible}]])]))
 
 (mf/defc icon-grid*
   {::mf/private true}
   [{:keys [entries placement-size theme]}]
-  [:div {:class (stl/css :icon-grid)}
+  [:div {:class (stl/css :icon-grid)
+         :data-icon-grid "true"}
    (for [{:keys [name outline filled]} entries]
      [:> icon-pair-cell*
       {:key (dm/str (:file-id (or outline filled)) "-" name)
@@ -243,15 +255,19 @@
 (mf/defc icon-category-group*
   {::mf/private true
    ::mf/memo true}
-  [{:keys [category entries placement-size theme on-view-all]}]
-  (let [total      (count entries)
-        preview    (dwi/preview-icon-entries entries)
-        overflows? (dwi/icon-category-overflows? entries)
+  [{:keys [category entries placement-size theme preview-limit on-view-all]}]
+  (let [group-ref  (mf/use-ref nil)
+        visible    (hooks/use-visible group-ref :once? true)
+        total      (count entries)
+        limit      (or preview-limit dwi/icon-preview-limit)
+        preview    (dwi/preview-icon-entries entries dwi/icon-preview-fill-limit)
+        overflows? (dwi/icon-category-overflows? entries limit)
         on-open    (mf/use-fn
                     (mf/deps category on-view-all)
                     (fn []
                       (on-view-all category)))]
-    [:section {:class (stl/css :icon-group)}
+    [:section {:ref group-ref
+               :class (stl/css :icon-group)}
      [:div {:class (stl/css :icon-group-header)}
       [:> icon-category-title*
        {:category category
@@ -262,10 +278,14 @@
                   :on-click on-open}
          (tr "workspace.sidebar.icons.view-all")])]
 
-     [:> icon-grid*
-      {:entries preview
-       :placement-size placement-size
-       :theme theme}]]))
+     (if (dwi/mount-icon-preview-grid? visible)
+       [:> icon-grid*
+        {:entries preview
+         :placement-size placement-size
+         :theme theme}]
+       [:div {:class (stl/css :icon-grid :icon-grid-placeholder)
+              :data-icon-grid "true"
+              :aria-hidden true}])]))
 
 (mf/defc icon-category-detail*
   {::mf/private true
@@ -296,9 +316,10 @@
 (mf/defc icon-groups-panel*
   {::mf/private true
    ::mf/memo true}
-  [{:keys [groups placement-size theme on-view-all]}]
+  [{:keys [groups placement-size theme preview-limit on-view-all]}]
   (if (seq groups)
-    [:div {:class (stl/css :icon-groups)}
+    [:div {:class (stl/css :icon-groups)
+           :data-icon-groups "true"}
      (for [{:keys [category entries]} groups]
        [:> icon-category-group*
         {:key category
@@ -306,6 +327,7 @@
          :entries entries
          :placement-size placement-size
          :theme theme
+         :preview-limit preview-limit
          :on-view-all on-view-all}])]
     [:> empty-state*
      {:class (stl/css :empty)
@@ -380,6 +402,15 @@
         [:span {:class (stl/css :theme-swatch :theme-swatch-filled)
                 :aria-hidden true}]]]]]))
 
+(defn- columns-from-container
+  [node]
+  (let [grid (.querySelector node "[data-icon-grid]")]
+    (if (nil? grid)
+      (dwi/icon-grid-columns (.-clientWidth node))
+      (dwi/resolved-grid-columns
+       (.-clientWidth grid)
+       (.-gridTemplateColumns (js/getComputedStyle grid))))))
+
 (mf/defc icons-toolbox*
   {::mf/memo true}
   []
@@ -394,6 +425,10 @@
         theme              (deref theme*)
         size*              (mf/use-state dwi/default-icon-size)
         size               (deref size*)
+        columns*           (mf/use-state dwi/icon-default-columns)
+        columns            (deref columns*)
+        preview-limit      (dwi/preview-limit-for-columns columns)
+        stage-ref          (mf/use-ref nil)
         expanded-category* (mf/use-state nil)
         expanded-category  (deref expanded-category*)
         visible            (mf/with-memo [entries search]
@@ -402,6 +437,7 @@
                              (dwi/group-icon-pairs (dwi/pair-icon-entries visible)))
         expanded-group     (mf/with-memo [groups expanded-category]
                              (dwi/find-icon-group groups expanded-category))
+        has-groups?        (boolean (seq groups))
         on-search-change   (mf/use-fn
                             (fn [value]
                               (reset! search-input* (or value ""))))
@@ -409,6 +445,33 @@
         on-size-change     (mf/use-fn #(reset! size* %))
         on-view-all        (mf/use-fn #(reset! expanded-category* %))
         on-back            (mf/use-fn #(reset! expanded-category* nil))]
+
+    (mf/with-effect [has-groups?]
+      (when-let [stage (mf/ref-val stage-ref)]
+        (let [aside (.getElementById js/document "left-sidebar-aside")
+              sync-columns
+              (fn []
+                (when-let [current (mf/ref-val stage-ref)]
+                  (let [node (or (.querySelector current "[data-icon-groups]") current)
+                        next (columns-from-container node)]
+                    (when (not= next (deref columns*))
+                      (reset! columns* next)))))
+              observer (js/ResizeObserver.
+                        (fn [_]
+                          (sync-columns)))]
+          (.observe observer stage)
+          (when (some? aside)
+            (.observe observer aside))
+          (sync-columns)
+          (fn []
+            (.disconnect observer)))))
+
+    (mf/with-layout-effect [has-groups? columns]
+      (when-let [stage (mf/ref-val stage-ref)]
+        (let [node (or (.querySelector stage "[data-icon-groups]") stage)
+              next (columns-from-container node)]
+          (when (not= next (deref columns*))
+            (reset! columns* next)))))
 
     [:article {:class (stl/css :icons-bar)
                :data-theme (name theme)
@@ -428,11 +491,13 @@
        {:theme theme
         :on-change on-theme-change}]]
 
-     [:div {:class (stl/css :icon-stage)}
+     [:div {:ref stage-ref
+            :class (stl/css :icon-stage)}
       [:> icon-groups-panel*
        {:groups groups
         :placement-size size
         :theme theme
+        :preview-limit preview-limit
         :on-view-all on-view-all}]
       (when expanded-category
         [:> icon-category-detail*

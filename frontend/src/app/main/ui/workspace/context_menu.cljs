@@ -725,7 +725,6 @@
        [:> context-menu-layer-position* props]
        (when is-not-variant-container?
          [:> context-menu-flip* props])
-       [:> context-menu-thumbnail* props]
        [:> context-menu-rename* props]
        [:> context-menu-group* props]
        [:> context-focus-mode-menu* props]

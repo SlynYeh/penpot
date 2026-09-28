@@ -14,7 +14,6 @@
    [frontend-tests.data.viewer-test]
    [frontend-tests.data.workspace-colors-test]
    [frontend-tests.data.workspace-comments-test]
-   [frontend-tests.data.workspace-icons-test]
    [frontend-tests.data.workspace-interactions-test]
    [frontend-tests.data.workspace-layout-test]
    [frontend-tests.data.workspace-mcp-test]
@@ -62,6 +61,7 @@
    [frontend-tests.ui.comments-position-modifier-test]
    [frontend-tests.ui.ds-controls-numeric-input-test]
    [frontend-tests.ui.measures-menu-props-test]
+   [frontend-tests.util-embed-test]
    [frontend-tests.util-object-test]
    [frontend-tests.util-range-tree-test]
    [frontend-tests.util-simple-math-test]
@@ -95,7 +95,6 @@
    'frontend-tests.data.viewer-test
    'frontend-tests.data.workspace-colors-test
    'frontend-tests.data.workspace-comments-test
-   'frontend-tests.data.workspace-icons-test
    'frontend-tests.data.workspace-interactions-test
    'frontend-tests.data.workspace-layout-test
    'frontend-tests.data.workspace-mcp-test
@@ -142,6 +141,7 @@
    'frontend-tests.ui.ds-controls-numeric-input-test
    'frontend-tests.ui.measures-menu-props-test
    'frontend-tests.render-wasm.process-objects-test
+   'frontend-tests.util-embed-test
    'frontend-tests.util-object-test
    'frontend-tests.util-range-tree-test
    'frontend-tests.util-simple-math-test

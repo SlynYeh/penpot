@@ -20,20 +20,30 @@
 (def all-shortcuts
   (d/deep-merge psc/shortcuts tsc/shortcuts wsc/shortcuts))
 
+;; 手势 token → 翻译 msgid：手势词需要国际化，由渲染层在运行期查翻译；
+;; 修饰键/键帽符号（Ctrl、⌘、空格以外的字面量）是通用符号，不进翻译
+(def gesture-msgids
+  {:click        "keymap.gesture.click"
+   :drag         "keymap.gesture.drag"
+   :hover-layers "keymap.gesture.hover-layers"
+   :scroll       "keymap.gesture.scroll"
+   :space        "keymap.gesture.space"})
+
 (def ^:private gesture-shortcuts
-  {:click-through    {:windows ["Ctrl" "点击"]       :macos ["⌘" "点击"]}
-   :multi-select     {:windows ["Shift" "点击"]      :macos ["⇧" "点击"]}
-   :drag-canvas      {:windows ["空格" "拖动"]       :macos ["空格" "拖动"]}
-   :zoom-canvas      {:windows ["Ctrl" "滚轮"]       :macos ["⌘" "滚轮"]}
-   :measure-distance {:windows ["Alt" "悬停目标图层"] :macos ["⌥" "悬停目标图层"]}})
+  {:click-through    {:windows ["Ctrl" :click]        :macos ["⌘" :click]}
+   :multi-select     {:windows ["Shift" :click]       :macos ["⇧" :click]}
+   :drag-canvas      {:windows [:space :drag]         :macos [:space :drag]}
+   :zoom-canvas      {:windows ["Ctrl" :scroll]       :macos ["⌘" :scroll]}
+   :measure-distance {:windows ["Alt" :hover-layers]  :macos ["⌥" :hover-layers]}})
 
 (defn gesture?
   [kw]
   (contains? gesture-shortcuts kw))
 
 (defn gesture-parts
-  "手势条目的 [按键 手势词] 显示文本（按当前平台取值）；
-   两段均为可直接渲染的显示文本，不再过 convert-char"
+  "手势条目的 [按键 手势词] 显示段（按当前平台取值）；
+   手势词为 gesture-msgids 中的 keyword token，渲染层负责翻译；
+   修饰键/键帽为可直接渲染的字面量，不再过 convert-char"
   [kw]
   (when-let [entry (get gesture-shortcuts kw)]
     (if (cf/check-platform? :macos)
@@ -63,10 +73,13 @@
                 :add-comment :hide-ui :toggle-colorpalette :toggle-textpalette]}
    {:id :text
     :shortcuts [:bold :underline :font-size-dec :escape
-                :font-size-inc]}
+                :font-size-inc]
+    :labels {:escape "keymap.text.exit-edit"}}
    {:id :selection
     :shortcuts [:click-through :select-all :escape :measure-distance
-                :start-editing :select-parent-layer :select-next :select-prev]}
+                :start-editing :select-parent-layer :select-next :select-prev]
+    :labels {:escape "keymap.selection.deselect"
+             :start-editing "keymap.selection.select-child"}}
    {:id :zoom
     :shortcuts [:drag-canvas :increase-zoom :decrease-zoom :reset-zoom
                 :fit-all :zoom-selected :zoom-lense-increase :zoom-lense-decrease]}
@@ -78,7 +91,8 @@
    {:id :edit
     :shortcuts [:copy :cut :paste :paste-replace
                 :copy-props :paste-props :start-editing :detach-component
-                :opacity-0 :opacity-5 :opacity-1]}
+                :opacity-0 :opacity-5 :opacity-1]
+    :labels {:start-editing "keymap.edit.edit-shape-or-text"}}
    {:id :arrange
     :shortcuts [:align-left :align-right :align-top :align-bottom
                 :align-hcenter :align-vcenter :toggle-layout-flex]}])
@@ -98,6 +112,13 @@
   [tab]
   (partition-all (:max-items tab max-items-per-column) (:shortcuts tab)))
 
+(defn label-msgid
+  "条目文案 msgid：tab 的 :labels 可为跨 tab 复用的 kw 指定专属文案，
+   缺省回落 shortcuts.<kw>"
+  [tab kw]
+  (or (get-in tab [:labels kw])
+      (str "shortcuts." (d/name kw))))
+
 (def ^:private modified-keys
   {:up ds/up-arrow
    :down ds/down-arrow
@@ -114,20 +135,31 @@
    :del "⌫"
    :shift "⇧"
    :control "⌃"
-   :esc "⎋"
-   :escape "⎋"
+   ;; Esc 键帽不用 ⎋ 图标，按需求显示文案 Esc（与 windows 显示风格一致）
+   :esc "Esc"
+   :escape "Esc"
    :enter "⏎"})
 
 (defn convert-char
   "单个按键 token 的显示转换：方向键/Esc/加号始终替换；mac 下修饰键转符号；
-   单个小写字母键帽显示大写（docs/UI/new-keymap-group.md 全部 tab 的约定）"
+   单个小写字母键帽显示大写（docs/UI/new-keymap-group.md 全部 tab 的约定）；
+   非 mac（windows 显示风格）下小写开头的 token 首字母大写"
   [char]
   (let [char (or (get modified-keys (keyword (str/lower char))) char)
         char (if (and (cf/check-platform? :macos)
                       (contains? macos-keys (keyword (str/lower char))))
                (get macos-keys (keyword (str/lower char)))
                char)]
-    (if (re-matches #"[a-z]" char) (str/upper char) char)))
+    (cond
+      (cf/check-platform? :macos)
+      (if (re-matches #"[a-z]" char) (str/upper char) char)
+
+      ;; windows 显示风格：ctrl/alt/shift/tab/enter/del/backspace/num0… 等
+      ;; 小写开头的多字符 token 首字母大写
+      (re-matches #"[a-z].*" char)
+      (str (str/upper (subs char 0 1)) (subs char 1))
+
+      :else char)))
 
 (defn display-chars
   "条目的键帽字符序列；多候选 command 只取第一个候选"

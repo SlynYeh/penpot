@@ -79,6 +79,7 @@
    [common-tests.types.shape-decode-encode-test]
    [common-tests.types.shape-interactions-test]
    [common-tests.types.shape-layout-test]
+   [common-tests.types.shape-tree-test]
    [common-tests.types.token-test]
    [common-tests.types.tokens-lib-test]
    [common-tests.undo-stack-test]
@@ -152,6 +153,7 @@
    'common-tests.types.shape-decode-encode-test
    'common-tests.types.shape-interactions-test
    'common-tests.types.shape-layout-test
+   'common-tests.types.shape-tree-test
    'common-tests.types.token-test
    'common-tests.types.tokens-lib-test
    'common-tests.undo-stack-test

@@ -134,6 +134,12 @@
         file-id        (get file :id)
 
         design-tokens? (features/use-feature "design-tokens/v1")
+
+        ;; Must be bound before `section`, which falls back to :layers when
+        ;; the tokens tab is hidden but the layout (typically coming from the
+        ;; URL) still selects it.
+        tokens-tab?    (dwlt/tokens-tab-visible? design-tokens? cf/hide-tokens)
+
         mode-inspect?  (= options-mode :inspect)
         show-debug?    (contains? layout :debug-panel)
 
@@ -142,6 +148,12 @@
                          (contains? layout :assets) :assets
                          (contains? layout :icons) :icons
                          (contains? layout :tokens) :tokens)
+
+        ;; A hidden selected tab would leave the switcher pointing at a tab
+        ;; that is not rendered and the sidebar blank.
+        section        (if (and (= section :tokens) (not tokens-tab?))
+                         :layers
+                         section)
 
         {on-pointer-down :on-pointer-down
          on-lost-pointer-capture :on-lost-pointer-capture
@@ -158,25 +170,19 @@
              (st/emit! (ev/event {::ev/name "open-tokens-tab"})))))
 
         tabs
-        (mf/with-memo [mode-inspect? design-tokens?]
+        (mf/with-memo [mode-inspect? tokens-tab?]
           (if ^boolean mode-inspect?
             [{:label (tr "workspace.sidebar.layers")
               :id "layers"}]
-            (if ^boolean design-tokens?
-              [{:label (tr "workspace.sidebar.layers")
-                :id "layers"}
-               {:label (tr "workspace.toolbar.assets")
-                :id "assets"}
-               {:label (tr "workspace.sidebar.icons")
-                :id "icons"}
-               {:label (tr "workspace.sidebar.tokens")
-                :id "tokens"}]
-              [{:label (tr "workspace.sidebar.layers")
-                :id "layers"}
-               {:label (tr "workspace.toolbar.assets")
-                :id "assets"}
-               {:label (tr "workspace.sidebar.icons")
-                :id "icons"}])))
+            (cond-> [{:label (tr "workspace.sidebar.layers")
+                      :id "layers"}
+                     {:label (tr "workspace.toolbar.assets")
+                      :id "assets"}
+                     {:label (tr "workspace.sidebar.icons")
+                      :id "icons"}]
+              ^boolean tokens-tab?
+              (conj {:label (tr "workspace.sidebar.tokens")
+                     :id "tokens"}))))
 
         aside-class
         (stl/css-case
@@ -207,7 +213,7 @@
         (dwlt/keep-sidebar-tab? section seen-tabs :icons)
 
         keep-tokens?
-        (and design-tokens?
+        (and tokens-tab?
              (dwlt/keep-sidebar-tab? section seen-tabs :tokens))]
 
     [:> (mf/provider muc/sidebar) {:value :left}

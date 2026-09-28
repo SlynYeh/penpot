@@ -116,11 +116,50 @@ services:
       # PENPOT_HELP_CENTER_URI: "https://help.example.com"
       # PENPOT_LEARNING_CENTER_URI: "https://learn.example.com"
       # PENPOT_HUB_URI: "https://hub.example.com"
+      # First-visit 新手基础操作 modal + help-menu 新手引导视频 item.
+      # Unset keeps the js/config.js default (shown). Set false to hide both.
+      # PENPOT_SHOW_BEGINNER_GUIDE: "true"
+      # Beginner-guide card video URLs. JSON object of {id: url}. Unset keeps
+      # the js/config.js default. Use {} to clear every URL.
+      # PENPOT_BEGINNER_GUIDE_VIDEOS: '{"click-through":"https://cdn.example/a.mp4","table-shortcuts":"https://cdn.example/b.mp4","component-library":"https://cdn.example/c.mp4"}'
       # Table main components (fork feature) that enable the insert/delete
       # row & column entries on the workspace context menu. Comma separated
       # component UUIDs (case insensitive). When set, it replaces the
       # default from js/config.js. Set to "none" to disable the menu.
       PENPOT_TABLE_COMPONENT_IDS: "5140cbc1-cb3a-803f-8008-8977ae7bee03"
+      # Auto-unbind (fork feature): component instances dragged from a shared
+      # library whose file-id is listed here are detached automatically.
+      # Comma separated library UUIDs (case insensitive). When set, it replaces
+      # the default from js/config.js. Set to "none" to disable the feature.
+      # An empty value counts as unset (the js/config.js default is kept).
+      PENPOT_AUTO_UNBIND_LIBRARY_IDS: "caf3ed7a-ac34-8165-8008-1fb0a074f9a9"
+      # Asset sidebar groups (fork feature) pre-expanded when a workspace opens.
+      # A JSON array of {"libraryId": <file-id>, "groups": [<path>...]}, where
+      # each path is a component :path prefix. Invalid JSON is rejected with a
+      # warning and the js/config.js default is kept. Single quotes are REQUIRED
+      # here because the value itself contains double quotes.
+      # An empty value counts as unset; use [] to disable the feature.
+      PENPOT_DEFAULT_EXPANDED_ASSET_GROUPS: '[{"libraryId":"40e06342-8830-80d6-8008-9b0e302c3f65","groups":["_Utilities"]}]'
+      # Colour palette (fork feature): shared library pre-selected in the
+      # 调色盘 library selector. Single library UUID (case insensitive).
+      # Set to "none" to always fall back to 最近颜色.
+      # An empty value counts as unset (the js/config.js default is kept).
+      PENPOT_DEFAULT_PALETTE_LIBRARY: "40e06342-8830-80d6-8008-9b0e302c3f65"
+      # Iframe embedding (fork feature): MUST be set to the origin of the third
+      # party system that embeds the app, otherwise the handshake keeps the
+      # js/config.js default (empty -> wildcard) and accepts credentials from
+      # any window. Used as the postMessage target origin for the ready message
+      # and to validate the origin of the X-token / X-ClientId credentials the
+      # parent sends back, which are then added as request headers to every
+      # backend call. Must be a bare origin, optionally with a trailing slash;
+      # invalid values are rejected with a warning and the default is kept.
+      # Set to "none" to clear it. An empty value counts as unset.
+      # Setting it also switches the framing policy: nginx replaces
+      # X-Frame-Options: SAMEORIGIN with
+      # Content-Security-Policy: frame-ancestors 'self' <origin>, which is what
+      # makes the browser render the app in a cross origin iframe at all. Leave
+      # it unset to keep SAMEORIGIN (no cross origin framing).
+      # PENPOT_EMBED_PARENT_ORIGIN: "https://portal.example.com"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

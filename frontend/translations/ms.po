@@ -128,7 +128,7 @@ msgstr "Cipta akaun"
 msgid "auth.sidebar-tagline"
 msgstr "Penyelesaian sumber terbuka untuk reka bentuk dan prototaip."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:184
 msgid "auth.terms-of-service"
 msgstr "Syarat perkhidmatan"
 
@@ -360,6 +360,7 @@ msgid "dashboard.export-standard-multi"
 msgstr "Muat turun %s fail standard (.svg + .json)"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:361
+#, unused
 msgid "dashboard.fonts.deleted-placeholder"
 msgstr "Fon hilang"
 
@@ -805,7 +806,7 @@ msgstr ""
 "yang anda cuba buka. Migrasi untuk '%s' perlu digunakan sebelum fail boleh "
 "dibuka."
 
-#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:231
+#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:229
 msgid "errors.generic"
 msgstr "Sesuatu yang tidak kena telah berlaku."
 
@@ -1160,15 +1161,15 @@ msgstr "Lebar"
 msgid "inspect.attributes.typography"
 msgstr "Tipografi"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:447
 msgid "inspect.attributes.typography.font-family"
 msgstr "Keluarga Fon"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:464, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
 msgid "inspect.attributes.typography.font-size"
 msgstr "Saiz huruf"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:456
 msgid "inspect.attributes.typography.font-style"
 msgstr "Gaya Huruf"
 
@@ -1176,11 +1177,11 @@ msgstr "Gaya Huruf"
 msgid "inspect.attributes.typography.font-weight"
 msgstr "Berat Huruf"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:446
+#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:513, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:524
 msgid "inspect.attributes.typography.letter-spacing"
 msgstr "Jarak Huruf"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:417, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:427
+#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:494, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:504
 msgid "inspect.attributes.typography.line-height"
 msgstr "Tinggi Garis"
 
@@ -1200,11 +1201,11 @@ msgstr "Garis bawah"
 msgid "inspect.attributes.typography.text-transform"
 msgstr "Transformasian Teks"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:476
+#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:554
 msgid "inspect.attributes.typography.text-transform.capitalize"
 msgstr "Huruf Tajuk"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:480
+#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:558
 msgid "inspect.attributes.typography.text-transform.lowercase"
 msgstr "Huruf Kecil"
 
@@ -1216,7 +1217,7 @@ msgstr "Tiada"
 msgid "inspect.attributes.typography.text-transform.unset"
 msgstr "Nyahset"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
+#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548
 msgid "inspect.attributes.typography.text-transform.uppercase"
 msgstr "Huruf Besar"
 
@@ -1278,71 +1279,71 @@ msgstr "SVG"
 msgid "inspect.tabs.code.selected.text"
 msgstr "Teks"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/main_menu.cljs:194
+#: src/app/main/ui/workspace/main_menu.cljs:192
 msgid "label.shortcuts"
 msgstr "Pintasan"
 
@@ -1379,8 +1380,7 @@ msgstr "Semua"
 msgid "labels.and"
 msgstr "dan"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:287
 msgid "labels.back"
 msgstr "Kembali"
 
@@ -1402,7 +1402,7 @@ msgstr "Batal"
 msgid "labels.canva"
 msgstr "Canva"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:107, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:262, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/onboarding/beginner_guide.cljs:256, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/colorpicker.cljs:864, src/app/main/ui/workspace/colorpicker.cljs:865, src/app/main/ui/workspace/help_center_menu.cljs:213, src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:653, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:306, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "Tutup"
 
@@ -1414,7 +1414,7 @@ msgstr "Kod"
 msgid "labels.comments"
 msgstr "Komen"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:146
+#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:144
 msgid "labels.community"
 msgstr "Komuniti"
 
@@ -1548,11 +1548,11 @@ msgstr "Pengasas/VP"
 msgid "labels.freelancer"
 msgstr "Saya seorang pekerja bebas (freelancer)"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:178
+#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:176
 msgid "labels.github-repo"
 msgstr "Repositori Github"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:207
+#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:205
 msgid "labels.give-feedback"
 msgstr "Beri maklum balas"
 
@@ -1560,7 +1560,7 @@ msgstr "Beri maklum balas"
 msgid "labels.go-back"
 msgstr "Pergi balik"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/main_menu.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
+#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/help_center_menu.cljs:138, src/app/main/ui/workspace/help_center_menu.cljs:139, src/app/main/ui/workspace/help_center_menu.cljs:142, src/app/main/ui/workspace/main_menu.cljs:136, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
 msgid "labels.help-center"
 msgstr "Pusat Bantuan"
 
@@ -1596,7 +1596,7 @@ msgstr "Jemputan"
 msgid "labels.language"
 msgstr "Bahasa"
 
-#: src/app/main/ui/workspace/main_menu.cljs:170
+#: src/app/main/ui/workspace/main_menu.cljs:168
 msgid "labels.libraries-and-templates"
 msgstr "Perpustakaan & Templat"
 
@@ -1709,7 +1709,7 @@ msgstr "Profil"
 msgid "labels.projects"
 msgstr "Projek"
 
-#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:162
+#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:160
 msgid "labels.release-notes"
 msgstr "Nota keluaran"
 
@@ -1822,7 +1822,7 @@ msgstr "Status"
 msgid "labels.student-teacher"
 msgstr "Pelajar atau guru"
 
-#: src/app/main/ui/workspace/main_menu.cljs:154
+#: src/app/main/ui/workspace/main_menu.cljs:152
 msgid "labels.tutorials"
 msgstr "Tutorial"
 
@@ -2188,7 +2188,7 @@ msgstr "Adakah anda pasti mahu meninggalkan pasukan ini?"
 msgid "modals.leave-confirm.title"
 msgstr "Meninggalkan pasukan"
 
-#: src/app/main/ui/workspace/main_menu.cljs:324, src/app/main/ui/workspace/nudge.cljs:46
+#: src/app/main/ui/workspace/main_menu.cljs:322, src/app/main/ui/workspace/nudge.cljs:46
 msgid "modals.nudge-title"
 msgstr "Jumlah anjakan"
 
@@ -2576,304 +2576,308 @@ msgstr "Penpot"
 msgid "profile.recovery.go-to-login"
 msgstr "Pergi ke log masuk"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:732, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:814, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:423
 msgid "settings.detach"
 msgstr "Tanggalkan"
 
-#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:549, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:572, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:583, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:611, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:624, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:644, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:665, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
+#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:605, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:646, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:655, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:666, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:687, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:474, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:506, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:526, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:472, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
 msgid "settings.multiple"
 msgstr "Bercampur"
 
 # SECTIONS
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:412
+#, unused
 msgid "shortcut-section.basics"
 msgstr "Asas"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:418
+#, unused
 msgid "shortcut-section.dashboard"
 msgstr "Papan pemuka"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:421
+#, unused
 msgid "shortcut-section.viewer"
 msgstr "Penonton"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:415
+#, unused
 msgid "shortcut-section.workspace"
 msgstr "Ruang kerja"
 
 # SUBSECTIONS
-#: src/app/main/ui/workspace/keymap_panel.cljs:115, src/app/main/ui/workspace/sidebar/shortcuts.cljs:58
+#: src/app/main/ui/workspace/keymap_panel.cljs:181
 msgid "shortcut-subsection.alignment"
 msgstr "Penjajaran"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:116, src/app/main/ui/workspace/sidebar/shortcuts.cljs:59
+#: src/app/main/ui/workspace/keymap_panel.cljs:182
 msgid "shortcut-subsection.edit"
 msgstr "Sunting"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:117, src/app/main/ui/workspace/sidebar/shortcuts.cljs:60
+#: src/app/main/ui/workspace/keymap_panel.cljs:183
 msgid "shortcut-subsection.general-dashboard"
 msgstr "Generik"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:118, src/app/main/ui/workspace/sidebar/shortcuts.cljs:61
+#: src/app/main/ui/workspace/keymap_panel.cljs:184
 msgid "shortcut-subsection.general-viewer"
 msgstr "Generik"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:119, src/app/main/ui/workspace/main_menu.cljs:789, src/app/main/ui/workspace/sidebar/shortcuts.cljs:62
+#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/main_menu.cljs:788, src/app/main/ui/workspace/main_menu.cljs:789
 msgid "shortcut-subsection.main-menu"
 msgstr "Menu utama"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:120, src/app/main/ui/workspace/sidebar/shortcuts.cljs:63
+#: src/app/main/ui/workspace/keymap_panel.cljs:186
 msgid "shortcut-subsection.modify-layers"
 msgstr "Ubah suai lapisan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:121, src/app/main/ui/workspace/sidebar/shortcuts.cljs:64
+#: src/app/main/ui/workspace/keymap_panel.cljs:187
 msgid "shortcut-subsection.navigation-dashboard"
 msgstr "Navigasi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:122, src/app/main/ui/workspace/sidebar/shortcuts.cljs:65
+#: src/app/main/ui/workspace/keymap_panel.cljs:188
 msgid "shortcut-subsection.navigation-viewer"
 msgstr "Navigasi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:123, src/app/main/ui/workspace/sidebar/shortcuts.cljs:66
+#: src/app/main/ui/workspace/keymap_panel.cljs:189
 msgid "shortcut-subsection.navigation-workspace"
 msgstr "Navigasi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/sidebar/shortcuts.cljs:67
+#: src/app/main/ui/workspace/keymap_panel.cljs:190
 msgid "shortcut-subsection.panels"
 msgstr "Panel"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:125, src/app/main/ui/workspace/sidebar/shortcuts.cljs:68
+#: src/app/main/ui/workspace/keymap_panel.cljs:191
 msgid "shortcut-subsection.path-editor"
 msgstr "laluan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:126, src/app/main/ui/workspace/sidebar/shortcuts.cljs:69
+#: src/app/main/ui/workspace/keymap_panel.cljs:192
 msgid "shortcut-subsection.shape"
 msgstr "Bentuk"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:127, src/app/main/ui/workspace/sidebar/shortcuts.cljs:70
+#: src/app/main/ui/workspace/keymap_panel.cljs:193
 msgid "shortcut-subsection.text-editor"
 msgstr "Teks"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:128, src/app/main/ui/workspace/sidebar/shortcuts.cljs:71
+#: src/app/main/ui/workspace/keymap_panel.cljs:194
 msgid "shortcut-subsection.tools"
 msgstr "Alatan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:129, src/app/main/ui/workspace/sidebar/shortcuts.cljs:72
+#: src/app/main/ui/workspace/keymap_panel.cljs:195
 msgid "shortcut-subsection.zoom-viewer"
 msgstr "Zum"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:130, src/app/main/ui/workspace/sidebar/shortcuts.cljs:73
+#: src/app/main/ui/workspace/keymap_panel.cljs:196
 msgid "shortcut-subsection.zoom-workspace"
 msgstr "Zum"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
+#: src/app/main/ui/workspace/keymap_panel.cljs:197
 msgid "shortcuts.add-comment"
 msgstr "Komen"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
+#: src/app/main/ui/workspace/keymap_panel.cljs:198
 msgid "shortcuts.add-node"
 msgstr "Tambah nota"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
+#: src/app/main/ui/workspace/keymap_panel.cljs:199
 msgid "shortcuts.align-bottom"
 msgstr "Sejajarkan bahagian bawah"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
+#: src/app/main/ui/workspace/keymap_panel.cljs:200
 msgid "shortcuts.align-center"
 msgstr "Jajarkan tengah"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:135, src/app/main/ui/workspace/sidebar/shortcuts.cljs:78
+#: src/app/main/ui/workspace/keymap_panel.cljs:201
 msgid "shortcuts.align-hcenter"
 msgstr "Jajarkan tengah secara mendatar"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:136, src/app/main/ui/workspace/sidebar/shortcuts.cljs:79
+#: src/app/main/ui/workspace/keymap_panel.cljs:202
 msgid "shortcuts.align-justify"
 msgstr "Mengimbangkan keselarasan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
+#: src/app/main/ui/workspace/keymap_panel.cljs:203
 msgid "shortcuts.align-left"
 msgstr "Jajar ke kiri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
+#: src/app/main/ui/workspace/keymap_panel.cljs:204
 msgid "shortcuts.align-right"
 msgstr "Sejajar ke kanan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
+#: src/app/main/ui/workspace/keymap_panel.cljs:205
 msgid "shortcuts.align-top"
 msgstr "Jajarkan atas"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
+#: src/app/main/ui/workspace/keymap_panel.cljs:206
 msgid "shortcuts.align-vcenter"
 msgstr "Jajarkan tengah secara menegak"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
+#: src/app/main/ui/workspace/keymap_panel.cljs:207
 msgid "shortcuts.artboard-selection"
 msgstr "Cipta papan daripada pemilihan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
+#: src/app/main/ui/workspace/keymap_panel.cljs:208
 msgid "shortcuts.bold"
 msgstr "Togol tebal"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
+#: src/app/main/ui/workspace/keymap_panel.cljs:209
 msgid "shortcuts.bool-difference"
 msgstr "Perbezaan Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:144, src/app/main/ui/workspace/sidebar/shortcuts.cljs:87
+#: src/app/main/ui/workspace/keymap_panel.cljs:210
 msgid "shortcuts.bool-exclude"
 msgstr "Pengecualian Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:145, src/app/main/ui/workspace/sidebar/shortcuts.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:211
 msgid "shortcuts.bool-intersection"
 msgstr "Persimpangan Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/sidebar/shortcuts.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:212
 msgid "shortcuts.bool-union"
 msgstr "Kesatuan Boolean"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:213
 msgid "shortcuts.bring-back"
 msgstr "Hantar ke paling belakang"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:214
 msgid "shortcuts.bring-backward"
 msgstr "Hantar ke belakang"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:215
 msgid "shortcuts.bring-forward"
 msgstr "Bawa ke hadapan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:216
 msgid "shortcuts.bring-front"
 msgstr "Bawa ke paling hadapan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:217
 msgid "shortcuts.clear-undo"
 msgstr "Kosongkan buat asal"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:219
 msgid "shortcuts.copy"
 msgstr "Salin"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156, src/app/main/ui/workspace/sidebar/shortcuts.cljs:98
+#: src/app/main/ui/workspace/keymap_panel.cljs:223
 msgid "shortcuts.create-new-project"
 msgstr "Buat baharu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157, src/app/main/ui/workspace/sidebar/shortcuts.cljs:99
+#: src/app/main/ui/workspace/keymap_panel.cljs:224
 msgid "shortcuts.cut"
 msgstr "Potong"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158, src/app/main/ui/workspace/right_header.cljs:85, src/app/main/ui/workspace/sidebar/shortcuts.cljs:100
+#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/right_header.cljs:85
 msgid "shortcuts.decrease-zoom"
 msgstr "Zum keluar"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159, src/app/main/ui/workspace/sidebar/shortcuts.cljs:101
+#: src/app/main/ui/workspace/keymap_panel.cljs:226
 msgid "shortcuts.delete"
 msgstr "Padam"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160, src/app/main/ui/workspace/sidebar/shortcuts.cljs:102
+#: src/app/main/ui/workspace/keymap_panel.cljs:227
 msgid "shortcuts.delete-node"
 msgstr "Padamkan nod"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
+#: src/app/main/ui/workspace/keymap_panel.cljs:228
 msgid "shortcuts.detach-component"
 msgstr "Tanggalkan komponen"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
+#: src/app/main/ui/workspace/keymap_panel.cljs:230
 msgid "shortcuts.draw-curve"
 msgstr "Lengkung"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
+#: src/app/main/ui/workspace/keymap_panel.cljs:231
 msgid "shortcuts.draw-ellipse"
 msgstr "elips"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164, src/app/main/ui/workspace/sidebar/shortcuts.cljs:106
+#: src/app/main/ui/workspace/keymap_panel.cljs:232
 msgid "shortcuts.draw-frame"
 msgstr "Papan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:165, src/app/main/ui/workspace/sidebar/shortcuts.cljs:107
+#: src/app/main/ui/workspace/keymap_panel.cljs:233
 msgid "shortcuts.draw-nodes"
 msgstr "Lukis laluan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
+#: src/app/main/ui/workspace/keymap_panel.cljs:234
 msgid "shortcuts.draw-path"
 msgstr "Laluan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
+#: src/app/main/ui/workspace/keymap_panel.cljs:235
 msgid "shortcuts.draw-rect"
 msgstr "Segi empat tepat"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
+#: src/app/main/ui/workspace/keymap_panel.cljs:236
 msgid "shortcuts.draw-text"
 msgstr "Teks"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:237
 msgid "shortcuts.duplicate"
 msgstr "Pendua"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:170, src/app/main/ui/workspace/sidebar/shortcuts.cljs:112
+#: src/app/main/ui/workspace/keymap_panel.cljs:238
 msgid "shortcuts.escape"
 msgstr "Batal"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:171, src/app/main/ui/workspace/sidebar/shortcuts.cljs:113
+#: src/app/main/ui/workspace/keymap_panel.cljs:239
 msgid "shortcuts.export-shapes"
 msgstr "Eksport bentuk"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
+#: src/app/main/ui/workspace/keymap_panel.cljs:242
 msgid "shortcuts.fit-all"
 msgstr "Zum untuk muat semua"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
+#: src/app/main/ui/workspace/keymap_panel.cljs:243
 msgid "shortcuts.flip-horizontal"
 msgstr "Terbalikkan secara mendatar"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:176, src/app/main/ui/workspace/sidebar/shortcuts.cljs:118
+#: src/app/main/ui/workspace/keymap_panel.cljs:244
 msgid "shortcuts.flip-vertical"
 msgstr "Terbalikkan secara menegak"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
+#: src/app/main/ui/workspace/keymap_panel.cljs:245
 msgid "shortcuts.font-size-dec"
 msgstr "Kurangkan saiz fon"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
+#: src/app/main/ui/workspace/keymap_panel.cljs:246
 msgid "shortcuts.font-size-inc"
 msgstr "Tambah saiz fon"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
+#: src/app/main/ui/workspace/keymap_panel.cljs:247
 msgid "shortcuts.go-to-drafts"
 msgstr "Pergi ke draf"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:180, src/app/main/ui/workspace/sidebar/shortcuts.cljs:122
+#: src/app/main/ui/workspace/keymap_panel.cljs:248
 msgid "shortcuts.go-to-libs"
 msgstr "Pergi ke perpustakaan kongsi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:181, src/app/main/ui/workspace/sidebar/shortcuts.cljs:123
+#: src/app/main/ui/workspace/keymap_panel.cljs:249
 msgid "shortcuts.go-to-search"
 msgstr "Cari"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
+#: src/app/main/ui/workspace/keymap_panel.cljs:250
 msgid "shortcuts.group"
 msgstr "Kumpulan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
+#: src/app/main/ui/workspace/keymap_panel.cljs:251
 msgid "shortcuts.h-distribute"
 msgstr "Edarkan secara mendatar"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
+#: src/app/main/ui/workspace/keymap_panel.cljs:252
 msgid "shortcuts.hide-ui"
 msgstr "Tunjukkan / Sembunyikan UI"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
+#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/right_header.cljs:90
 msgid "shortcuts.increase-zoom"
 msgstr "Zum kedalam"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:186, src/app/main/ui/workspace/sidebar/shortcuts.cljs:128
+#: src/app/main/ui/workspace/keymap_panel.cljs:254
 msgid "shortcuts.insert-image"
 msgstr "Masukkan gambar"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:187, src/app/main/ui/workspace/sidebar/shortcuts.cljs:129
+#: src/app/main/ui/workspace/keymap_panel.cljs:255
 msgid "shortcuts.italic"
 msgstr "Togol condong"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:188, src/app/main/ui/workspace/sidebar/shortcuts.cljs:130
+#: src/app/main/ui/workspace/keymap_panel.cljs:256
 msgid "shortcuts.join-nodes"
 msgstr "Sambung nod"

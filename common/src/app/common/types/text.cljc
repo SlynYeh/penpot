@@ -135,6 +135,16 @@
   []
   (assoc default-text-attrs :fills (get-default-text-fills)))
 
+(def text-font-face-attrs
+  "Font identity attrs that must not follow new text from the last selection."
+  [:font-id :font-family :font-variant-id :font-weight :font-style])
+
+(defn without-font-face
+  "Drop font-face attrs so last-used styles keep size/color, not family."
+  [attrs]
+  (when attrs
+    (apply dissoc attrs text-font-face-attrs)))
+
 (def typography-fields
   [:font-id
    :font-family

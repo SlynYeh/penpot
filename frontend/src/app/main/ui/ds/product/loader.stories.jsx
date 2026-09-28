@@ -42,3 +42,13 @@ export const Inline = {
     children: "Lorem ipsum",
   },
 };
+
+export const FileLoading = {
+  args: {
+    fileLoading: true,
+    overlay: true,
+  },
+  parameters: {
+    layout: "fullscreen",
+  },
+};

@@ -153,6 +153,14 @@
     border-block-start: $b-1 solid var(--color-background-quaternary);
   }
 
+  .group-header {
+    @include use-typography("headline-small");
+
+    color: var(--color-foreground-secondary);
+    padding: var(--sp-s) var(--sp-s) var(--sp-xxs);
+    pointer-events: none;
+  }
+
   &[data-direction="up"] {
     bottom: $sz-32;
     top: auto;

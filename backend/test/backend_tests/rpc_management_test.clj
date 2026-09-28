@@ -14,6 +14,7 @@
    [app.db :as db]
    [app.http :as http]
    [app.rpc :as-alias rpc]
+   [app.rpc.management.exporter :as exporter]
    [app.storage :as sto]
    [backend-tests.helpers :as th]
    [backend-tests.storage-test :refer [configure-storage-backend]]
@@ -56,6 +57,22 @@
     (t/is (nil? (:error out2)))
     (t/is (not= (get-in out1 [:result :id])
                 (get-in out2 [:result :id])))))
+
+(t/deftest build-asset-uri-applies-base-route-path
+  (let [id (uuid/random)]
+    (t/testing "no base route path configured keeps the bare assets uri"
+      (t/is (= (str "https://localhost:3449/assets/by-id/" id)
+               (str (exporter/build-asset-uri "https://localhost:3449" nil id))))
+      (t/is (= (str "https://localhost:3449/assets/by-id/" id)
+               (str (exporter/build-asset-uri "https://localhost:3449" "" id)))))
+    (t/testing "configured base route path is prepended to the assets uri"
+      (t/is (= (str "https://localhost:3449/penpot/assets/by-id/" id)
+               (str (exporter/build-asset-uri "https://localhost:3449" "/penpot/" id)))))
+    (t/testing "missing slashes on the base route path are tolerated"
+      (t/is (= (str "https://localhost:3449/penpot/assets/by-id/" id)
+               (str (exporter/build-asset-uri "https://localhost:3449" "penpot" id))))
+      (t/is (= (str "https://localhost:3449/penpot/assets/by-id/" id)
+               (str (exporter/build-asset-uri "https://localhost:3449" "/penpot" id)))))))
 
 (t/deftest duplicate-file
   (let [storage (-> (:app.storage/storage th/*system*)

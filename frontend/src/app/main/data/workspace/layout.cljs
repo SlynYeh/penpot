@@ -83,6 +83,13 @@
   (or (= section tab)
       (contains? seen-tabs tab)))
 
+(defn tokens-tab-visible?
+  "The left sidebar Tokens tab is available only when the design-tokens
+   feature is on and the fork knob `penpotHideTokens` is off."
+  [design-tokens? hide-tokens?]
+  (and (boolean design-tokens?)
+       (not (boolean hide-tokens?))))
+
 (defn ensure-layout
   [name]
   (ptk/reify ::ensure-layout

@@ -677,6 +677,10 @@
                                       {:ignore-touched true}))
                 (when initial-size
                   (dwtr/update-dimensions [(:id new-shape)] :width initial-size))
+                (when glyph-color
+                  (dwsh/update-shapes added-ids
+                                      #(dwi/apply-icon-canvas-strokes % (or initial-size dwi/default-icon-size))
+                                      {:attrs [:strokes]}))
                 (when start-move?
                   (dwtr/start-move initial-point #{(:id new-shape)}))
                 (dwu/commit-undo-transaction undo-id)))))))

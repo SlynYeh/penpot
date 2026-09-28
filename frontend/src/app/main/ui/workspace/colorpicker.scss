@@ -14,7 +14,11 @@
 .colorpicker-tooltip {
   @extend %modal-background;
 
-  --colorpicker-width: px2rem(308);
+  // Sass only interpolates custom property values through `#{}`; without it the
+  // literal text `px2rem(286)` is emitted and the `width` below is dropped as
+  // invalid, leaving the tooltip at `width: auto` — which let the popup
+  // shrink-to-fit its content and change width per 颜色/渐变/图片 mode.
+  --colorpicker-width: #{px2rem(286)};
 
   left: calc(10 * px2rem(140));
   padding: var(--sp-m);
@@ -48,6 +52,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  // Cancel the parent `.colorpicker-tooltip` padding so the divider below
+  // spans the full modal width (edge to edge); the matching inline padding
+  // keeps the tabs and close button aligned with the panel content.
+  margin-inline: calc(-1 * var(--sp-m));
+  padding-inline: var(--sp-m);
   padding-block-end: 12px;
   margin-block-end: 16px;
   border-block-end: 1px solid var(--color-background-secondary, rgba(0, 0, 0, 0.08));

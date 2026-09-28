@@ -58,10 +58,11 @@
   [{:keys [kw alternatives]}]
   [:span {:class (stl/css :keymap-keys)}
    (if (km/gesture? kw)
+     ;; 手势词是翻译 token：渲染期查 tr，保证语言切换后跟随当前语言
      (let [[gkey gesture] (km/gesture-parts kw)]
        [:*
-        [:span {:class (stl/css :keymap-key)} gkey]
-        [:span {:class (stl/css :keymap-gesture)} gesture]])
+        [:span {:class (stl/css :keymap-key)} (if (keyword? gkey) (tr (km/gesture-msgids gkey)) gkey)]
+        [:span {:class (stl/css :keymap-gesture)} (tr (km/gesture-msgids gesture))]])
      (let [groups (if alternatives
                     (or (km/display-alternatives kw) [])
                     [(km/display-chars kw)])]
@@ -77,22 +78,26 @@
 
 (mf/defc keymap-item*
   {::mf/private true}
-  [{:keys [kw]}]
-  [:div {:class (stl/css :keymap-item)}
-   [:span {:class (stl/css :keymap-item-label)}
-    (tr (str "shortcuts." (d/name kw)))]
-   [:> shortcut-keys* {:kw kw}]])
+  [{:keys [kw label-msgid]}]
+  (let [label (tr (or label-msgid (str "shortcuts." (d/name kw))))]
+    [:div {:class (stl/css :keymap-item)}
+     [:span {:class (stl/css :keymap-item-label)
+             :title label}
+      label]
+     [:> shortcut-keys* {:kw kw}]]))
 
 (mf/defc important-item*
   {::mf/private true}
   [{:keys [kw]}]
-  [:div {:class (stl/css :keymap-important-item)}
-   [:div {:class (stl/css :keymap-important-row)}
-    [:span {:class (stl/css :keymap-important-label)}
-     (tr (str "keymap.important." (d/name kw)))]
-    [:> shortcut-keys* {:kw kw :alternatives true}]]
-   [:span {:class (stl/css :keymap-important-desc)}
-    (tr (str "keymap.important." (d/name kw) ".desc"))]])
+  (let [label (tr (str "keymap.important." (d/name kw)))]
+    [:div {:class (stl/css :keymap-important-item)}
+     [:div {:class (stl/css :keymap-important-row)}
+      [:span {:class (stl/css :keymap-important-label)
+              :title label}
+       label]
+      [:> shortcut-keys* {:kw kw :alternatives true}]]
+     [:span {:class (stl/css :keymap-important-desc)}
+      (tr (str "keymap.important." (d/name kw) ".desc"))]]))
 
 (mf/defc keymap-content*
   {::mf/private true}
@@ -113,7 +118,7 @@
          [:div {:class (stl/css :keymap-column)
                 :key idx}
           (for [kw column]
-            [:> item {:key (d/name kw) :kw kw}])]))]))
+            [:> item {:key (d/name kw) :kw kw :label-msgid (km/label-msgid tab kw)}])]))]))
 
 (mf/defc keymap-panel*
   {::mf/memo true}
@@ -148,6 +153,12 @@
 ;; to the translations extractor.
 ;; Ported from the legacy sidebar shortcuts panel (pruned of old-panel-only strings; copy-props/paste-props added).
 (comment
+  (tr "keymap.edit.edit-shape-or-text")
+  (tr "keymap.gesture.click")
+  (tr "keymap.gesture.drag")
+  (tr "keymap.gesture.hover-layers")
+  (tr "keymap.gesture.scroll")
+  (tr "keymap.gesture.space")
   (tr "keymap.important.click-through")
   (tr "keymap.important.click-through.desc")
   (tr "keymap.important.drag-canvas")
@@ -164,6 +175,9 @@
   (tr "keymap.important.multi-select.desc")
   (tr "keymap.important.zoom-canvas")
   (tr "keymap.important.zoom-canvas.desc")
+  (tr "keymap.selection.deselect")
+  (tr "keymap.selection.select-child")
+  (tr "keymap.text.exit-edit")
   (tr "shortcut-subsection.alignment")
   (tr "shortcut-subsection.edit")
   (tr "shortcut-subsection.general-dashboard")

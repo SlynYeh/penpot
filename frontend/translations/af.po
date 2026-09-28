@@ -145,7 +145,7 @@ msgstr "Skep 'n rekening"
 msgid "auth.sidebar-tagline"
 msgstr "Die oopbron-oplossing vir ontwerp en prototipering."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:184
 msgid "auth.terms-of-service"
 msgstr "Diensbepalings"
 
@@ -342,66 +342,66 @@ msgstr "Voer %s Penpot lêers uit"
 msgid "errors.invalid-recovery-token"
 msgstr "Die hersteltoken is ongeldig."
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr ""

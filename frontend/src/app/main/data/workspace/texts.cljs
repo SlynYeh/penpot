@@ -192,7 +192,8 @@
     (update [_ state]
       (let [text-state   (some->> content ted/import-content)
             attrs        (merge (txt/get-default-text-attrs)
-                                (get-in state [:workspace-global :default-font]))
+                                (txt/without-font-face
+                                 (get-in state [:workspace-global :default-font])))
             editor       (cond-> (ted/create-editor-state text-state decorator)
                            (and (nil? content) (some? attrs))
                            (ted/update-editor-current-block-data attrs))]
@@ -668,7 +669,8 @@
   (ptk/reify ::save-font
     ptk/UpdateEvent
     (update [_ state]
-      (let [multiple? (->> data vals (d/seek #(= % :multiple)))]
+      (let [data      (txt/without-font-face data)
+            multiple? (->> data vals (d/seek #(= % :multiple)))]
         (cond-> state
           (not multiple?)
           (assoc-in [:workspace-global :default-font] data))))))
@@ -992,7 +994,8 @@
       ;; Avoid swapping the global store when the computed styles are unchanged,
       ;; otherwise we can end up in store->rerender->selectionchange loops.
       (let [merged-styles (merge (txt/get-default-text-attrs)
-                                 (get-in state [:workspace-global :default-font])
+                                 (txt/without-font-face
+                                  (get-in state [:workspace-global :default-font]))
                                  new-styles)
             prev (get-in state [:workspace-v2-editor-state id])]
         (if (= merged-styles prev)

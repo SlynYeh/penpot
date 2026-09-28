@@ -170,7 +170,11 @@
     :mcp
     :background-blur
     :available-viewer-wasm
-    :stroke-path})
+    :stroke-path
+
+    ;; Shows the plugins manager entry on the workspace main toolbar
+    ;; (hidden by default).
+    :toolbar-plugins-entry})
 
 (def all-flags
   (set/union email login varia))

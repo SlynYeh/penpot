@@ -96,7 +96,7 @@
           (txt/get-default-text-attrs)
           {:fills [{:fill-color text-color :fill-opacity 1}]}
           txt/default-root-attrs
-          default-font))
+          (txt/without-font-face default-font)))
 
         options
         #js {:styleDefaults style-defaults

@@ -5,7 +5,7 @@
 // Copyright (c) KALEIDOS INC Sucursal en España SL
 //
 // Self-contained styles for the 色板 / 自定义 colorpicker tooltip body.
-// Spec: img_5.png — panel padding ~14px, 9×7 swatch grid (24px cells,
+// Spec: img_5.png — panel padding ~14px, 9×6 swatch grid (22px cells,
 // 8px gaps), opacity row 30px / 1fr / 30px. The modal header (tabs +
 // close) lives in `colorpicker.scss`, not here, because those classes are
 // referenced from `colorpicker.cljs` (same-file scoping).
@@ -23,12 +23,14 @@
   flex: 1;
 }
 
-// 9 × 7 swatch grid (img_5.png). Each cell is a fixed 24×24 swatch
-// (the medium size from `swatch*`) with 8px gaps on all sides.
-// Total width ≈ 9 × 24 + 8 × 8 = 280px.
+// 9 × 6 swatch grid (img_5.png). Each cell is a fixed 22×22 swatch with
+// 8px gaps on all sides. The `swatch*` border is 1px and box-sizing is
+// border-box, so the visible colour square is 20×20 (see the shared
+// `swatch*` sizing rule at the end of this file).
+// Total width = 9 × 22 + 8 × 8 = 262px.
 .palette-grid {
   display: grid;
-  grid-template-columns: repeat(9, 24px);
+  grid-template-columns: repeat(9, 22px);
   gap: 8px;
   padding: 0;
   margin: 0;
@@ -36,8 +38,8 @@
 }
 
 .palette-grid > li {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 // Opacity row: 24px picker button (20px glyph inside) | 1fr slider |
@@ -115,7 +117,7 @@
 // Up to 18 recent swatches (img_5.png): 9-col grid wraps to 2 rows.
 .palette-recent-grid {
   display: grid;
-  grid-template-columns: repeat(9, 24px);
+  grid-template-columns: repeat(9, 22px);
   gap: 8px;
   padding: 0;
   margin: 0;
@@ -123,6 +125,21 @@
 }
 
 .palette-recent-grid > li {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+}
+
+// --- Shared swatch sizing ---------------------------------------------
+// `swatch*` carries its own fixed size from the DS `medium` class (24px),
+// which is independent of the grid track — the width/height on the `li`
+// above only sizes the layout box, so the swatch overflows it and the
+// visible square stays 22px. `.medium` belongs to the `swatch` css-module
+// (hence `:global`), and the extra `.palette-*-grid` ancestor gives this
+// rule the higher specificity needed to win.
+.palette-grid,
+.palette-recent-grid {
+  :global(.main_ui_ds_utilities_swatch__swatch) {
+    inline-size: 22px;
+    block-size: 22px;
+  }
 }

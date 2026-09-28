@@ -22,6 +22,7 @@
    [app.main.ui.hooks :as hooks]
    [app.main.ui.hooks.resize :refer [use-resize-observer]]
    [app.main.ui.modal :refer [modal-container*]]
+   [app.main.ui.onboarding.beginner-guide :as beginner-guide]
    [app.main.ui.workspace.colorpicker]
    [app.main.ui.workspace.context-menu :refer [context-menu*]]
    [app.main.ui.workspace.coordinates :as coordinates]
@@ -253,6 +254,10 @@
     (mf/with-effect [file-id page-id file-loaded?]
       (when (and file-loaded? (not page-id))
         (st/emit! (dcm/go-to-workspace :file-id file-id ::rt/replace true))))
+
+    (mf/with-effect [file-loaded?]
+      (when file-loaded?
+        (beginner-guide/maybe-show!)))
 
     (mf/with-effect [file-id page-id]
       (reset! first-frame-rendered? false))

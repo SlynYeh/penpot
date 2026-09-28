@@ -255,15 +255,15 @@ msgstr "Bredde"
 msgid "inspect.attributes.typography"
 msgstr "Typografi"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:447
 msgid "inspect.attributes.typography.font-family"
 msgstr "Skriftfamilie"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:464, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
 msgid "inspect.attributes.typography.font-size"
 msgstr "Skriftstørrelse"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:456
 msgid "inspect.attributes.typography.font-style"
 msgstr "Skriftstil"
 
@@ -291,67 +291,67 @@ msgstr "SVG"
 msgid "inspect.tabs.code.selected.text"
 msgstr "Tekst"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr ""
 
@@ -611,15 +611,15 @@ msgstr "Profil - Penpot"
 msgid "title.team-settings"
 msgstr "Innstillinger - %s - Penpot"
 
-#: src/app/main/ui/workspace.cljs:243
+#: src/app/main/ui/workspace.cljs:246
 msgid "title.workspace"
 msgstr "%s - Penpot"
 
-#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
+#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:521, src/app/main/ui/workspace/sidebar/assets.cljs:215
 msgid "workspace.assets.colors"
 msgstr "Farger"
 
-#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:161
+#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:212
 msgid "workspace.assets.components"
 msgstr "Komponenter"
 
@@ -627,7 +627,7 @@ msgstr "Komponenter"
 msgid "workspace.assets.create-group"
 msgstr "Opprett en gruppe"
 
-#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:567
+#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:649
 msgid "workspace.assets.delete"
 msgstr "Slett"
 
@@ -657,15 +657,15 @@ msgstr "Gi nytt navn"
 msgid "workspace.assets.typography.font-id"
 msgstr "Skrift"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:603
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:685
 msgid "workspace.assets.typography.font-size"
 msgstr "Størrelse"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:599
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:681
 msgid "workspace.assets.typography.font-style"
 msgstr "Skriftstil"
 
-#: src/app/main/ui/workspace/main_menu.cljs:380
+#: src/app/main/ui/workspace/main_menu.cljs:378
 msgid "workspace.header.menu.show-rules"
 msgstr "Vis regler"
 
@@ -678,11 +678,11 @@ msgstr "Legg til"
 msgid "workspace.libraries.colors.file-library"
 msgstr "Filbibliotek"
 
-#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219
+#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219, src/app/main/ui/workspace/colorpicker/palette.cljs:228, src/app/main/ui/workspace/colorpicker/palette.cljs:230
 msgid "workspace.libraries.colors.recent-colors"
 msgstr "Nylige farger"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:562
+#: src/app/main/ui/workspace/colorpicker.cljs:574
 msgid "workspace.libraries.colors.save-color"
 msgstr "Lagre fargestil"
 
@@ -694,7 +694,7 @@ msgstr "Filbibliotek"
 msgid "workspace.options.component"
 msgstr "Komponent"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:203
+#: src/app/main/ui/workspace/sidebar/options.cljs:218
 msgid "workspace.options.design"
 msgstr "Design"
 

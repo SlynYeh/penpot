@@ -172,16 +172,20 @@
       (let [key1 (events/listen js/window "resize" on-resize)]
         #(events/unlistenByKey key1)))
 
-    ;; Pre-select the configured shared library once per session as soon as
-    ;; the libraries are loaded. Guarded by `default-applied*` so a manual
-    ;; library change made later in the same session is never reset; a page
-    ;; refresh re-applies the default (this mirrors the assets sidebar's
+    ;; Pre-select the configured shared library and force the palette bar
+    ;; open once per mount (i.e. on every workspace/file/page entry) as soon
+    ;; as the libraries are loaded. Guarded by `default-applied*` so manual
+    ;; changes made later in the same session are never reset; the next
+    ;; entry re-applies the default (this mirrors the assets sidebar's
     ;; `apply-default-asset-expansions` behaviour).
-    (mf/with-effect [libraries]
+    (mf/with-effect [libraries read-only?]
       (let [default-lib (default-palette-library libraries file-id)]
-        (when (and (not @default-applied*) default-lib)
+        (when (and (not @default-applied*) default-lib (not ^boolean read-only?))
           (reset! default-applied* true)
-          (reset! selected default-lib))))
+          (reset! selected default-lib)
+          (st/emit! (dw/remove-layout-flag :hide-palettes)
+                    (dw/remove-layout-flag :textpalette)
+                    (dw/toggle-layout-flag :colorpalette :force? true)))))
 
     (mf/with-layout-effect []
       (let [dom     (mf/ref-val parent-ref)

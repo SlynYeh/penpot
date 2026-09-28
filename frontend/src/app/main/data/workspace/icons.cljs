@@ -147,6 +147,16 @@
              (= theme :outline)
              (not has-outline?)))))
 
+(defn show-icon-glyph?
+  "Draw the sidebar SVG only when this face is active and on screen."
+  [active visible]
+  (and (true? active) (true? visible)))
+
+(defn mount-icon-preview-grid?
+  "Overview category grids wait until the section is on screen."
+  [visible]
+  (true? visible))
+
 (defn- icon-entry-identity
   [entry]
   [(str/lower (or (:name (:component entry)) ""))
@@ -266,17 +276,106 @@
        (sort-by (comp category-sort-key :category))
        vec))
 
-(def icon-preview-limit 15)
+;; Tile size fills five columns in the default 318px left sidebar
+;; (12px inline padding on each side, 12px column gap, plus the thin
+;; scrollbar gutter reserved by `scrollbar-gutter: stable`). The app
+;; rewrites scrollbars to `scrollbar-width: thin` (webkit fallback 12px).
+;; Keep in sync with `--icon-tile-size` in icons.scss.
+(def icon-sidebar-default-width 318)
+(def icon-sidebar-max-width 500)
+(def icon-sidebar-inline-padding 12)
+(def icon-scrollbar-gutter 12)
+(def icon-default-columns 5)
+(def icon-column-gap 12)
+(def icon-preview-rows 3)
+(def icon-content-width-at-default
+  (- icon-sidebar-default-width
+     (* 2 icon-sidebar-inline-padding)
+     icon-scrollbar-gutter))
+(def icon-tile-size
+  (/ (- icon-content-width-at-default
+        (* (dec icon-default-columns) icon-column-gap))
+     icon-default-columns))
+(def icon-preview-limit
+  (* icon-preview-rows icon-default-columns))
+
+(defn icon-grid-columns
+  "How many fixed-size icon columns fit in `available-width`.
+   Keep `icon-tile-size` / `icon-column-gap` in sync with icons.scss."
+  [available-width]
+  (let [tile  icon-tile-size
+        gap   icon-column-gap
+        width (if (number? available-width) available-width 0)]
+    (cond
+      (< width tile)
+      1
+
+      :else
+      (inc (int (/ (- width tile) (+ tile gap)))))))
+
+(defn- track-size
+  [part]
+  (if-let [m (re-find #"([0-9]+(?:\.[0-9]+)?)" (str part))]
+    (js/parseFloat (second m))
+    0))
+
+(defn count-grid-columns
+  "Column count from a computed `grid-template-columns` value.
+   Ignores collapsed 0-width auto-fill tracks."
+  [template]
+  (let [s (if (string? template) template "")]
+    (if (or (str/blank? s) (= "none" s))
+      1
+      (->> (str/split s #"\s+")
+           (remove str/blank?)
+           (filter #(> (track-size %) 1))
+           count
+           (max 1)))))
+
+(defn resolved-grid-columns
+  "Visible icon columns from the live CSS template, with the width
+   formula as fallback when the template is not available yet."
+  [available-width template]
+  (if (or (not (string? template))
+          (str/blank? template)
+          (= "none" template))
+    (icon-grid-columns available-width)
+    (count-grid-columns template)))
+
+(def icon-max-columns
+  "Most icon columns that fit in the max 500px left sidebar."
+  (icon-grid-columns
+   (- icon-sidebar-max-width
+      (* 2 icon-sidebar-inline-padding)
+      icon-scrollbar-gutter)))
+
+(def icon-preview-fill-limit
+  "Items to mount in each overview grid. CSS max-height clips to three
+   rows, so this must cover three full rows at every column count up to
+   `icon-max-columns`. Using the live column count would leave a short
+   last row while the sidebar is being resized."
+  (* icon-preview-rows icon-max-columns))
+
+(defn preview-limit-for-columns
+  "How many overview icons are visible at `columns` (three rows).
+   Used for the 查看全部 affordance, not for how many tiles to mount."
+  [columns]
+  (* icon-preview-rows (max 1 (or columns 1))))
 
 (defn preview-icon-entries
-  "Keep the first `icon-preview-limit` paired icons for the overview grid."
-  [entries]
-  (into [] (take icon-preview-limit) entries))
+  "Keep the first `limit` paired icons for the overview grid.
+   `limit` defaults to three rows of five columns (15)."
+  ([entries]
+   (preview-icon-entries entries icon-preview-limit))
+  ([entries limit]
+   (into [] (take (max 1 (or limit icon-preview-limit))) entries)))
 
 (defn icon-category-overflows?
   "True when a category has more icons than the overview preview."
-  [entries]
-  (> (count entries) icon-preview-limit))
+  ([entries]
+   (icon-category-overflows? entries icon-preview-limit))
+  ([entries limit]
+   (> (count entries) (max 1 (or limit icon-preview-limit)))))
 
 (defn find-icon-group
   "Return the grouped category named `category`, or nil."
@@ -320,6 +419,15 @@
 (def default-icon-size 24)
 (def icon-size-presets [12 14 16 20 24 32 36 48 100])
 (def icon-glyph-color "#495e74")
+;; Shared IconPark library is authored at 48px / 2px (= 24px / 1px).
+;; Keep in sync with library/playground/generate-iconpark.mjs.
+(def icon-library-size 48)
+(def icon-library-stroke-width 2)
+;; Sidebar preview and dropped instances use 1.5px at 24px.
+(def icon-canvas-stroke-width 1.5)
+(def icon-instance-stroke-scale
+  (/ (/ icon-canvas-stroke-width default-icon-size)
+     (/ icon-library-stroke-width icon-library-size)))
 
 (defn- recolor-paint
   [paint attr color]
@@ -344,6 +452,30 @@
     (seq (:strokes shape))
     (update :strokes (fn [strokes]
                        (mapv #(recolor-paint % :stroke-color color) strokes)))))
+
+(defn icon-stroke-width-at-size
+  "Stroke width that matches the 24px / 1.5px rule at `size`."
+  [size]
+  (* icon-canvas-stroke-width (icon-stroke-scale default-icon-size size)))
+
+(defn apply-icon-canvas-strokes
+  "Set instance strokes to the canvas spec for `size` without editing the library."
+  [shape size]
+  (let [target (icon-stroke-width-at-size (or size default-icon-size))]
+    (if (empty? (:strokes shape))
+      shape
+      (update shape :strokes
+              (fn [strokes]
+                (mapv #(assoc % :stroke-width target) strokes))))))
+
+(defn style-dropped-icon-shape
+  "Recolor a copy and set its strokes to the 24px / 1.5px canvas spec."
+  ([shape color]
+   (style-dropped-icon-shape shape color default-icon-size))
+  ([shape color size]
+   (-> shape
+       (recolor-icon-shape color)
+       (apply-icon-canvas-strokes size))))
 
 (defn format-icon-size
   [n]

@@ -11,32 +11,51 @@
   (:require
    [app.common.data :as d]
    [app.common.math :as mth]
+   [app.main.ui.ds.foundations.assets.icon :as i :refer [icon*]]
    [app.util.i18n :as i18n :refer [tr]]
-   [beicon.v2.core :as rx]
    [rumext.v2 :as mf]))
 
-(defn- get-tips
+(def tip-badge-icon-id i/alarm)
+
+(def tip-message-ids
+  ["loader.tips.01.message"
+   "loader.tips.02.message"
+   "loader.tips.03.message"
+   "loader.tips.04.message"
+   "loader.tips.05.message"
+   "loader.tips.06.message"
+   "loader.tips.07.message"
+   "loader.tips.08.message"])
+
+(defonce ^:private selected-tip-id*
+  (atom nil))
+
+(defonce ^:private prepared-tip*
+  (atom nil))
+
+(defn- translation-ready
+  "Return the translated string only when it is real copy, not the i18n key."
+  [code]
+  (let [code  (d/name code)
+        value (tr code)]
+    (when (and (not (i18n/empty-string? value))
+               (not= value code))
+      value)))
+
+(defn- ensure-tip-message-id!
   []
-  [{:title (tr "loader.tips.01.title")
-    :message (tr "loader.tips.01.message")}
-   {:title (tr "loader.tips.02.title")
-    :message (tr "loader.tips.02.message")}
-   {:title (tr "loader.tips.03.title")
-    :message (tr "loader.tips.03.message")}
-   {:title (tr "loader.tips.04.title")
-    :message (tr "loader.tips.04.message")}
-   {:title (tr "loader.tips.05.title")
-    :message (tr "loader.tips.05.message")}
-   {:title (tr "loader.tips.06.title")
-    :message (tr "loader.tips.06.message")}
-   {:title (tr "loader.tips.07.title")
-    :message (tr "loader.tips.07.message")}
-   {:title (tr "loader.tips.08.title")
-    :message (tr "loader.tips.08.message")}
-   {:title (tr "loader.tips.09.title")
-    :message (tr "loader.tips.09.message")}
-   {:title (tr "loader.tips.10.title")
-    :message (tr "loader.tips.10.message")}])
+  (or @selected-tip-id*
+      (reset! selected-tip-id* (rand-nth tip-message-ids))))
+
+(defn- prepare-loader-tip
+  "Badge label + random message, or nil until both translations are loaded."
+  []
+  (or @prepared-tip*
+      (let [message-id (ensure-tip-message-id!)
+            label      (translation-ready "loader.tips.label")
+            message    (translation-ready message-id)]
+        (when (and label message)
+          (reset! prepared-tip* {:label label :message message})))))
 
 (def ^:private
   svg:loader-path-1
@@ -62,6 +81,41 @@
       [:path {:class (stl/css :loader-line)
               :d svg:loader-path-2}]]]))
 
+(mf/defc loader-tips*
+  {::mf/private true}
+  []
+  (let [tip* (mf/use-state @prepared-tip*)]
+
+    ;; Resolve copy before the first paint when translations are already loaded.
+    (mf/with-layout-effect []
+      (when (nil? @tip*)
+        (when-let [copy (prepare-loader-tip)]
+          (reset! tip* copy))))
+
+    ;; Translations load asynchronously; keep waiting until both strings exist.
+    (mf/with-effect []
+      (when (nil? @prepared-tip*)
+        (let [interval-id* (volatile! nil)]
+          (vreset! interval-id*
+                   (js/setInterval
+                    (fn []
+                      (when-let [copy (prepare-loader-tip)]
+                        (js/clearInterval @interval-id*)
+                        (reset! tip* copy)))
+                    32))
+          (fn []
+            (js/clearInterval @interval-id*)))))
+
+    (when-let [{:keys [label message]} @tip*]
+      [:div {:class (stl/css :tips-container)}
+       [:div {:class (stl/css :tip-badge)}
+        [:> icon* {:icon-id tip-badge-icon-id
+                   :size "s"}]
+        [:span {:class (stl/css :tip-badge-label)}
+         label]]
+       [:div {:class (stl/css :tip-message)}
+        message]])))
+
 (def ^:private schema:loader
   [:map
    [:class {:optional true} :string]
@@ -82,28 +136,14 @@
                                      :wrapper-overlay overlay
                                      :file-loading file-loading))
 
-        title  (or title (tr "labels.loading"))
-        tips   (mf/use-memo get-tips)
-
-        tip*   (mf/use-state nil)
-        tip    (deref tip*)]
-
-    (mf/with-effect [file-loading tips]
-      (when file-loading
-        (let [sub (->> (rx/timer 1000 4000)
-                       (rx/subs! #(reset! tip* (rand-nth tips))))]
-          (partial rx/dispose! sub))))
+        title  (or title (tr "labels.loading"))]
 
     [:> :div {:class class}
      [:div {:class (stl/css :loader-content)}
       [:> loader-icon* {:title title
                         :width width
                         :height height}]
-      (when (and file-loading tip)
-        [:div {:class (stl/css :tips-container)}
-         [:div {:class (stl/css :tip-title)}
-          (get tip :title)]
-         [:div {:class (stl/css :tip-message)}
-          (get tip :message)]])]
+      (when file-loading
+        [:> loader-tips*])]
 
      children]))

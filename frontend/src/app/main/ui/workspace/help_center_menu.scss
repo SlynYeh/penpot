@@ -12,8 +12,13 @@
 @use "ds/_sizes.scss" as *;
 @use "ds/_utils.scss" as *;
 
+.help-center {
+  position: relative;
+}
+
 // Foreground hexes are per fork design spec; intentionally not tokenized.
-// Hover/focus background is the design-system $gray-50 (spec typo #f2f3f6 unified).
+// Focus background is the design-system $gray-50 (spec typo #f2f3f6 unified);
+// hover stays flat per spec (no background, same as default color).
 .help-trigger {
   @include deprecated.flex-center;
 
@@ -23,7 +28,7 @@
   border: 0;
   border-radius: deprecated.$br-4;
   background: transparent;
-  color: #495e74;
+  color: #6911d4;
   cursor: pointer;
   font: inherit;
 
@@ -36,14 +41,8 @@
     fill: none;
   }
 
-  &:hover {
-    background-color: $gray-50;
-    color: #6911D4;
-  }
-
   &:focus-visible {
     background-color: $gray-50;
-    color: #6911D4;
   }
 }
 
@@ -51,21 +50,39 @@
   @include t.use-typography("body-small");
 
   white-space: nowrap;
+  line-height: 1;
+  font-family: '微软雅黑', system-ui;
+  vertical-align: middle;
+}
+
+// Shrink-wraps the trigger (flex item of the header) so the dropdown can
+// anchor to the button's left edge, which is dynamic per locale label width.
+.help-wrapper {
+  position: relative;
+}
+
+// Positions the dropdown under the trigger (relative to .help-wrapper) so
+// the hint can sit against the whole list (left: 100%) instead of the
+// sidebar edge. top keeps the old 4px gap below the 32px button.
+.help-flyout {
+  position: absolute;
+  top: calc(100% + #{px2rem(4)});
+  left: 0;
+  z-index: var(--z-index-dropdown);
 }
 
 // Visual block intentionally duplicated from main-menu's .base-menu:
-// css-modules cannot @extend across files.
+// css-modules cannot @extend across files. In-flow inside .help-flyout so
+// the hint's left: 100% uses the menu width; do not re-apply absolute
+// top/left here or the menu double-offsets under the trigger.
 .help-menu {
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--sp-xs);
   padding: var(--sp-xs);
-  top: $sz-48;
-  right: deprecated.$s-12;
   inline-size: $sz-192;
   border-radius: $br-8;
-  z-index: var(--z-index-dropdown);
   background-color: var(--menu-background-color);
   border: $b-2 solid var(--panel-border-color);
   box-shadow: 0 0 $sz-12 0 var(--menu-shadow-color);
@@ -101,13 +118,13 @@
 
 // --- One-time onboarding guide popover (fork feature)
 
-// Anchored to the aside.left-settings-bar, same containing block and anchor
-// offsets as .help-menu above. Fork-spec colors (#296afd) intentionally not
-// tokenized, same policy as .help-trigger.
+// Anchored to the aside.left-settings-bar (NOT .help-wrapper: the popover
+// must not follow the trigger's dynamic width). Fork-spec colors (#296afd)
+// intentionally not tokenized, same policy as .help-trigger.
 .guide-popover {
   position: absolute;
-  top: $sz-48;
-  right: deprecated.$s-12;
+  top: calc(100% + #{px2rem(8)});
+  left: 0;
   z-index: var(--z-index-dropdown);
   display: flex;
   flex-direction: column;
@@ -116,7 +133,8 @@
   padding: deprecated.$s-12;
   border-radius: $br-6;
   background-color: #296afd;
-  box-shadow: 0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
+  box-shadow:
+    0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
     0 px2rem(9) px2rem(28) 0 rgb(2 22 61 / 0.05),
     0 px2rem(12) px2rem(48) px2rem(16) rgb(2 22 61 / 0.03);
 }
@@ -127,7 +145,7 @@
 .guide-arrow {
   position: absolute;
   top: px2rem(-4);
-  right: deprecated.$s-48;
+  left: deprecated.$s-24;
   inline-size: px2rem(8);
   block-size: px2rem(8);
   border-radius: px2rem(1);
@@ -194,5 +212,61 @@
 
     stroke: currentcolor;
     fill: none;
+  }
+}
+
+.hint-popover {
+  position: absolute;
+  top: 0;
+  left: calc(100% + #{px2rem(6)});
+  z-index: var(--z-index-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-12;
+  inline-size: px2rem(280);
+  padding: px2rem(16) px2rem(24);
+  border-radius: $br-8;
+  background-color: rgba(20, 81, 219, 1);
+  box-shadow:
+    0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
+    0 px2rem(9) px2rem(28) 0 rgb(2 22 61 / 0.05),
+    0 px2rem(12) px2rem(48) px2rem(16) rgb(2 22 61 / 0.03);
+}
+
+.hint-arrow {
+  position: absolute;
+  top: 50%;
+  left: px2rem(-4);
+  inline-size: px2rem(8);
+  block-size: px2rem(8);
+  border-radius: px2rem(1);
+  background-color: rgba(20, 81, 219, 1);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.hint-body {
+  font-size: px2rem(14);
+  line-height: px2rem(22);
+  color: #fff;
+}
+
+.hint-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hint-got-it {
+  @include t.use-typography("body-small");
+
+  height: deprecated.$s-24;
+  padding: deprecated.$s-2 deprecated.$s-8;
+  border: 0;
+  border-radius: px2rem(3);
+  background-color: #fff;
+  color: rgb(20 81 219);
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f2f5ff;
   }
 }

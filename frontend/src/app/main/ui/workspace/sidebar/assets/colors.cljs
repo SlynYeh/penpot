@@ -408,6 +408,14 @@
          (fn [value _]
            (st/emit! (dwl/add-color value))))
 
+        ;; Quick-add from the 色板 tab: the colorpicker stays open, so the
+        ;; new color must not enter inline-rename mode — that would steal
+        ;; focus from the picker on every click.
+        add-color-quick
+        (mf/use-fn
+         (fn [value]
+           (st/emit! (dwl/add-color value {:rename? false}))))
+
         add-color-clicked
         (mf/use-fn
          (mf/deps file-id)
@@ -425,6 +433,7 @@
                                    {:x x-position
                                     :y y-position
                                     :on-accept add-color
+                                    :on-add-color add-color-quick
                                     :origin :assets
                                     :data {:color "#406280"
                                            :opacity 1}

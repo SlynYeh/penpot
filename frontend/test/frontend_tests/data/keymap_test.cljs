@@ -46,8 +46,9 @@
     (t/is (= "⎋" (km/convert-char "esc")))
     (t/is (= "Z" (km/convert-char "z"))))
   (with-redefs [cf/check-platform? (constantly false)]
-    (t/is (= "command" (km/convert-char "command")))
-    (t/is (= "ctrl" (km/convert-char "ctrl")))
+    ;; windows 显示风格：小写开头 token 首字母大写（abc1849858）
+    (t/is (= "Command" (km/convert-char "command")))
+    (t/is (= "Ctrl" (km/convert-char "ctrl")))
     (t/is (= "Esc" (km/convert-char "escape")))
     (t/is (= "G" (km/convert-char "g"))))
   ;; 方向键/加号替换与平台无关
@@ -70,19 +71,32 @@
   (t/is (= ["b"] (km/display-chars :draw-frame))))               ; display-chars 仍只取 first
 
 (t/deftest gesture-parts-platform
+  ;; 手势词是翻译 token（keyword），渲染层经 gesture-msgids 查 tr
   (with-redefs [cf/check-platform? (constantly true)]
-    (t/is (= ["⌘" "点击"] (km/gesture-parts :click-through)))
-    (t/is (= ["⇧" "点击"] (km/gesture-parts :multi-select)))
-    (t/is (= ["空格" "拖动"] (km/gesture-parts :drag-canvas)))
-    (t/is (= ["⌘" "滚轮"] (km/gesture-parts :zoom-canvas)))
-    (t/is (= ["⌥" "悬停目标图层"] (km/gesture-parts :measure-distance))))
+    (t/is (= ["⌘" :click] (km/gesture-parts :click-through)))
+    (t/is (= ["⇧" :click] (km/gesture-parts :multi-select)))
+    (t/is (= [:space :drag] (km/gesture-parts :drag-canvas)))
+    (t/is (= ["⌘" :scroll] (km/gesture-parts :zoom-canvas)))
+    (t/is (= ["⌥" :hover-layers] (km/gesture-parts :measure-distance))))
   (with-redefs [cf/check-platform? (constantly false)]
-    (t/is (= ["Ctrl" "点击"] (km/gesture-parts :click-through)))
-    (t/is (= ["Shift" "点击"] (km/gesture-parts :multi-select)))
-    (t/is (= ["空格" "拖动"] (km/gesture-parts :drag-canvas)))
-    (t/is (= ["Ctrl" "滚轮"] (km/gesture-parts :zoom-canvas)))
-    (t/is (= ["Alt" "悬停目标图层"] (km/gesture-parts :measure-distance))))
+    (t/is (= ["Ctrl" :click] (km/gesture-parts :click-through)))
+    (t/is (= ["Shift" :click] (km/gesture-parts :multi-select)))
+    (t/is (= [:space :drag] (km/gesture-parts :drag-canvas)))
+    (t/is (= ["Ctrl" :scroll] (km/gesture-parts :zoom-canvas)))
+    (t/is (= ["Alt" :hover-layers] (km/gesture-parts :measure-distance))))
   (t/is (nil? (km/gesture-parts :move))))
+
+(t/deftest gesture-msgids-resolve
+  ;; tabs 覆盖全部 5 个手势 kw；每段要么是字面量键帽，要么是有 msgid 的翻译 token
+  (let [gesture-kws (into #{} (mapcat :shortcuts) km/tabs)]
+    (t/is (= #{:click-through :multi-select :drag-canvas
+               :zoom-canvas :measure-distance}
+             (set (filter km/gesture? gesture-kws))))
+    (doseq [kw gesture-kws
+            :when (km/gesture? kw)
+            part (km/gesture-parts kw)]
+      (when (keyword? part)
+        (t/is (contains? km/gesture-msgids part) part)))))
 
 (t/deftest important-tab-layout
   (let [important (some #(when (= :important (:id %)) %) km/tabs)]

@@ -85,6 +85,10 @@ http {
 
         root /var/www/app/;
 
+        location /penpot/ {
+            rewrite ^/penpot/(.*)$ /$1 last;
+        }
+
         location @handle_redirect {
             set $redirect_uri "$upstream_http_location";
             set $redirect_host "$upstream_http_x_host";

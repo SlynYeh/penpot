@@ -62,7 +62,7 @@
   #{:size :position :rotation :radius})
 
 (def ^:private frame-options
-  #{:presets :size :position :rotation :radius :clip-content :show-in-viewer})
+  #{:presets :size :position :rotation :radius :clip-content})
 
 (defn- type->options
   [type]

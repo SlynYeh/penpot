@@ -14,6 +14,7 @@
    [app.common.uri :as u]
    [app.config :as cf]
    [app.util.dom :as dom]
+   [app.util.font-style :as font-style]
    [app.util.globals :as globals]
    [app.util.http :as http]
    [app.util.object :as obj]
@@ -294,10 +295,14 @@
     (p/then (obj/get fonts "ready") cb)))
 
 (defn get-default-variant
-  [{:keys [variants]}]
-  (or (d/seek #(or (= (:id %) "regular")
-                   (= (:name %) "regular")) variants)
-      (first variants)))
+  [{:keys [variants backend]}]
+  (if (= backend :custom)
+    (or (get (font-style/custom-style-index variants) "Regular")
+        (first variants))
+    (or (d/seek #(or (= (:id %) "regular")
+                     (= (:name %) "regular"))
+                variants)
+        (first variants))))
 
 (defn get-variant
   [{:keys [variants] :as font} font-variant-id]

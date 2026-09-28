@@ -5,6 +5,7 @@
 // Copyright (c) KALEIDOS INC Sucursal en España SL
 
 @use "ds/_utils.scss" as *;
+@use "ds/typography.scss" as *;
 
 @keyframes line-pencil {
   0% {
@@ -24,49 +25,6 @@
   column-gap: var(--sp-s);
   align-items: center;
   color: var(--loader-color-foreground);
-
-  // Specific styles for file loading screen
-  &.file-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    padding: var(--sp-xxl);
-
-    // Container for loader icon and tips
-    .loader-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-xl);
-    }
-
-    // Tips container
-    .tips-container {
-      text-align: center;
-      min-width: px2rem(600);
-      max-width: px2rem(800);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-s);
-      border: 1px solid var(--color-background-tertiary);
-      border-radius: var(--sp-l);
-      padding: var(--sp-xxl) var(--sp-xxxl);
-
-      // Tips title
-      .tip-title {
-        color: var(--color-foreground-primary);
-        font-weight: 500;
-      }
-
-      // Tips message
-      .tip-message {
-        color: var(--color-foreground-secondary);
-      }
-    }
-  }
 }
 
 .wrapper-overlay {
@@ -75,6 +33,55 @@
   height: 100%;
   width: 100%;
   row-gap: var(--sp-s);
+}
+
+.file-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: var(--sp-xxl);
+}
+
+.file-loading .loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: px2rem(40);
+}
+
+.tips-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-s);
+  max-width: px2rem(720);
+}
+
+.tip-badge {
+  --tip-badge-bg-color: color-mix(in srgb, var(--color-accent-primary) 10%, transparent);
+  --tip-badge-fg-color: var(--color-accent-primary);
+
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-xs) var(--sp-s);
+  border-radius: var(--sp-s);
+  background-color: var(--tip-badge-bg-color);
+  color: var(--tip-badge-fg-color);
+}
+
+.tip-badge-label {
+  @include use-typography("body-medium");
+}
+
+.tip-message {
+  @include use-typography("body-medium");
+
+  color: var(--color-foreground-secondary);
 }
 
 .loader {

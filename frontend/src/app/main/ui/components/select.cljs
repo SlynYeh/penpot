@@ -24,6 +24,13 @@
     [(:value item) (:label item) (:icon item)]
     [item item item]))
 
+(defn- non-selectable-option?
+  [item]
+  (or (= :separator item)
+      (and (map? item)
+           (or (:disabled item)
+               (:group-header item)))))
+
 (defn- rotate-index-forward
   [index length]
   (let [last-index (dec length)
@@ -51,7 +58,10 @@
 (mf/defc select
   [{:keys [default-value options class dropdown-class is-open? on-change on-pointer-enter-option on-pointer-leave-option disabled data-direction searchable? search-placeholder]}]
   (let [label-index   (mf/with-memo [options]
-                        (into {} (map as-key-value) options))
+                        (into {}
+                              (comp (remove non-selectable-option?)
+                                    (map as-key-value))
+                              options))
 
         state*        (mf/use-state
                        #(-> {:id (uuid/next)
@@ -79,6 +89,7 @@
             (let [needle (str/lower search)]
               (into [] (filter (fn [item]
                                  (and (map? item)
+                                      (not (:group-header item))
                                       (when-let [label (:label item)]
                                         (str/includes? (str/lower (dm/str label)) needle)))))
                     options))
@@ -100,7 +111,7 @@
          (mf/deps disabled visible-options current-value searchable?)
          (fn [e]
            (when-not disabled
-             (let [options (into [] (remove :disabled) visible-options)
+             (let [options (into [] (remove non-selectable-option?) visible-options)
                    length  (count options)
                    index   (d/index-of-pred options #(= (:value %) current-value))
                    index   (d/nilv index 0)]
@@ -255,12 +266,23 @@
                  :role "presentation"}
             (tr "labels.no-matches")])
          (for [[index item] (d/enumerate visible-options)]
-           (if (= :separator item)
+           (cond
+             (= :separator item)
              [:li {:id (dm/str current-id "-" index)
                    :key (dm/str current-id "-" index)
                    :class (stl/css :separator)
                    :tab-index "-1"
                    :role "option"}]
+
+             (:group-header item)
+             [:li {:id (dm/str current-id "-" index)
+                   :key (dm/str current-id "-" index)
+                   :class (stl/css :group-header)
+                   :tab-index "-1"
+                   :role "presentation"}
+              (:label item)]
+
+             :else
              (let [[value label icon] (as-key-value item)
                    icon-ref (deprecated-icon/key->icon icon)]
                [:li

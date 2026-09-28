@@ -15,6 +15,7 @@
     ptk/UpdateEvent
     (update [_ state]
       (let [merged-styles (merge (txt/get-default-text-attrs)
-                                 (get-in state [:workspace-global :default-font])
+                                 (txt/without-font-face
+                                  (get-in state [:workspace-global :default-font]))
                                  new-styles)]
         (update-in state [:workspace-wasm-editor-styles id] (fnil merge {}) merged-styles)))))

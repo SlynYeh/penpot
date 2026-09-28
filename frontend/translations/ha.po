@@ -127,7 +127,7 @@ msgstr "qirqiri sabon kundi"
 msgid "auth.sidebar-tagline"
 msgstr "samun hanyar magance matsalar zane-zane."
 
-#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:186
+#: src/app/main/ui/auth/register.cljs:251, src/app/main/ui/dashboard/sidebar.cljs:1224, src/app/main/ui/workspace/main_menu.cljs:184
 msgid "auth.terms-of-service"
 msgstr "dokokin aiki"
 
@@ -354,6 +354,7 @@ msgid "dashboard.export-standard-multi"
 msgstr "Sauke %s cikakken kundi (.svg + .json)"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:361
+#, unused
 msgid "dashboard.fonts.deleted-placeholder"
 msgstr "rashin font"
 
@@ -787,7 +788,7 @@ msgstr ""
 msgid "errors.feature-not-supported"
 msgstr "sassa '%s' ba za su yi aiki ba."
 
-#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:231
+#: src/app/main/data/auth.cljs:354, src/app/main/errors.cljs:192, src/app/main/ui/auth/login.cljs:103, src/app/main/ui/auth/register.cljs:112, src/app/main/ui/auth/register.cljs:304, src/app/main/ui/auth/verify_token.cljs:119, src/app/main/ui/dashboard/fonts.cljs:388, src/app/main/ui/dashboard/team.cljs:230, src/app/main/ui/dashboard/team.cljs:1069, src/app/main/ui/onboarding/team_choice.cljs:125, src/app/main/ui/settings/feedback.cljs:84, src/app/main/ui/settings/integrations.cljs:156, src/app/main/ui/workspace/main_menu.cljs:229
 msgid "errors.generic"
 msgstr "wata matsala ta faru."
 
@@ -1112,15 +1113,15 @@ msgstr "fadi"
 msgid "inspect.attributes.typography"
 msgstr "tsara rubutu"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:341
+#: src/app/main/ui/inspect/attributes/text.cljs:62, src/app/main/ui/inspect/styles/panels/text.cljs:123, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:447
 msgid "inspect.attributes.typography.font-family"
 msgstr "gidan salo"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:365, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:371
+#: src/app/main/ui/inspect/attributes/text.cljs:78, src/app/main/ui/inspect/styles/panels/text.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:464, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
 msgid "inspect.attributes.typography.font-size"
 msgstr "girman salo"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:382
+#: src/app/main/ui/inspect/attributes/text.cljs:70, src/app/main/ui/inspect/styles/panels/text.cljs:130, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:456
 msgid "inspect.attributes.typography.font-style"
 msgstr "tsarin salo"
 
@@ -1128,11 +1129,11 @@ msgstr "tsarin salo"
 msgid "inspect.attributes.typography.font-weight"
 msgstr "kaurin salon"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:446
+#: src/app/main/ui/inspect/attributes/text.cljs:102, src/app/main/ui/inspect/styles/panels/text.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:513, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:524
 msgid "inspect.attributes.typography.letter-spacing"
 msgstr "tazarar harafi"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:417, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:427
+#: src/app/main/ui/inspect/attributes/text.cljs:94, src/app/main/ui/inspect/styles/panels/text.cljs:154, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:494, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:504
 msgid "inspect.attributes.typography.line-height"
 msgstr "tsawon layi"
 
@@ -1152,11 +1153,11 @@ msgstr "jan layi"
 msgid "inspect.attributes.typography.text-transform"
 msgstr "masarrafin rubu,manya ko qanana"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:476
+#: src/app/main/ui/inspect/attributes/text.cljs:126, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:554
 msgid "inspect.attributes.typography.text-transform.capitalize"
 msgstr "yadda ake rubuta batu"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:480
+#: src/app/main/ui/inspect/attributes/text.cljs:124, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:558
 msgid "inspect.attributes.typography.text-transform.lowercase"
 msgstr "qananan baqaqe"
 
@@ -1164,7 +1165,7 @@ msgstr "qananan baqaqe"
 msgid "inspect.attributes.typography.text-transform.none"
 msgstr "babu"
 
-#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:470
+#: src/app/main/ui/inspect/attributes/text.cljs:127, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548
 msgid "inspect.attributes.typography.text-transform.uppercase"
 msgstr "manyan baqaqe"
 
@@ -1224,71 +1225,71 @@ msgstr "SVG"
 msgid "inspect.tabs.code.selected.text"
 msgstr "rubutu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:162
 msgid "keymap.important.click-through"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:163
 msgid "keymap.important.click-through.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:164
 msgid "keymap.important.drag-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:165
 msgid "keymap.important.drag-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:166
 msgid "keymap.important.draw-frame"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:167
 msgid "keymap.important.draw-frame.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:168
 msgid "keymap.important.draw-text"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:169
 msgid "keymap.important.draw-text.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:170
 msgid "keymap.important.escape"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:171
 msgid "keymap.important.escape.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:172
 msgid "keymap.important.group"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:173
 msgid "keymap.important.group.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:174
 msgid "keymap.important.multi-select"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:175
 msgid "keymap.important.multi-select.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:176
 msgid "keymap.important.zoom-canvas"
 msgstr ""
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:177
 msgid "keymap.important.zoom-canvas.desc"
 msgstr ""
 
-#: src/app/main/ui/workspace/main_menu.cljs:194
+#: src/app/main/ui/workspace/main_menu.cljs:192
 msgid "label.shortcuts"
 msgstr "yanke"
 
@@ -1325,8 +1326,7 @@ msgstr "duk"
 msgid "labels.and"
 msgstr "da"
 
-#: src/app/main/ui/onboarding/team_choice.cljs:186
-#, unused
+#: src/app/main/ui/workspace/sidebar/icons.cljs:287
 msgid "labels.back"
 msgstr "baya"
 
@@ -1348,7 +1348,7 @@ msgstr "sokewa"
 msgid "labels.canva"
 msgstr "Canva"
 
-#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/keymap_panel.cljs:107, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:262, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
+#: src/app/main/data/common.cljs:96, src/app/main/ui/confirm.cljs:78, src/app/main/ui/dashboard/comments.cljs:101, src/app/main/ui/dashboard/projects.cljs:98, src/app/main/ui/ds/product/panel_title.cljs:32, src/app/main/ui/exports/files.cljs:192, src/app/main/ui/nitrate/nitrate_code_activation_modal.cljs:72, src/app/main/ui/onboarding/beginner_guide.cljs:256, src/app/main/ui/settings/integrations.cljs:141, src/app/main/ui/settings/integrations.cljs:260, src/app/main/ui/settings/integrations.cljs:300, src/app/main/ui/settings/integrations.cljs:342, src/app/main/ui/settings/subscription.cljs:383, src/app/main/ui/viewer/login.cljs:71, src/app/main/ui/viewer/share_link.cljs:175, src/app/main/ui/workspace/colorpicker.cljs:864, src/app/main/ui/workspace/colorpicker.cljs:865, src/app/main/ui/workspace/help_center_menu.cljs:213, src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/libraries.cljs:668, src/app/main/ui/workspace/sidebar/layers.cljs:579, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:653, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/variants_help_modal.cljs:43, src/app/main/ui/workspace/sidebar.cljs:306, src/app/main/ui/workspace/tokens/export.cljs:25, src/app/main/ui/workspace/tokens/import.cljs:19, src/app/main/ui/workspace/tokens/import_from_library.cljs:63, src/app/main/ui/workspace/tokens/management/forms/modals.cljs:99, src/app/main/ui/workspace/tokens/management/forms/rename_node_modal.cljs:114, src/app/main/ui/workspace/tokens/remapping_modal.cljs:93, src/app/main/ui/workspace/tokens/settings/menu.cljs:77, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:61, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:144, src/app/main/ui/workspace/tokens/themes/create_modal.cljs:458, src/app/main/ui/workspace/webgl_unavailable_modal.cljs:55
 msgid "labels.close"
 msgstr "rufewa"
 
@@ -1360,7 +1360,7 @@ msgstr "lamba"
 msgid "labels.comments"
 msgstr "yabo"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:146
+#: src/app/main/ui/dashboard/sidebar.cljs:1181, src/app/main/ui/workspace/main_menu.cljs:144
 msgid "labels.community"
 msgstr "matattara"
 
@@ -1494,11 +1494,11 @@ msgstr "mawallafi/VP"
 msgid "labels.freelancer"
 msgstr "ni mai zaman kansa ne"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:178
+#: src/app/main/ui/dashboard/sidebar.cljs:1175, src/app/main/ui/workspace/main_menu.cljs:176
 msgid "labels.github-repo"
 msgstr "taskar rubuce-rubuce"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:207
+#: src/app/main/ui/dashboard/sidebar.cljs:1151, src/app/main/ui/workspace/main_menu.cljs:205
 msgid "labels.give-feedback"
 msgstr "bada bayani"
 
@@ -1506,7 +1506,7 @@ msgstr "bada bayani"
 msgid "labels.go-back"
 msgstr "koma baya"
 
-#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/main_menu.cljs:138, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
+#: src/app/main/ui/dashboard/sidebar.cljs:1132, src/app/main/ui/workspace/help_center_menu.cljs:138, src/app/main/ui/workspace/help_center_menu.cljs:139, src/app/main/ui/workspace/help_center_menu.cljs:142, src/app/main/ui/workspace/main_menu.cljs:136, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1356, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1385, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:1575
 msgid "labels.help-center"
 msgstr "sashen taimako"
 
@@ -1542,7 +1542,7 @@ msgstr "gayyata"
 msgid "labels.language"
 msgstr "harshe"
 
-#: src/app/main/ui/workspace/main_menu.cljs:170
+#: src/app/main/ui/workspace/main_menu.cljs:168
 msgid "labels.libraries-and-templates"
 msgstr "taskoki  & allunan talla"
 
@@ -1654,7 +1654,7 @@ msgstr "kundi"
 msgid "labels.projects"
 msgstr "aiyuka"
 
-#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:162
+#: src/app/main/ui/settings/sidebar.cljs:128, src/app/main/ui/workspace/main_menu.cljs:160
 msgid "labels.release-notes"
 msgstr "bayar da bayani"
 
@@ -1759,7 +1759,7 @@ msgstr "daraja"
 msgid "labels.student-teacher"
 msgstr "malami ko dalibi"
 
-#: src/app/main/ui/workspace/main_menu.cljs:154
+#: src/app/main/ui/workspace/main_menu.cljs:152
 msgid "labels.tutorials"
 msgstr "koyarwa"
 
@@ -2128,7 +2128,7 @@ msgstr "ka tabbata ka na son barin wannan tawagar?"
 msgid "modals.leave-confirm.title"
 msgstr "barin tawaga"
 
-#: src/app/main/ui/workspace/main_menu.cljs:324, src/app/main/ui/workspace/nudge.cljs:46
+#: src/app/main/ui/workspace/main_menu.cljs:322, src/app/main/ui/workspace/nudge.cljs:46
 msgid "modals.nudge-title"
 msgstr "adadin jan hankali"
 
@@ -2461,605 +2461,612 @@ msgstr "fenfot"
 msgid "profile.recovery.go-to-login"
 msgstr "je ka hanyar shiga"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:732, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:814, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:423
 msgid "settings.detach"
 msgstr "cire"
 
-#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:549, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:572, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:583, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:611, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:624, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:644, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:665, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:676, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:375, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:429, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:448, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:468, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
+#: src/app/main/ui/inspect/exports.cljs:169, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:192, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:243, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:261, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:278, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:297, src/app/main/ui/workspace/sidebar/options/menus/border_radius.cljs:299, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:342, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:499, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1063, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:1303, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:163, src/app/main/ui/workspace/sidebar/options/menus/constraints.cljs:174, src/app/main/ui/workspace/sidebar/options/menus/exports.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/fill.cljs:221, src/app/main/ui/workspace/sidebar/options/menus/input_wrapper_tokens.cljs:25, src/app/main/ui/workspace/sidebar/options/menus/layer.cljs:244, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:388, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:399, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:425, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:435, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:519, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:553, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:755, src/app/main/ui/workspace/sidebar/options/menus/layout_container.cljs:793, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:80, src/app/main/ui/workspace/sidebar/options/menus/layout_item.cljs:86, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:571, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:594, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:605, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:633, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:646, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:655, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:666, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:687, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/shadow.cljs:165, src/app/main/ui/workspace/sidebar/options/menus/stroke.cljs:222, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:474, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:506, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:526, src/app/main/ui/workspace/sidebar/options/rows/color_row.cljs:472, src/app/main/ui/workspace/sidebar/options/rows/stroke_row.cljs:304
 msgid "settings.multiple"
 msgstr "gauraya"
 
 # SECTIONS
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:412
+#, unused
 msgid "shortcut-section.basics"
 msgstr "shikashikai"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:418
+#, unused
 msgid "shortcut-section.dashboard"
 msgstr "allon kallo"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:421
+#, unused
 msgid "shortcut-section.viewer"
 msgstr "Dankallo"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:415
+#, unused
 msgid "shortcut-section.workspace"
 msgstr "fagen aiki"
 
 # SUBSECTIONS
-#: src/app/main/ui/workspace/keymap_panel.cljs:115, src/app/main/ui/workspace/sidebar/shortcuts.cljs:58
+#: src/app/main/ui/workspace/keymap_panel.cljs:181
 msgid "shortcut-subsection.alignment"
 msgstr "kwaskwarima"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:116, src/app/main/ui/workspace/sidebar/shortcuts.cljs:59
+#: src/app/main/ui/workspace/keymap_panel.cljs:182
 msgid "shortcut-subsection.edit"
 msgstr "Tace"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:117, src/app/main/ui/workspace/sidebar/shortcuts.cljs:60
+#: src/app/main/ui/workspace/keymap_panel.cljs:183
 msgid "shortcut-subsection.general-dashboard"
 msgstr "gamayya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:118, src/app/main/ui/workspace/sidebar/shortcuts.cljs:61
+#: src/app/main/ui/workspace/keymap_panel.cljs:184
 msgid "shortcut-subsection.general-viewer"
 msgstr "gamayya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:119, src/app/main/ui/workspace/main_menu.cljs:789, src/app/main/ui/workspace/sidebar/shortcuts.cljs:62
+#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/main_menu.cljs:788, src/app/main/ui/workspace/main_menu.cljs:789
 msgid "shortcut-subsection.main-menu"
 msgstr "Babbar kumshiya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:120, src/app/main/ui/workspace/sidebar/shortcuts.cljs:63
+#: src/app/main/ui/workspace/keymap_panel.cljs:186
 msgid "shortcut-subsection.modify-layers"
 msgstr "gyara shimfida"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:121, src/app/main/ui/workspace/sidebar/shortcuts.cljs:64
+#: src/app/main/ui/workspace/keymap_panel.cljs:187
 msgid "shortcut-subsection.navigation-dashboard"
 msgstr "shawagi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:122, src/app/main/ui/workspace/sidebar/shortcuts.cljs:65
+#: src/app/main/ui/workspace/keymap_panel.cljs:188
 msgid "shortcut-subsection.navigation-viewer"
 msgstr "shawagi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:123, src/app/main/ui/workspace/sidebar/shortcuts.cljs:66
+#: src/app/main/ui/workspace/keymap_panel.cljs:189
 msgid "shortcut-subsection.navigation-workspace"
 msgstr "shawagi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:124, src/app/main/ui/workspace/sidebar/shortcuts.cljs:67
+#: src/app/main/ui/workspace/keymap_panel.cljs:190
 msgid "shortcut-subsection.panels"
 msgstr "allon sarrarfav naura"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:125, src/app/main/ui/workspace/sidebar/shortcuts.cljs:68
+#: src/app/main/ui/workspace/keymap_panel.cljs:191
 msgid "shortcut-subsection.path-editor"
 msgstr "Hanya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:126, src/app/main/ui/workspace/sidebar/shortcuts.cljs:69
+#: src/app/main/ui/workspace/keymap_panel.cljs:192
 msgid "shortcut-subsection.shape"
 msgstr "Siffa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:127, src/app/main/ui/workspace/sidebar/shortcuts.cljs:70
+#: src/app/main/ui/workspace/keymap_panel.cljs:193
 msgid "shortcut-subsection.text-editor"
 msgstr "Rubutu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:128, src/app/main/ui/workspace/sidebar/shortcuts.cljs:71
+#: src/app/main/ui/workspace/keymap_panel.cljs:194
 msgid "shortcut-subsection.tools"
 msgstr "Kayan aiki"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:129, src/app/main/ui/workspace/sidebar/shortcuts.cljs:72
+#: src/app/main/ui/workspace/keymap_panel.cljs:195
 msgid "shortcut-subsection.zoom-viewer"
 msgstr "Zukowa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:130, src/app/main/ui/workspace/sidebar/shortcuts.cljs:73
+#: src/app/main/ui/workspace/keymap_panel.cljs:196
 msgid "shortcut-subsection.zoom-workspace"
 msgstr "Zukowa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:131, src/app/main/ui/workspace/sidebar/shortcuts.cljs:74
+#: src/app/main/ui/workspace/keymap_panel.cljs:197
 msgid "shortcuts.add-comment"
 msgstr "Bayyana Ra'ayi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:132, src/app/main/ui/workspace/sidebar/shortcuts.cljs:75
+#: src/app/main/ui/workspace/keymap_panel.cljs:198
 msgid "shortcuts.add-node"
 msgstr "kara Girma"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:133, src/app/main/ui/workspace/sidebar/shortcuts.cljs:76
+#: src/app/main/ui/workspace/keymap_panel.cljs:199
 msgid "shortcuts.align-bottom"
 msgstr "tsarin kasa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:134, src/app/main/ui/workspace/sidebar/shortcuts.cljs:77
+#: src/app/main/ui/workspace/keymap_panel.cljs:200
 msgid "shortcuts.align-center"
 msgstr "tsarin tsakiya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:135, src/app/main/ui/workspace/sidebar/shortcuts.cljs:78
+#: src/app/main/ui/workspace/keymap_panel.cljs:201
 msgid "shortcuts.align-hcenter"
 msgstr "tsarin tsakiya ko ina"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:136, src/app/main/ui/workspace/sidebar/shortcuts.cljs:79
+#: src/app/main/ui/workspace/keymap_panel.cljs:202
 msgid "shortcuts.align-justify"
 msgstr "Tabbataccan tsari"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:137, src/app/main/ui/workspace/sidebar/shortcuts.cljs:80
+#: src/app/main/ui/workspace/keymap_panel.cljs:203
 msgid "shortcuts.align-left"
 msgstr "tsarin hagu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:138, src/app/main/ui/workspace/sidebar/shortcuts.cljs:81
+#: src/app/main/ui/workspace/keymap_panel.cljs:204
 msgid "shortcuts.align-right"
 msgstr "tsarin dama"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:139, src/app/main/ui/workspace/sidebar/shortcuts.cljs:82
+#: src/app/main/ui/workspace/keymap_panel.cljs:205
 msgid "shortcuts.align-top"
 msgstr "tsarin sama"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:140, src/app/main/ui/workspace/sidebar/shortcuts.cljs:83
+#: src/app/main/ui/workspace/keymap_panel.cljs:206
 msgid "shortcuts.align-vcenter"
 msgstr "tsarin tsakiya a tsaye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:141, src/app/main/ui/workspace/sidebar/shortcuts.cljs:84
+#: src/app/main/ui/workspace/keymap_panel.cljs:207
 msgid "shortcuts.artboard-selection"
 msgstr "kirkiri allo daga zabi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:142, src/app/main/ui/workspace/sidebar/shortcuts.cljs:85
+#: src/app/main/ui/workspace/keymap_panel.cljs:208
 msgid "shortcuts.bold"
 msgstr "fito da shi barobaro"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:143, src/app/main/ui/workspace/sidebar/shortcuts.cljs:86
+#: src/app/main/ui/workspace/keymap_panel.cljs:209
 msgid "shortcuts.bool-difference"
 msgstr "ma'auni mabanbanci"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:144, src/app/main/ui/workspace/sidebar/shortcuts.cljs:87
+#: src/app/main/ui/workspace/keymap_panel.cljs:210
 msgid "shortcuts.bool-exclude"
 msgstr "kebentaccan ma'auni"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:145, src/app/main/ui/workspace/sidebar/shortcuts.cljs:88
+#: src/app/main/ui/workspace/keymap_panel.cljs:211
 msgid "shortcuts.bool-intersection"
 msgstr "ma'aunin abubuwa daban daban"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:146, src/app/main/ui/workspace/sidebar/shortcuts.cljs:89
+#: src/app/main/ui/workspace/keymap_panel.cljs:212
 msgid "shortcuts.bool-union"
 msgstr "ma'auni hadaka"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:147, src/app/main/ui/workspace/sidebar/shortcuts.cljs:90
+#: src/app/main/ui/workspace/keymap_panel.cljs:213
 msgid "shortcuts.bring-back"
 msgstr "tura zuwa baya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:148, src/app/main/ui/workspace/sidebar/shortcuts.cljs:91
+#: src/app/main/ui/workspace/keymap_panel.cljs:214
 msgid "shortcuts.bring-backward"
 msgstr "komawa baya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:149, src/app/main/ui/workspace/sidebar/shortcuts.cljs:92
+#: src/app/main/ui/workspace/keymap_panel.cljs:215
 msgid "shortcuts.bring-forward"
 msgstr "tura gaba"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:150, src/app/main/ui/workspace/sidebar/shortcuts.cljs:93
+#: src/app/main/ui/workspace/keymap_panel.cljs:216
 msgid "shortcuts.bring-front"
 msgstr "kawo zuwa gaba"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:151, src/app/main/ui/workspace/sidebar/shortcuts.cljs:94
+#: src/app/main/ui/workspace/keymap_panel.cljs:217
 msgid "shortcuts.clear-undo"
 msgstr "goge sake"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:152, src/app/main/ui/workspace/sidebar/shortcuts.cljs:95
+#: src/app/main/ui/workspace/keymap_panel.cljs:219
 msgid "shortcuts.copy"
 msgstr "kwafi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:156, src/app/main/ui/workspace/sidebar/shortcuts.cljs:98
+#: src/app/main/ui/workspace/keymap_panel.cljs:223
 msgid "shortcuts.create-new-project"
 msgstr "samar da sabo abu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:157, src/app/main/ui/workspace/sidebar/shortcuts.cljs:99
+#: src/app/main/ui/workspace/keymap_panel.cljs:224
 msgid "shortcuts.cut"
 msgstr "cire"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:158, src/app/main/ui/workspace/right_header.cljs:85, src/app/main/ui/workspace/sidebar/shortcuts.cljs:100
+#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/right_header.cljs:85
 msgid "shortcuts.decrease-zoom"
 msgstr "fito da shi waje"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:159, src/app/main/ui/workspace/sidebar/shortcuts.cljs:101
+#: src/app/main/ui/workspace/keymap_panel.cljs:226
 msgid "shortcuts.delete"
 msgstr "goge"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:160, src/app/main/ui/workspace/sidebar/shortcuts.cljs:102
+#: src/app/main/ui/workspace/keymap_panel.cljs:227
 msgid "shortcuts.delete-node"
 msgstr "fita da ga cikin net wok"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:161, src/app/main/ui/workspace/sidebar/shortcuts.cljs:103
+#: src/app/main/ui/workspace/keymap_panel.cljs:228
 msgid "shortcuts.detach-component"
 msgstr "rarraba abubuwan da su ke a ware"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:162, src/app/main/ui/workspace/sidebar/shortcuts.cljs:104
+#: src/app/main/ui/workspace/keymap_panel.cljs:230
 msgid "shortcuts.draw-curve"
 msgstr "Ratse"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:163, src/app/main/ui/workspace/sidebar/shortcuts.cljs:105
+#: src/app/main/ui/workspace/keymap_panel.cljs:231
 msgid "shortcuts.draw-ellipse"
 msgstr "siffar kwai"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:164, src/app/main/ui/workspace/sidebar/shortcuts.cljs:106
+#: src/app/main/ui/workspace/keymap_panel.cljs:232
 msgid "shortcuts.draw-frame"
 msgstr "Allo"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:165, src/app/main/ui/workspace/sidebar/shortcuts.cljs:107
+#: src/app/main/ui/workspace/keymap_panel.cljs:233
 msgid "shortcuts.draw-nodes"
 msgstr "samar da hanya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:166, src/app/main/ui/workspace/sidebar/shortcuts.cljs:108
+#: src/app/main/ui/workspace/keymap_panel.cljs:234
 msgid "shortcuts.draw-path"
 msgstr "Hanya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:167, src/app/main/ui/workspace/sidebar/shortcuts.cljs:109
+#: src/app/main/ui/workspace/keymap_panel.cljs:235
 msgid "shortcuts.draw-rect"
 msgstr "Ractangula"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:168, src/app/main/ui/workspace/sidebar/shortcuts.cljs:110
+#: src/app/main/ui/workspace/keymap_panel.cljs:236
 msgid "shortcuts.draw-text"
 msgstr "rubutaccan sako"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:169, src/app/main/ui/workspace/sidebar/shortcuts.cljs:111
+#: src/app/main/ui/workspace/keymap_panel.cljs:237
 msgid "shortcuts.duplicate"
 msgstr "maimaita"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:170, src/app/main/ui/workspace/sidebar/shortcuts.cljs:112
+#: src/app/main/ui/workspace/keymap_panel.cljs:238
 msgid "shortcuts.escape"
 msgstr "kubuta"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:171, src/app/main/ui/workspace/sidebar/shortcuts.cljs:113
+#: src/app/main/ui/workspace/keymap_panel.cljs:239
 msgid "shortcuts.export-shapes"
 msgstr "samar da sabbabbin abubuwa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:174, src/app/main/ui/workspace/sidebar/shortcuts.cljs:116
+#: src/app/main/ui/workspace/keymap_panel.cljs:242
 msgid "shortcuts.fit-all"
 msgstr "fitar da abubuwan da zai dace da ko wane abu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:175, src/app/main/ui/workspace/sidebar/shortcuts.cljs:117
+#: src/app/main/ui/workspace/keymap_panel.cljs:243
 msgid "shortcuts.flip-horizontal"
 msgstr "kifa shi dai dai"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:176, src/app/main/ui/workspace/sidebar/shortcuts.cljs:118
+#: src/app/main/ui/workspace/keymap_panel.cljs:244
 msgid "shortcuts.flip-vertical"
 msgstr "kifa ta tsaye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:177, src/app/main/ui/workspace/sidebar/shortcuts.cljs:119
+#: src/app/main/ui/workspace/keymap_panel.cljs:245
 msgid "shortcuts.font-size-dec"
 msgstr "rage girman rubutu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:178, src/app/main/ui/workspace/sidebar/shortcuts.cljs:120
+#: src/app/main/ui/workspace/keymap_panel.cljs:246
 msgid "shortcuts.font-size-inc"
 msgstr "kara gaban yanayi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:179, src/app/main/ui/workspace/sidebar/shortcuts.cljs:121
+#: src/app/main/ui/workspace/keymap_panel.cljs:247
 msgid "shortcuts.go-to-drafts"
 msgstr "ta fi rumbu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:180, src/app/main/ui/workspace/sidebar/shortcuts.cljs:122
+#: src/app/main/ui/workspace/keymap_panel.cljs:248
 msgid "shortcuts.go-to-libs"
 msgstr "ta fi zuwa rabbabben ma'ajiya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:181, src/app/main/ui/workspace/sidebar/shortcuts.cljs:123
+#: src/app/main/ui/workspace/keymap_panel.cljs:249
 msgid "shortcuts.go-to-search"
 msgstr "gajeran sako"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:182, src/app/main/ui/workspace/sidebar/shortcuts.cljs:124
+#: src/app/main/ui/workspace/keymap_panel.cljs:250
 msgid "shortcuts.group"
 msgstr "rukuni"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:183, src/app/main/ui/workspace/sidebar/shortcuts.cljs:125
+#: src/app/main/ui/workspace/keymap_panel.cljs:251
 msgid "shortcuts.h-distribute"
 msgstr "raba ta tsaye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:184, src/app/main/ui/workspace/sidebar/shortcuts.cljs:126
+#: src/app/main/ui/workspace/keymap_panel.cljs:252
 msgid "shortcuts.hide-ui"
 msgstr "fito / boye UI"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:185, src/app/main/ui/workspace/right_header.cljs:90, src/app/main/ui/workspace/sidebar/shortcuts.cljs:127
+#: src/app/main/ui/workspace/keymap_panel.cljs:253, src/app/main/ui/workspace/right_header.cljs:90
 msgid "shortcuts.increase-zoom"
 msgstr "zuko ciki"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:186, src/app/main/ui/workspace/sidebar/shortcuts.cljs:128
+#: src/app/main/ui/workspace/keymap_panel.cljs:254
 msgid "shortcuts.insert-image"
 msgstr "sa hoto"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:187, src/app/main/ui/workspace/sidebar/shortcuts.cljs:129
+#: src/app/main/ui/workspace/keymap_panel.cljs:255
 msgid "shortcuts.italic"
 msgstr "juya zuwa kwantaccen rubuyu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:188, src/app/main/ui/workspace/sidebar/shortcuts.cljs:130
+#: src/app/main/ui/workspace/keymap_panel.cljs:256
 msgid "shortcuts.join-nodes"
 msgstr "hada abubuwan"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:189, src/app/main/ui/workspace/sidebar/shortcuts.cljs:131
+#: src/app/main/ui/workspace/keymap_panel.cljs:257
 msgid "shortcuts.line-through"
 msgstr "danna layin duk"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:190, src/app/main/ui/workspace/sidebar/shortcuts.cljs:132
+#: src/app/main/ui/workspace/keymap_panel.cljs:258
 msgid "shortcuts.make-corner"
 msgstr "kirkiri kwana"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:191, src/app/main/ui/workspace/sidebar/shortcuts.cljs:133
+#: src/app/main/ui/workspace/keymap_panel.cljs:259
 msgid "shortcuts.make-curve"
 msgstr "kirkiri lankwasa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:192, src/app/main/ui/workspace/sidebar/shortcuts.cljs:134
+#: src/app/main/ui/workspace/keymap_panel.cljs:260
 msgid "shortcuts.mask"
 msgstr "takunkumi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:193, src/app/main/ui/workspace/sidebar/shortcuts.cljs:135
+#: src/app/main/ui/workspace/keymap_panel.cljs:262
 msgid "shortcuts.merge-nodes"
 msgstr "hada da kauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:194, src/app/main/ui/workspace/sidebar/shortcuts.cljs:136
+#: src/app/main/ui/workspace/keymap_panel.cljs:263
 msgid "shortcuts.move"
 msgstr "matsa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:195, src/app/main/ui/workspace/sidebar/shortcuts.cljs:137
+#: src/app/main/ui/workspace/keymap_panel.cljs:264
 msgid "shortcuts.move-fast-down"
 msgstr "Matsa kasa da sauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:196, src/app/main/ui/workspace/sidebar/shortcuts.cljs:138
+#: src/app/main/ui/workspace/keymap_panel.cljs:265
 msgid "shortcuts.move-fast-left"
 msgstr "Matsa hagu da sauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:197, src/app/main/ui/workspace/sidebar/shortcuts.cljs:139
+#: src/app/main/ui/workspace/keymap_panel.cljs:266
 msgid "shortcuts.move-fast-right"
 msgstr "matsa dama da sauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:198, src/app/main/ui/workspace/sidebar/shortcuts.cljs:140
+#: src/app/main/ui/workspace/keymap_panel.cljs:267
 msgid "shortcuts.move-fast-up"
 msgstr "Matsa sama da sauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:199, src/app/main/ui/workspace/sidebar/shortcuts.cljs:141
+#: src/app/main/ui/workspace/keymap_panel.cljs:268
 msgid "shortcuts.move-nodes"
 msgstr "matsa a hade"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:200, src/app/main/ui/workspace/sidebar/shortcuts.cljs:142
+#: src/app/main/ui/workspace/keymap_panel.cljs:269
 msgid "shortcuts.move-unit-down"
 msgstr "Matsa da sashin kasa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:201, src/app/main/ui/workspace/sidebar/shortcuts.cljs:143
+#: src/app/main/ui/workspace/keymap_panel.cljs:270
 msgid "shortcuts.move-unit-left"
 msgstr "Matsa da sashin hagu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:202, src/app/main/ui/workspace/sidebar/shortcuts.cljs:144
+#: src/app/main/ui/workspace/keymap_panel.cljs:271
 msgid "shortcuts.move-unit-right"
 msgstr "Matsa da sashin dama"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:203, src/app/main/ui/workspace/sidebar/shortcuts.cljs:145
+#: src/app/main/ui/workspace/keymap_panel.cljs:272
 msgid "shortcuts.move-unit-up"
 msgstr "Matsa da sashin samu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:204, src/app/main/ui/workspace/sidebar/shortcuts.cljs:146
+#: src/app/main/ui/workspace/keymap_panel.cljs:274
 msgid "shortcuts.next-frame"
 msgstr "wani tsari"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:510
+#, unused
 msgid "shortcuts.not-found"
 msgstr "babu gajeriyar hanya"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:205, src/app/main/ui/workspace/sidebar/shortcuts.cljs:147
+#: src/app/main/ui/workspace/keymap_panel.cljs:275
 msgid "shortcuts.opacity-0"
 msgstr "Saita dishi dishi zuwa kashi  100"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:206, src/app/main/ui/workspace/sidebar/shortcuts.cljs:148
+#: src/app/main/ui/workspace/keymap_panel.cljs:276
 msgid "shortcuts.opacity-1"
 msgstr "saita dishi dishi zuwa kashi 10"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:207, src/app/main/ui/workspace/sidebar/shortcuts.cljs:149
+#: src/app/main/ui/workspace/keymap_panel.cljs:277
 msgid "shortcuts.opacity-2"
 msgstr "Saita dishi dishi zuwa kashi 20"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:208, src/app/main/ui/workspace/sidebar/shortcuts.cljs:150
+#: src/app/main/ui/workspace/keymap_panel.cljs:278
 msgid "shortcuts.opacity-3"
 msgstr "Seta dashi dashi zuwa kashi 50"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:209, src/app/main/ui/workspace/sidebar/shortcuts.cljs:151
+#: src/app/main/ui/workspace/keymap_panel.cljs:279
 msgid "shortcuts.opacity-4"
 msgstr "Saita dishi dishi zuwa kashi 40"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:210, src/app/main/ui/workspace/sidebar/shortcuts.cljs:152
+#: src/app/main/ui/workspace/keymap_panel.cljs:280
 msgid "shortcuts.opacity-5"
 msgstr "Saita dishi dishi zuwa kashi 50"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:211, src/app/main/ui/workspace/sidebar/shortcuts.cljs:153
+#: src/app/main/ui/workspace/keymap_panel.cljs:281
 msgid "shortcuts.opacity-6"
 msgstr "Saita dishi dishi zuwa kashi 60"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:212, src/app/main/ui/workspace/sidebar/shortcuts.cljs:154
+#: src/app/main/ui/workspace/keymap_panel.cljs:282
 msgid "shortcuts.opacity-7"
 msgstr "Saita dishi dishi zuwa kashi 70"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:213, src/app/main/ui/workspace/sidebar/shortcuts.cljs:155
+#: src/app/main/ui/workspace/keymap_panel.cljs:283
 msgid "shortcuts.opacity-8"
 msgstr "seta dishi dishin zuwa kashi 8o"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:214, src/app/main/ui/workspace/sidebar/shortcuts.cljs:156
+#: src/app/main/ui/workspace/keymap_panel.cljs:284
 msgid "shortcuts.opacity-9"
 msgstr "Seta dish dishi zuwa 90"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:215, src/app/main/ui/workspace/sidebar/shortcuts.cljs:157
+#: src/app/main/ui/workspace/keymap_panel.cljs:285
 msgid "shortcuts.open-color-picker"
 msgstr "abin daukan kala"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:216, src/app/main/ui/workspace/sidebar/shortcuts.cljs:158
+#: src/app/main/ui/workspace/keymap_panel.cljs:286
 msgid "shortcuts.open-comments"
 msgstr "tafi inda 'yan kallo za su bayyana ra'ayi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:217, src/app/main/ui/workspace/sidebar/shortcuts.cljs:159
+#: src/app/main/ui/workspace/keymap_panel.cljs:287
 msgid "shortcuts.open-dashboard"
 msgstr "tafi gaban allon"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:218, src/app/main/ui/workspace/sidebar/shortcuts.cljs:160
+#: src/app/main/ui/workspace/keymap_panel.cljs:288
 msgid "shortcuts.open-inspect"
 msgstr "tafi sashin da 'yan kallo za su duba"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:219, src/app/main/ui/workspace/sidebar/shortcuts.cljs:161
+#: src/app/main/ui/workspace/keymap_panel.cljs:289
 msgid "shortcuts.open-interactions"
 msgstr "tafi sashin da masu kallo suke hulda"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:220, src/app/main/ui/workspace/sidebar/shortcuts.cljs:162
+#: src/app/main/ui/workspace/keymap_panel.cljs:290
 msgid "shortcuts.open-viewer"
 msgstr "tafi sashin da masu kallo suke hulda"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:221, src/app/main/ui/workspace/sidebar/shortcuts.cljs:163
+#: src/app/main/ui/workspace/keymap_panel.cljs:291
 msgid "shortcuts.open-workspace"
 msgstr "tafi fagen aiki"
 
 #: src/app/main/ui/workspace/sidebar/shortcuts.cljs:258
+#, unused
 msgid "shortcuts.or"
 msgstr " ko "
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:222, src/app/main/ui/workspace/sidebar/shortcuts.cljs:164
+#: src/app/main/ui/workspace/keymap_panel.cljs:292
 msgid "shortcuts.paste"
 msgstr "manna"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:225, src/app/main/ui/workspace/sidebar/shortcuts.cljs:166
+#: src/app/main/ui/workspace/keymap_panel.cljs:295
 msgid "shortcuts.prev-frame"
 msgstr "allon da ya gabata"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:226, src/app/main/ui/workspace/sidebar/shortcuts.cljs:167
+#: src/app/main/ui/workspace/keymap_panel.cljs:296
 msgid "shortcuts.redo"
 msgstr "gyara"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:228, src/app/main/ui/workspace/sidebar/shortcuts.cljs:169
+#: src/app/main/ui/workspace/keymap_panel.cljs:298
 msgid "shortcuts.reset-zoom"
 msgstr "zake zukowa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:230, src/app/main/ui/workspace/sidebar/shortcuts.cljs:171
+#: src/app/main/ui/workspace/keymap_panel.cljs:300
 msgid "shortcuts.search-placeholder"
 msgstr "takaitaccen sako yanken"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:231, src/app/main/ui/workspace/sidebar/shortcuts.cljs:172
+#: src/app/main/ui/workspace/keymap_panel.cljs:301
 msgid "shortcuts.select-all"
 msgstr "zabi duka"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:232, src/app/main/ui/workspace/sidebar/shortcuts.cljs:173
+#: src/app/main/ui/workspace/keymap_panel.cljs:302
 msgid "shortcuts.select-next"
 msgstr "zabi wani shafi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:233, src/app/main/ui/workspace/sidebar/shortcuts.cljs:174
+#: src/app/main/ui/workspace/keymap_panel.cljs:303
 msgid "shortcuts.select-parent-layer"
 msgstr "zabi ainihin shafi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:234, src/app/main/ui/workspace/sidebar/shortcuts.cljs:175
+#: src/app/main/ui/workspace/keymap_panel.cljs:304
 msgid "shortcuts.select-prev"
 msgstr "zabi shafin da ya gabata"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:235, src/app/main/ui/workspace/sidebar/shortcuts.cljs:176
+#: src/app/main/ui/workspace/keymap_panel.cljs:305
 msgid "shortcuts.separate-nodes"
 msgstr "raba kauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:236, src/app/main/ui/workspace/sidebar/shortcuts.cljs:177
+#: src/app/main/ui/workspace/keymap_panel.cljs:306
 msgid "shortcuts.show-pixel-grid"
 msgstr "nuna / boye akwatin  pixel"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:237, src/app/main/ui/workspace/sidebar/shortcuts.cljs:178
+#: src/app/main/ui/workspace/keymap_panel.cljs:307
 msgid "shortcuts.show-shortcuts"
 msgstr "nuna / boye yanken"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:238, src/app/main/ui/workspace/sidebar/shortcuts.cljs:179
+#: src/app/main/ui/workspace/keymap_panel.cljs:308
 msgid "shortcuts.snap-nodes"
 msgstr "yanke kauri"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:239, src/app/main/ui/workspace/sidebar/shortcuts.cljs:180
+#: src/app/main/ui/workspace/keymap_panel.cljs:309
 msgid "shortcuts.snap-pixel-grid"
 msgstr "yanke zuwa ga akwatin  pixel"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:240, src/app/main/ui/workspace/sidebar/shortcuts.cljs:181
+#: src/app/main/ui/workspace/keymap_panel.cljs:310
 msgid "shortcuts.start-editing"
 msgstr "fara gyarawa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:241, src/app/main/ui/workspace/sidebar/shortcuts.cljs:182
+#: src/app/main/ui/workspace/keymap_panel.cljs:311
 msgid "shortcuts.start-measure"
 msgstr "fara aunawa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:242, src/app/main/ui/workspace/sidebar/shortcuts.cljs:183
+#: src/app/main/ui/workspace/keymap_panel.cljs:312
 msgid "shortcuts.stop-measure"
 msgstr "dena aunawa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:243, src/app/main/ui/workspace/sidebar/shortcuts.cljs:184
+#: src/app/main/ui/workspace/keymap_panel.cljs:313
 msgid "shortcuts.thumbnail-set"
 msgstr "saita babban yatsa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:102, src/app/main/ui/workspace/sidebar/shortcuts.cljs:491, src/app/main/ui/workspace/sidebar/shortcuts.cljs:498
+#: src/app/main/ui/workspace/keymap_panel.cljs:141
 msgid "shortcuts.title"
 msgstr "allon harufa yanke"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:244, src/app/main/ui/workspace/sidebar/shortcuts.cljs:185
+#: src/app/main/ui/workspace/keymap_panel.cljs:314
 msgid "shortcuts.toggle-alignment"
 msgstr "Danna a jere"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:245, src/app/main/ui/workspace/sidebar/shortcuts.cljs:186
+#: src/app/main/ui/workspace/keymap_panel.cljs:315
 msgid "shortcuts.toggle-assets"
 msgstr "Danna kadara"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:246, src/app/main/ui/workspace/sidebar/shortcuts.cljs:187
+#: src/app/main/ui/workspace/keymap_panel.cljs:316
 msgid "shortcuts.toggle-colorpalette"
 msgstr "Danna launukan kala"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:247, src/app/main/ui/workspace/sidebar/shortcuts.cljs:188
+#: src/app/main/ui/workspace/keymap_panel.cljs:317
 msgid "shortcuts.toggle-focus-mode"
 msgstr "Danna yanayin maida hankali"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:248, src/app/main/ui/workspace/sidebar/shortcuts.cljs:189
+#: src/app/main/ui/workspace/keymap_panel.cljs:318
 msgid "shortcuts.toggle-fullscreen"
 msgstr "Danna fuskar ta cika duka"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:250, src/app/main/ui/workspace/sidebar/shortcuts.cljs:191
+#: src/app/main/ui/workspace/keymap_panel.cljs:320
 msgid "shortcuts.toggle-history"
 msgstr "Danna tarihi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:251, src/app/main/ui/workspace/sidebar/shortcuts.cljs:192
+#: src/app/main/ui/workspace/keymap_panel.cljs:321
 msgid "shortcuts.toggle-layers"
 msgstr "Danna shimfida"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:252, src/app/main/ui/workspace/sidebar/shortcuts.cljs:193
+#: src/app/main/ui/workspace/keymap_panel.cljs:322
 msgid "shortcuts.toggle-layout-flex"
 msgstr "Tara/fitar da lankwasashhiyar shimfida"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:254, src/app/main/ui/workspace/sidebar/shortcuts.cljs:195
+#: src/app/main/ui/workspace/keymap_panel.cljs:324
 msgid "shortcuts.toggle-lock"
 msgstr "Rufe/bude"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:255, src/app/main/ui/workspace/sidebar/shortcuts.cljs:196
+#: src/app/main/ui/workspace/keymap_panel.cljs:325
 msgid "shortcuts.toggle-lock-size"
 msgstr "Rufe rabo"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:259, src/app/main/ui/workspace/sidebar/shortcuts.cljs:200
+#: src/app/main/ui/workspace/keymap_panel.cljs:329
 msgid "shortcuts.toggle-textpalette"
 msgstr "Juya zuwa launukan rubutu"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:261, src/app/main/ui/workspace/sidebar/shortcuts.cljs:202
+#: src/app/main/ui/workspace/keymap_panel.cljs:331
 msgid "shortcuts.toggle-visibility"
 msgstr "Nuna/boye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:262, src/app/main/ui/workspace/sidebar/shortcuts.cljs:203
+#: src/app/main/ui/workspace/keymap_panel.cljs:332
 msgid "shortcuts.toggle-zoom-style"
 msgstr "Danna salon zukowa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:263, src/app/main/ui/workspace/sidebar/shortcuts.cljs:204
+#: src/app/main/ui/workspace/keymap_panel.cljs:333
 msgid "shortcuts.underline"
 msgstr "Danna ta layi a kasa"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:264, src/app/main/ui/workspace/sidebar/shortcuts.cljs:205
+#: src/app/main/ui/workspace/keymap_panel.cljs:334
 msgid "shortcuts.undo"
 msgstr "Cire"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:265, src/app/main/ui/workspace/sidebar/shortcuts.cljs:206
+#: src/app/main/ui/workspace/keymap_panel.cljs:335
 msgid "shortcuts.ungroup"
 msgstr "Fita daka rukuni"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:266, src/app/main/ui/workspace/sidebar/shortcuts.cljs:207
+#: src/app/main/ui/workspace/keymap_panel.cljs:336
 msgid "shortcuts.unmask"
 msgstr "Cire takunkumi"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:267, src/app/main/ui/workspace/sidebar/shortcuts.cljs:208
+#: src/app/main/ui/workspace/keymap_panel.cljs:337
 msgid "shortcuts.v-distribute"
 msgstr "Rarraba ta tsaye"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:268, src/app/main/ui/workspace/sidebar/shortcuts.cljs:209
+#: src/app/main/ui/workspace/keymap_panel.cljs:339
 msgid "shortcuts.zoom-lense-decrease"
 msgstr "Zuko raguwar ido"
 
-#: src/app/main/ui/workspace/keymap_panel.cljs:269, src/app/main/ui/workspace/sidebar/shortcuts.cljs:210
+#: src/app/main/ui/workspace/keymap_panel.cljs:340
 msgid "shortcuts.zoom-lense-increase"
 msgstr "Zuko karuwar ido"
 
 #: src/app/main/ui/workspace/keymap_panel.cljs:270, src/app/main/ui/workspace/sidebar/shortcuts.cljs:211
+#, unused
 msgid "shortcuts.zoom-selected"
 msgstr "Zuko wanda aka zaba"
 
@@ -3127,7 +3134,7 @@ msgstr "gidan yanar gizo - %s - Mazubin biruka"
 msgid "title.viewer"
 msgstr "%s - duba kumburi - Mazubin biruka"
 
-#: src/app/main/ui/workspace.cljs:243
+#: src/app/main/ui/workspace.cljs:246
 msgid "title.workspace"
 msgstr "%s - Mazubin biruka"
 
@@ -3232,15 +3239,15 @@ msgstr "Daidaita sama(%s)"
 msgid "workspace.assets.assets"
 msgstr "kadara"
 
-#: src/app/main/ui/workspace/sidebar/assets.cljs:158
+#: src/app/main/ui/workspace/sidebar/assets.cljs:209
 msgid "workspace.assets.box-filter-all"
 msgstr "duka kadara"
 
-#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:512, src/app/main/ui/workspace/sidebar/assets.cljs:164
+#: src/app/main/ui/dashboard/grid.cljs:161, src/app/main/ui/dashboard/grid.cljs:193, src/app/main/ui/workspace/colorpicker/libraries.cljs:362, src/app/main/ui/workspace/colorpicker/libraries.cljs:379, src/app/main/ui/workspace/colorpicker/libraries.cljs:393, src/app/main/ui/workspace/sidebar/assets/colors.cljs:521, src/app/main/ui/workspace/sidebar/assets.cljs:215
 msgid "workspace.assets.colors"
 msgstr "kala"
 
-#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:161
+#: src/app/main/ui/dashboard/grid.cljs:157, src/app/main/ui/dashboard/grid.cljs:172, src/app/main/ui/workspace/sidebar/assets/components.cljs:595, src/app/main/ui/workspace/sidebar/assets.cljs:212
 msgid "workspace.assets.components"
 msgstr "Bangarori"
 
@@ -3252,11 +3259,11 @@ msgstr "kirkiri rukuni"
 msgid "workspace.assets.create-group-hint"
 msgstr "abubuwanka za a samu su suna nan take kamar \"sunan kungiya/ sunan abubuwan\""
 
-#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:567
+#: src/app/main/ui/workspace/context_menu.cljs:761, src/app/main/ui/workspace/sidebar/assets/colors.cljs:265, src/app/main/ui/workspace/sidebar/assets/components.cljs:677, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:475, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:649
 msgid "workspace.assets.delete"
 msgstr "goge"
 
-#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:563
+#: src/app/main/ui/workspace/context_menu.cljs:766, src/app/main/ui/workspace/sidebar/assets/colors.cljs:262, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:471, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:645
 msgid "workspace.assets.duplicate"
 msgstr "maimaita"
 
@@ -3281,11 +3288,11 @@ msgstr "rukuni"
 msgid "workspace.assets.group-name"
 msgstr "sunan kungiya"
 
-#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:106, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
+#: src/app/main/ui/workspace/sidebar/assets/file_library.cljs:107, src/app/main/ui/workspace/sidebar/options/menus/component.cljs:691
 msgid "workspace.assets.local-library"
 msgstr "dakin karatun gida"
 
-#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:298
+#: src/app/main/ui/workspace/color_palette.cljs:204, src/app/main/ui/workspace/sidebar/assets/file_library.cljs:299
 msgid "workspace.assets.not-found"
 msgstr "ba'a samu kadara ba"
 
@@ -3302,7 +3309,7 @@ msgstr "sake suna"
 msgid "workspace.assets.rename-group"
 msgstr "sake sunan kungiyar"
 
-#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:192
+#: src/app/main/ui/workspace/color_palette.cljs:182, src/app/main/ui/workspace/color_palette.cljs:187, src/app/main/ui/workspace/sidebar/assets.cljs:230
 msgid "workspace.assets.search"
 msgstr "nemo kadarar"
 
@@ -3318,7 +3325,7 @@ msgstr[1] "%s zababbun abubuwan"
 msgid "workspace.assets.shared-library"
 msgstr "rababben dakin karatu"
 
-#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:167
+#: src/app/main/ui/dashboard/grid.cljs:165, src/app/main/ui/dashboard/grid.cljs:220, src/app/main/ui/workspace/sidebar/assets/typographies.cljs:422, src/app/main/ui/workspace/sidebar/assets.cljs:218
 msgid "workspace.assets.typography"
 msgstr "rubutun rubutu"
 
@@ -3327,27 +3334,27 @@ msgstr "rubutun rubutu"
 msgid "workspace.assets.typography.font-id"
 msgstr "tsarin haruffa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:603
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:685
 msgid "workspace.assets.typography.font-size"
 msgstr "girma"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:599
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:681
 msgid "workspace.assets.typography.font-style"
 msgstr "tsarin salo"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:621
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:703
 msgid "workspace.assets.typography.go-to-edit"
 msgstr "tafi zuwa salon dakin karatu don a tace"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:611
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:693
 msgid "workspace.assets.typography.letter-spacing"
 msgstr "fili a tsakanin haruffa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:607
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:689
 msgid "workspace.assets.typography.line-height"
 msgstr "tsawon layi"
 
-#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:548, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:586, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:698, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:718
+#: src/app/main/ui/dashboard/grid.cljs:230, src/app/main/ui/workspace/libraries.cljs:592, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:630, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:668, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:780, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:800
 msgid "workspace.assets.typography.sample"
 msgstr "Ag"
 
@@ -3355,7 +3362,7 @@ msgstr "Ag"
 msgid "workspace.assets.typography.text-styles"
 msgstr "salon rubutu"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:615
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:697
 msgid "workspace.assets.typography.text-transform"
 msgstr "canja rubutu"
 
@@ -3387,11 +3394,11 @@ msgstr "a layi mikakke"
 msgid "workspace.gradients.radial"
 msgstr "a da'ira"
 
-#: src/app/main/ui/workspace/main_menu.cljs:296
+#: src/app/main/ui/workspace/main_menu.cljs:294
 msgid "workspace.header.menu.disable-dynamic-alignment"
 msgstr "kashe daidaitawa mai canjawa"
 
-#: src/app/main/ui/workspace/main_menu.cljs:250
+#: src/app/main/ui/workspace/main_menu.cljs:248
 msgid "workspace.header.menu.disable-scale-content"
 msgstr "kashe sikelin rabo"
 
@@ -3400,19 +3407,19 @@ msgstr "kashe sikelin rabo"
 msgid "workspace.header.menu.disable-scale-text"
 msgstr "kashe sikelin rubutu"
 
-#: src/app/main/ui/workspace/main_menu.cljs:281
+#: src/app/main/ui/workspace/main_menu.cljs:279
 msgid "workspace.header.menu.disable-snap-guides"
 msgstr "kashe tsinkewa zuwa mai jagora"
 
-#: src/app/main/ui/workspace/main_menu.cljs:311
+#: src/app/main/ui/workspace/main_menu.cljs:309
 msgid "workspace.header.menu.disable-snap-pixel-grid"
 msgstr "kashe tsinkewa zuwa pixel"
 
-#: src/app/main/ui/workspace/main_menu.cljs:297
+#: src/app/main/ui/workspace/main_menu.cljs:295
 msgid "workspace.header.menu.enable-dynamic-alignment"
 msgstr "bada damar daidaitawa mai canjawa"
 
-#: src/app/main/ui/workspace/main_menu.cljs:251
+#: src/app/main/ui/workspace/main_menu.cljs:249
 msgid "workspace.header.menu.enable-scale-content"
 msgstr "bada damar sikelin rabo"
 
@@ -3421,31 +3428,31 @@ msgstr "bada damar sikelin rabo"
 msgid "workspace.header.menu.enable-scale-text"
 msgstr "bada damar sikelin rubutu"
 
-#: src/app/main/ui/workspace/main_menu.cljs:282
+#: src/app/main/ui/workspace/main_menu.cljs:280
 msgid "workspace.header.menu.enable-snap-guides"
 msgstr "Tsinke zuwa mai jagora"
 
-#: src/app/main/ui/workspace/main_menu.cljs:312
+#: src/app/main/ui/workspace/main_menu.cljs:310
 msgid "workspace.header.menu.enable-snap-pixel-grid"
 msgstr "Bda damar tsinkewa zuwa akwatin pixel"
 
-#: src/app/main/ui/workspace/main_menu.cljs:441
+#: src/app/main/ui/workspace/main_menu.cljs:439
 msgid "workspace.header.menu.hide-artboard-names"
 msgstr "Boye allom suna"
 
-#: src/app/main/ui/workspace/main_menu.cljs:412
+#: src/app/main/ui/workspace/main_menu.cljs:410
 msgid "workspace.header.menu.hide-palette"
 msgstr "farantin launuka"
 
-#: src/app/main/ui/workspace/main_menu.cljs:453
+#: src/app/main/ui/workspace/main_menu.cljs:451
 msgid "workspace.header.menu.hide-pixel-grid"
 msgstr "boye pixel akwati"
 
-#: src/app/main/ui/workspace/main_menu.cljs:379
+#: src/app/main/ui/workspace/main_menu.cljs:377
 msgid "workspace.header.menu.hide-rules"
 msgstr "boye ma'auni"
 
-#: src/app/main/ui/workspace/main_menu.cljs:426
+#: src/app/main/ui/workspace/main_menu.cljs:424
 msgid "workspace.header.menu.hide-textpalette"
 msgstr "boye launukan yanayin tsarin rubutu"
 
@@ -3469,35 +3476,35 @@ msgstr "fifiko"
 msgid "workspace.header.menu.option.view"
 msgstr "gani"
 
-#: src/app/main/ui/workspace/main_menu.cljs:525
+#: src/app/main/ui/workspace/main_menu.cljs:523
 msgid "workspace.header.menu.redo"
 msgstr "sake"
 
-#: src/app/main/ui/workspace/main_menu.cljs:496
+#: src/app/main/ui/workspace/main_menu.cljs:494
 msgid "workspace.header.menu.select-all"
 msgstr "zabi duka"
 
-#: src/app/main/ui/workspace/main_menu.cljs:442
+#: src/app/main/ui/workspace/main_menu.cljs:440
 msgid "workspace.header.menu.show-artboard-names"
 msgstr "Nuna sunayen allo"
 
-#: src/app/main/ui/workspace/main_menu.cljs:413
+#: src/app/main/ui/workspace/main_menu.cljs:411
 msgid "workspace.header.menu.show-palette"
 msgstr "nuna launukan kala"
 
-#: src/app/main/ui/workspace/main_menu.cljs:454
+#: src/app/main/ui/workspace/main_menu.cljs:452
 msgid "workspace.header.menu.show-pixel-grid"
 msgstr "Nuna akwatin pixel"
 
-#: src/app/main/ui/workspace/main_menu.cljs:380
+#: src/app/main/ui/workspace/main_menu.cljs:378
 msgid "workspace.header.menu.show-rules"
 msgstr "Nuna ma'auni"
 
-#: src/app/main/ui/workspace/main_menu.cljs:427
+#: src/app/main/ui/workspace/main_menu.cljs:425
 msgid "workspace.header.menu.show-textpalette"
 msgstr "Nuna launukan tsarin rubutu"
 
-#: src/app/main/ui/workspace/main_menu.cljs:511
+#: src/app/main/ui/workspace/main_menu.cljs:509
 msgid "workspace.header.menu.undo"
 msgstr "Cire"
 
@@ -3580,7 +3587,7 @@ msgstr "F"
 msgid "workspace.libraries.colors.hsv"
 msgstr "HSV"
 
-#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219
+#: src/app/main/ui/workspace/color_palette_ctx_menu.cljs:120, src/app/main/ui/workspace/colorpicker/libraries.cljs:219, src/app/main/ui/workspace/colorpicker/palette.cljs:228, src/app/main/ui/workspace/colorpicker/palette.cljs:230
 msgid "workspace.libraries.colors.recent-colors"
 msgstr "kalar yanzu"
 
@@ -3589,11 +3596,11 @@ msgstr "kalar yanzu"
 msgid "workspace.libraries.colors.rgb-complementary"
 msgstr "Jituwar RGB"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:364
+#: src/app/main/ui/workspace/colorpicker.cljs:372
 msgid "workspace.libraries.colors.rgba"
 msgstr "RGBA"
 
-#: src/app/main/ui/workspace/colorpicker.cljs:562
+#: src/app/main/ui/workspace/colorpicker.cljs:574
 msgid "workspace.libraries.colors.save-color"
 msgstr "Adana salon kala"
 
@@ -3677,7 +3684,7 @@ msgstr "zabin dishi dishi"
 msgid "workspace.options.canvas-background"
 msgstr "bayan zane"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:699
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:721
 msgid "workspace.options.clip-content"
 msgstr "Matse abun ciki"
 
@@ -3745,7 +3752,7 @@ msgstr "sama"
 msgid "workspace.options.constraints.topbottom"
 msgstr "sama & kasa"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:203
+#: src/app/main/ui/workspace/sidebar/options.cljs:218
 msgid "workspace.options.design"
 msgstr "zane"
 
@@ -3901,11 +3908,11 @@ msgstr "Cika rukuni"
 msgid "workspace.options.group-stroke"
 msgstr "Ja layi a rukuni"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:560, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:579
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:582, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:601
 msgid "workspace.options.height"
 msgstr "Tsawo"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:207
+#: src/app/main/ui/workspace/sidebar/options.cljs:224
 msgid "workspace.options.inspect"
 msgstr "Duba"
 
@@ -4350,7 +4357,7 @@ msgstr "dishi dishi"
 msgid "workspace.options.position"
 msgstr "matsayi"
 
-#: src/app/main/ui/workspace/sidebar/options.cljs:205
+#: src/app/main/ui/workspace/sidebar/options.cljs:221
 msgid "workspace.options.prototype"
 msgstr "samfur"
 
@@ -4374,7 +4381,7 @@ msgstr "saman hagu"
 msgid "workspace.options.radius-top-right"
 msgstr "saman dama"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:221
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:250, src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:390
 msgid "workspace.options.recent-fonts"
 msgstr "da dimi dimi"
 
@@ -4382,11 +4389,11 @@ msgstr "da dimi dimi"
 msgid "workspace.options.retry"
 msgstr "sake"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:661, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:669
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:683, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:691
 msgid "workspace.options.rotation"
 msgstr "juyawa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:218
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:247
 msgid "workspace.options.search-font"
 msgstr "nemo jerin harufa"
 
@@ -4450,7 +4457,7 @@ msgstr "inuwar zabi"
 msgid "workspace.options.show-fill-on-export"
 msgstr "fito da shi a ga"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:714
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:736
 msgid "workspace.options.show-in-viewer"
 msgstr "fito da kaurin sosai"
 
@@ -4458,7 +4465,7 @@ msgstr "fito da kaurin sosai"
 msgid "workspace.options.size"
 msgstr "girma"
 
-#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:100, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:477
+#: src/app/main/ui/workspace/sidebar/options/drawing/frame.cljs:105, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:497
 msgid "workspace.options.size-presets"
 msgstr "yanayin girman yanayin"
 
@@ -4560,43 +4567,43 @@ msgstr "waje"
 msgid "workspace.options.stroke.solid"
 msgstr "mai tauri"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:134
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:161
 msgid "workspace.options.text-options.align-bottom"
 msgstr "jerin kasa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:130
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:157
 msgid "workspace.options.text-options.align-middle"
 msgstr "jerin tsakiya"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:126
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:153
 msgid "workspace.options.text-options.align-top"
 msgstr "jerin sama"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:99
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:125
 msgid "workspace.options.text-options.direction-ltr"
 msgstr "LTR"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:103
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:129
 msgid "workspace.options.text-options.direction-rtl"
 msgstr "RTL"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:166
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:194
 msgid "workspace.options.text-options.grow-auto-height"
 msgstr "sarrafaffan tsaho"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:162
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:190
 msgid "workspace.options.text-options.grow-auto-width"
 msgstr "sarrafaffen fadi"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:158
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:186
 msgid "workspace.options.text-options.grow-fixed"
 msgstr "dasa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:438
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:516
 msgid "workspace.options.text-options.letter-spacing"
 msgstr "tazarar harafi"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:419
+#: src/app/main/ui/workspace/sidebar/options/menus/typography.cljs:496
 msgid "workspace.options.text-options.line-height"
 msgstr "tsahon layi"
 
@@ -4610,35 +4617,35 @@ msgstr "yanayin kasa"
 msgid "workspace.options.text-options.none"
 msgstr "babu"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:211
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:240
 msgid "workspace.options.text-options.strikethrough"
 msgstr "gigciye ta cikinsa (%s)"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:68
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:93
 msgid "workspace.options.text-options.text-align-center"
 msgstr "jerin tsakiya"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:76
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:101
 msgid "workspace.options.text-options.text-align-justify"
 msgstr "tabbatarwa"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:64
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:89
 msgid "workspace.options.text-options.text-align-left"
 msgstr "jera hagu"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:72
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:97
 msgid "workspace.options.text-options.text-align-right"
 msgstr "jera dama"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:374
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:409
 msgid "workspace.options.text-options.title"
 msgstr "rubutu"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:373
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:408
 msgid "workspace.options.text-options.title-group"
 msgstr "rukunin rubutu"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:372
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:407
 msgid "workspace.options.text-options.title-selection"
 msgstr "zababbun rubutu"
 
@@ -4647,7 +4654,7 @@ msgstr "zababbun rubutu"
 msgid "workspace.options.text-options.titlecase"
 msgstr "yanayin lakani"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:206
+#: src/app/main/ui/workspace/sidebar/options/menus/text.cljs:235
 msgid "workspace.options.text-options.underline"
 msgstr "ja layi (%s)"
 
@@ -4660,15 +4667,15 @@ msgstr "yanayin sama"
 msgid "workspace.options.use-play-button"
 msgstr "yi amfani da madanneta ta sama ki tafi da samfuri."
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:545, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:567, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:589
 msgid "workspace.options.width"
 msgstr "fadi"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:607, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:630
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:629, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:652
 msgid "workspace.options.x"
 msgstr "X layi"
 
-#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:620, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:641
+#: src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:642, src/app/main/ui/workspace/sidebar/options/menus/measures.cljs:663
 msgid "workspace.options.y"
 msgstr "Y layi"
 
@@ -4821,7 +4828,7 @@ msgstr "rukuni"
 msgid "workspace.shape.menu.hide"
 msgstr "boye"
 
-#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:467
+#: src/app/main/ui/workspace/context_menu.cljs:782, src/app/main/ui/workspace/main_menu.cljs:465
 msgid "workspace.shape.menu.hide-ui"
 msgstr "nuna / boye UI"
 
@@ -4911,11 +4918,11 @@ msgstr "sabunta ainihin wurin"
 msgid "workspace.shape.menu.update-main"
 msgstr "sabunta ainihin wurin"
 
-#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:62
+#: src/app/main/ui/components/tab_container.cljs:52, src/app/main/ui/workspace/sidebar.cljs:63
 msgid "workspace.sidebar.collapse"
 msgstr "ruguza a'ajiyar bayani"
 
-#: src/app/main/ui/workspace/sidebar.cljs:73, src/app/main/ui/workspace/sidebar.cljs:77
+#: src/app/main/ui/workspace/sidebar.cljs:74, src/app/main/ui/workspace/sidebar.cljs:78
 msgid "workspace.sidebar.expand"
 msgstr "kara yankin ma'agiyar bayani"
 
@@ -4923,7 +4930,7 @@ msgstr "kara yankin ma'agiyar bayani"
 msgid "workspace.sidebar.history"
 msgstr "labari"
 
-#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:154, src/app/main/ui/workspace/sidebar.cljs:157, src/app/main/ui/workspace/sidebar.cljs:163
+#: src/app/main/ui/workspace/sidebar/layers.cljs:838, src/app/main/ui/workspace/sidebar.cljs:175, src/app/main/ui/workspace/sidebar.cljs:177
 msgid "workspace.sidebar.layers"
 msgstr "shafi"
 
@@ -4972,11 +4979,11 @@ msgstr "shafi"
 msgid "workspace.sitemap"
 msgstr "taswirar wuri"
 
-#: src/app/main/ui/workspace/sidebar.cljs:159, src/app/main/ui/workspace/sidebar.cljs:165
+#: src/app/main/ui/workspace/sidebar.cljs:179
 msgid "workspace.toolbar.assets"
 msgstr "kadara"
 
-#: src/app/main/ui/workspace/palette.cljs:182, src/app/main/ui/workspace/palette.cljs:183
+#: src/app/main/ui/workspace/palette.cljs:210, src/app/main/ui/workspace/palette.cljs:211
 msgid "workspace.toolbar.color-palette"
 msgstr "farantin kala (%s)"
 
@@ -5021,7 +5028,7 @@ msgstr "yanke (%s)"
 msgid "workspace.toolbar.text"
 msgstr "rubutu (%s)"
 
-#: src/app/main/ui/workspace/palette.cljs:190, src/app/main/ui/workspace/palette.cljs:191
+#: src/app/main/ui/workspace/palette.cljs:218, src/app/main/ui/workspace/palette.cljs:219
 msgid "workspace.toolbar.text-palette"
 msgstr "rubutub rubutu (%s)"
 
@@ -5170,19 +5177,19 @@ msgstr "yanayi fiye da %s"
 msgid "workspace.undo.title"
 msgstr "labari"
 
-#: src/app/main/data/workspace/libraries.cljs:1342, src/app/main/data/workspace/versions.cljs:232
+#: src/app/main/data/workspace/libraries.cljs:1361, src/app/main/data/workspace/versions.cljs:232
 msgid "workspace.updates.dismiss"
 msgstr "watsar"
 
-#: src/app/main/data/workspace/libraries.cljs:1340
+#: src/app/main/data/workspace/libraries.cljs:1359
 msgid "workspace.updates.more-info"
 msgstr "bayanai masu yawa"
 
-#: src/app/main/data/workspace/libraries.cljs:1338
+#: src/app/main/data/workspace/libraries.cljs:1357
 msgid "workspace.updates.there-are-updates"
 msgstr "a kwai na zamani a rababban ma'ajiya"
 
-#: src/app/main/data/workspace/libraries.cljs:1344
+#: src/app/main/data/workspace/libraries.cljs:1363
 msgid "workspace.updates.update"
 msgstr "sabintawas"
 

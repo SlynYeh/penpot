@@ -272,6 +272,44 @@
               -1))))
       items))))
 
+(defn- clip-shape
+  "For an ancestor that clips the content of its children, returns the shape
+   defining its visible area: a masked-group → its first child shape (the
+   mask); a non-root frame with show-content false, and bool shapes → the
+   shape itself; nil when it does not clip.
+   Mirrors the semantics of app.common.files.indices/create-clip-index
+   (not depended on directly, to preserve the types.* layering)."
+  [objects shape]
+  (when (some? shape)
+    (cond
+      (:masked-group shape)
+      (get objects (first (:shapes shape)))
+
+      (or (and (cfh/frame-shape? shape)
+               (not (:show-content shape))
+               (not= uuid/zero (dm/get-prop shape :id)))
+          (cfh/bool-shape? shape))
+      shape)))
+
+(defn- visible-at-point?
+  "Checks whether the shape with the given id is visible at the given point:
+   walks up the parent chain, and if the visible area of any clipping
+   ancestor does not contain the point, the shape is not visible there.
+   The shape's own clipping attributes only hide its children, not itself.
+   The page root board (uuid/zero) has itself as parent and never clips, so
+   the walk terminates when it is reached."
+  [objects shape-id point]
+  (loop [parent-id (dm/get-in objects [shape-id :parent-id])]
+    (if (or (nil? parent-id) (= uuid/zero parent-id))
+      true
+      (let [parent     (get objects parent-id)
+            clip-shape (clip-shape objects parent)]
+        (cond
+          (nil? parent) true
+          (and (some? clip-shape)
+               (not ^boolean (gsh/has-point? clip-shape point))) false
+          :else (recur (dm/get-prop parent :parent-id)))))))
+
 (defn get-frame-by-position
   ([objects position]
    (get-frame-by-position objects position nil))
@@ -284,9 +322,10 @@
    (let [frames    (get-frames objects options)
          frames    (sort-z-index-objects objects frames options)
          ;; Validator is a callback to add extra conditions to the suggested frame
-         validator (or (get options :validator) #(-> true))]
+         validator (or (get options :validator) (constantly true))]
      (or (d/seek #(and ^boolean (some? position)
                        ^boolean (gsh/has-point? % position)
+                       ^boolean (visible-at-point? objects (dm/get-prop % :id) position)
                        ^boolean (validator %))
                  frames)
          (get objects uuid/zero)))))
@@ -308,7 +347,11 @@
 (defn top-nested-frame
   "Search for the top nested frame for positioning shapes when moving or creating.
   Looks for all the frames in a position and then goes in depth between the top-most and its
-  children to find the target."
+  children to find the target.
+
+  Clip-aware: a frame region hidden by an ancestor clip-content (or by a mask,
+  inside masked groups) is never a placement target; the point resolves to the
+  top-most frame visible at that position instead."
   [objects position excluded read-only?]
   (assert (or (nil? excluded) (set? excluded)))
 
@@ -321,7 +364,10 @@
                  :always
                  (remove #(or ^boolean (true? (:hidden %))
                               ^boolean (and (true? (:blocked %))
-                                            (not read-only?)))))
+                                            (not read-only?))))
+
+                 :always
+                 (remove #(not ^boolean (visible-at-point? objects (dm/get-prop % :id) position))))
 
         frame-set (into #{} (map #(dm/get-prop % :id)) frames)]
 

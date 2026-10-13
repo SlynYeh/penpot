@@ -160,6 +160,13 @@ services:
       # makes the browser render the app in a cross origin iframe at all. Leave
       # it unset to keep SAMEORIGIN (no cross origin framing).
       # PENPOT_EMBED_PARENT_ORIGIN: "https://portal.example.com"
+      # Iframe embedding (fork feature): how long the boot waits for the
+      # credentials from the parent window before starting up anyway, in
+      # milliseconds. Only digits are accepted; anything else is rejected with
+      # a warning and the js/config.js default (5000) is kept. Set it higher
+      # when the portal takes a while to reply, lower it to fail open sooner.
+      # Unset keeps the default. 0 means "never wait".
+      # PENPOT_EMBED_TIMEOUT_MS: "5000"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

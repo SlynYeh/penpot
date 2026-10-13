@@ -142,6 +142,8 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 (function () {
   // 嵌入时等待父窗口回传凭据的最长时间(毫秒)。超时后照常启动, 但首个请求
   // 不带凭据(会落到未登录态); 若之后凭据才到达, 会自动重试一次 profile 请求。
+  // Docker 部署: 可用环境变量 PENPOT_EMBED_TIMEOUT_MS 覆盖
+  // (只接受纯数字, 由 nginx-entrypoint.sh 校验后追加赋值, 优先级更高)。
   globalThis.penpotEmbedTimeoutMs = 5000;
 })();
 

@@ -55,6 +55,16 @@ curl -s https://penpot.example.com/ | grep penpotBasePath
 | CSP 允许框住 Penpot | 若宿主页有 `Content-Security-Policy`，`frame-src`（或 `child-src` / `default-src`）必须包含 Penpot 的 origin |
 | 协议一致 | 宿主是 HTTPS 时 Penpot 也必须是 HTTPS，否则被浏览器按混合内容拦截 |
 
+### 1.4 可选：调整等待超时
+
+guest 等待宿主回传凭据的上限由 `PENPOT_EMBED_TIMEOUT_MS`（毫秒）控制，不设时用 `js/config.js` 里的默认值 **5000**：
+
+```yaml
+PENPOT_EMBED_TIMEOUT_MS: "8000"
+```
+
+只接受纯数字，写成 `8s` / `8 000` / 带单位的值会被拒绝（启动日志有一条 `nginx-entrypoint:` 告警），并保留默认值。宿主侧回传慢就调大，想尽早失败放开就调小或设 `0`（完全不等）。含义见 3.2。
+
 ---
 
 ## 2. 消息协议
@@ -170,7 +180,7 @@ frame.contentWindow.postMessage(
 
 ### 3.2 启动时序与超时
 
-guest 会**先等握手，再启动**，这样第一个请求就带凭据。等待上限由 `penpotEmbedTimeoutMs` 决定（`js/config.js`，默认 **5000ms**，没有对应的环境变量）。
+guest 会**先等握手，再启动**，这样第一个请求就带凭据。等待上限由 `penpotEmbedTimeoutMs` 决定（`js/config.js`，默认 **5000ms**，可用环境变量 `PENPOT_EMBED_TIMEOUT_MS` 覆盖，见 1.4）。
 
 超时后的行为：
 
@@ -235,7 +245,7 @@ x-clientid: <你的 clientId>
 | 做法 | 期望现象 |
 |---|---|
 | 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃） |
-| 收到 `ready` 后故意不回复 | guest 等 5 秒后启动，所有请求**不带** header |
+| 收到 `ready` 后故意不回复 | guest 等满超时（默认 5 秒）后启动，所有请求**不带** header |
 | 把字段名写成 `x-token` / `x-clientid` | 无效，等同于没发（消息键名大小写敏感） |
 | 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，走超时路径 |
 
@@ -245,7 +255,7 @@ x-clientid: <你的 clientId>
 |---|---|
 | iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（注意端口、scheme、有无结尾 `/`） |
 | 宿主收不到 `ready` | 同上——origin 不一致会导致 `ready` 发给一个不存在的窗口，**没有任何报错** |
-| 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或回复晚于 5 秒 |
+| 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或回复晚于超时（默认 5 秒） |
 | 所有请求都没有 `x-token` | 凭据在超时之后才到，或 payload 不合法 |
 | 只有部分请求有 header | 那些是外部资源/插件资源/WebSocket 请求，按设计不带 |
 | 复制/粘贴不可用 | iframe 缺 `allow="clipboard-read; clipboard-write"`，且需 HTTPS |

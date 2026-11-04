@@ -140,8 +140,12 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
-  // 嵌入时等待父窗口回传凭据的最长时间(毫秒)。超时后照常启动, 但首个请求
-  // 不带凭据(会落到未登录态); 若之后凭据才到达, 会自动重试一次 profile 请求。
+  // 嵌入时等待父窗口回传凭据的最长时间(毫秒), 即启动门阶段 1 的时长。超时后
+  // 不再立即以未登录态启动, 而是进入启动门的探测期(cookie 探测 + ready 重发),
+  // 凭据或可用 cookie 任一就绪即以认证态启动; 超过启动门上限(默认 30s,
+  // 见 frontend/resources/config.js 的 penpotEmbedBootDeadlineMs)才降级为未登录启动。
+  // Docker 部署: 可用环境变量 PENPOT_EMBED_TIMEOUT_MS 覆盖
+  // (只接受纯数字, 由 nginx-entrypoint.sh 校验后追加赋值, 优先级更高)。
   globalThis.penpotEmbedTimeoutMs = 5000;
 })();
 

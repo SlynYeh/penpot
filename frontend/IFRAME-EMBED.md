@@ -55,6 +55,16 @@ curl -s https://penpot.example.com/ | grep penpotBasePath
 | CSP 允许框住 Penpot | 若宿主页有 `Content-Security-Policy`，`frame-src`（或 `child-src` / `default-src`）必须包含 Penpot 的 origin |
 | 协议一致 | 宿主是 HTTPS 时 Penpot 也必须是 HTTPS，否则被浏览器按混合内容拦截 |
 
+### 1.4 可选：调整等待超时
+
+guest 等待宿主回传凭据的上限由 `PENPOT_EMBED_TIMEOUT_MS`（毫秒）控制，不设时用 `js/config.js` 里的默认值 **5000**：
+
+```yaml
+PENPOT_EMBED_TIMEOUT_MS: "8000"
+```
+
+只接受纯数字，写成 `8s` / `8 000` / 带单位的值会被拒绝（启动日志有一条 `nginx-entrypoint:` 告警），并保留默认值。宿主侧回传慢就调大，想尽早失败放开就调小或设 `0`（完全不等）。含义见 3.2。
+
 ---
 
 ## 2. 消息协议
@@ -170,7 +180,7 @@ frame.contentWindow.postMessage(
 
 ### 3.2 启动时序与启动门（三阶段）
 
-guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭据。门分三个阶段：
+guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭据。阶段 1 的等待上限由 `penpotEmbedTimeoutMs` 决定（`js/config.js`，默认 **5000ms**，可用环境变量 `PENPOT_EMBED_TIMEOUT_MS` 覆盖，见 1.4）。门分三个阶段：
 
 | 阶段 | 时间窗 | 行为 |
 |---|---|---|
@@ -180,10 +190,10 @@ guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭�
 
 阶段 1 或 2 里**凭据到达、或探测到可认证的 cookie**，即以认证态干净启动（路由、WebSocket 正常初始化），门打开、`ready` 停止重发。降级（阶段 3）之后凭据才到达的，仍会存下凭据并**补一次 `get-profile`**（日志：`embed: credentials arrived late, refreshing profile`），此后请求开始带 header——与旧版一致。
 
-相关配置（都在 `js/config.js`，均无对应环境变量）：
+相关配置（都在 `js/config.js`）：
 
-- `penpotEmbedTimeoutMs`：阶段 1 时长，默认 5000（语义不变）
-- `penpotEmbedBootDeadlineMs`：**新增**。降级上限（阶段 1+2 总时长），默认 30000；实际生效值为 `max(timeout, deadline)`
+- `penpotEmbedTimeoutMs`：阶段 1 时长，默认 5000（语义不变）；可用环境变量 `PENPOT_EMBED_TIMEOUT_MS` 覆盖（见 1.4）
+- `penpotEmbedBootDeadlineMs`：**新增**。降级上限（阶段 1+2 总时长），默认 30000；实际生效值为 `max(timeout, deadline)`（暂无环境变量，需调时改 `js/config.js`）
 
 顶层（非 iframe）打开时完全绕过启动门，启动行为不变。
 

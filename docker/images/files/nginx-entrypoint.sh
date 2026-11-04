@@ -243,6 +243,28 @@ update_embed_parent_origin() {
   printf 'globalThis.penpotEmbedParentOrigin = "%s";\n' "$raw" >> "$1";
 }
 
+update_embed_timeout_ms() {
+  # How long the boot waits for the iframe credentials before starting up
+  # anyway, in milliseconds. Overrides the js/config.js default (5000).
+  # Only digits are accepted: the value is interpolated raw into the JS
+  # assignment, and anything else ("5s", "5 000", "5000; alert(1)") would
+  # either change the meaning or break the whole js/config.js file.
+  if [ -z "${PENPOT_EMBED_TIMEOUT_MS:-}" ]; then
+    return;
+  fi
+
+  local raw="${PENPOT_EMBED_TIMEOUT_MS}";
+  # strip whitespace so that " 8000 " works too
+  raw="${raw//[[:space:]]/}";
+
+  if [[ ! "$raw" =~ ^[0-9]+$ ]]; then
+    echo "nginx-entrypoint: PENPOT_EMBED_TIMEOUT_MS must be a whole number of milliseconds; keeping the js/config.js default" >&2;
+    return;
+  fi
+
+  printf 'globalThis.penpotEmbedTimeoutMs = %s;\n' "$raw" >> "$1";
+}
+
 update_frame_ancestors() {
   # Let the third party system that embeds the app actually frame it. The
   # bundled `add_header X-Frame-Options SAMEORIGIN` makes the browser refuse
@@ -325,6 +347,7 @@ update_default_expanded_asset_groups /var/www/app/js/config.js
 update_default_palette_library /var/www/app/js/config.js
 update_hide_tokens /var/www/app/js/config.js
 update_embed_parent_origin /var/www/app/js/config.js
+update_embed_timeout_ms /var/www/app/js/config.js
 update_show_beginner_guide /var/www/app/js/config.js
 update_beginner_guide_videos /var/www/app/js/config.js
 

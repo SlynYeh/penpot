@@ -7,7 +7,8 @@
 (ns frontend-tests.util-embed-test
   (:require
    [app.util.embed :as embed]
-   [cljs.test :as t :include-macros true]))
+   [cljs.test :as t :include-macros true]
+   [promesa.core :as p]))
 
 (t/deftest headers-without-credentials
   ;; Nothing is sent until the parent has actually handed over credentials.
@@ -82,3 +83,50 @@
                                            "X-ClientId" "xyz"})))
   (t/is (false? (embed/valid-payload? #js {"X-token" nil
                                            "X-ClientId" "xyz"}))))
+
+(t/deftest wait-boot-opens-on-credentials
+  (t/async done
+    (let [handshake (p/deferred)
+          probes    (atom 0)]
+      (p/then
+       (embed/wait-boot! {:handshake handshake
+                          :probe #(do (swap! probes inc)
+                                      (p/rejected (js/Error. "probe must not run")))
+                          :timeout-ms 50
+                          :deadline-ms 500})
+       (fn [outcome]
+         (t/is (= :credentials outcome))
+         (t/is (zero? @probes) "phase 1 must not probe")
+         (done)))
+      ;; credentials arrive before the timeout: the probe must never fire.
+      (js/setTimeout #(p/resolve! handshake {:token "t" :client-id "c"}) 10))))
+
+(t/deftest wait-boot-opens-on-authenticated-probe
+  (t/async done
+    ;; Handshake never resolves (parent lost the ready message); the cookie
+    ;; jar starts authenticating after the timeout-only window.
+    (let [handshake (p/deferred)
+          jar       (atom false)]
+      (p/then
+       (embed/wait-boot! {:handshake handshake
+                          :probe #(p/resolved @jar)
+                          :timeout-ms 30
+                          :deadline-ms 2000
+                          :probe-interval-ms 20})
+       (fn [outcome]
+         (t/is (= :authenticated outcome))
+         (done)))
+      (js/setTimeout #(reset! jar true) 60))))
+
+(t/deftest wait-boot-degrades-at-deadline
+  (t/async done
+    (let [handshake (p/deferred)]
+      (p/then
+       (embed/wait-boot! {:handshake handshake
+                          :probe #(p/resolved false)
+                          :timeout-ms 20
+                          :deadline-ms 120
+                          :probe-interval-ms 20})
+       (fn [outcome]
+         (t/is (= :deadline outcome))
+         (done))))))

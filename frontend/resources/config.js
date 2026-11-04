@@ -121,6 +121,13 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // 嵌入启动门:等待凭据或可用 auth cookie 的总上限(毫秒)。超过 penpotEmbedTimeoutMs
+  // 后进入探测期:不再立即以未登录态启动, 而是周期静默 get-profile 探测 cookie、并重发
+  // ready, 直到凭据/cookie 任一就绪(干净启动)或到达本上限(降级为旧的未登录启动)。
+  globalThis.penpotEmbedBootDeadlineMs = 30000;
+})();
+
+(function () {
   // 「新手基础操作」弹窗三张卡片的视频地址。改这里即可, 无需重新编译前端。
   // 键名对应卡片 id: click-through / table-shortcuts / component-library。
   // 某张卡片缺地址或为空字符串时, 弹窗仍显示, 该卡走占位文案。

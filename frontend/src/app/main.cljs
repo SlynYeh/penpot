@@ -19,6 +19,7 @@
    [app.main.errors]
    [app.main.features :as feat]
    [app.main.rasterizer :as thr]
+   [app.main.repo :as rp]
    [app.main.store :as st]
    [app.main.ui :as ui]
    [app.main.ui.alert]
@@ -81,6 +82,25 @@
     (effect [_ _ _]
       ;; The rasterizer is used for the dashboard thumbnails
       (thr/init!))))
+
+(defn- first-value
+  "Resolve with the first value of `obs`. The observable is expected to
+   emit; if it completes empty the promise stays pending (callers rely on
+   their own timeout)."
+  [obs]
+  (p/create (fn [resolve _]
+              (rx/subscribe (rx/take 1 obs) resolve))))
+
+(defn- probe-authenticated?
+  "Promise of boolean: does the current cookie jar authenticate? Used by the
+   embed boot gate to notice the parent planting the auth cookie without (or
+   before) the postMessage credentials. Anonymous profiles return 200 with
+   :id = uuid/zero, so this never throws for a logged-out jar."
+  []
+  (->> (rp/cmd! :get-profile)
+       (rx/map da/is-authenticated?)
+       (rx/catch (constantly (rx/of false)))
+       (first-value)))
 
 (defn initialize
   []
@@ -159,32 +179,46 @@
       ;; is set, which only happens once the profile has been fetched.
       (init-ui)
 
-      ;; When embedded in a third party system, wait for the credentials
-      ;; sent over postMessage so that the very first request already
-      ;; carries them. Everywhere else this resolves immediately.
+      ;; When embedded in a third party system, booting is gated: wait for
+      ;; the postMessage credentials first (happy path, no uncredentialed
+      ;; requests); past `embed-timeout-ms` start probing the cookie jar and
+      ;; re-posting `ready` (cold start recovery); at `embed-boot-deadline-ms`
+      ;; boot degraded exactly like the old fixed timeout did. Top-level
+      ;; loads boot immediately.
       (let [handshake (embed/start!)
-            timed-out (volatile! false)]
+            degraded  (volatile! false)]
+        (if (embed/embedded?)
+          (-> (embed/wait-boot! {:handshake handshake
+                                 :probe probe-authenticated?
+                                 :timeout-ms cf/embed-timeout-ms
+                                 :deadline-ms (max cf/embed-timeout-ms
+                                                   cf/embed-boot-deadline-ms)})
+              (p/then (fn [outcome]
+                        (when (= outcome :deadline)
+                          (vreset! degraded true)
+                          (log/wrn :hint "embed: timed out waiting for credentials"))
+                        (when (= outcome :authenticated)
+                          (log/inf :hint "embed: session cookie detected"))
+                        (log/inf :hint "embed: boot gate opened" :outcome outcome)
+                        (boot!)))
+              (p/catch (fn [cause]
+                         (log/err :hint "embed: boot gate failed, booting anyway"
+                                  :cause cause)
+                         (boot!))))
 
-        ;; NOTE: thread with `->`, not `->>`: promesa's `timeout` is a plain
-        ;; function and its `then`/`catch` macros pass their arguments through
-        ;; in order, so the promise must stay in first position.
-        (-> handshake
-            (p/timeout cf/embed-timeout-ms ::timeout)
-            (p/then (fn [result]
-                      (when (= result ::timeout)
-                        (vreset! timed-out true)
-                        (log/wrn :hint "embed: timed out waiting for credentials"))
-                      (boot!)))
-            (p/catch (fn [cause]
-                       (log/err :hint "embed: handshake failed, booting anyway"
-                                :cause cause)
-                       (boot!))))
+          ;; Not embedded: the handshake is already resolved with nil.
+          (-> handshake
+              (p/then (fn [_] (boot!)))
+              (p/catch (fn [cause]
+                         (log/err :hint "embed: handshake failed, booting anyway"
+                                  :cause cause)
+                         (boot!)))))
 
-        ;; Credentials that show up only after giving up: redo the initial
-        ;; profile fetch once so the session is not stuck logged out.
+        ;; Backstop: credentials that only arrive after a degraded boot still
+        ;; refresh the session once (unchanged semantics from the old flow).
         (-> handshake
             (p/then (fn [creds]
-                      (when (and (some? creds) @timed-out)
+                      (when (and (some? creds) @degraded)
                         (log/wrn :hint "embed: credentials arrived late, refreshing profile")
                         (st/emit! (dp/refresh-profile)))))
             (p/catch (fn [cause]

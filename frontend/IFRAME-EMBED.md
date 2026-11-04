@@ -63,7 +63,7 @@ curl -s https://penpot.example.com/ | grep penpotBasePath
 
 ### 2.1 guest → 宿主：`ready`
 
-guest 在自己**被 iframe 嵌入**时，向 `window.parent` 发一条 `ready`：
+guest 在自己**被 iframe 嵌入**时，向 `window.parent` 发 `ready`：
 
 ```json
 { "scope": "penpot/embed", "type": "ready" }
@@ -72,7 +72,7 @@ guest 在自己**被 iframe 嵌入**时，向 `window.parent` 发一条 `ready`�
 | 项目 | 说明 |
 |---|---|
 | 发送时机 | guest 页面加载后立即（在发起任何后端请求之前） |
-| 发送频率 | 每个页面加载**只发一次**；iframe 重新加载 = 一轮新握手 |
+| 发送频率 | 启动门打开前**每 2 秒重发**（凭据就绪、探测到可用 cookie、或到达降级上限，任一发生即停）；同一次加载宿主可能收到多条，监听器请**幂等**。iframe 重新加载 = 一轮新握手 |
 | targetOrigin | 1.1 配置的宿主 origin（未配置时为 `*`，会打告警日志） |
 | 顶层打开 | 直接访问 Penpot 网址（非 iframe）时**不发**，也不安装监听器 |
 
@@ -168,16 +168,26 @@ frame.contentWindow.postMessage(
 
 **另外**：本 fork 的 `js/config.js` 会给所有 `fetch`/XHR 请求追加一个 `x-iframe-src: <guest 当前 URL>`（实测：仅出现在这类请求上，静态资源/图片等不经 fetch 的请求没有）。这是 Penpot 自身的行为，与凭据无关，但第三方做安全评审时会在 Network 里看到它——也就是说 guest 会把自身的当前 URL 一起发给后端。
 
-### 3.2 启动时序与超时
+### 3.2 启动时序与启动门（三阶段）
 
-guest 会**先等握手，再启动**，这样第一个请求就带凭据。等待上限由 `penpotEmbedTimeoutMs` 决定（`js/config.js`，默认 **5000ms**，没有对应的环境变量）。
+guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭据。门分三个阶段：
 
-超时后的行为：
+| 阶段 | 时间窗 | 行为 |
+|---|---|---|
+| 1 等凭据 | 0 → `penpotEmbedTimeoutMs`（默认 **5000ms**） | 只等 postMessage 凭据，**零后端请求**；每 2s 重发一次 `ready` |
+| 2 探测 cookie | timeout → `penpotEmbedBootDeadlineMs`（默认 **30000ms**） | 每 3s **静默探测**一次 `get-profile`（不带凭据、走 cookie-jar 鉴权；返回匿名 profile = 未认证），同时每 2s 继续重发 `ready` |
+| 3 降级 | deadline | 凭据与 cookie 均未就绪 → 降级为**未登录启动**（与旧版行为一致） |
 
-1. guest 无凭据启动，此阶段所有请求**不带** header
-2. 凭据稍后到达 → 存下凭据，并**补一次 `get-profile`**（日志：`embed: credentials arrived late, refreshing profile`），此后请求开始带 header
+阶段 1 或 2 里**凭据到达、或探测到可认证的 cookie**，即以认证态干净启动（路由、WebSocket 正常初始化），门打开、`ready` 停止重发。降级（阶段 3）之后凭据才到达的，仍会存下凭据并**补一次 `get-profile`**（日志：`embed: credentials arrived late, refreshing profile`），此后请求开始带 header——与旧版一致。
 
-结论：不要依赖"迟到也能救回来"，宿主应在收到 `ready` 后**立即**回传。
+相关配置（都在 `js/config.js`，均无对应环境变量）：
+
+- `penpotEmbedTimeoutMs`：阶段 1 时长，默认 5000（语义不变）
+- `penpotEmbedBootDeadlineMs`：**新增**。降级上限（阶段 1+2 总时长），默认 30000；实际生效值为 `max(timeout, deadline)`
+
+顶层（非 iframe）打开时完全绕过启动门，启动行为不变。
+
+结论：5–30s 内凭据或 cookie 任一就绪都会**自动恢复**为认证启动，30s（deadline）仍是硬上限。宿主仍应在收到 `ready` 后尽快回传，但不再需要抢在 5 秒之内。
 
 ### 3.3 凭据更新
 
@@ -235,9 +245,9 @@ x-clientid: <你的 clientId>
 | 做法 | 期望现象 |
 |---|---|
 | 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃） |
-| 收到 `ready` 后故意不回复 | guest 等 5 秒后启动，所有请求**不带** header |
+| 收到 `ready` 后故意不回复 | 5s 后开始探测（每 3s 一个**不带凭据**的 `get-profile`），期间每 2s 重发 `ready`；30s（deadline）前种好有效 cookie 即**自动恢复**为认证启动，否则 30s 降级为未登录启动（此阶段请求不带 header） |
 | 把字段名写成 `x-token` / `x-clientid` | 无效，等同于没发（消息键名大小写敏感） |
-| 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，走超时路径 |
+| 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，等同没发——走上一行的探测→降级路径 |
 
 ### 4.5 故障排查表
 
@@ -245,8 +255,8 @@ x-clientid: <你的 clientId>
 |---|---|
 | iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（注意端口、scheme、有无结尾 `/`） |
 | 宿主收不到 `ready` | 同上——origin 不一致会导致 `ready` 发给一个不存在的窗口，**没有任何报错** |
-| 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或回复晚于 5 秒 |
-| 所有请求都没有 `x-token` | 凭据在超时之后才到，或 payload 不合法 |
+| 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或迟到超过上限。现已支持 30s（`penpotEmbedBootDeadlineMs`，默认）内 cookie/凭据迟到**自愈**（日志可见 `embed: session cookie detected`）；若仍出现该页面，说明超过 `penpotEmbedBootDeadlineMs` 上限或 cookie 无效 |
+| 所有请求都没有 `x-token` | payload 不合法，或凭据始终未有效到达（到达的凭据会走认证启动(30s 内)或补一次刷新(30s 后)，不会全程无 header） |
 | 只有部分请求有 header | 那些是外部资源/插件资源/WebSocket 请求，按设计不带 |
 | 复制/粘贴不可用 | iframe 缺 `allow="clipboard-read; clipboard-write"`，且需 HTTPS |
 | 实时协作/通知不工作 | WebSocket 不带自定义 header，检查第三方 Cookie 是否被浏览器策略拦截 |
@@ -267,7 +277,7 @@ x-clientid: <你的 clientId>
 ## 6. FAQ
 
 **Q：能用 cookie 或 URL 参数代替 postMessage 吗？**
-不能。Penpot 读不到父窗口注入的 DOM/JS，跨域 iframe 也无法共享 cookie 语义（且第三方 Cookie 可能被浏览器拦截）。设计上只支持 postMessage。
+要分两件事看。凭据的**传递**渠道不变：仍只走 postMessage（`ready` → 宿主回复 `X-token` / `X-ClientId` 的握手不变，URL 参数不支持）；但**认证**自 5s 探测期起支持同站 cookie——宿主种下有效 auth-token cookie，即可在没有 postMessage 的情况下完成认证启动（见 3.2 / 4.4）。注意第三方 Cookie 限制：跨站 iframe 下 cookie 可能不被浏览器发送。
 
 **Q：能嵌入多个 iframe 吗？**
 可以，每个 iframe 各自独立握手；同一个 Penpot 域下用不同 token 即可（注意配额与并发）。
@@ -276,7 +286,7 @@ x-clientid: <你的 clientId>
 不需要，再发一条消息即可覆盖（见 3.3）。只有希望"已加载的 profile 立刻刷新"时才需要重载。
 
 **Q：`ready` 重复发送吗？**
-一个页面加载只发一次。宿主如果想确认 guest 还活着，请自行在业务层做心跳，不要依赖 guest 重复发 `ready`。
+会。启动门打开前每 2 秒重发一次，凭据就绪、探测到可用 cookie、或到达降级上限（`penpotEmbedBootDeadlineMs`）任一发生即停；同一次加载宿主可能收到多条，请**幂等处理**（重复回发凭据无害）。宿主若想确认 guest 还活着，仍请自行在业务层做心跳，不要把 `ready` 当心跳使用（门打开后不会再发）。
 
 **Q：Penpot 侧怎么调试？**
-同一个 Penpot 前端也可以用仓库里的 `frontend/scripts/proxy-server.js` 起本地环境，配合一个最小宿主页验证（`frontend/playwright/ui/specs/embed-credentials.spec.js` 是自动化版本，覆盖正常握手、迟到凭据、origin 不匹配拒绝、通配回退四个场景）。
+同一个 Penpot 前端也可以用仓库里的 `frontend/scripts/proxy-server.js` 起本地环境，配合一个最小宿主页验证（`frontend/playwright/ui/specs/embed-credentials.spec.js` 是自动化版本，共五个用例：正常握手、两个迟到自愈恢复场景、origin 不匹配拒绝、通配回退）。

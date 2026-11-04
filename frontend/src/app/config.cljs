@@ -244,6 +244,14 @@
   anyway. Configured via `penpotEmbedTimeoutMs` in resources/config.js."
   (d/parse-integer (obj/get global "penpotEmbedTimeoutMs") 5000))
 
+(def embed-boot-deadline-ms
+  "How long the embedded app keeps waiting for either the postMessage
+   credentials or a working auth cookie before giving up and booting
+   logged-out (degraded boot, same behavior as the old fixed timeout).
+   Must be >= embed-timeout-ms to make sense. Configured via
+   `penpotEmbedBootDeadlineMs` in resources/config.js."
+  (d/parse-integer (obj/get global "penpotEmbedBootDeadlineMs") 30000))
+
 (defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.

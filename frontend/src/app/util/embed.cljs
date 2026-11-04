@@ -19,7 +19,9 @@
   of the `:main` build and is therefore also compiled into the
   rasterizer/render/viewer modules. Listening eagerly would make the
   rasterizer iframe post a bogus `ready` to its own parent. The
-  handshake is started explicitly from `app.main/init` only."
+  handshake is started explicitly from `app.main/init` only. The boot
+  gate (wait-boot!) is likewise driven only from app.main/init; this
+  namespace keeps no top-level side effects."
   (:require
    [app.common.logging :as log]
    [app.config :as cf]
@@ -41,8 +43,10 @@
 (defonce ^:private wildcard-warned?
   (volatile! false))
 
-(defn- embedded?
-  "True when this document is rendered inside another window."
+(defn embedded?
+  "True when this document is rendered inside another window. Public so the
+   boot sequence in `app.main` can skip the embed gate entirely for
+   top-level loads."
   []
   (not (identical? js/window js/parent)))
 
@@ -161,3 +165,59 @@
             (post-ready!))
           (p/resolve! deferred nil))
         deferred)))
+
+(defn wait-boot!
+  "Boot gate for embedded loads. Returns a promise resolved with one of:
+
+   :credentials  — the parent delivered the postMessage credentials
+   :authenticated — a probe says the cookie jar already authenticates
+   :deadline     — gave up; caller should boot degraded (logged-out)
+
+   Phases: until `timeout-ms` only the handshake is watched (no requests,
+   so the happy path never sends uncredentialed traffic); from `timeout-ms`
+   to `deadline-ms` the app probes `probe` (a function returning a promise of boolean, injected
+   to avoid a layering cycle with app.main.repo) and re-posts `ready` every
+   `resend-interval-ms` so a parent that missed the first message can still
+   answer. Non-embedded callers never reach this function."
+  [{:keys [handshake probe timeout-ms deadline-ms
+           probe-interval-ms resend-interval-ms]
+    :or {timeout-ms 5000
+         deadline-ms 30000
+         probe #(p/resolved false)
+         probe-interval-ms 3000
+         resend-interval-ms 2000}}]
+  (let [result (p/deferred)
+        timers (atom #{})
+        open!  (fn [outcome]
+                 (when (p/pending? result)
+                   (run! js/clearInterval @timers)
+                   (p/resolve! result outcome)))
+        every! (fn [ms f] (swap! timers conj (js/setInterval f ms)))
+        probe! (fn []
+                 (-> (probe)
+                     (p/catch (constantly false))
+                     (p/then (fn [auth?] (when auth? (open! :authenticated))))))]
+
+    ;; Phase 1: the handshake resolves as soon as credentials arrive.
+    (p/then handshake (fn [creds] (when (some? creds) (open! :credentials))))
+
+    ;; Phase 2: once the handshake-only window is over, probe the cookie
+    ;; jar (immediately, then on an interval).
+    (js/setTimeout
+     (fn []
+       (when (p/pending? result)
+         (probe!)
+         (every! probe-interval-ms #(when (p/pending? result) (probe!)))))
+     timeout-ms)
+
+    ;; Re-post ready while unresolved (postMessage has no buffering; the
+    ;; first one can be lost if the parent listener is not installed yet).
+    (every! resend-interval-ms
+            (fn []
+              (when (p/pending? result)
+                (post-ready!))))
+
+    ;; Phase 3: degraded boot at the deadline.
+    (swap! timers conj (js/setTimeout #(open! :deadline) deadline-ms))
+
+    result))

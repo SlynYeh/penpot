@@ -623,6 +623,19 @@
 
 (defonce !tokens-cache (atom nil))
 
+;; The cache is keyed by the tokens value, so every token edit creates a
+;; new entry (each holding the full resolved structure); cap it to keep
+;; it from growing for the lifetime of the tab.
+(def ^:private max-cached-tokens-versions 8)
+
+(defn- cache-tokens!
+  [cache-atom tokens value]
+  (let [cache (assoc @cache-atom tokens value)]
+    (reset! cache-atom
+            (if (> (count cache) max-cached-tokens-versions)
+              (into {} (take max-cached-tokens-versions) cache)
+              cache))))
+
 (defn use-resolved-tokens
   "The StyleDictionary process function is async, so we can't use
   resolved values directly.
@@ -649,9 +662,9 @@
             :else (let [resolved-tokens-s (if interactive?
                                             (resolve-tokens-interactive tokens)
                                             (resolve-tokens tokens))]
-                    (swap! cache-atom assoc tokens resolved-tokens-s)
+                    (cache-tokens! cache-atom tokens resolved-tokens-s)
                     (rx/sub! resolved-tokens-s (fn [resolved-tokens]
-                                                 (swap! cache-atom assoc tokens resolved-tokens)
+                                                 (cache-tokens! cache-atom tokens resolved-tokens)
                                                  (reset! tokens-state resolved-tokens))))))))
     (if (contains? cf/flags :tokenscript)
       (ts/resolve-tokens tokens)

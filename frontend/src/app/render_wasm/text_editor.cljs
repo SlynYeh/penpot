@@ -497,6 +497,14 @@
   [shape-id content]
   (swap! shape-text-contents assoc shape-id content))
 
+(defn reset-shape-text-contents!
+  "Clears the whole text contents cache. Called when the wasm context is
+   torn down (page switch, workspace exit): the wasm text editor state is
+   recreated from scratch on the next init, so the stale cache entries
+   would only accumulate."
+  []
+  (reset! shape-text-contents {}))
+
 (defn- merge-exported-texts-into-content
   "Merge exported span texts back into the existing content tree.
 

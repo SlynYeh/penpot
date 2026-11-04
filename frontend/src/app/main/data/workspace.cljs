@@ -442,32 +442,32 @@
                ;; Keep comment thread positions in sync on undo/redo
                (rx/of (dwcm/watch-comment-thread-position-changes stoper-s))
 
-              (when (= "true" (:hiddenView rparams))
-                (->> stream
-                     (rx/filter (ptk/type? ::workspace-initialized))
-                     (rx/observe-on :async)
-                     (rx/take 1)
-                     (rx/map #(-> (layout/toggle-layout-flag :hide-ui)
-                                  (with-meta {::ev/origin "workspace-url-param"})))))
+               (when (= "true" (:hiddenView rparams))
+                 (->> stream
+                      (rx/filter (ptk/type? ::workspace-initialized))
+                      (rx/observe-on :async)
+                      (rx/take 1)
+                      (rx/map #(-> (layout/toggle-layout-flag :hide-ui)
+                                   (with-meta {::ev/origin "workspace-url-param"})))))
 
-              (when (seq cf/default-expanded-asset-groups)
-                (->> stream
-                     (rx/filter (ptk/type? ::workspace-initialized))
-                     (rx/observe-on :async)
-                     (rx/take 1)
-                     (rx/map (fn [_] (apply-default-asset-expansions)))))
+               (when (seq cf/default-expanded-asset-groups)
+                 (->> stream
+                      (rx/filter (ptk/type? ::workspace-initialized))
+                      (rx/observe-on :async)
+                      (rx/take 1)
+                      (rx/map (fn [_] (apply-default-asset-expansions)))))
 
-              (when render-wasm?
-                (->> stream
-                     (rx/filter dch/commit?)
-                     (rx/map deref)
-                     (rx/mapcat
-                      (fn [{:keys [redo-changes]}]
-                        (let [added (->> redo-changes
-                                         (filter #(= (:type %) :add-obj))
-                                         (map :id))]
-                          (->> (rx/from added)
-                               (rx/map process-wasm-object)))))))
+               (when render-wasm?
+                 (->> stream
+                      (rx/filter dch/commit?)
+                      (rx/map deref)
+                      (rx/mapcat
+                       (fn [{:keys [redo-changes]}]
+                         (let [added (->> redo-changes
+                                          (filter #(= (:type %) :add-obj))
+                                          (map :id))]
+                           (->> (rx/from added)
+                                (rx/map process-wasm-object)))))))
 
                ;; Resize auto-grow text shapes whose selrect does not match
                ;; the WASM text layout once their fonts finish loading.
@@ -555,35 +555,69 @@
 
 (defn finalize-workspace
   [_team-id file-id]
-  (ptk/reify ::finalize-workspace
-    ptk/UpdateEvent
-    (update [_ state]
-      (-> state
-          ;; FIXME: revisit
-          (dissoc
-           :current-file-id
-           :workspace-editor-state
-           :workspace-wasm-editor-styles
-           :workspace-media-objects
-           :workspace-persistence
-           :workspace-presence
-           :workspace-tokens
-           :workspace-undo
-           :workspace-versions)
-          (update :workspace-global dissoc :read-only?)
-          (assoc-in [:workspace-global :options-mode] :design)
-          (update :files d/update-vals #(dissoc % :data))))
+  (let [thumbnails (volatile! nil)]
+    (ptk/reify ::finalize-workspace
+      ptk/UpdateEvent
+      (update [_ state]
+        (vreset! thumbnails (get state :thumbnails))
+        (-> state
+            ;; FIXME: revisit
+            (dissoc
+             :current-file-id
+             :comment-threads
+             :thumbnails
+             :thumbnails-meta
+             :workspace-editor-state
+             :workspace-wasm-editor-styles
+             :workspace-media-objects
+             :workspace-persistence
+             :workspace-presence
+             :workspace-tokens
+             :workspace-undo
+             :workspace-versions)
+            (update :workspace-global dissoc :read-only?)
+            (assoc-in [:workspace-global :options-mode] :design)
+            ;; Keep the page-local snapshots (zoom, selection, opened
+            ;; plugins, ...) only for the file we are leaving; browsing
+            ;; many files no longer accumulates entries forever.
+            (update :workspace-cache
+                    (fn [cache]
+                      (into {}
+                            (filter (fn [[[fid _page-id] _local]]
+                                      (= fid file-id)))
+                            cache)))
+            (update :files d/update-vals #(dissoc % :data))))
 
-    ptk/WatchEvent
-    (watch [_ state _]
-      (let [project-id (:current-project-id state)]
-        (rx/of (dwn/finalize file-id)
-               (dpj/finalize-project project-id)
-               (dwsl/finalize-shape-layout)
-               (dwcl/stop-picker)
-               (dwc/set-workspace-visited)
-               (modal/hide)
-               (ntf/hide))))))
+      ptk/WatchEvent
+      (watch [_ state _]
+        (let [project-id (:current-project-id state)
+              ;; `:workspace-local` was already stashed into
+              ;; `:workspace-cache` by `finalize-page`, so the set of
+              ;; opened plugins is collected from the file's cached
+              ;; snapshots. The MCP plugin is auto-started outside of
+              ;; `:open-plugins`, so it is always included.
+              open-plugin-ids (conj (->> (get state :workspace-cache)
+                                         (keep (fn [[[fid _page-id] local]]
+                                                 (when (and (= fid file-id) (map? local))
+                                                   (:open-plugins local))))
+                                         (reduce into #{}))
+                                    preg/mcp-plugin-id)]
+          ;; Revoke the workspace-owned blob: URIs. The dashboard renders
+          ;; its own thumbnails and the next workspace session refetches
+          ;; fresh ones, so nothing should retain the blobs behind these.
+          (doseq [uri (vals @thumbnails)]
+            (when (str/starts-with? uri "blob:")
+              (tm/schedule-on-idle (partial wapi/revoke-uri uri))))
+          (dwth/clear-queue!)
+          (rx/of (dwn/finalize file-id)
+                 (dpj/finalize-project project-id)
+                 (dwsl/finalize-shape-layout)
+                 (dwcl/stop-picker)
+                 (dwc/set-workspace-visited)
+                 (dp/close-plugins open-plugin-ids)
+                 (mcp/finalize)
+                 (modal/hide)
+                 (ntf/hide)))))))
 
 (defn- reload-current-file
   []
@@ -1219,7 +1253,7 @@
                                           :groups
                                           :components
                                           path]
-                                    true))
+                                   true))
                        state
                        (mapcat group-ancestor-paths groups))
                (assoc-in [:workspace-assets :open-status library-id :library] true)

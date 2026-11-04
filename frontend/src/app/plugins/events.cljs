@@ -12,6 +12,7 @@
    [app.plugins.file :as file]
    [app.plugins.page :as page]
    [app.plugins.parser :as parser]
+   [app.plugins.register :as preg]
    [app.plugins.shape :as shape]
    [app.util.object :as obj]
    [app.util.theme :as theme]
@@ -125,9 +126,15 @@
          (when (not= ::not-changed result)
            (debounced-callback result)))))
 
+    ;; Track the key so unloading the plugin can remove this watch; an
+    ;; untracked watch would keep firing on every state change (and pin
+    ;; the callback) for the lifetime of the tab.
+    (preg/register-listener-key! plugin-id key)
+
     ;; return the generated key
     key))
 
 (defn remove-listener
   [key]
+  (preg/unregister-listener-key! key)
   (remove-watch st/state key))

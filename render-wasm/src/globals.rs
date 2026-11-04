@@ -96,10 +96,38 @@ macro_rules! with_current_shape {
     };
 }
 
+/// Drops a previously allocated state, making the slot null again.
+///
+/// # Safety
+///
+/// Must only be called from the single-threaded wasm call context, when no
+/// references derived from the corresponding `get_*_state` are alive (all of
+/// them end within the same exported call).
+unsafe fn drop_state<T>(slot: &mut *mut T) {
+    if !(*slot).is_null() {
+        drop(Box::from_raw(*slot));
+        *slot = std::ptr::null_mut();
+    }
+}
+
 /// Initializes GPUState.
 fn gpu_init() {
     unsafe {
+        // Abandon defensively: in the normal flow `clean_up` already did it
+        // (abandon is idempotent), but on a double `init` without a previous
+        // cleanup (e.g. hot reload or a context-restore retry) this
+        // guarantees the drop below never issues GL commands against
+        // whichever context `init_gl` just made current.
+        #[allow(static_mut_refs)]
+        if !GPU_STATE.is_null() {
+            (*GPU_STATE).context.abandon();
+        }
+
         let gpu_state = GpuState::try_new().expect("Cannot initialize GPU State");
+        // Free the previous generation only after the new one is built, so a
+        // failed initialization keeps the old state alive (same as before).
+        #[allow(static_mut_refs)]
+        drop_state(&mut GPU_STATE);
         GPU_STATE = Box::into_raw(Box::new(gpu_state));
     }
 }
@@ -109,6 +137,11 @@ fn render_init(width: i32, height: i32) {
     unsafe {
         let render_state =
             RenderState::try_new(width, height).expect("Cannot initialize RenderState");
+        // Safe to drop the previous generation here: `gpu_init` above already
+        // abandoned the GL context its GPU-backed resources belong to, so
+        // destructors won't issue GL commands.
+        #[allow(static_mut_refs)]
+        drop_state(&mut RENDER_STATE);
         RENDER_STATE = Box::into_raw(Box::new(render_state));
     }
 }
@@ -117,6 +150,8 @@ fn render_init(width: i32, height: i32) {
 fn design_init() {
     unsafe {
         let design_state = State::new();
+        #[allow(static_mut_refs)]
+        drop_state(&mut DESIGN_STATE);
         DESIGN_STATE = Box::into_raw(Box::new(design_state));
     }
 }
@@ -125,6 +160,8 @@ fn design_init() {
 fn text_editor_init() {
     unsafe {
         let text_editor_state = TextEditorState::new();
+        #[allow(static_mut_refs)]
+        drop_state(&mut TEXT_EDITOR_STATE);
         TEXT_EDITOR_STATE = Box::into_raw(Box::new(text_editor_state));
     }
 }
@@ -133,6 +170,8 @@ fn text_editor_init() {
 fn ui_init() {
     unsafe {
         let ui_state = UIState::new();
+        #[allow(static_mut_refs)]
+        drop_state(&mut UI_STATE);
         UI_STATE = Box::into_raw(Box::new(ui_state));
     }
 }
@@ -157,7 +196,56 @@ pub extern "C" fn clean_up() -> Result<()> {
     // it won't try to render without context
     let render_state = get_render_state();
     render_state.prepare_context_loss_cleanup();
-    unsafe { DESIGN_STATE = std::ptr::null_mut() }
+    // Drop the design state instead of leaking it by nulling the pointer.
+    // GPU/render/text-editor/ui states are intentionally left
+    // allocated-but-stale here: the window between clean_up and the next
+    // init must keep behaving like today for stray unguarded wasm calls;
+    // the next `init` drops them right before replacing.
+    #[allow(static_mut_refs)]
+    unsafe {
+        drop_state(&mut DESIGN_STATE)
+    }
     mem::free_bytes()?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static DROPS: AtomicUsize = AtomicUsize::new(0);
+
+    struct DropCounter;
+
+    impl Drop for DropCounter {
+        fn drop(&mut self) {
+            DROPS.fetch_add(1, Ordering::SeqCst);
+        }
+    }
+
+    #[test]
+    fn drop_state_drops_previous_generation_and_ignores_null() {
+        static mut SLOT: *mut DropCounter = std::ptr::null_mut();
+
+        unsafe {
+            // A null slot is a no-op.
+            #[allow(static_mut_refs)]
+            drop_state(&mut SLOT);
+            assert_eq!(DROPS.load(Ordering::SeqCst), 0);
+
+            // Dropping a live slot runs the value's destructor and nulls it.
+            SLOT = Box::into_raw(Box::new(DropCounter));
+            #[allow(static_mut_refs)]
+            drop_state(&mut SLOT);
+            assert!(SLOT.is_null());
+            assert_eq!(DROPS.load(Ordering::SeqCst), 1);
+
+            // Dropping again after null is still a no-op (no double free).
+            #[allow(static_mut_refs)]
+            drop_state(&mut SLOT);
+            assert_eq!(DROPS.load(Ordering::SeqCst), 1);
+        }
+    }
 }

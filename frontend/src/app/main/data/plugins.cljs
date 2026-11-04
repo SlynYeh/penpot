@@ -148,6 +148,9 @@
 
 (defn close-plugin!
   [{:keys [plugin-id]}]
+  ;; Remove the plugin's store watches before unloading; the runtime does
+  ;; not call back into the host for listeners registered via `on(...)`.
+  (preg/remove-plugin-listeners! plugin-id)
   (let [unload-plugin (unchecked-get ug/global "ɵunloadPlugin")]
     (if (fn? unload-plugin)
       (try
@@ -157,6 +160,16 @@
       (log/warn :hint "Plugin runtime not initialized yet"
                 :plugin-id plugin-id
                 :action "close-plugin!"))))
+
+(defn close-plugins
+  "Unloads the given plugin ids. Used by the workspace finalization to
+   close every plugin session (user-opened plugins and the auto-started
+   MCP plugin) when leaving the workspace."
+  [ids]
+  (ptk/reify ::close-plugins
+    ptk/EffectEvent
+    (effect [_ _ _]
+      (run! #(close-plugin! {:plugin-id %}) ids))))
 
 (defn close-current-plugin
   [& {:keys [close-only-edition-plugins?]}]

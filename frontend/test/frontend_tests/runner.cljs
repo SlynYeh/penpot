@@ -12,8 +12,10 @@
    [frontend-tests.data.repo-test]
    [frontend-tests.data.uploads-test]
    [frontend-tests.data.viewer-test]
+   [frontend-tests.data.workspace-asset-expansions-test]
    [frontend-tests.data.workspace-colors-test]
    [frontend-tests.data.workspace-comments-test]
+   [frontend-tests.data.workspace-finalize-test]
    [frontend-tests.data.workspace-interactions-test]
    [frontend-tests.data.workspace-layout-test]
    [frontend-tests.data.workspace-mcp-test]
@@ -21,7 +23,6 @@
    [frontend-tests.data.workspace-shortcuts-test]
    [frontend-tests.data.workspace-texts-test]
    [frontend-tests.data.workspace-thumbnails-test]
-   [frontend-tests.data.workspace-asset-expansions-test]
    [frontend-tests.errors-test]
    [frontend-tests.fonts-test]
    [frontend-tests.helpers-shapes-test]
@@ -61,6 +62,7 @@
    [frontend-tests.ui.comments-position-modifier-test]
    [frontend-tests.ui.ds-controls-numeric-input-test]
    [frontend-tests.ui.measures-menu-props-test]
+   [frontend-tests.util-cache-test]
    [frontend-tests.util-embed-test]
    [frontend-tests.util-object-test]
    [frontend-tests.util-range-tree-test]
@@ -102,6 +104,7 @@
    'frontend-tests.data.workspace-shortcuts-test
    'frontend-tests.data.workspace-texts-test
    'frontend-tests.data.workspace-thumbnails-test
+   'frontend-tests.data.workspace-finalize-test
    'frontend-tests.data.workspace-asset-expansions-test
    'frontend-tests.helpers-shapes-test
    'frontend-tests.logic.comp-remove-swap-slots-test
@@ -142,6 +145,7 @@
    'frontend-tests.ui.measures-menu-props-test
    'frontend-tests.render-wasm.process-objects-test
    'frontend-tests.util-embed-test
+   'frontend-tests.util-cache-test
    'frontend-tests.util-object-test
    'frontend-tests.util-range-tree-test
    'frontend-tests.util-simple-math-test

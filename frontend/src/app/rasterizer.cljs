@@ -27,6 +27,11 @@
 
 (defonce data-uri-cache (js/Map.))
 
+;; Upper bound for the data-uri cache; entries hold whole Blobs (fonts,
+;; images inlined into thumbnail SVGs) and the map lives for the lifetime
+;; of the tab.
+(def ^:private max-cached-data-uris 64)
+
 (defonce parent-origin
   (dm/str cf/public-uri))
 
@@ -139,7 +144,16 @@
                         (rx/of uri)
                         (->> (rx/of (:body response))
                              (rx/mapcat wapi/read-file-as-data-url)
-                             (rx/tap (fn [data-uri] (.set data-uri-cache uri (wapi/create-blob data-uri "text/plain")))))))))))
+                             (rx/tap (fn [data-uri]
+                                       (.set data-uri-cache uri (wapi/create-blob data-uri "text/plain"))
+                                       ;; Cap the cache: entries are whole
+                                       ;; Blobs and the map would otherwise
+                                       ;; grow for the lifetime of the tab.
+                                       ;; js/Map iterates in insertion
+                                       ;; order, so the oldest entry goes
+                                       ;; first.
+                                       (while (> (.-size data-uri-cache) max-cached-data-uris)
+                                         (.delete data-uri-cache (.next (.keys data-uri-cache)))))))))))))
 
 (defn- svg-update-image!
   "Updates an image in an SVG to a Data URI."

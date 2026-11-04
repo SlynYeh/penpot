@@ -68,6 +68,16 @@
     (rx/dispose! @interval-sub)
     (reset! interval-sub nil)))
 
+(defn finalize
+  "Stops the reconnect watcher when the workspace session ends; without
+   this the interval ticks forever (the plugin iframe itself is unloaded
+   by the workspace finalization via close-plugins)."
+  []
+  (ptk/reify ::finalize
+    ptk/EffectEvent
+    (effect [_ _ _]
+      (stop-reconnect-watcher!))))
+
 ;; This event will arrive when the mcp is enabled in the dashboard
 (defn update-mcp-status
   [value]

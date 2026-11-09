@@ -338,6 +338,55 @@ update_beginner_guide_videos() {
   fi
 }
 
+update_x_front_sdk() {
+  # Script URI of the host AI assistant JS SDK; when set (and the app is
+  # embedded in an iframe) the workspace shows the AI assistant tab and
+  # loads the SDK from this URI. Overrides the js/config.js default
+  # (empty = tab hidden). The special value "none" (case insensitive)
+  # clears it back to hidden. Protocol relative URLs (//host/...) are
+  # cross origin references, not the root relative paths they look like,
+  # and are rejected.
+  if [ -z "${PENPOT_X_FRONT_SDK:-}" ]; then
+    return;
+  fi
+
+  local raw="${PENPOT_X_FRONT_SDK}";
+  # Whitespace is stripped on a COPY for the sentinel check only, so
+  # " none " works too; the value itself is validated unstripped below
+  # because a space inside a URL is a typo that must be surfaced, not
+  # silently repaired.
+  local sentinel="${raw//[[:space:]]/}";
+  if [ "${sentinel,,}" == "none" ]; then
+    printf 'globalThis.penpotXFrontSdk = "";\n' >> "$1";
+    return;
+  fi
+
+  # A protocol relative URL (//host/...) would otherwise sail through the
+  # "/" branch of the regex below while silently pointing the script tag
+  # at whatever scheme embedded the app; POSIX ERE has no (?!/) lookahead
+  # to exclude it there, so it gets its own check up front.
+  if [[ "$raw" == //* ]]; then
+    echo "nginx-entrypoint: PENPOT_X_FRONT_SDK must not be a protocol-relative URL (//host/...); use the full https:// form; keeping the js/config.js default" >&2;
+    return;
+  fi
+
+  # The value is interpolated into a double quoted JS string, so a quote or
+  # a backslash would break the whole js/config.js file, and a backtick or
+  # angle brackets would let the URI escape the script tag downstream.
+  # Deliberately wider than the bare-origin check of
+  # update_embed_parent_origin: paths and query strings are part of the
+  # value. Regex spelling note: POSIX ERE has no \[ \] escapes inside a
+  # bracket expression (that spelling fails to compile), so the literal ]
+  # is placed first in the list, where both [ and ] are plain members.
+  local re='^(https?://|/)[]A-Za-z0-9._~:/?#[@!$&*+,;=%-]+$';
+  if [[ ! "$raw" =~ $re ]]; then
+    echo "nginx-entrypoint: PENPOT_X_FRONT_SDK must be an absolute http(s) URL or a root-relative path like /assistant/sdk.js; keeping the js/config.js default" >&2;
+    return;
+  fi
+
+  printf 'globalThis.penpotXFrontSdk = "%s";\n' "$raw" >> "$1";
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
@@ -350,6 +399,7 @@ update_embed_parent_origin /var/www/app/js/config.js
 update_embed_timeout_ms /var/www/app/js/config.js
 update_show_beginner_guide /var/www/app/js/config.js
 update_beginner_guide_videos /var/www/app/js/config.js
+update_x_front_sdk /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

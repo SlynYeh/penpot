@@ -167,6 +167,19 @@ services:
       # when the portal takes a while to reply, lower it to fail open sooner.
       # Unset keeps the default. 0 means "never wait".
       # PENPOT_EMBED_TIMEOUT_MS: "5000"
+      # Host AI assistant tab (fork feature): script URI of the portal's AI
+      # assistant JS SDK. When set and the app is embedded in an iframe, the
+      # workspace shows the AI assistant tab and loads the SDK from this URI;
+      # unset, empty or "none" keeps the tab hidden. Accepts an absolute
+      # http(s) URL or a root-relative path; values containing quotes,
+      # backticks, whitespace or <> are rejected with a warning and the
+      # hidden default is kept. Only meaningful for iframe embedding, so
+      # pair it with PENPOT_EMBED_PARENT_ORIGIN (without it the app cannot
+      # be framed cross origin at all).
+      # PENPOT_X_FRONT_SDK: "https://portal.example.com/ai/sdk.js"
+      # Local debugging against a mock SDK served by the app itself (the
+      # mock file ships with the AI assistant tab work):
+      # PENPOT_X_FRONT_SDK: "/assistant/mock-assistant-sdk.js"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

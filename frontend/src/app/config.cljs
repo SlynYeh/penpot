@@ -252,6 +252,20 @@
    `penpotEmbedBootDeadlineMs` in resources/config.js."
   (d/parse-integer (obj/get global "penpotEmbedBootDeadlineMs") 30000))
 
+(def x-front-sdk
+  "URI of the host AI assistant JS SDK script. When set and the app is
+   embedded in an iframe (`app.util.embed/embedded?`), the workspace shows
+   the AI assistant tab and loads the SDK from this URI; nil (the default)
+   keeps the tab hidden. Accepts an absolute http(s) URL or a root
+   relative path. Blank strings are normalized to nil, so consumers can
+   just check `some?`. Configured via `penpotXFrontSdk` in
+   resources/config.js (docker: `PENPOT_X_FRONT_SDK`)."
+  (let [value (obj/get global "penpotXFrontSdk")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
 (defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.

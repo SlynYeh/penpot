@@ -131,6 +131,17 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // 宿主 AI 助手 JS SDK 的 script 地址(「x-front」助手 tab)。非空且当前页面
+  // 处于 iframe 嵌入态时, workspace 显示 AI 助手 tab 并从此地址加载 SDK;
+  // 留空(默认)则隐藏该 tab。接受绝对 http(s) URL 或以 / 开头的根相对路径;
+  // 空串/纯空白一律按未配置处理(前端会归一成 null)。
+  // Docker 部署: 可用环境变量 PENPOT_X_FRONT_SDK 覆盖此默认值
+  // (由 nginx-entrypoint.sh 校验后追加赋值, 优先级更高; 非法值保留默认并告警;
+  // 设为 none 则清空)。
+  globalThis.penpotXFrontSdk = "";
+})();
+
+(function () {
   // 「新手基础操作」弹窗三张卡片的视频地址。改这里即可, 无需重新编译前端。
   // 键名对应卡片 id: click-through / table-shortcuts / component-library。
   // 某张卡片缺地址或为空字符串时, 弹窗仍显示, 该卡走占位文案。

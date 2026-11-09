@@ -63,6 +63,7 @@
    [frontend-tests.ui.ds-controls-numeric-input-test]
    [frontend-tests.ui.measures-menu-props-test]
    [frontend-tests.util-cache-test]
+   [frontend-tests.util-embed-assistant-test]
    [frontend-tests.util-embed-test]
    [frontend-tests.util-object-test]
    [frontend-tests.util-range-tree-test]
@@ -144,6 +145,7 @@
    'frontend-tests.ui.ds-controls-numeric-input-test
    'frontend-tests.ui.measures-menu-props-test
    'frontend-tests.render-wasm.process-objects-test
+   'frontend-tests.util-embed-assistant-test
    'frontend-tests.util-embed-test
    'frontend-tests.util-cache-test
    'frontend-tests.util-object-test

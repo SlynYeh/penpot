@@ -629,6 +629,7 @@ export async function copyAssets() {
 
   await syncDirs("resources/images/", "resources/public/images/");
   await syncDirs("resources/fonts/", "resources/public/fonts/");
+  await syncDirs("resources/assistant/", "resources/public/assistant/");
 
   const end = process.hrtime(start);
   log.info("done: copy assets", `(${ppt(end)})`);

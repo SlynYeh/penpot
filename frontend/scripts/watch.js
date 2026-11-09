@@ -115,6 +115,12 @@ h.watch(["resources/wasm-playground"], null, async function (path) {
   await h.copyWasmPlayground();
 });
 
+log.info("watch: assistant (~)");
+h.watch(["resources/assistant"], null, async function (path) {
+  log.info("changed:", path);
+  await h.copyAssets();
+});
+
 log.info("watch: config (~)");
 h.watch("resources/config.js", null, async function (path) {
   log.info("changed:", path);

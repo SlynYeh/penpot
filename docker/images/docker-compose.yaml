@@ -180,6 +180,10 @@ services:
       # Local debugging against a mock SDK served by the app itself (the
       # mock file ships with the AI assistant tab work):
       # PENPOT_X_FRONT_SDK: "/assistant/mock-assistant-sdk.js"
+      # (when driving it from the bundled dev host page
+      # /assistant/dev-host.html, keep PENPOT_EMBED_PARENT_ORIGIN unset
+      # or set to the instance's own origin; a remote origin makes the
+      # assistant handshake time out silently)
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

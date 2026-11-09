@@ -12,6 +12,7 @@
    [app.common.files.helpers :as cfh]
    [app.common.geom.shapes :as gsh]
    [app.common.types.shape.layout :as ctl]
+   [app.config :as cf]
    [app.main.data.helpers :as dsh]
    [app.main.data.workspace :as udw]
    [app.main.data.workspace.common :as dwc]
@@ -19,8 +20,10 @@
    [app.main.refs :as refs]
    [app.main.store :as st]
    [app.main.ui.context :as ctx]
+   [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.ds.layout.tab-switcher :refer [tab-switcher*]]
    [app.main.ui.inspect.right-sidebar :as hrs]
+   [app.main.ui.workspace.sidebar.assistant :refer [assistant-tab*]]
    [app.main.ui.workspace.sidebar.options.drawing :as drawing]
    [app.main.ui.workspace.sidebar.options.menus.align :refer [align-options*]]
    [app.main.ui.workspace.sidebar.options.menus.bool :refer [bool-options*]]
@@ -38,6 +41,7 @@
    [app.main.ui.workspace.sidebar.options.shapes.rect :as rect]
    [app.main.ui.workspace.sidebar.options.shapes.svg-raw :as svg-raw]
    [app.main.ui.workspace.sidebar.options.shapes.text :as text]
+   [app.util.embed :as embed]
    [app.util.i18n :as i18n :refer [tr]]
    [okulary.core :as l]
    [rumext.v2 :as mf]))
@@ -201,9 +205,14 @@
 
 (def prototype-tab-enabled? false)
 
+(defn- assistant-tab-visible?
+  []
+  (and (some? cf/x-front-sdk) (embed/embedded?)))
+
 (defn visible-options-tab-ids
   []
   (cond-> ["design"]
+    (assistant-tab-visible?) (conj "assistant")
     prototype-tab-enabled? (conj "prototype")
     :always (conj "inspect")))
 
@@ -217,9 +226,15 @@
   []
   (cond-> [{:label (tr "workspace.options.design")
             :id "design"}]
+    (assistant-tab-visible?)
+    (conj {:label (tr "workspace.options.assistant")
+           :id "assistant"
+           :icon i/assistant})
+
     prototype-tab-enabled?
     (conj {:label (tr "workspace.options.prototype")
            :id "prototype"})
+
     :always
     (conj {:label (tr "workspace.options.inspect")
            :id "inspect"})))
@@ -264,6 +279,10 @@
           :prototype
           [:div {:class (stl/css :element-options :interaction-options)}
            [:> interactions-menu* {:shape (first shapes)}]]
+
+          :assistant
+          [:> assistant-tab* {:page-id page-id
+                              :file-id file-id}]
 
           :inspect
           [:div {:class (stl/css :element-options :inspect-options)}

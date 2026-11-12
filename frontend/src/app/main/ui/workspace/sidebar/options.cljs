@@ -20,7 +20,6 @@
    [app.main.refs :as refs]
    [app.main.store :as st]
    [app.main.ui.context :as ctx]
-   [app.main.ui.ds.foundations.assets.icon :as i]
    [app.main.ui.ds.layout.tab-switcher :refer [tab-switcher*]]
    [app.main.ui.inspect.right-sidebar :as hrs]
    [app.main.ui.workspace.sidebar.assistant :refer [assistant-tab*]]
@@ -229,7 +228,9 @@
     (assistant-tab-visible?)
     (conj {:label (tr "workspace.options.assistant")
            :id "assistant"
-           :icon i/assistant})
+           ;; Referenced by file path instead of the sprite, so the icon can be
+           ;; replaced by overwriting resources/public/images/icons/assistant.svg.
+           :icon-url "images/icons/assistant.svg"})
 
     prototype-tab-enabled?
     (conj {:label (tr "workspace.options.prototype")

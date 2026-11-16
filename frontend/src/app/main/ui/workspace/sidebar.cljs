@@ -10,7 +10,8 @@
    [app.common.data.macros :as dm]
    [app.common.types.tokens-lib :as ctob]
    [app.config :as cf]
-   [app.main.constants :refer [left-sidebar-default-max-width
+   [app.main.constants :refer [assistant-sidebar-width
+                               left-sidebar-default-max-width
                                left-sidebar-default-width
                                right-sidebar-default-max-width
                                right-sidebar-default-width]]
@@ -331,6 +332,13 @@
 
         dbg-shape-panel? (dbg/enabled? :shape-panel)
 
+        ;; Only expands when the options toolbox (and thus the assistant
+        ;; tab) is actually rendered; comments/history/debug override it.
+        is-assistant?    (and (not is-comments?)
+                              (not is-history?)
+                              (not dbg-shape-panel?)
+                              (= section :assistant))
+
         current-section* (mf/use-state :info)
         current-section  (deref current-section*)
 
@@ -374,8 +382,14 @@
         :data-testid "right-sidebar"
         :data-size (str width)
         :on-context-menu dom/prevent-default-context-menu
-        :style {:--right-sidebar-width (if can-be-expanded?
+        :style {:--right-sidebar-width (cond
+                                         can-be-expanded?
                                          (dm/str width "px")
+
+                                         is-assistant?
+                                         (dm/str assistant-sidebar-width "px")
+
+                                         :else
                                          (dm/str right-sidebar-default-width "px"))}}
 
        (when can-be-expanded?

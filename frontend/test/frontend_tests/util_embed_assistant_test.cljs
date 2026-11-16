@@ -88,6 +88,96 @@
   (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" "  "))))
   (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" 42)))))
 
+(defn- recording-hooks
+  "Wiring closures for build-init-config that record what the built
+  config actually invokes: forward! produces the per-event callbacks,
+  enrich-message counts the messages routed through it."
+  []
+  (let [events   (atom [])
+        enriched (atom 0)]
+    {:events   events
+     :enriched enriched
+     :hooks    {:enrich-message (fn [message] (swap! enriched inc) message)
+                :forward!       (fn [event-name]
+                                  (fn [data] (swap! events conj [event-name data])))}}))
+
+(t/deftest build-init-config-passes-host-params-through
+  ;; Anything the host returns in params must reach the init config
+  ;; untouched: unknown keys (the point of the pass-through), same-name
+  ;; keys and the raw alias keys alongside their derived counterparts.
+  (let [prompts #js [#js {"id" "p1"}]
+        params  (-> (init-params)
+                    (obj/set! "theme" "dark")
+                    (obj/set! "prompts" prompts)
+                    (obj/set! "logoUrl" "https://portal.example.com/logo.png"))
+        config  (assistant/build-init-config params (:hooks (recording-hooks)))]
+    (t/is (= "dark" (obj/get config "theme")))
+    (t/is (identical? prompts (obj/get config "prompts")))
+    (t/is (= "app" (obj/get config "appName")))
+    (t/is (= "agent" (obj/get config "agentId")))
+    (t/is (= "token" (obj/get config "idToken")))
+    (t/is (= "skill" (obj/get config "skillName")))
+    (t/is (= "https://portal.example.com/logo.png" (obj/get config "logoUrl")))))
+
+(t/deftest build-init-config-overlays-the-local-wiring
+  (let [{:keys [events enriched hooks]} (recording-hooks)
+        config (assistant/build-init-config (init-params) hooks)
+        msg    #js {"messageId" "m1"}
+        rating #js {"score" 5}]
+    (t/is (= "domMount" (obj/get config "layoutType")))
+    (t/is (= "skill" (obj/get config "defaultSkillName")))
+    (t/is (fn? (obj/get config "getIdToken")))
+    ;; the host SDK docs spell the hook two ways; both carry the same fn
+    (t/is (identical? (obj/get config "beforeSendMessage")
+                      (obj/get config "beforeSendMesssage")))
+    ((obj/get config "beforeSendMessage") msg)
+    ((obj/get config "afterSendMessage") msg)
+    ((obj/get config "onMessageFinish") msg)
+    (let [satisfaction (obj/get config "satisfactionRating")]
+      (t/is (true? (obj/get satisfaction "enabled")))
+      ((obj/get satisfaction "onComplete") rating))
+    (t/is (= 1 @enriched))
+    (t/is (= [["afterSendMessage" msg]
+              ["onMessageFinish" msg]
+              ["onSatisfactionRatingComplete" rating]]
+             @events))))
+
+(t/deftest build-init-config-get-id-token-resolves-the-host-token
+  (t/async done
+    (let [config (assistant/build-init-config (init-params) (:hooks (recording-hooks)))]
+      (p/then ((obj/get config "getIdToken"))
+              (fn [value]
+                (t/is (= "token" value))
+                (done))))))
+
+(t/deftest build-init-config-derives-appimage-from-logo-url
+  ;; logoUrl wins over a host supplied appImage (documented precedence)
+  (let [config (assistant/build-init-config
+                (-> (init-params)
+                    (obj/set! "logoUrl" "https://portal.example.com/logo.png")
+                    (obj/set! "appImage" #js {"src" "https://portal.example.com/other.png"}))
+                (:hooks (recording-hooks)))
+        app-image (obj/get config "appImage")]
+    (t/is (= "https://portal.example.com/logo.png" (obj/get app-image "src")))
+    (t/is (= "ai-penpot-icon" (obj/get app-image "className")))
+    (t/is (true? (obj/get app-image "hideClose"))))
+  ;; without logoUrl nothing is injected...
+  (let [config (assistant/build-init-config (init-params) (:hooks (recording-hooks)))]
+    (t/is (nil? (obj/get config "appImage"))))
+  ;; ...and a host supplied appImage passes through untouched
+  (let [direct #js {"src" "https://portal.example.com/direct.png" "hideClose" false}
+        config (assistant/build-init-config (obj/set! (init-params) "appImage" direct)
+                                            (:hooks (recording-hooks)))]
+    (t/is (identical? direct (obj/get config "appImage")))))
+
+(t/deftest build-init-config-does-not-mutate-the-host-params
+  (let [params (-> (init-params)
+                   (obj/set! "theme" "dark")
+                   (obj/set! "logoUrl" "https://portal.example.com/logo.png"))
+        before (js->clj (obj/clone params))]
+    (assistant/build-init-config params (:hooks (recording-hooks)))
+    (t/is (= before (js->clj params)))))
+
 (t/deftest parse-incoming-accepts-valid-response
   (let [payload #js {"ok" true "reqId" "r1" "params" #js {"idToken" "t"}}
         parsed  (assistant/parse-incoming (response-data "getInitParams" payload))]

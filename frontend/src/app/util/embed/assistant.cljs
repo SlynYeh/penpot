@@ -58,6 +58,36 @@
              (and (string? logo-url)
                   (pos? (count (str/trim logo-url))))))))
 
+(defn build-init-config
+  "Builds the config object handed to the host SDK `init` method: the
+  init params returned by getInitParams are passed through in full —
+  any extra key the host adds reaches the SDK untouched — and overlaid
+  with the locally resolved wiring: the callback hooks (functions
+  cannot cross postMessage), the derived getIdToken/defaultSkillName
+  aliases, the domMount layout and the logoUrl->appImage derivation.
+  The received params object is never mutated."
+  [params {:keys [enrich-message forward!]}]
+  (let [config (obj/merge params
+                          #js {"getIdToken" (fn [] (p/resolved (obj/get params "idToken")))
+                               "defaultSkillName" (obj/get params "skillName")
+                               "layoutType" "domMount"
+                               ;; The host SDK docs spell this hook two
+                               ;; different ways; set both to the same fn.
+                               "beforeSendMesssage" enrich-message
+                               "beforeSendMessage" enrich-message
+                               "afterSendMessage" (forward! "afterSendMessage")
+                               "onMessageFinish" (forward! "onMessageFinish")
+                               "satisfactionRating"
+                               #js {"enabled" true
+                                    "onComplete" (forward! "onSatisfactionRatingComplete")}})
+        logo-url (obj/get params "logoUrl")]
+    (if (some? logo-url)
+      (obj/set! config "appImage"
+                #js {"src" logo-url
+                     "className" "ai-penpot-icon"
+                     "hideClose" true})
+      config)))
+
 (defn parse-incoming
   "Parses the `data` of a message event into
   `{:type :event-name :req-id :payload}`, or nil when the message does

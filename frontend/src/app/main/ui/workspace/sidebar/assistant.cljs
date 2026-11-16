@@ -129,32 +129,10 @@
              init-and-render!
              (fn [^js sdk params]
                (try
-                 (let [config
-                       #js {"appName"          (obj/get params "appName")
-                            "agentId"          (obj/get params "agentId")
-                            "getIdToken"       (fn [] (p/resolved (obj/get params "idToken")))
-                            "defaultSkillName" (obj/get params "skillName")
-                            "prompts"          nil
-                            "layoutType"       "domMount"
-                            ;; The host SDK docs spell this hook two
-                            ;; different ways; set both to the same fn.
-                            "beforeSendMesssage" enrich-message
-                            "beforeSendMessage"  enrich-message
-                            "afterSendMessage"   (forward! "afterSendMessage")
-                            "onMessageFinish"    (forward! "onMessageFinish")
-                            "satisfactionRating"
-                            #js {"enabled" true
-                                 "onComplete" (forward! "onSatisfactionRatingComplete")}}
-
-                       config
-                       (let [logo-url (obj/get params "logoUrl")]
-                         (if (some? logo-url)
-                           (obj/set! config "appImage"
-                                     #js {"src" logo-url
-                                          "className" "ai-penpot-icon"
-                                          "hideClose" true})
-                           config))]
-
+                 (let [config (assistant/build-init-config
+                               params
+                               {:enrich-message enrich-message
+                                :forward!       forward!})]
                    (-> (adopt-sdk-result (.init sdk config))
                        (p/then (fn [_]
                                  (adopt-sdk-result (.render sdk mount-dom-id))))

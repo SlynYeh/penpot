@@ -78,6 +78,14 @@
   color: var(--tabs-item-fg-color);
   padding: 0 var(--sp-m);
   width: 100%;
+
+  // Pin the icon-url image to the 16px icon slot: the global base rule
+  // `img { height: auto; width: 100% }` overrides the HTML width/height
+  // attributes, so a replaced icon larger than 16x16 overflows the tab.
+  img {
+    width: $sz-16;
+    height: $sz-16;
+  }
 }
 
 .selected {

@@ -23,6 +23,7 @@
    [app.config :as cf]
    [app.main.refs :as refs]
    [app.main.ui.ds.buttons.button :refer [button*]]
+   [app.main.ui.ds.foundations.assets.icon :as i :refer [icon*]]
    [app.main.ui.hooks :as hooks]
    [app.util.dom :as dom]
    [app.util.embed :as embed]
@@ -124,10 +125,79 @@
         page-id-ref (hooks/use-update-ref page-id)
         file-id-ref (hooks/use-update-ref file-id)
 
+        ;; v2: which of the two mutually exclusive views the tab content
+        ;; shows — :chat (SDK mount + action bar) or :history.
+        view* (mf/use-state :chat)
+        view  (deref view*)
+
+        ;; v2: history list fetch state — nil (never fetched), :loading,
+        ;; :error or [:ok sessions-js-array]. history-attempt bumps on
+        ;; retry and after a delete; the fetch effect reruns on it.
+        history*         (mf/use-state nil)
+        history-attempt* (mf/use-state 0)
+
         on-retry
         (mf/use-fn
          (fn []
-           (swap! attempt* inc)))]
+           (swap! attempt* inc)))
+
+        on-back-to-chat!
+        (mf/use-fn (fn [] (reset! view* :chat)))
+
+        on-open-history!
+        (mf/use-fn (fn [] (reset! view* :history)))
+
+        on-history-retry!
+        (mf/use-fn (fn [] (swap! history-attempt* inc)))
+
+        on-new-session!
+        (mf/use-fn
+         (fn []
+           (when-let [change! (:change-session-id! (deref sdk-tools*))]
+             (try
+               (change! "")
+               (assistant/clear-saved-session-id!
+                (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
+               (reset! session-id* nil)
+               (catch :default cause
+                 (log/wrn :hint "assistant: failed to start a new session" :cause cause))))))
+
+        on-select-session!
+        (mf/use-fn
+         (fn [session-id]
+           (when-let [change! (:change-session-id! (deref sdk-tools*))]
+             (try
+               (change! session-id)
+               (assistant/save-session-id!
+                (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
+               (reset! session-id* session-id)
+               (reset! view* :chat)
+               (catch :default cause
+                 (log/wrn :hint "assistant: failed to switch session" :cause cause))))))
+
+        on-delete-session!
+        (mf/use-fn
+         (fn [session-id]
+           (when-let [delete! (:delete-session! (deref sdk-tools*))]
+             (-> (try (adopt-sdk-result (delete! session-id))
+                      (catch :default cause (p/rejected cause)))
+                 (p/then
+                  (fn [_]
+                    (when (= session-id (deref session-id*))
+                      ;; deleting the session that is on screen falls
+                      ;; back to a brand new one
+                      (assistant/clear-saved-session-id!
+                       (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
+                      (reset! session-id* nil)
+                      (when-let [change! (:change-session-id! (deref sdk-tools*))]
+                        (try (change! "") (catch :default _ nil))))
+                    ;; always refresh the list after a delete
+                    (swap! history-attempt* inc)))
+                 (p/catch
+                  (fn [cause]
+                    (log/wrn :hint "assistant: failed to delete the session" :cause cause)
+                    ;; still refresh: the list may be stale
+                    (swap! history-attempt* inc)))))))]
 
     (mf/use-effect
      (mf/deps attempt)
@@ -332,10 +402,106 @@
            (unchecked-set ug/global sdk-global-name nil)
            (close!)))))
 
-    (let [[_ reason :as error] (when (vector? state) state)]
+    ;; v2: every entry into the history view fetches the list fresh
+    ;; (spec: no caching); retry and post-delete re-fetches bump
+    ;; history-attempt.
+    (mf/use-effect
+     (mf/deps view attempt (deref history-attempt*))
+     (fn []
+       (when (= :history view)
+         (let [cancelled? (volatile! false)]
+           (reset! history* :loading)
+           (let [{:keys [get-session-list!]} (deref sdk-tools*)]
+             (if (nil? get-session-list!)
+               (reset! history* :error)
+               (-> (try (adopt-sdk-result (get-session-list!))
+                        (catch :default cause (p/rejected cause)))
+                   (p/then (fn [^js result]
+                             (when-not @cancelled?
+                               (let [sessions (when (object? result)
+                                                (obj/get result "sessions"))]
+                                 (reset! history* [:ok (when (array? sessions) sessions)])))))
+                   (p/catch (fn [cause]
+                              (when-not @cancelled?
+                                (log/wrn :hint "assistant: failed to load the session history"
+                                         :cause cause)
+                                (reset! history* :error)))))))
+           (fn []
+             (vreset! cancelled? true))))))
+
+    (let [[_ reason :as error] (when (vector? state) state)
+          history  (deref history*)
+          sessions (when (vector? history) (second history))]
       [:div {:class (stl/css :assistant-tab)}
+       (if (= :history view)
+         ;; history header row replaces the action bar entirely
+         [:div {:class (stl/css :history-head)
+                :role "button"
+                :tab-index "0"
+                :on-click on-back-to-chat!}
+          [:> icon* {:icon-id i/arrow-left :size "s"}]
+          [:span {:class (stl/css :history-head-label)}
+           (tr "workspace.options.assistant.history")]]
+         (when (and (= :ready state) (some? (deref sdk-tools*)))
+           [:div {:class (stl/css :action-bar)}
+            [:button {:type "button"
+                      :class (stl/css :action-btn)
+                      :on-click on-new-session!}
+             [:> icon* {:icon-id i/comments :size "s"}]
+             (tr "workspace.options.assistant.new-session")]
+            [:button {:type "button"
+                      :class (stl/css :action-btn)
+                      :on-click on-open-history!}
+             [:> icon* {:icon-id i/history :size "s"}]
+             (tr "workspace.options.assistant.history")]]))
+
+       ;; The SDK mount div is NEVER conditionally rendered: the host
+       ;; SDK owns its DOM and a React remount would destroy it. It is
+       ;; only hidden while the history view is on.
        [:div {:id mount-dom-id
-              :class (stl/css :mount)}]
+              :class (cond-> (stl/css :mount)
+                       (= :history view)
+                       (str " " (stl/css :mount-hidden)))}]
+
+       (when (= :history view)
+         (cond
+           (= :loading history)
+           [:div {:class (stl/css :history-state)}
+            [:span {:class (stl/css :spinner)}]]
+
+           (= :error history)
+           [:div {:class (stl/css :history-state)}
+            [:div {:class (stl/css :status-text)}
+             (tr "workspace.options.assistant.history.error")]
+            [:> button* {:variant "secondary"
+                         :on-click on-history-retry!}
+             (tr "labels.retry")]]
+
+           (or (nil? sessions) (zero? (alength sessions)))
+           [:div {:class (stl/css :history-state)}
+            [:div {:class (stl/css :status-text)}
+             (tr "workspace.options.assistant.history.empty")]]
+
+           :else
+           [:div {:class (stl/css :history-list)}
+            (for [^js session sessions]
+              (let [uid   (obj/get session "uid")
+                    title (obj/get session "title")]
+                [:div {:key uid
+                       :class (stl/css :history-item)
+                       :on-click #(on-select-session! uid)}
+                 [:span {:class (stl/css :history-item-title)}
+                  (if (and (string? title) (pos? (count title)))
+                    title
+                    (tr "workspace.options.assistant.new-session"))]
+                 [:span {:class (stl/css :history-item-time)}
+                  (assistant/format-session-time (obj/get session "updatedAt"))]
+                 [:button {:type "button"
+                           :class (stl/css :history-item-delete)
+                           :on-click (fn [event]
+                                       (dom/stop-propagation event)
+                                       (on-delete-session! uid))}
+                  [:> icon* {:icon-id i/remove :size "s"}]]]))]))
 
        (if error
          [:div {:class (stl/css :status)}

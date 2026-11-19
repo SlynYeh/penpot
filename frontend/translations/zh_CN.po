@@ -6287,8 +6287,24 @@ msgid "workspace.options.assistant.error.sdk"
 msgstr "助手 SDK 加载或初始化失败。"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history"
+msgstr "历史对话"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.empty"
+msgstr "暂无历史对话"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.error"
+msgstr "历史对话加载失败"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.loading"
 msgstr "正在连接 AI 助手…"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.new-session"
+msgstr "新对话"
 
 #: src/app/main/ui/workspace/sidebar/options/menus/blur.cljs
 #, unused

@@ -144,6 +144,13 @@
         on-back-to-chat!
         (mf/use-fn (fn [] (reset! view* :chat)))
 
+        on-history-head-keydown!
+        (mf/use-fn
+         (fn [event]
+           (when (or (= (.-key event) "Enter") (= (.-key event) " "))
+             (dom/prevent-default event)
+             (on-back-to-chat!))))
+
         on-open-history!
         (mf/use-fn (fn [] (reset! view* :history)))
 
@@ -154,26 +161,30 @@
         (mf/use-fn
          (fn []
            (when-let [change! (:change-session-id! (deref sdk-tools*))]
-             (try
-               (change! "")
-               (assistant/clear-saved-session-id!
-                (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
-               (reset! session-id* nil)
-               (catch :default cause
-                 (log/wrn :hint "assistant: failed to start a new session" :cause cause))))))
+             (-> (try (adopt-sdk-result (change! ""))
+                      (catch :default cause (p/rejected cause)))
+                 (p/then (fn [_]
+                           (assistant/clear-saved-session-id!
+                            (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
+                           (reset! session-id* nil)))
+                 (p/catch (fn [cause]
+                            (log/wrn :hint "assistant: failed to start a new session"
+                                     :cause cause)))))))
 
         on-select-session!
         (mf/use-fn
          (fn [session-id]
            (when-let [change! (:change-session-id! (deref sdk-tools*))]
-             (try
-               (change! session-id)
-               (assistant/save-session-id!
-                (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
-               (reset! session-id* session-id)
-               (reset! view* :chat)
-               (catch :default cause
-                 (log/wrn :hint "assistant: failed to switch session" :cause cause))))))
+             (-> (try (adopt-sdk-result (change! session-id))
+                      (catch :default cause (p/rejected cause)))
+                 (p/then (fn [_]
+                           (assistant/save-session-id!
+                            (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
+                           (reset! session-id* session-id)
+                           (reset! view* :chat)))
+                 (p/catch (fn [cause]
+                            (log/wrn :hint "assistant: failed to switch session"
+                                     :cause cause)))))))
 
         on-delete-session!
         (mf/use-fn
@@ -438,7 +449,8 @@
          [:div {:class (stl/css :history-head)
                 :role "button"
                 :tab-index "0"
-                :on-click on-back-to-chat!}
+                :on-click on-back-to-chat!
+                :on-key-down on-history-head-keydown!}
           [:> icon* {:icon-id i/arrow-left :size "s"}]
           [:span {:class (stl/css :history-head-label)}
            (tr "workspace.options.assistant.history")]]
@@ -465,7 +477,7 @@
 
        (when (= :history view)
          (cond
-           (= :loading history)
+           (or (nil? history) (= :loading history))
            [:div {:class (stl/css :history-state)}
             [:span {:class (stl/css :spinner)}]]
 
@@ -484,7 +496,8 @@
 
            :else
            [:div {:class (stl/css :history-list)}
-            (for [^js session sessions]
+            (for [^js session sessions
+                  :when (string? (obj/get session "uid"))]
               (let [uid   (obj/get session "uid")
                     title (obj/get session "title")]
                 [:div {:key uid

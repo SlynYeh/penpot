@@ -123,6 +123,11 @@
   font-weight: 600;
   color: var(--color-foreground-primary);
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-foreground-primary);
+    outline-offset: -2px;
+  }
 }
 
 .history-head-label {

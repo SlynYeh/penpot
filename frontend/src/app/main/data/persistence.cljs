@@ -230,7 +230,8 @@
 
         (rx/merge
          (->> notifier-s
-              (rx/map #(ptk/data-event ::persistence-notification)))
+              (rx/map #(ptk/data-event ::persistence-notification))
+              (rx/take-until stoper-s))
 
          (->> local-commits-s
               (rx/debounce 200)

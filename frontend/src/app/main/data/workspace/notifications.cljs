@@ -220,16 +220,21 @@
   (ptk/reify ::handle-pointer-update
     ptk/UpdateEvent
     (update [_ state]
-      (update-in state [:workspace-presence session-id]
-                 (fn [session]
-                   (assoc session
-                          :zoom zoom
-                          :zoom-inverse zoom-inverse
-                          :vbox vbox
-                          :vport vport
-                          :point position
-                          :updated-at (ct/now)
-                          :page-id page-id))))))
+      ;; Only update sessions known through a presence message: pointer
+      ;; updates arriving for unknown sessions (e.g. after a missed leave
+      ;; message) would otherwise create entries that nothing ever prunes.
+      (if (contains? (:workspace-presence state) session-id)
+        (update-in state [:workspace-presence session-id]
+                   (fn [session]
+                     (assoc session
+                            :zoom zoom
+                            :zoom-inverse zoom-inverse
+                            :vbox vbox
+                            :vport vport
+                            :point position
+                            :updated-at (ct/now)
+                            :page-id page-id)))
+        state))))
 
 (def ^:private
   schema:handle-file-change

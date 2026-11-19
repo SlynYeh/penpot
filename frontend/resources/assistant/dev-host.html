@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Penpot Assistant - Dev Host</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        font:
+          13px/1.5 system-ui,
+          sans-serif;
+        color: #18181b;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        padding: 6px 12px;
+        background: #18181b;
+        color: #e4e4e7;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      header code {
+        font-family: ui-monospace, monospace;
+        color: #a1a1aa;
+      }
+      main {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+      }
+      .frame-pane {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .frame-bar {
+        display: flex;
+        gap: 6px;
+        padding: 6px 8px;
+        background: #f4f4f5;
+        border-bottom: 1px solid #e4e4e7;
+      }
+      .frame-bar input {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-family: ui-monospace, monospace;
+        padding: 3px 8px;
+        border: 1px solid #d4d4d8;
+        border-radius: 5px;
+      }
+      .frame-bar button,
+      .panel button {
+        font: inherit;
+        padding: 3px 10px;
+        border: 1px solid #d4d4d8;
+        border-radius: 5px;
+        background: #fff;
+        cursor: pointer;
+      }
+      .frame-bar button:hover,
+      .panel button:hover {
+        background: #f0f0f1;
+      }
+      iframe {
+        flex: 1;
+        width: 100%;
+        border: 0;
+        border-right: 1px solid #e4e4e7;
+      }
+      .panel {
+        width: 420px;
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        overflow: auto;
+        background: #fafafa;
+      }
+      .panel fieldset {
+        margin: 0;
+        padding: 6px 10px 10px;
+        border: 1px solid #d4d4d8;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .panel legend {
+        font-weight: 600;
+        font-size: 12px;
+        padding: 0 4px;
+      }
+      .panel label {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+      .panel .hint {
+        color: #71717a;
+        font-size: 11px;
+      }
+      .origin-hint {
+        margin: 0;
+        color: #71717a;
+        font-size: 11px;
+      }
+      .origin-hint code {
+        font-family: ui-monospace, monospace;
+      }
+      .log-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 600;
+        font-size: 12px;
+      }
+      #log {
+        flex: 1;
+        min-height: 120px;
+        margin: 0;
+        padding: 6px 8px;
+        overflow: auto;
+        background: #18181b;
+        color: #e4e4e7;
+        border-radius: 6px;
+        font:
+          11px/1.5 ui-monospace,
+          monospace;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      #log .in {
+        color: #e4e4e7;
+      }
+      #log .in .evt {
+        color: #fbbf24;
+      }
+      #log .out {
+        color: #34d399;
+      }
+      #log .sys {
+        color: #71717a;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Penpot dev host</h1>
+      <span
+        >assistant protocol parent side - scope <code>penpot/assistant</code> -
+        host origin <code id="host-origin"></code
+      ></span>
+    </header>
+    <main>
+      <section class="frame-pane">
+        <div class="frame-bar">
+          <input
+            id="penpot-url"
+            type="text"
+            spellcheck="false"
+            aria-label="Penpot iframe URL"
+          />
+          <button id="reload" type="button">Reload iframe</button>
+        </div>
+        <iframe id="penpot" title="Penpot workspace"></iframe>
+      </section>
+      <aside class="panel">
+        <p class="origin-hint">
+          Requires <code>PENPOT_EMBED_PARENT_ORIGIN</code> unset (wildcard) or
+          set to this instance's own origin &mdash; a remote origin makes the
+          assistant handshake time out silently (15s).
+        </p>
+        <fieldset>
+          <legend>Fault simulation</legend>
+          <label>
+            <input type="checkbox" id="fault-silent" />
+            <span
+              >不应答 getInitParams<span class="hint"
+                >（子端 10s 超时 → 错误占位 + 重试）</span
+              ></span
+            >
+          </label>
+          <label>
+            <input type="checkbox" id="fault-poison" />
+            <span
+              >毒参数（应答缺 skillName）<span class="hint"
+                >（子端 :invalid-params）</span
+              ></span
+            >
+          </label>
+          <label>
+            <input type="checkbox" id="fault-error" />
+            <span
+              >应答 ok:false<span class="hint"
+                >（error "mock failure"，优先于毒参数）</span
+              ></span
+            >
+          </label>
+        </fieldset>
+        <div class="log-head">
+          <span>Child &rarr; parent events</span>
+          <button id="clear-log" type="button">Clear</button>
+        </div>
+        <pre id="log"></pre>
+      </aside>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var STORAGE_KEY = "penpot-dev-host.iframe-url";
+        var SCOPE = "penpot/assistant";
+        var TYPE_EVENT = "AI_ASSISTANT_EVENT";
+        var TYPE_RESPONSE = "AI_ASSISTANT_RESPONSE";
+        var MAX_LOG_LINES = 400;
+
+        var iframe = document.getElementById("penpot");
+        var urlInput = document.getElementById("penpot-url");
+        var reloadButton = document.getElementById("reload");
+        var clearButton = document.getElementById("clear-log");
+        var logEl = document.getElementById("log");
+        var faultSilent = document.getElementById("fault-silent");
+        var faultPoison = document.getElementById("fault-poison");
+        var faultError = document.getElementById("fault-error");
+
+        document.getElementById("host-origin").textContent =
+          window.location.origin;
+
+        // ---- iframe URL: ?penpot= > localStorage > same-origin root ----
+
+        function storedUrl() {
+          try {
+            return window.localStorage.getItem(STORAGE_KEY);
+          } catch (cause) {
+            return null;
+          }
+        }
+
+        function rememberUrl(url) {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, url);
+          } catch (cause) {
+            // private mode etc.; losing the memory does not break anything
+          }
+        }
+
+        function initialUrl() {
+          var fromQuery = new URLSearchParams(window.location.search).get(
+            "penpot",
+          );
+          return fromQuery || storedUrl() || "/";
+        }
+
+        function loadIframe(url) {
+          urlInput.value = url;
+          iframe.src = url;
+        }
+
+        function applyUrl() {
+          var url = urlInput.value.trim();
+          if (!url) {
+            return;
+          }
+          rememberUrl(url);
+          loadIframe(url);
+        }
+
+        reloadButton.addEventListener("click", applyUrl);
+        urlInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            applyUrl();
+          }
+        });
+
+        loadIframe(initialUrl());
+
+        // ---- log ---------------------------------------------------------
+
+        function stamp() {
+          var d = new Date();
+          var ms = String(d.getMilliseconds()).padStart(3, "0");
+          return d.toTimeString().slice(0, 8) + "." + ms;
+        }
+
+        function safeJson(value) {
+          try {
+            return JSON.stringify(value);
+          } catch (cause) {
+            return String(value);
+          }
+        }
+
+        function appendLine(cls, textContent) {
+          var line = document.createElement("div");
+          line.className = cls;
+          line.textContent = textContent;
+          logEl.appendChild(line);
+          while (logEl.childElementCount > MAX_LOG_LINES) {
+            logEl.removeChild(logEl.firstChild);
+          }
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function logIncoming(data) {
+          var line = document.createElement("div");
+          line.className = "in";
+          line.appendChild(document.createTextNode(stamp() + "  "));
+          var evt = document.createElement("span");
+          evt.className = "evt";
+          evt.textContent = data.eventName;
+          line.appendChild(evt);
+          line.appendChild(
+            document.createTextNode(
+              "  reqId=" +
+                (data.reqId != null ? data.reqId : "-") +
+                "  payload=" +
+                safeJson(data.payload),
+            ),
+          );
+          logEl.appendChild(line);
+          while (logEl.childElementCount > MAX_LOG_LINES) {
+            logEl.removeChild(logEl.firstChild);
+          }
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function logOutgoing(text) {
+          appendLine("out", stamp() + "  -> child  " + text);
+        }
+
+        function logSystem(text) {
+          appendLine("sys", stamp() + "  " + text);
+        }
+
+        clearButton.addEventListener("click", function () {
+          logEl.textContent = "";
+        });
+
+        // ---- parent side of the assistant protocol -----------------------
+        //
+        // child -> parent : {scope, type: AI_ASSISTANT_EVENT, eventName,
+        //                    payload, reqId?}
+        // parent -> child : {scope, type: AI_ASSISTANT_RESPONSE, eventName,
+        //                    payload}  posted to the iframe contentWindow
+
+        function respond(source, origin, eventName, payload) {
+          var targetOrigin = origin && origin !== "null" ? origin : "*";
+          source.postMessage(
+            {
+              scope: SCOPE,
+              type: TYPE_RESPONSE,
+              eventName: eventName,
+              payload: payload,
+            },
+            targetOrigin,
+          );
+        }
+
+        function mockParams() {
+          return {
+            idToken: "mock-id-token",
+            appName: "Penpot Dev",
+            agentId: "mock-agent",
+            skillName: "penpot-helper",
+            // Extra keys are passed through to X_Assistant.init in full
+            // (check window.__mockAssistantConfig after the tab loads).
+            theme: "dark",
+          };
+        }
+
+        window.addEventListener("message", function (event) {
+          var data = event.data;
+          if (!data || typeof data !== "object") {
+            return;
+          }
+          if (data.type !== TYPE_EVENT || data.scope !== SCOPE) {
+            return;
+          }
+          if (event.source !== iframe.contentWindow) {
+            logSystem(
+              "ignored AI_ASSISTANT_EVENT from a window that is not the iframe",
+            );
+            return;
+          }
+
+          logIncoming(data);
+
+          if (data.eventName === "ready") {
+            // ack every ready; the child resends every 2s until one ack
+            // arrives, so several acks are normal protocol behavior
+            respond(event.source, event.origin, "ready", {
+              ok: true,
+              timestamp: Date.now(),
+            });
+            logOutgoing("ready ack {ok:true}");
+            return;
+          }
+
+          if (data.eventName === "getInitParams") {
+            if (faultSilent.checked) {
+              logOutgoing("getInitParams dropped (fault: silent)");
+              return;
+            }
+
+            var reqId = data.reqId != null ? data.reqId : null;
+            var payload;
+            if (faultError.checked) {
+              payload = { ok: false, reqId: reqId, error: "mock failure" };
+            } else {
+              var params = mockParams();
+              if (faultPoison.checked) {
+                delete params.skillName;
+              }
+              payload = { ok: true, reqId: reqId, params: params };
+            }
+
+            respond(event.source, event.origin, "getInitParams", payload);
+            logOutgoing("getInitParams response " + safeJson(payload));
+            return;
+          }
+
+          // initialized / afterSendMessage / onMessageFinish /
+          // onSatisfactionRatingComplete: one way notifications, logged above.
+        });
+
+        logSystem("dev host ready - listening for scope " + SCOPE);
+      })();
+    </script>
+  </body>
+</html>

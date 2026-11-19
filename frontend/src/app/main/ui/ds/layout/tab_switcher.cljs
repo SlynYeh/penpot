@@ -18,7 +18,7 @@
 
 (mf/defc tab*
   {::mf/private true}
-  [{:keys [selected icon label aria-label id ref] :rest props}]
+  [{:keys [selected icon icon-url label aria-label id ref] :rest props}]
   (let [class (stl/css-case
                :tab true
                :selected selected)
@@ -40,10 +40,16 @@
          {:icon-id icon
           :aria-hidden (when label true)
           :aria-label  (when (not label) aria-label)}])
+      (when (some? icon-url)
+        [:img {:src icon-url
+               :width 16
+               :height 16
+               :alt (when (not label) aria-label)
+               :aria-hidden (when label true)}])
       (when (string? label)
         [:span {:class (stl/css-case
                         :tab-text true
-                        :tab-text-and-icon icon)}
+                        :tab-text-and-icon (or icon icon-url))}
          label])]]))
 
 (mf/defc tab-nav*
@@ -66,11 +72,13 @@
      [:> :ul props
       (for [element tabs]
         (let [icon       (get element :icon)
+              icon-url   (get element :icon-url)
               label      (get element :label)
               aria-label (get element :aria-label)
               id         (get element :id)]
 
           [:> tab* {:icon       icon
+                    :icon-url   icon-url
                     :key        id
                     :label      label
                     :aria-label aria-label
@@ -86,6 +94,7 @@
   [:map {:title "tab"}
    [:icon {:optional true}
     [:and :string [:fn #(contains? icon-list %)]]]
+   [:icon-url {:optional true} :string]
    [:label {:optional true} :string]
    [:aria-label {:optional true} :string]])
 

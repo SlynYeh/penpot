@@ -57,7 +57,7 @@
     :add #{:icons}}})
 
 (def valid-options-mode
-  #{:design :prototype :inspect})
+  #{:assistant :design :prototype :inspect})
 
 (def default-layout
   #{:sitemap

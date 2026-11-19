@@ -24,6 +24,9 @@
 (def right-sidebar-default-width 318)
 (def right-sidebar-default-max-width 768)
 
+;; Width used while the AI assistant tab is the active right-sidebar tab.
+(def assistant-sidebar-width 518)
+
 (def left-sidebar-default-width 318)
 (def left-sidebar-default-max-width 500)
 

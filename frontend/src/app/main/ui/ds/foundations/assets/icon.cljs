@@ -57,6 +57,7 @@
 (def ^:icon-id arrow-up "arrow-up")
 (def ^:icon-id arrow-up-right "arrow-up-right")
 (def ^:icon-id asc-sort "asc-sort")
+(def ^:icon-id assistant "assistant")
 (def ^:icon-id at "at")
 (def ^:icon-id board "board")
 (def ^:icon-id boards-thumbnail "boards-thumbnail")

@@ -2238,6 +2238,17 @@
        (.removeEventListener wasm/canvas "webglcontextrestored" on-webgl-context-restored))
      (stop-canvas-snapshot-listener!)
 
+     ;; Close the retained canvas snapshot. A replaced snapshot never
+     ;; becomes visible again (see capture-canvas-snapshot); only the one
+     ;; the transition overlay is currently showing must survive.
+     (when-let [^js snapshot wasm/canvas-snapshot]
+       (when-not (identical? snapshot @transition-image*)
+         (try (.close snapshot) (catch :default _))))
+
+     ;; Drop the per-shape text contents cache; the next context
+     ;; repopulates it while objects are loaded.
+     (text-editor/reset-shape-text-contents!)
+
      (when (wasm/module-ready?)
        (free-gpu-resources)
        (h/call wasm/internal-module "_clean_up"))

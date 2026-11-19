@@ -40,6 +40,37 @@
 ;; Stores the installed plugins information
 (defonce ^:private registry (atom {}))
 
+;; Maps the `add-watch` keys installed on the global store (see
+;; `app.plugins.events/add-listener`) to the plugin that registered them.
+;; Needed so unloading a plugin can remove its store watches; lives here
+;; because `app.main.data.plugins` cannot require `app.plugins.events`
+;; without a circular dependency.
+(defonce ^:private listener-keys (atom {}))
+
+(defn register-listener-key!
+  "Tracks a store watch key as belonging to `plugin-id`."
+  [plugin-id key]
+  (swap! listener-keys assoc key plugin-id))
+
+(defn unregister-listener-key!
+  "Stops tracking a store watch key (the plugin removed the listener)."
+  [key]
+  (swap! listener-keys dissoc key))
+
+(defn remove-plugin-listeners!
+  "Removes every store watch registered by `plugin-id`. Called when the
+   plugin is unloaded, otherwise the watches keep firing (and keep the
+   plugin's callbacks alive) for the lifetime of the tab."
+  [plugin-id]
+  (let [keys (into []
+                   (keep (fn [[key pid]]
+                           (when (= pid plugin-id) key)))
+                   @listener-keys)]
+    (doseq [key keys]
+      (remove-watch st/state key)
+      (swap! listener-keys dissoc key))
+    nil))
+
 (defn plugins-list
   "Retrieves the plugin data as an ordered list of plugin elements"
   []

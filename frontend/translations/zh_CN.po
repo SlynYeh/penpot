@@ -6270,6 +6270,26 @@ msgstr "细节"
 msgid "workspace.options.add-interaction"
 msgstr "单击 + 按钮以添加交互。"
 
+#: src/app/main/ui/workspace/sidebar/options.cljs
+msgid "workspace.options.assistant"
+msgstr "AI助手"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.error.handshake"
+msgstr "无法连接宿主页面。"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.error.params"
+msgstr "宿主页面未返回有效的助手初始化参数。"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.error.sdk"
+msgstr "助手 SDK 加载或初始化失败。"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.loading"
+msgstr "正在连接 AI 助手…"
+
 #: src/app/main/ui/workspace/sidebar/options/menus/blur.cljs
 #, unused
 msgid "workspace.options.blur-effects-options.title"

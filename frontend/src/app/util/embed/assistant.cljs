@@ -26,6 +26,7 @@
   connection is explicitly created and unit tests can inject fakes."
   (:require
    [app.common.logging :as log]
+   [app.common.time :as ct]
    [app.config :as cf]
    [app.util.embed :as embed]
    [app.util.globals :as ug]
@@ -100,6 +101,94 @@
                      "className" "ai-penpot-icon"
                      "hideClose" true})
       config)))
+
+;; -------------------------------------------------------------------------
+;; v2: session memory (localStorage) and history list formatting.
+;; Pure key building / parsing lives here so the exact contracts stay
+;; unit-testable; the localStorage IO is nil-safe and injectable.
+;; -------------------------------------------------------------------------
+
+(def ^:private session-storage-prefix "penpot-assistant-session")
+
+(defn session-storage-key
+  "Builds the localStorage key under which the assistant tab remembers
+  the last session of a (profile, file) pair: the file dimension keeps
+  the conversations of different designs apart, the profile dimension
+  keeps different Penpot accounts apart on a shared browser. Public so
+  the exact key format can be unit-tested."
+  [profile-id file-id]
+  (str session-storage-prefix ":" (str profile-id) ":" (str file-id)))
+
+(defn- resolve-session-storage
+  "The localStorage of the current window, or nil when unavailable
+  (node tests, privacy modes, storage that throws on access)."
+  []
+  (try (unchecked-get ug/window "localStorage")
+       (catch :default _ nil)))
+
+(defn load-saved-session-id
+  "Returns the remembered session id for the (profile, file) pair, or
+  nil when nothing (or nothing usable) is stored. `storage` is
+  injectable for tests and defaults to the window localStorage."
+  ([profile-id file-id]
+   (load-saved-session-id profile-id file-id (resolve-session-storage)))
+  ([profile-id file-id storage]
+   (when (some? storage)
+     (try (let [value (.getItem storage (session-storage-key profile-id file-id))]
+            (when (and (string? value) (pos? (count value))) value))
+          (catch :default _ nil)))))
+
+(defn save-session-id!
+  "Remembers `session-id` as the current session of the (profile, file)
+  pair. Never throws: a quota or privacy failure only loses the
+  memory, the live session is unaffected."
+  ([profile-id file-id session-id]
+   (save-session-id! profile-id file-id session-id (resolve-session-storage)))
+  ([profile-id file-id session-id storage]
+   (when (some? storage)
+     (try (.setItem storage (session-storage-key profile-id file-id) (str session-id))
+          (catch :default _ nil)))))
+
+(defn clear-saved-session-id!
+  "Forgets the remembered session of the (profile, file) pair."
+  ([profile-id file-id]
+   (clear-saved-session-id! profile-id file-id (resolve-session-storage)))
+  ([profile-id file-id storage]
+   (when (some? storage)
+     (try (.removeItem storage (session-storage-key profile-id file-id))
+          (catch :default _ nil)))))
+
+(defn- valid-date?
+  [date]
+  (and (some? date) (not (js/isNaN (.getTime ^js date)))))
+
+(defn parse-sdk-timestamp
+  "Parses an SDK `updatedAt`/`createdAt` string into a js/Date, or nil.
+  The host docs call the field a timestamp without naming the unit, so
+  numeric strings are read as epoch seconds when their magnitude fits
+  the 10 digit era and as epoch millis otherwise; non numeric strings
+  go through the Date constructor. Public so the heuristic can be
+  unit-tested."
+  [value]
+  (when (and (string? value) (pos? (count value)))
+    (let [number (js/Number value)]
+      (if (js/isFinite number)
+        (let [millis (if (and (pos? number) (< number 100000000000))
+                       (* number 1000)
+                       number)
+              date  (js/Date. millis)]
+          (when (valid-date? date) date))
+        (let [date (try (js/Date. value) (catch :default _ nil))]
+          (when (valid-date? date) date))))))
+
+(defn format-session-time
+  "Formats an SDK timestamp string for the history list with the fixed,
+  never localized `yyyy-MM-dd HH:mm` shape agreed in the v2
+  requirements. Public so the shape can be unit-tested."
+  [value]
+  (when-let [date (parse-sdk-timestamp value)]
+    (try (ct/format-inst date "yyyy-MM-dd HH:mm")
+         (catch :default _ nil))))
 
 (defn parse-incoming
   "Parses the `data` of a message event into

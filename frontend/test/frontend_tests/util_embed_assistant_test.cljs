@@ -496,3 +496,75 @@
          (t/is (= {:ok false :error :closed} result))
          (done)))
       ((:close! conn)))))
+
+;; ---------------------------------------------------------------------------
+;; v2: session memory (localStorage) and history list formatting
+;; ---------------------------------------------------------------------------
+
+(defn- fake-storage
+  "The localStorage surface the session memory needs, backed by an atom;
+  also able to throw on every method for the containment tests."
+  [& {:keys [throwing]}]
+  (let [items (atom {})]
+    #js {:setItem    (fn [k v]
+                       (when throwing (throw (js/Error. "boom")))
+                       (swap! items assoc k v))
+         :getItem    (fn [k]
+                       (when throwing (throw (js/Error. "boom")))
+                       (get @items k))
+         :removeItem (fn [k]
+                       (when throwing (throw (js/Error. "boom")))
+                       (swap! items dissoc k))}))
+
+(t/deftest session-storage-key-format
+  (t/is (= "penpot-assistant-session:p1:f1"
+           (assistant/session-storage-key "p1" "f1"))))
+
+(t/deftest saved-session-id-roundtrip
+  (let [storage (fake-storage)]
+    (t/is (nil? (assistant/load-saved-session-id "p1" "f1" storage)))
+    (assistant/save-session-id! "p1" "f1" "s1" storage)
+    (t/is (= "s1" (assistant/load-saved-session-id "p1" "f1" storage)))
+    ;; a different (profile, file) pair never sees the same slot
+    (t/is (nil? (assistant/load-saved-session-id "p2" "f1" storage)))
+    (assistant/clear-saved-session-id! "p1" "f1" storage)
+    (t/is (nil? (assistant/load-saved-session-id "p1" "f1" storage)))))
+
+(t/deftest saved-session-id-nil-storage-is-a-no-op
+  (t/is (nil? (assistant/load-saved-session-id "p" "f" nil)))
+  (t/is (nil? (assistant/save-session-id! "p" "f" "s" nil)))
+  (t/is (nil? (assistant/clear-saved-session-id! "p" "f" nil))))
+
+(t/deftest saved-session-id-throwing-storage-is-contained
+  (let [storage (fake-storage :throwing true)]
+    (t/is (nil? (assistant/load-saved-session-id "p" "f" storage)))
+    (t/is (nil? (assistant/save-session-id! "p" "f" "s" storage)))
+    (t/is (nil? (assistant/clear-saved-session-id! "p" "f" storage)))))
+
+(t/deftest parse-sdk-timestamp-units
+  ;; 13 digit numeric string -> epoch millis
+  (let [date (assistant/parse-sdk-timestamp "1732012800000")]
+    (t/is (some? date))
+    (t/is (= 1732012800000 (.getTime date))))
+  ;; 10 digit numeric string -> epoch seconds (same instant)
+  (let [date (assistant/parse-sdk-timestamp "1732012800")]
+    (t/is (some? date))
+    (t/is (= 1732012800000 (.getTime date)))))
+
+(t/deftest parse-sdk-timestamp-garbage
+  (t/is (nil? (assistant/parse-sdk-timestamp nil)))
+  (t/is (nil? (assistant/parse-sdk-timestamp "")))
+  (t/is (nil? (assistant/parse-sdk-timestamp "not-a-date"))))
+
+(t/deftest format-session-time-fixed-shape
+  ;; timezone independent assertions: the two unit spellings of the same
+  ;; instant format identically, and the shape is always yyyy-MM-dd HH:mm
+  (let [via-ms (assistant/format-session-time "1732012800000")
+        via-s  (assistant/format-session-time "1732012800")]
+    (t/is (some? via-ms))
+    (t/is (= via-ms via-s))
+    (t/is (re-find #"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$" via-ms))))
+
+(t/deftest format-session-time-invalid
+  (t/is (nil? (assistant/format-session-time "garbage")))
+  (t/is (nil? (assistant/format-session-time nil))))

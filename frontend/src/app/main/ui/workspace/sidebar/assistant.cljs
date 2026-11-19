@@ -177,41 +177,50 @@
                      (reset! session-id* session-id)))))
 
              ready!
-             (fn [^js sdk]
-               (reset! sdk-tools* (extract-sdk-tools sdk))
-               (when-let [on (when (object? sdk) (obj/get sdk "on"))]
-                 (when (fn? on)
-                   (try
-                     (on "ai:createNewSession" create-session-handler)
-                     (catch :default cause
-                       (log/wrn :hint "assistant: could not subscribe to the SDK session events"
-                                :cause cause)))))
-               ;; Only now, with init, render and (when applicable) the
-               ;; session restore settled, is the assistant really up.
-               (post-event! "initialized" #js {"timestamp" (now-ts)})
-               (advance! :ready))
+             (fn [^js sdk tools]
+               (when-not @cancelled?
+                 (reset! sdk-tools* tools)
+                 (when-let [on (when (object? sdk) (obj/get sdk "on"))]
+                   (when (fn? on)
+                     (try
+                       (on "ai:createNewSession" create-session-handler)
+                       (catch :default cause
+                         (log/wrn :hint "assistant: could not subscribe to the SDK session events"
+                                  :cause cause)))))
+                 ;; Only now, with init, render and (when applicable) the
+                 ;; session restore settled, is the assistant really up.
+                 (post-event! "initialized" #js {"timestamp" (now-ts)})
+                 (advance! :ready)))
 
              restore-and-ready!
              (fn [^js sdk]
                (let [saved-id (assistant/load-saved-session-id
                                (mf/ref-val profile-id-ref)
                                (mf/ref-val file-id-ref))
-                     change! (:change-session-id! (extract-sdk-tools sdk))]
-                 (reset! session-id* saved-id)
+                     tools   (extract-sdk-tools sdk)
+                     change! (:change-session-id! tools)]
+                 (when-not @cancelled?
+                   (reset! session-id* saved-id))
                  (if (or (nil? saved-id) (nil? change!))
-                   (ready! sdk)
+                   (ready! sdk tools)
                    (-> (try (adopt-sdk-result (change! saved-id))
                             (catch :default cause (p/rejected cause)))
-                       (p/then (fn [_] (ready! sdk)))
                        (p/catch
                         (fn [cause]
                           (log/wrn :hint "assistant: could not restore the last session, starting a new one"
                                    :cause cause)
                           (assistant/clear-saved-session-id!
                            (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
-                          (reset! session-id* nil)
-                          (try (change! "") (catch :default _ nil))
-                          (ready! sdk)))))))
+                          (when-not @cancelled?
+                            (reset! session-id* nil))
+                          (try (change! "")
+                               (catch :default cause
+                                 (log/wrn :hint "assistant: could not arm a new session after a failed restore"
+                                          :cause cause)))
+                          ;; fall through: ready! arms the UI on both the
+                          ;; restored and the fallback path, exactly once
+                          nil))
+                       (p/then (fn [_] (ready! sdk tools)))))))
 
              init-and-render!
              (fn [^js sdk params]

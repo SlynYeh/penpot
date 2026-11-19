@@ -64,6 +64,12 @@
       var parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed) ? parsed : [];
     } catch (cause) {
+      if (typeof console !== "undefined" && console.warn) {
+        console.warn(
+          "mock-assistant-sdk: sessionStorage unavailable (load)",
+          cause,
+        );
+      }
       return [];
     }
   }
@@ -72,6 +78,12 @@
     try {
       sessionStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
     } catch (cause) {
+      if (typeof console !== "undefined" && console.warn) {
+        console.warn(
+          "mock-assistant-sdk: sessionStorage unavailable (store)",
+          cause,
+        );
+      }
       // quota or privacy mode: keep working with the in-memory copy
     }
   }
@@ -105,7 +117,7 @@
 
   function sortSessions(sessions) {
     return sessions.slice().sort(function (a, b) {
-      return String(b.updatedAt).localeCompare(String(a.updatedAt));
+      return (Number(b.updatedAt) || 0) - (Number(a.updatedAt) || 0);
     });
   }
 
@@ -283,7 +295,7 @@
             ? rating.onComplete
             : null;
         runTrigger(onComplete, "satisfactionRating.onComplete", {
-          sessionId: "mock-session-1",
+          sessionId: (currentSession && currentSession.uid) || "mock-session-1",
           score: 5,
           comment: "Helpful (mock)",
           ratedAt: nowTs(),
@@ -559,11 +571,15 @@
             });
           },
           deleteSession: function (sessionId) {
-            storeSessions(
-              loadSessions().filter(function (session) {
-                return session.uid !== sessionId;
-              }),
-            );
+            var sessions = loadSessions();
+            var before = sessions.length;
+            var remaining = sessions.filter(function (session) {
+              return session.uid !== sessionId;
+            });
+            if (remaining.length === before) {
+              logLine("deleteSession: unknown id " + sessionId);
+            }
+            storeSessions(remaining);
             if (currentSession && currentSession.uid === sessionId) {
               currentSession = null;
             }

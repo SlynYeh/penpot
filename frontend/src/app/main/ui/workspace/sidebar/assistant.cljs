@@ -11,14 +11,17 @@
   fresh postMessage connection (`app.util.embed.assistant`) runs the
   handshake and the `getInitParams` request against the embedding host
   page, then the host provided SDK script is injected and initialized
-  against the `penpot-assistant-mount` div. Leaving the tab (or hitting
-  retry) destroys the SDK, removes the script node, clears
-  `window.X_Assistant` and closes the connection, so every entry into
-  the tab starts a brand new assistant session."
+  against the `penpot-assistant-mount` div.
+  Leaving the tab (or hitting retry) destroys the SDK, removes the
+  script node, clears `window.X_Assistant` and closes the connection.
+  Since v2 the last session of the (profile, file) pair is remembered
+  in localStorage: re-entering the tab restores it through
+  changeSessionId instead of always starting a new one."
   (:require-macros [app.main.style :as stl])
   (:require
    [app.common.logging :as log]
    [app.config :as cf]
+   [app.main.refs :as refs]
    [app.main.ui.ds.buttons.button :refer [button*]]
    [app.main.ui.hooks :as hooks]
    [app.util.dom :as dom]
@@ -72,12 +75,48 @@
            (reject cause)))))
     (p/resolved nil)))
 
+(defn- extract-sdk-tools
+  "Extracts the v2 session management surface from the host SDK global
+  (`getTools() -> {:jsSdk {:getSessionList :deleteSession}
+  :changeSessionId}`), every member nil checked and bound to its owner
+  object so `this` survives the extraction. An SDK without the v2
+  surface yields a map of nils — the v2 UI degrades to hidden instead
+  of throwing."
+  [^js sdk]
+  (when (object? sdk)
+    (let [tools (when (fn? (obj/get sdk "getTools"))
+                  (try (.getTools sdk) (catch :default _ nil)))
+          bind  (fn [owner name]
+                  (let [method (when (object? owner) (obj/get owner name))]
+                    (when (fn? method) (.bind method owner))))]
+      (when (object? tools)
+        (let [js-sdk (obj/get tools "jsSdk")]
+          {:change-session-id! (bind tools "changeSessionId")
+           :get-session-list!  (bind js-sdk "getSessionList")
+           :delete-session!    (bind js-sdk "deleteSession")})))))
+
 (mf/defc assistant-tab*
   [{:keys [file-id page-id]}]
   (let [state*   (mf/use-state :handshaking)
         state    (deref state*)
         attempt* (mf/use-state 0)
         attempt  (deref attempt*)
+
+        ;; v2: id of the session currently shown in the chat area (nil =
+        ;; a fresh session whose first message has not produced an id
+        ;; yet). Mirrors the localStorage memory of this (profile,
+        ;; file) pair.
+        session-id* (mf/use-state nil)
+
+        ;; v2: the {:change-session-id! :get-session-list!
+        ;; :delete-session!} bridge while the session is alive; nil
+        ;; outside the ready state.
+        sdk-tools* (mf/use-state nil)
+
+        profile    (mf/deref refs/profile)
+        profile-id (some-> profile :id str)
+
+        profile-id-ref (hooks/use-update-ref profile-id)
 
         ;; The SDK callbacks are created once per session; they read the
         ;; ids through these refs so every message carries the page and
@@ -128,6 +167,52 @@
                (fn [data]
                  (post-event! event-name (event-payload data))))
 
+             create-session-handler
+             (fn [data]
+               (when-not @cancelled?
+                 (let [session-id (when (object? data) (obj/get data "sessionId"))]
+                   (when (and (string? session-id) (pos? (count session-id)))
+                     (assistant/save-session-id!
+                      (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
+                     (reset! session-id* session-id)))))
+
+             ready!
+             (fn [^js sdk]
+               (reset! sdk-tools* (extract-sdk-tools sdk))
+               (when-let [on (when (object? sdk) (obj/get sdk "on"))]
+                 (when (fn? on)
+                   (try
+                     (on "ai:createNewSession" create-session-handler)
+                     (catch :default cause
+                       (log/wrn :hint "assistant: could not subscribe to the SDK session events"
+                                :cause cause)))))
+               ;; Only now, with init, render and (when applicable) the
+               ;; session restore settled, is the assistant really up.
+               (post-event! "initialized" #js {"timestamp" (now-ts)})
+               (advance! :ready))
+
+             restore-and-ready!
+             (fn [^js sdk]
+               (let [saved-id (assistant/load-saved-session-id
+                               (mf/ref-val profile-id-ref)
+                               (mf/ref-val file-id-ref))
+                     change! (:change-session-id! (extract-sdk-tools sdk))]
+                 (reset! session-id* saved-id)
+                 (if (or (nil? saved-id) (nil? change!))
+                   (ready! sdk)
+                   (-> (try (adopt-sdk-result (change! saved-id))
+                            (catch :default cause (p/rejected cause)))
+                       (p/then (fn [_] (ready! sdk)))
+                       (p/catch
+                        (fn [cause]
+                          (log/wrn :hint "assistant: could not restore the last session, starting a new one"
+                                   :cause cause)
+                          (assistant/clear-saved-session-id!
+                           (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
+                          (reset! session-id* nil)
+                          (try (change! "") (catch :default _ nil))
+                          (ready! sdk)))))))
+
              init-and-render!
              (fn [^js sdk params]
                (try
@@ -139,10 +224,7 @@
                        (p/then (fn [_]
                                  (adopt-sdk-result (.render sdk mount-dom-id))))
                        (p/then (fn [_]
-                                 ;; Only now, with both init and render
-                                 ;; settled, is the assistant really up.
-                                 (post-event! "initialized" #js {"timestamp" (now-ts)})
-                                 (advance! :ready)))
+                                 (restore-and-ready! sdk)))
                        (p/catch
                         (fn [cause]
                           (log/err :hint "assistant: SDK initialization failed" :cause cause)
@@ -208,6 +290,8 @@
                              on-params!))
                    (fail! :handshake-timeout))))]
 
+         (reset! sdk-tools* nil)
+         (reset! session-id* nil)
          (advance! :handshaking)
          (-> (handshake!)
              (p/then on-handshake!)
@@ -224,6 +308,11 @@
            ;; nil guarded and the whole cleanup is idempotent.
            (let [sdk (unchecked-get ug/global sdk-global-name)]
              (when (object? sdk)
+               (let [off (obj/get sdk "off")]
+                 (when (fn? off)
+                   (try
+                     (off "ai:createNewSession" create-session-handler)
+                     (catch :default _ nil))))
                (try
                  (let [destroy (obj/get sdk "destroy")]
                    (when (fn? destroy)

@@ -23,6 +23,27 @@
   min-height: 0;
   overflow: hidden;
   padding: 10px;
+
+  // The assistant SDK renders its UI (Semi Design + Ant Design + lucide
+  // internals) directly into this div — no iframe — so this module's css
+  // reaches it. These overrides hide footer chrome the embedded tab does
+  // not want: the knowledge-base entry, the model tag and the usage tips.
+  // All names are SDK-internal (including the emotion hash `.css-am3cdm`)
+  // and may drift on SDK updates.
+  :global(.semi-aiChatInput-footer-action) {
+    :global(.lucide-book-open),
+    :global(.css-am3cdm) {
+      display: none;
+    }
+  }
+
+  :global(.semi-aiChatInput-footer-configure) :global(.ant-tag.css-am3cdm) {
+    display: none;
+  }
+
+  :global([class^="minTips"]) {
+    display: none;
+  }
 }
 
 .status {

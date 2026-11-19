@@ -88,6 +88,18 @@
   (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" "  "))))
   (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" 42)))))
 
+(t/deftest build-message-envs-includes-page-and-file
+  (let [envs (assistant/build-message-envs "page-1" "file-1" nil)]
+    (t/is (= "page-1" (obj/get envs "PAGE_ID")))
+    (t/is (= "file-1" (obj/get envs "FILE_ID")))
+    (t/is (undefined? (obj/get envs "DOC_CONTENT")))))
+
+(t/deftest build-message-envs-includes-doc-content-when-string
+  (let [envs (assistant/build-message-envs "page-1" "file-1" "the-doc")]
+    (t/is (= "the-doc" (obj/get envs "DOC_CONTENT"))))
+  (let [envs (assistant/build-message-envs "page-1" "file-1" "")]
+    (t/is (= "" (obj/get envs "DOC_CONTENT")))))
+
 (defn- recording-hooks
   "Wiring closures for build-init-config that record what the built
   config actually invokes: forward! produces the per-event callbacks,

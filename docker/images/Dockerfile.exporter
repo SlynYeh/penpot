@@ -110,12 +110,18 @@ RUN set -eux; \
     chown -R penpot:penpot /opt/penpot;
 
 ARG BUNDLE_PATH="./bundle-exporter/"
-COPY --chown=penpot:penpot $BUNDLE_PATH /opt/penpot/exporter/
 COPY --from=penpotapp/imagemagick:7.1.2-24 /opt/imagick /opt/imagick
+
+# Layer 1: dependencies; cached unless package.json / pnpm-lock / setup change
+COPY --chown=penpot:penpot $BUNDLE_PATH/package.json $BUNDLE_PATH/pnpm-lock.yaml $BUNDLE_PATH/pnpm-workspace.yaml $BUNDLE_PATH/setup /opt/penpot/exporter/
+RUN chown -R penpot:penpot /opt/penpot/exporter
 
 WORKDIR /opt/penpot/exporter
 USER penpot:penpot
 
 RUN ./setup
+
+# Layer 2: compiled app; changes on every build but cheap to copy
+COPY --chown=penpot:penpot $BUNDLE_PATH/app.js $BUNDLE_PATH/app.js.map /opt/penpot/exporter/
 
 CMD ["node", "app.js"]

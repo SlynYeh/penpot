@@ -17,12 +17,12 @@
   the tab starts a brand new assistant session."
   (:require-macros [app.main.style :as stl])
   (:require
-   [app.common.data.macros :as dm]
    [app.common.logging :as log]
    [app.config :as cf]
    [app.main.ui.ds.buttons.button :refer [button*]]
    [app.main.ui.hooks :as hooks]
    [app.util.dom :as dom]
+   [app.util.embed :as embed]
    [app.util.embed.assistant :as assistant]
    [app.util.globals :as ug]
    [app.util.i18n :as i18n :refer [tr]]
@@ -112,8 +112,10 @@
                (try
                  (when (object? message)
                    (obj/set! message "envs"
-                             #js {"PAGE_ID"  (dm/str (mf/ref-val page-id-ref))
-                                  "FILE_ID" (dm/str (mf/ref-val file-id-ref))}))
+                             (assistant/build-message-envs
+                              (mf/ref-val page-id-ref)
+                              (mf/ref-val file-id-ref)
+                              (embed/doc-content))))
                  (catch :default cause
                    ;; A frozen/sealed SDK message object cannot be
                    ;; enriched; hand it back untouched instead of

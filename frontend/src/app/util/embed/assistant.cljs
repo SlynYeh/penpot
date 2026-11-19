@@ -58,6 +58,19 @@
              (and (string? logo-url)
                   (pos? (count (str/trim logo-url))))))))
 
+(defn build-message-envs
+  "Builds the `envs` object injected into each assistant SDK message:
+  current page/file ids plus the optional `docContent` received on the
+  embed credentials handshake. `doc-content` is omitted when it is not
+  a string so a host that never sends the field does not get an empty
+  env key. Public so the shape can be unit-tested."
+  [page-id file-id doc-content]
+  (let [envs #js {"PAGE_ID" (str page-id)
+                  "FILE_ID" (str file-id)}]
+    (when (string? doc-content)
+      (obj/set! envs "DOC_CONTENT" doc-content))
+    envs))
+
 (defn build-init-config
   "Builds the config object handed to the host SDK `init` method: the
   init params returned by getInitParams are passed through in full —

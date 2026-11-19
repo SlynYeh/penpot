@@ -61,7 +61,12 @@
                                           "X-ClientId" "xyz"})))
   ;; Whitespace around a value is trimmed, not rejected.
   (t/is (true? (embed/valid-payload? #js {"X-token" " abc "
-                                          "X-ClientId" "xyz"}))))
+                                          "X-ClientId" "xyz"})))
+  ;; Optional docContent is extra data, not a credential; its presence
+  ;; must not change whether the handshake payload is accepted.
+  (t/is (true? (embed/valid-payload? #js {"X-token" "abc"
+                                          "X-ClientId" "xyz"
+                                          "docContent" "hello"}))))
 
 (t/deftest valid-payload-rejects-malformed
   (t/is (false? (embed/valid-payload? nil)))
@@ -82,7 +87,49 @@
   (t/is (false? (embed/valid-payload? #js {"X-token" 1
                                            "X-ClientId" "xyz"})))
   (t/is (false? (embed/valid-payload? #js {"X-token" nil
-                                           "X-ClientId" "xyz"}))))
+                                           "X-ClientId" "xyz"})))
+  ;; docContent alone is not a credentials payload.
+  (t/is (false? (embed/valid-payload? #js {"docContent" "hello"}))))
+
+(t/deftest parse-payload-extracts-credentials
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"})))
+  ;; Token and client-id are trimmed; the rest of the handshake still
+  ;; requires both to be present.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil}
+           (embed/parse-payload #js {"X-token" " abc "
+                                     "X-ClientId" " xyz "}))))
+
+(t/deftest parse-payload-extracts-optional-doc-content
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content "hello"}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docContent" "hello"})))
+  ;; Empty string is a real value, not "missing".
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content ""}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docContent" ""})))
+  ;; Leading/trailing whitespace in document text is preserved.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content "  keep  "}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docContent" "  keep  "})))
+  ;; Wrong type is ignored rather than rejecting the credentials.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docContent" 1})))
+  ;; Wrong key casing is not the agreed shape for this field.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "DocContent" "hello"}))))
+
+(t/deftest parse-payload-rejects-malformed
+  (t/is (nil? (embed/parse-payload nil)))
+  (t/is (nil? (embed/parse-payload #js {"X-token" "abc"}))))
 
 (t/deftest wait-boot-opens-on-credentials
   (t/async done

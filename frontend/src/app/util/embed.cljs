@@ -12,7 +12,10 @@
   credentials arrive over postMessage: we post a `ready` message to the
   parent and it replies with a flat object holding the `X-token` and
   `X-ClientId` strings, which are then sent as request headers on every
-  backend call (see `app.util.http/default-headers`).
+  backend call (see `app.util.http/default-headers`). The same payload
+  may also carry an optional `docContent` string; it is stored for the
+  embedded workspace (assistant message envs) and is never sent as an
+  HTTP header.
 
   IMPORTANT: this namespace must not have any top level side effect. It
   is reachable from `app.util.http`, which lands on the `:shared` chunk
@@ -31,9 +34,10 @@
 
 (def token-key "X-token")
 (def client-id-key "X-ClientId")
+(def doc-content-key "docContent")
 
 (defonce ^:private credentials
-  ;; nil | {:token "..." :client-id "..."}
+  ;; nil | {:token "..." :client-id "..." :doc-content nil|"..."}
   (atom nil))
 
 (defonce ^:private handshake
@@ -52,11 +56,18 @@
 
 (defn headers
   "Request headers to add to every backend call. Empty until valid
-  credentials have been received."
+  credentials have been received. `docContent` is not a header."
   []
   (if-let [{:keys [token client-id]} @credentials]
     {token-key token client-id-key client-id}
     {}))
+
+(defn doc-content
+  "The optional `docContent` string from the last accepted parent
+  payload, or nil when it was absent, not a string, or no credentials
+  have been received yet."
+  []
+  (get @credentials :doc-content))
 
 (defn normalize-origin
   "Reduces a configured origin, or the `event.origin` of a received
@@ -84,13 +95,29 @@
 
 (defn valid-payload?
   "Whether a received message carries usable `X-token` / `X-ClientId`
-  values. Public so the parsing rule can be unit-tested."
+  values. Optional `docContent` is ignored here: credentials remain
+  valid with or without it. Public so the parsing rule can be unit-tested."
   [data]
   (and (object? data)
        (let [token     (obj/get data token-key)
              client-id (obj/get data client-id-key)]
          (and (string? token) (pos? (count (str/trim token)))
               (string? client-id) (pos? (count (str/trim client-id)))))))
+
+(defn parse-payload
+  "Extracts the handshake fields from a received message. Returns
+  `{:token :client-id :doc-content}` when `valid-payload?` holds, else
+  nil. Token and client-id are trimmed; `docContent` is kept as-is when
+  it is a string (including empty) and nil otherwise. Public so the
+  parsing rule can be unit-tested."
+  [data]
+  (when (valid-payload? data)
+    (let [token           (str/trim (obj/get data token-key))
+          client-id       (str/trim (obj/get data client-id-key))
+          raw-doc-content (obj/get data doc-content-key)]
+      {:token token
+       :client-id client-id
+       :doc-content (when (string? raw-doc-content) raw-doc-content)})))
 
 (defn- configured-origin
   []
@@ -111,20 +138,22 @@
       true)))
 
 (defn- receive!
-  [token client-id]
+  [{:keys [token client-id doc-content] :as payload}]
   (let [updated? (some? @credentials)]
-    (reset! credentials {:token token :client-id client-id})
+    (reset! credentials payload)
     ;; Never log the values themselves.
     (log/inf :hint "embed: credentials received"
              :token-length (count token)
              :client-id-length (count client-id)
+             :doc-content-length (when (string? doc-content) (count doc-content))
              :updated updated?)
     (when (p/pending? @handshake)
-      (p/resolve! @handshake {:token token :client-id client-id}))))
+      (p/resolve! @handshake payload))))
 
 (defn- on-message
   [^js event]
-  (let [data (unchecked-get event "data")]
+  (let [data    (unchecked-get event "data")
+        payload (parse-payload data)]
     (cond
       (not (identical? (unchecked-get event "source") js/parent))
       (log/dbg :hint "embed: ignoring message from a non-parent window")
@@ -133,12 +162,11 @@
       (log/dbg :hint "embed: ignoring message from a disallowed origin"
                :origin (unchecked-get event "origin"))
 
-      (not (valid-payload? data))
+      (nil? payload)
       (log/dbg :hint "embed: ignoring malformed credentials payload")
 
       :else
-      (receive! (obj/get data token-key)
-                (obj/get data client-id-key)))))
+      (receive! payload))))
 
 (defn- post-ready!
   []

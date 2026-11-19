@@ -2,6 +2,11 @@
 
 Compose-based dev environment under `docker/devenv/`, driven by `manage.sh`. Parallel instances share infra + Postgres + MinIO; each instance has its own `main` container, Valkey, source checkout, tmux session.
 
+## Build/install execution environment (hard rule)
+
+- `build`/`install` commands (pnpm install, package builds, etc.) MUST run inside the dev container's tmux session, never on the macOS host. Enter via `run-devenv-shell` / attach to the instance tmux.
+- Reason: the container is linux/arm64 while the host is macOS. Native bindings are platform-specific — e.g. `@rolldown/binding-linux-arm64-gnu` (in-container) vs the macOS binding (on host). Running install/build on the host (or vice versa) writes platform-mismatched binaries into the same `node_modules`, which cross-contaminate and overwrite each other, breaking processes inside the docker container.
+
 ## Compose project layout
 
 - `penpotdev-infra`: shared `postgres`, `minio`, `minio-setup`, `mailer`, `ldap`. File: `docker-compose.infra.yml`.

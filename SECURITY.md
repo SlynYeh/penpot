@@ -29,3 +29,4 @@ organizations for their help in keeping this project safe.
 > **Note:** This list is a work in progress. If you have contributed
 > to the security of this project and would like to be recognized (or
 > prefer to remain anonymous), please let us know.
+

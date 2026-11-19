@@ -2,10 +2,10 @@
 
 ## Hard rules (always apply — no exceptions)
 
-- **Never `git push`, force-push, or modify `git origin`** (or any other remote).
-  The user pushes from their own shell. If a push is required to surface the
-  agent's work (e.g. force-push after an amend), state this in the response and
-  wait for the user to push. Do not change the remote URL, do not switch SSH↔HTTPS.
+- **Never force-push or modify `git origin`** (or any other remote), and never
+  `git push` without an explicit user request. When the user explicitly asks to
+  push/推送 (e.g. "commit & push"), a plain `git push` to the current branch's
+  upstream is allowed. Do not change the remote URL, do not switch SSH↔HTTPS.
 - **Never amend a commit that has been pushed** unless the user explicitly asks.
   If the user pushes, treat that commit as final from the agent's side.
 - **Read the workflow memory BEFORE the corresponding action**:

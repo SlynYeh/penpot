@@ -9,8 +9,17 @@
  *   X_Assistant.render(id)     paints a placeholder UI in the mount div
  *   X_Assistant.destroy()      clears the mount div, sets
  *                              window.__mockAssistantDestroyed = true
- *   X_Assistant.on/off         minimal event registry for future use
- *   X_Assistant.getTools()     one or two mock tool descriptors
+ *   X_Assistant.on/off         minimal event registry; the SDK emits
+ *                              "ai:createNewSession" when a new chat
+ *                              gets its first user message
+ *   X_Assistant.getTools()     v2 session contract:
+ *                              {jsSdk: {getSessionList, deleteSession},
+ *                               changeSessionId(id)} — sessions are
+ *                              persisted in sessionStorage so they
+ *                              survive the tab switch destroy/re-init
+ *                              cycle; changeSessionId("") starts a new
+ *                              chat, an unknown id throws so Penpot's
+ *                              restore-failure fallback is exercisable
  *
  * The config Penpot passes to init carries (among others) the hooks
  * `beforeSendMesssage` (the host docs' spelling, preferred) and
@@ -37,6 +46,68 @@
   var config = null;
   var messageCounter = 0;
   var listeners = {};
+
+  // ---- v2 session store ------------------------------------------------
+  //
+  // Sessions live in sessionStorage so they survive the tab switch /
+  // SDK destroy / re-init cycle (Penpot destroys window.X_Assistant
+  // when the tab is left) — exactly what the restore flow needs to be
+  // developable against the mock. The *current* session is runtime
+  // state only: the SDK starts without one and Penpot drives it
+  // through changeSessionId.
+  var SESSIONS_KEY = "mockAssistantSessions";
+  var currentSession = null;
+
+  function loadSessions() {
+    try {
+      var raw = sessionStorage.getItem(SESSIONS_KEY);
+      var parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (cause) {
+      return [];
+    }
+  }
+
+  function storeSessions(sessions) {
+    try {
+      sessionStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    } catch (cause) {
+      // quota or privacy mode: keep working with the in-memory copy
+    }
+  }
+
+  function replaceSession(session) {
+    storeSessions(
+      loadSessions().map(function (candidate) {
+        return candidate.uid === session.uid ? session : candidate;
+      }),
+    );
+  }
+
+  function newSessionId() {
+    return (
+      "mock-session-" +
+      Date.now().toString(36) +
+      "-" +
+      Math.random().toString(36).slice(2, 6)
+    );
+  }
+
+  function emit(name, data) {
+    (listeners[name] || []).forEach(function (fn) {
+      try {
+        fn(data);
+      } catch (cause) {
+        // one broken consumer must not break the others
+      }
+    });
+  }
+
+  function sortSessions(sessions) {
+    return sessions.slice().sort(function (a, b) {
+      return String(b.updatedAt).localeCompare(String(a.updatedAt));
+    });
+  }
 
   function nowTs() {
     return Date.now();
@@ -299,6 +370,80 @@
     return section;
   }
 
+  function renderCurrentSession() {
+    if (!mountElement) {
+      return;
+    }
+    var box = mountElement.querySelector(".xmock-current");
+    if (!box) {
+      return;
+    }
+    box.textContent = currentSession
+      ? "current session\n  uid   : " +
+        currentSession.uid +
+        "\n  title : " +
+        currentSession.title
+      : "current session\n  (none — a new chat waits for its first message)";
+  }
+
+  function makeSessionSection() {
+    var section = makeSection("Session lifecycle (v2)");
+
+    var row = el("div", "xmock-row");
+    var input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("placeholder", "first message / session title…");
+
+    var sendUserMessage = makeTriggerButton("user message", function () {
+      var content = input.value.trim() || "Mock first message";
+      if (!currentSession) {
+        currentSession = {
+          uid: newSessionId(),
+          title: content.slice(0, 40),
+          createdAt: String(nowTs()),
+          updatedAt: String(nowTs()),
+          domain: "design",
+          pinned: false,
+          projectName: "Penpot mock",
+          projectUid: "mock-project",
+          sapUserId: "mock-user",
+          status: "SESSION_STATUS_STOPPED",
+          userId: "mock-user",
+        };
+        var sessions = loadSessions();
+        sessions.push(currentSession);
+        storeSessions(sessions);
+        emit("ai:createNewSession", { sessionId: currentSession.uid });
+        logLine("ai:createNewSession <- " + currentSession.uid);
+      } else {
+        currentSession.updatedAt = String(nowTs());
+        replaceSession(currentSession);
+      }
+      runTrigger(hook("afterSendMessage"), "afterSendMessage", {
+        messageId: "mock-msg-" + ++messageCounter,
+        role: "user",
+        content: content,
+        sentAt: nowTs(),
+      });
+      renderCurrentSession();
+    });
+
+    var startNewChat = makeTriggerButton("changeSessionId('')", function () {
+      // exactly what the Penpot "new chat" button does
+      window.X_Assistant.getTools().changeSessionId("");
+      logLine("changeSessionId('') — new chat armed");
+    });
+
+    row.appendChild(input);
+    row.appendChild(sendUserMessage);
+    row.appendChild(startNewChat);
+    section.appendChild(row);
+
+    var current = el("pre", "xmock-summary xmock-current");
+    section.appendChild(current);
+    return section;
+  }
+
   function makeLogSection() {
     var section = makeSection("SDK log");
     section.appendChild(el("pre", "xmock-log"));
@@ -359,11 +504,14 @@
       root.appendChild(head);
 
       root.appendChild(makeSummary());
+      root.appendChild(makeSessionSection());
       root.appendChild(makeTriggerSection());
       root.appendChild(makeBeforeSendSection());
       root.appendChild(makeLogSection());
 
       mountElement.appendChild(root);
+
+      renderCurrentSession();
 
       logLine("mock SDK rendered (mount: " + mountId + ")");
     },
@@ -400,27 +548,51 @@
     },
 
     getTools: function () {
-      return [
-        {
-          name: "mock_get_current_page",
-          description: "Returns the id of the Penpot page being edited (mock).",
-          parameters: {
-            type: "object",
-            properties: {},
+      // v2 host SDK contract: {jsSdk, changeSessionId}
+      return {
+        jsSdk: {
+          getSessionList: function () {
+            var sessions = sortSessions(loadSessions());
+            return Promise.resolve({
+              total: String(sessions.length),
+              sessions: sessions,
+            });
+          },
+          deleteSession: function (sessionId) {
+            storeSessions(
+              loadSessions().filter(function (session) {
+                return session.uid !== sessionId;
+              }),
+            );
+            if (currentSession && currentSession.uid === sessionId) {
+              currentSession = null;
+            }
+            renderCurrentSession();
+            return Promise.resolve(true);
           },
         },
-        {
-          name: "mock_echo",
-          description: "Echoes the given text back (mock).",
-          parameters: {
-            type: "object",
-            properties: {
-              text: { type: "string" },
-            },
-            required: ["text"],
-          },
+        changeSessionId: function (sessionId) {
+          if (sessionId === "" || sessionId == null) {
+            // brand new session: it only gets an identity (and the
+            // ai:createNewSession event) with its first user message
+            currentSession = null;
+            renderCurrentSession();
+            return;
+          }
+          var found = loadSessions().find(function (session) {
+            return session.uid === sessionId;
+          });
+          if (!found) {
+            // deliberate: lets Penpot exercise its restore-failure
+            // fallback path against the mock
+            throw new Error(
+              "mock-assistant-sdk: unknown session " + sessionId,
+            );
+          }
+          currentSession = found;
+          renderCurrentSession();
         },
-      ];
+      };
     },
   };
 })();

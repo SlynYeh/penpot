@@ -182,13 +182,98 @@
           (when (valid-date? date) date))))))
 
 (defn format-session-time
-  "Formats an SDK timestamp string for the history list with the fixed,
-  never localized `yyyy-MM-dd HH:mm` shape agreed in the v2
-  requirements. Public so the shape can be unit-tested."
+  "Formats an SDK timestamp string with the fixed, never localized
+  `yyyy-MM-dd HH:mm` shape. Public so the shape can be unit-tested."
   [value]
   (when-let [date (parse-sdk-timestamp value)]
     (try (ct/format-inst date "yyyy-MM-dd HH:mm")
          (catch :default _ nil))))
+
+;; -------------------------------------------------------------------------
+;; v2.1: age grouped history list (today / last 7 days / last 30 days).
+;; Pure bucketing lives here so the day edges stay unit-testable.
+;; -------------------------------------------------------------------------
+
+(def history-group-order
+  "The history age buckets in display order."
+  [:today :last-7-days :last-30-days])
+
+(def ^:private day-ms 86400000)
+
+(defn- start-of-day
+  [^js date]
+  (js/Date. (.getFullYear date) (.getMonth date) (.getDate date)))
+
+(defn- calendar-days-ago
+  "Whole calendar days between `date` and `now` (0 = the same local
+  day). Rounded so a one hour DST shift cannot move a bucket edge."
+  [^js date ^js now]
+  (js/Math.round (/ (- (.getTime (start-of-day now))
+                       (.getTime (start-of-day date)))
+                    day-ms)))
+
+(defn session-age-group
+  "Maps an age in whole calendar days (0 = today) to its history
+  bucket: :today, :last-7-days (1-7 days ago) or :last-30-days (8-30
+  days ago). Older ages yield nil (spec: not displayed); negative ages
+  (an SDK clock running ahead) count as today. Public so the bucket
+  edges can be unit-tested."
+  [days-ago]
+  (cond
+    (<= days-ago 0) :today
+    (<= days-ago 7) :last-7-days
+    (<= days-ago 30) :last-30-days
+    :else nil))
+
+(defn- entry-time-ms
+  "The millis of the date (index 1) of a `[group date session]` entry,
+  nil for an undated session."
+  [entry]
+  (let [^js date (nth entry 1)]
+    (when (some? date) (.getTime date))))
+
+(defn- by-time-desc
+  "Comparator over `[group date session]` entries: newest first, the
+  undated ones last, equal keys keep their input order (the platform
+  sort is stable)."
+  [a b]
+  (let [ta (entry-time-ms a)
+        tb (entry-time-ms b)]
+    (cond
+      (nil? ta) (if (nil? tb) 0 1)
+      (nil? tb) -1
+      :else     (compare tb ta))))
+
+(defn group-sessions-by-age
+  "Groups the SDK `sessions` array into the history buckets relative to
+  `now` (a js/Date, injectable for tests): a vector of
+  `{:key :today|:last-7-days|:last-30-days :sessions [...]}` in display
+  order, newest session first inside a bucket, empty buckets omitted
+  and sessions older than 30 days dropped (spec: not displayed). A
+  session whose updatedAt cannot be parsed stays in the most inclusive
+  bucket instead of silently disappearing. Non-object entries are
+  skipped and a non-array input yields nil."
+  ([sessions]
+   (group-sessions-by-age sessions (js/Date.)))
+  ([sessions now]
+   (when (array? sessions)
+     (let [entries   (keep
+                      (fn [session]
+                        (when (object? session)
+                          (let [date  (parse-sdk-timestamp (obj/get session "updatedAt"))
+                                group (if (nil? date)
+                                        :last-30-days
+                                        (session-age-group (calendar-days-ago date now)))]
+                            (when (some? group)
+                              [group date session]))))
+                      sessions)
+           by-group  (group-by first entries)]
+       (into []
+             (keep (fn [group]
+                     (when-let [entries (get by-group group)]
+                       {:key group
+                        :sessions (mapv #(nth % 2) (sort by-time-desc entries))})))
+             history-group-order)))))
 
 (defn parse-incoming
   "Parses the `data` of a message event into

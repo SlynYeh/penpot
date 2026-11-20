@@ -39,6 +39,13 @@
 (def ^:private sdk-script-attribute "data-penpot-assistant-sdk")
 (def ^:private mount-dom-id "penpot-assistant-mount")
 
+;; v2.1: i18n key of each history age bucket, in the display order of
+;; assistant/history-group-order.
+(def ^:private history-group->i18n-key
+  {:today         "workspace.options.assistant.history.group.today"
+   :last-7-days   "workspace.options.assistant.history.group.last-7-days"
+   :last-30-days  "workspace.options.assistant.history.group.last-30-days"})
+
 (def ^:private error->i18n-key
   {:handshake-timeout "workspace.options.assistant.error.handshake"
    :params-timeout    "workspace.options.assistant.error.params"
@@ -78,11 +85,10 @@
 
 (defn- extract-sdk-tools
   "Extracts the v2 session management surface from the host SDK global
-  (`getTools() -> {:jsSdk {:getSessionList :deleteSession}
-  :changeSessionId}`), every member nil checked and bound to its owner
-  object so `this` survives the extraction. An SDK without the v2
-  surface yields a map of nils — the v2 UI degrades to hidden instead
-  of throwing."
+  (`getTools() -> {:jsSdk {:getSessionList}}` and `changeSessionId`),
+  every member nil checked and bound to its owner object so `this`
+  survives the extraction. An SDK without the v2 surface yields a map
+  of nils — the v2 UI degrades to hidden instead of throwing."
   [^js sdk]
   (when (object? sdk)
     (let [tools (when (fn? (obj/get sdk "getTools"))
@@ -93,8 +99,7 @@
       (when (object? tools)
         (let [js-sdk (obj/get tools "jsSdk")]
           {:change-session-id! (bind tools "changeSessionId")
-           :get-session-list!  (bind js-sdk "getSessionList")
-           :delete-session!    (bind js-sdk "deleteSession")})))))
+           :get-session-list!  (bind js-sdk "getSessionList")})))))
 
 (mf/defc assistant-tab*
   [{:keys [file-id page-id]}]
@@ -109,9 +114,8 @@
         ;; file) pair.
         session-id* (mf/use-state nil)
 
-        ;; v2: the {:change-session-id! :get-session-list!
-        ;; :delete-session!} bridge while the session is alive; nil
-        ;; outside the ready state.
+        ;; v2: the {:change-session-id! :get-session-list!} bridge
+        ;; while the session is alive; nil outside the ready state.
         sdk-tools* (mf/use-state nil)
 
         profile    (mf/deref refs/profile)
@@ -132,7 +136,7 @@
 
         ;; v2: history list fetch state — nil (never fetched), :loading,
         ;; :error or [:ok sessions-js-array]. history-attempt bumps on
-        ;; retry and after a delete; the fetch effect reruns on it.
+        ;; retry; the fetch effect reruns on it.
         history*         (mf/use-state nil)
         history-attempt* (mf/use-state 0)
 
@@ -184,31 +188,7 @@
                            (reset! view* :chat)))
                  (p/catch (fn [cause]
                             (log/wrn :hint "assistant: failed to switch session"
-                                     :cause cause)))))))
-
-        on-delete-session!
-        (mf/use-fn
-         (fn [session-id]
-           (when-let [delete! (:delete-session! (deref sdk-tools*))]
-             (-> (try (adopt-sdk-result (delete! session-id))
-                      (catch :default cause (p/rejected cause)))
-                 (p/then
-                  (fn [_]
-                    (when (= session-id (deref session-id*))
-                      ;; deleting the session that is on screen falls
-                      ;; back to a brand new one
-                      (assistant/clear-saved-session-id!
-                       (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
-                      (reset! session-id* nil)
-                      (when-let [change! (:change-session-id! (deref sdk-tools*))]
-                        (try (change! "") (catch :default _ nil))))
-                    ;; always refresh the list after a delete
-                    (swap! history-attempt* inc)))
-                 (p/catch
-                  (fn [cause]
-                    (log/wrn :hint "assistant: failed to delete the session" :cause cause)
-                    ;; still refresh: the list may be stale
-                    (swap! history-attempt* inc)))))))]
+                                     :cause cause)))))))]
 
     (mf/use-effect
      (mf/deps attempt)
@@ -414,8 +394,7 @@
            (close!)))))
 
     ;; v2: every entry into the history view fetches the list fresh
-    ;; (spec: no caching); retry and post-delete re-fetches bump
-    ;; history-attempt.
+    ;; (spec: no caching); retry re-fetches bump history-attempt.
     (mf/use-effect
      (mf/deps view attempt (deref history-attempt*))
      (fn []
@@ -442,16 +421,28 @@
 
     (let [[_ reason :as error] (when (vector? state) state)
           history  (deref history*)
-          sessions (when (vector? history) (second history))]
+          sessions (when (vector? history) (second history))
+          ;; v2.1: sessions grouped into the today / last 7 days / last
+          ;; 30 days buckets; older ones are already dropped here, so
+          ;; an all-old list renders the empty state.
+          groups    (assistant/group-sessions-by-age sessions)]
       [:div {:class (stl/css :assistant-tab)}
        (if (= :history view)
-         ;; history header row replaces the action bar entirely
+         ;; history header row replaces the action bar entirely. The
+         ;; back arrow is a hand-rolled svg because the spec asks for a
+         ;; 19px glyph and icon* only renders the fixed s/m/l sizes.
          [:div {:class (stl/css :history-head)
                 :role "button"
                 :tab-index "0"
                 :on-click on-back-to-chat!
                 :on-key-down on-history-head-keydown!}
-          [:> icon* {:icon-id i/arrow-left :size "s"}]
+          [:svg {:class (stl/css :history-back-icon)
+                 :width 19
+                 :height 19
+                 :aria-hidden true}
+           [:use {:href "#icon-arrow-left"
+                  :width 19
+                  :height 19}]]
           [:span {:class (stl/css :history-head-label)}
            (tr "workspace.options.assistant.history")]]
          (when (and (= :ready state) (some? (deref sdk-tools*)))
@@ -459,12 +450,12 @@
             [:button {:type "button"
                       :class (stl/css :action-btn)
                       :on-click on-new-session!}
-             [:> icon* {:icon-id i/comments :size "s"}]
+             [:> icon* {:icon-id i/comments :size "m"}]
              (tr "workspace.options.assistant.new-session")]
             [:button {:type "button"
                       :class (stl/css :action-btn)
                       :on-click on-open-history!}
-             [:> icon* {:icon-id i/history :size "s"}]
+             [:> icon* {:icon-id i/history :size "m"}]
              (tr "workspace.options.assistant.history")]]))
 
        ;; The SDK mount div is NEVER conditionally rendered: the host
@@ -489,32 +480,29 @@
                          :on-click on-history-retry!}
              (tr "labels.retry")]]
 
-           (or (nil? sessions) (zero? (alength sessions)))
+           (or (nil? sessions) (zero? (alength sessions)) (empty? groups))
            [:div {:class (stl/css :history-state)}
             [:div {:class (stl/css :status-text)}
              (tr "workspace.options.assistant.history.empty")]]
 
            :else
            [:div {:class (stl/css :history-list)}
-            (for [^js session sessions
-                  :when (string? (obj/get session "uid"))]
-              (let [uid   (obj/get session "uid")
-                    title (obj/get session "title")]
-                [:div {:key uid
-                       :class (stl/css :history-item)
-                       :on-click #(on-select-session! uid)}
-                 [:span {:class (stl/css :history-item-title)}
-                  (if (and (string? title) (pos? (count title)))
-                    title
-                    (tr "workspace.options.assistant.new-session"))]
-                 [:span {:class (stl/css :history-item-time)}
-                  (assistant/format-session-time (obj/get session "updatedAt"))]
-                 [:button {:type "button"
-                           :class (stl/css :history-item-delete)
-                           :on-click (fn [event]
-                                       (dom/stop-propagation event)
-                                       (on-delete-session! uid))}
-                  [:> icon* {:icon-id i/remove :size "s"}]]]))]))
+            (for [{:keys [key sessions]} groups]
+              [:div {:key (name key)
+                     :class (stl/css :history-group)}
+               [:div {:class (stl/css :history-group-title)}
+                (tr (get history-group->i18n-key key))]
+               (for [^js session sessions
+                     :when (string? (obj/get session "uid"))]
+                 (let [uid   (obj/get session "uid")
+                       title (obj/get session "title")]
+                   [:div {:key uid
+                          :class (stl/css :history-item)
+                          :on-click #(on-select-session! uid)}
+                    [:span {:class (stl/css :history-item-title)}
+                     (if (and (string? title) (pos? (count title)))
+                       title
+                       (tr "workspace.options.assistant.new-session"))]]))])]))
 
        (if error
          [:div {:class (stl/css :status)}

@@ -568,3 +568,87 @@
 (t/deftest format-session-time-invalid
   (t/is (nil? (assistant/format-session-time "garbage")))
   (t/is (nil? (assistant/format-session-time nil))))
+
+;; ---------------------------------------------------------------------------
+;; v2.1: age grouped history list (today / last 7 days / last 30 days)
+;; ---------------------------------------------------------------------------
+
+(defn- hist-session
+  "A session object with `uid` and, when `updated-at-ms` is given, an
+  epoch-millis `updatedAt` (the unit SDK timestamps use)."
+  [uid updated-at-ms]
+  (cond-> #js {:uid uid}
+    (some? updated-at-ms)
+    (obj/set! "updatedAt" (str updated-at-ms))))
+
+(defn- hist-now
+  "The fixed 'now' of the grouping tests: 2026-11-20 12:00 local time."
+  []
+  (js/Date. 2026 10 20 12 0 0 0))
+
+(defn- ms-at
+  "Epoch millis of 12:00 on 2026-`month`-`day` local time (month is the
+  js Date month index, 0 = January)."
+  [month day]
+  (.getTime (js/Date. 2026 month day 12)))
+
+(defn- group-uids
+  "Runs the grouping against the fixed now and flattens it to an
+  ordered `[group-key [uid ...]]` vector for assertions."
+  [sessions]
+  (mapv (fn [{:keys [key sessions]}]
+          [key (mapv #(obj/get % "uid") sessions)])
+        (assistant/group-sessions-by-age sessions (hist-now))))
+
+(t/deftest group-sessions-buckets-boundaries-and-order
+  ;; boundaries: 7 days ago still belongs to the last-7-days bucket,
+  ;; 8 days ago to last-30-days, 31 days ago is dropped entirely
+  (let [sessions #js [(hist-session "d30" (ms-at 9 21))
+                      (hist-session "today" (ms-at 10 20))
+                      (hist-session "d31" (ms-at 9 20))
+                      (hist-session "d7" (ms-at 10 13))
+                      (hist-session "d8" (ms-at 10 12))
+                      (hist-session "yesterday" (ms-at 10 19))]]
+    (t/is (= [[:today ["today"]]
+              [:last-7-days ["yesterday" "d7"]]
+              [:last-30-days ["d8" "d30"]]]
+             (group-uids sessions)))))
+
+(t/deftest group-sessions-omits-empty-buckets
+  (let [sessions #js [(hist-session "only-today" (ms-at 10 20))]]
+    (t/is (= [[:today ["only-today"]]] (group-uids sessions)))))
+
+(t/deftest group-sessions-drops-everything-older-than-30-days
+  ;; a list whose every session is too old must yield no groups at all,
+  ;; so the UI falls back to its empty state
+  (let [sessions #js [(hist-session "old" (ms-at 9 20))]]
+    (t/is (= [] (assistant/group-sessions-by-age sessions (hist-now))))))
+
+(t/deftest group-sessions-future-timestamps-count-as-today
+  ;; an SDK clock running ahead of the browser must not hide sessions
+  (let [sessions #js [(hist-session "skewed" (+ (.getTime (hist-now)) 300000))]]
+    (t/is (= [[:today ["skewed"]]] (group-uids sessions)))))
+
+(t/deftest group-sessions-keeps-undated-sessions-reachable
+  ;; no updatedAt at all or an unparseable one keeps the session in the
+  ;; most inclusive bucket instead of silently hiding it; junk entries
+  ;; that are not objects are skipped
+  (let [garbage (obj/set! #js {:uid "garbage"} "updatedAt" "not-a-date")
+        sessions #js [(hist-session "no-date" nil) "junk" garbage]]
+    (t/is (= [[:last-30-days ["no-date" "garbage"]]] (group-uids sessions)))))
+
+(t/deftest group-sessions-rejects-non-array-input
+  (t/is (nil? (assistant/group-sessions-by-age nil (hist-now))))
+  (t/is (nil? (assistant/group-sessions-by-age #js {} (hist-now))))
+  (t/is (nil? (assistant/group-sessions-by-age "nope" (hist-now)))))
+
+(t/deftest group-sessions-single-arity-uses-the-real-current-date
+  ;; regression: the one-arg call used by the UI must bucket against
+  ;; an actual js/Date, not a timestamp number (Date.now), which made
+  ;; start-of-day throw "getFullYear is not a function"
+  (let [fresh-ms (.getTime (js/Date.))]
+    (t/is (= [[:today ["fresh"]]]
+             (mapv (fn [{:keys [key sessions]}]
+                     [key (mapv #(obj/get % "uid") sessions)])
+                   (assistant/group-sessions-by-age
+                    #js [(hist-session "fresh" fresh-ms)]))))))

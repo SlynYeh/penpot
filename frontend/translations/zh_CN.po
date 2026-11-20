@@ -6272,7 +6272,7 @@ msgstr "单击 + 按钮以添加交互。"
 
 #: src/app/main/ui/workspace/sidebar/options.cljs
 msgid "workspace.options.assistant"
-msgstr "AI助手"
+msgstr "智能原型"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.error.handshake"
@@ -6299,8 +6299,20 @@ msgid "workspace.options.assistant.history.error"
 msgstr "历史对话加载失败"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.last-30-days"
+msgstr "近30天"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.last-7-days"
+msgstr "近7天"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.today"
+msgstr "当天"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.loading"
-msgstr "正在连接 AI 助手…"
+msgstr "正在连接智能原型…"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.new-session"

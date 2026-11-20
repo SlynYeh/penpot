@@ -7844,7 +7844,7 @@ msgstr "Click the + button to add interactions."
 
 #: src/app/main/ui/workspace/sidebar/options.cljs
 msgid "workspace.options.assistant"
-msgstr "AI Assistant"
+msgstr "AI Proto"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.error.handshake"
@@ -7871,8 +7871,20 @@ msgid "workspace.options.assistant.history.error"
 msgstr "Failed to load the conversation history."
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.last-30-days"
+msgstr "Last 30 days"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.last-7-days"
+msgstr "Last 7 days"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
+msgid "workspace.options.assistant.history.group.today"
+msgstr "Today"
+
+#: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.loading"
-msgstr "Connecting the AI assistant…"
+msgstr "Connecting the AI Proto…"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.new-session"

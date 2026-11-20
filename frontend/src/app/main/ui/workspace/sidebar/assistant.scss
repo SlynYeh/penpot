@@ -6,6 +6,7 @@
 
 @use "ds/_sizes.scss" as *;
 @use "ds/_borders.scss" as *;
+@use "ds/_utils.scss" as *;
 
 .assistant-tab {
   position: relative;
@@ -84,11 +85,12 @@
 }
 
 // v2: chat view action bar (IMG_4245) — flat icon+text buttons, left
-// aligned, no background and no border.
+// aligned, no background and no border. Buttons sit 16 apart and are
+// vertically centered (spec).
 .action-bar {
   display: flex;
   align-items: center;
-  gap: var(--sp-m);
+  gap: var(--sp-l);
   padding: 6px 10px 0;
 }
 
@@ -99,12 +101,25 @@
   padding: 2px 0;
   border: none;
   background: none;
-  color: var(--color-foreground-secondary);
-  font: inherit;
+  font-family: inherit;
+  font-size: px2rem(12);
+  font-weight: 400;
+  color: #505463;
   cursor: pointer;
+
+  // 16x16 glyph (icon* size "m"); the ds icon strokes itself with
+  // currentColor, so the icon gray is set apart from the text color
+  // (spec: icon #495e74, text #505463).
+  svg {
+    color: #495e74;
+  }
 
   &:hover {
     color: var(--color-foreground-primary);
+
+    svg {
+      color: var(--color-foreground-primary);
+    }
   }
 }
 
@@ -114,14 +129,13 @@
 }
 
 // v2: history view header (IMG_4244) — back arrow + title, whole row
-// clickable.
+// clickable. Sits 8 above the history list (spec).
 .history-head {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 6px 10px;
-  font-weight: 600;
-  color: var(--color-foreground-primary);
+  margin-bottom: var(--sp-s);
   cursor: pointer;
 
   &:focus-visible {
@@ -130,7 +144,21 @@
   }
 }
 
+// 19x19 back arrow, 4 from the title (spec). Hand-rolled next to the
+// head because icon* only renders the fixed s/m/l sizes.
+.history-back-icon {
+  display: block;
+  flex: none;
+  width: px2rem(19);
+  height: px2rem(19);
+  fill: none;
+  stroke: #8694a3;
+}
+
 .history-head-label {
+  font-size: px2rem(13);
+  font-weight: 600;
+  color: #000;
   white-space: nowrap;
 }
 
@@ -145,14 +173,32 @@
   padding: var(--sp-m);
 }
 
+// v2.1: the list is grouped by session age (today / last 7 days /
+// last 30 days); groups sit 10 apart (spec).
 .history-list {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 10px;
   padding: 4px 6px 10px;
   overflow: auto;
+}
+
+.history-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-group-title {
+  // 10 above the first item; the items themselves sit flush (gap 0)
+  margin-bottom: 10px;
+
+  // aligns with the item title text (items carry padding 8)
+  padding: 0 8px;
+  font-size: px2rem(12);
+  font-weight: 500;
+  color: #8694a3;
 }
 
 .history-item {
@@ -160,12 +206,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 6px;
+  padding: 8px;
   border-radius: $br-4;
   cursor: pointer;
 
   &:hover {
-    background: var(--color-background-tertiary);
+    background: rgb(16 28 88 / 0.07);
   }
 }
 
@@ -175,35 +221,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--color-foreground-primary);
-}
-
-.history-item-time {
-  flex: none;
-  color: var(--color-foreground-secondary);
-}
-
-.history-item-delete {
-  display: none;
-  flex: none;
-  padding: 2px;
-  border: none;
-  background: none;
-  color: var(--color-foreground-secondary);
-  cursor: pointer;
-
-  &:hover {
-    color: var(--color-foreground-primary);
-  }
-}
-
-// hover swaps the timestamp for the delete action (spec)
-.history-item:hover {
-  .history-item-time {
-    display: none;
-  }
-
-  .history-item-delete {
-    display: inline-flex;
-  }
+  font-size: px2rem(14);
+  font-weight: 400;
+  color: #000;
 }

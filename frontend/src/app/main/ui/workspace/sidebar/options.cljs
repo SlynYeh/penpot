@@ -210,9 +210,10 @@
 
 (defn visible-options-tab-ids
   []
-  (cond-> ["design"]
+  (cond-> []
     (assistant-tab-visible?) (conj "assistant")
     prototype-tab-enabled? (conj "prototype")
+    :always (conj "design")
     :always (conj "inspect")))
 
 (defn effective-options-mode
@@ -223,14 +224,17 @@
 
 (defn- options-tabs
   []
-  (cond-> [{:label (tr "workspace.options.design")
-            :id "design"}]
+  (cond-> []
     (assistant-tab-visible?)
     (conj {:label (tr "workspace.options.assistant")
            :id "assistant"
            ;; Referenced by file path instead of the sprite, so the icon can be
            ;; replaced by overwriting resources/public/images/icons/assistant.svg.
            :icon-url "images/icons/assistant.svg"})
+
+    :always
+    (conj {:label (tr "workspace.options.design")
+           :id "design"})
 
     prototype-tab-enabled?
     (conj {:label (tr "workspace.options.prototype")

@@ -84,14 +84,15 @@
   }
 }
 
-// v2: chat view action bar (IMG_4245) — flat icon+text buttons, left
+// v2: chat view action bar (IMG_4245) — flat icon+text buttons, right
 // aligned, no background and no border. Buttons sit 16 apart and are
 // vertically centered (spec).
 .action-bar {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--sp-l);
-  padding: 6px 10px 0;
+  padding: 6px 12px 0;
 }
 
 .action-btn {

@@ -450,12 +450,12 @@
             [:button {:type "button"
                       :class (stl/css :action-btn)
                       :on-click on-new-session!}
-             [:> icon* {:icon-id i/comments :size "m"}]
+             [:> icon* {:icon-id i/session-new :size "m"}]
              (tr "workspace.options.assistant.new-session")]
             [:button {:type "button"
                       :class (stl/css :action-btn)
                       :on-click on-open-history!}
-             [:> icon* {:icon-id i/history :size "m"}]
+             [:> icon* {:icon-id i/session-history :size "m"}]
              (tr "workspace.options.assistant.history")]]))
 
        ;; The SDK mount div is NEVER conditionally rendered: the host

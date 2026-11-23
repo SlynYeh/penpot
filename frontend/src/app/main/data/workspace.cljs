@@ -576,7 +576,7 @@
              :workspace-undo
              :workspace-versions)
             (update :workspace-global dissoc :read-only?)
-            (assoc-in [:workspace-global :options-mode] :design)
+            (assoc-in [:workspace-global :options-mode] layout/default-options-mode)
             ;; Keep the page-local snapshots (zoom, selection, opened
             ;; plugins, ...) only for the file we are leaving; browsing
             ;; many files no longer accumulates entries forever.

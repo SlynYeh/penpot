@@ -9,7 +9,9 @@
   (:require
    [app.common.data :as d]
    [app.common.data.macros :as dm]
+   [app.config :as cf]
    [app.main.data.event :as ev]
+   [app.util.embed :as embed]
    [app.util.storage :as storage]
    [clojure.set :as set]
    [potok.v2.core :as ptk]))
@@ -73,8 +75,21 @@
     :show-pixel-grid
     :snap-pixel-grid})
 
+(defn assistant-tab-visible?
+  "True when the AI assistant tab is part of the right sidebar: the
+   host SDK URI (`penpotXFrontSdk`) is configured and the app runs
+   embedded in the host page. Lives in the data layer so the initial
+   options mode and the UI tab list share one predicate."
+  []
+  (and (some? cf/x-front-sdk) (embed/embedded?)))
+
+(def default-options-mode
+  "Mode the right sidebar tab-switcher starts on: `:assistant` when
+   the AI assistant tab is available, `:design` otherwise."
+  (if (assistant-tab-visible?) :assistant :design))
+
 (def default-global
-  {:options-mode :design})
+  {:options-mode default-options-mode})
 
 (defn keep-sidebar-tab?
   "Once a left-sidebar tab has been visited, keep it mounted and hide it

@@ -12,10 +12,10 @@
    [app.common.files.helpers :as cfh]
    [app.common.geom.shapes :as gsh]
    [app.common.types.shape.layout :as ctl]
-   [app.config :as cf]
    [app.main.data.helpers :as dsh]
    [app.main.data.workspace :as udw]
    [app.main.data.workspace.common :as dwc]
+   [app.main.data.workspace.layout :as dwlt]
    [app.main.features :as features]
    [app.main.refs :as refs]
    [app.main.store :as st]
@@ -40,7 +40,6 @@
    [app.main.ui.workspace.sidebar.options.shapes.rect :as rect]
    [app.main.ui.workspace.sidebar.options.shapes.svg-raw :as svg-raw]
    [app.main.ui.workspace.sidebar.options.shapes.text :as text]
-   [app.util.embed :as embed]
    [app.util.i18n :as i18n :refer [tr]]
    [okulary.core :as l]
    [rumext.v2 :as mf]))
@@ -206,7 +205,7 @@
 
 (defn- assistant-tab-visible?
   []
-  (and (some? cf/x-front-sdk) (embed/embedded?)))
+  (dwlt/assistant-tab-visible?))
 
 (defn visible-options-tab-ids
   []
@@ -218,9 +217,16 @@
 
 (defn effective-options-mode
   [mode]
-  (if (and (not prototype-tab-enabled?) (= mode :prototype))
+  (cond
+    (and (not prototype-tab-enabled?) (= mode :prototype))
     :design
-    mode))
+
+    ;; The assistant tab can be hidden (not embedded / no SDK); fall
+    ;; back to design so a stale :assistant mode never renders it.
+    (and (not (assistant-tab-visible?)) (= mode :assistant))
+    :design
+
+    :else mode))
 
 (defn- options-tabs
   []
@@ -272,6 +278,10 @@
     (mf/with-effect [options-mode]
       (when (and (not prototype-tab-enabled?)
                  (= options-mode :prototype))
+        (st/emit! (udw/set-options-mode :design)))
+
+      (when (and (not (assistant-tab-visible?))
+                 (= options-mode :assistant))
         (st/emit! (udw/set-options-mode :design))))
 
     [:div {:class (stl/css :tool-window)}

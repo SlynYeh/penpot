@@ -6,6 +6,7 @@
 
 @use "ds/_sizes.scss" as *;
 @use "ds/_borders.scss" as *;
+@use "ds/_utils.scss" as *;
 @use "ds/typography.scss" as *;
 
 .tabs {
@@ -106,6 +107,21 @@
 
 .tab-text-and-icon {
   padding-inline: var(--sp-xxs);
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: px2rem(4) px2rem(5);
+  border: $b-1 solid #fff;
+  border-radius: px2rem(16);
+  background: rgba(250, 74, 74, 1);
+  color: #fff;
+  font-size: px2rem(10);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .tab-panel {

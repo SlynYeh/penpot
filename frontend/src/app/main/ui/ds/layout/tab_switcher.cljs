@@ -18,7 +18,7 @@
 
 (mf/defc tab*
   {::mf/private true}
-  [{:keys [selected icon icon-url label aria-label id ref] :rest props}]
+  [{:keys [selected icon icon-url label aria-label id ref badge] :rest props}]
   (let [class (stl/css-case
                :tab true
                :selected selected)
@@ -50,7 +50,10 @@
         [:span {:class (stl/css-case
                         :tab-text true
                         :tab-text-and-icon (or icon icon-url))}
-         label])]]))
+         label])
+      (when (some? badge)
+        [:span {:class (stl/css :tab-badge)}
+         badge])]]))
 
 (mf/defc tab-nav*
   {::mf/private true
@@ -75,12 +78,14 @@
               icon-url   (get element :icon-url)
               label      (get element :label)
               aria-label (get element :aria-label)
-              id         (get element :id)]
+              id         (get element :id)
+              badge      (get element :badge)]
 
           [:> tab* {:icon       icon
                     :icon-url   icon-url
                     :key        id
                     :label      label
+                    :badge      badge
                     :aria-label aria-label
                     :selected   (= id selected)
                     :on-click   on-click
@@ -96,6 +101,7 @@
     [:and :string [:fn #(contains? icon-list %)]]]
    [:icon-url {:optional true} :string]
    [:label {:optional true} :string]
+   [:badge {:optional true} :string]
    [:aria-label {:optional true} :string]])
 
 (def ^:private schema:tab

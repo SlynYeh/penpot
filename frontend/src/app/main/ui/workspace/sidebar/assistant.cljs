@@ -35,6 +35,7 @@
    [app.util.globals :as ug]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.object :as obj]
+   [app.util.storage :as storage]
    [promesa.core :as p]
    [rumext.v2 :as mf]))
 
@@ -42,6 +43,11 @@
 (def ^:private sdk-script-selector "[data-penpot-assistant-sdk]")
 (def ^:private sdk-script-attribute "data-penpot-assistant-sdk")
 (def ^:private mount-dom-id "penpot-assistant-mount")
+
+;; Persisted (app.util.storage/global, i.e. localStorage) once the SDK
+;; reports its first finished message; hides the NEW badge of the
+;; assistant tab label (see sidebar/options.cljs) for good.
+(def new-badge-dismissed-key ::assistant-new-badge-dismissed)
 
 ;; v2.1: i18n key of each history age bucket, in the display order of
 ;; assistant/history-group-order.
@@ -231,6 +237,8 @@
              forward!
              (fn [event-name]
                (fn [data]
+                 (when (= event-name "onMessageFinish")
+                   (swap! storage/global assoc new-badge-dismissed-key true))
                  (post-event! event-name (event-payload data))))
 
              sdk-forward-handlers

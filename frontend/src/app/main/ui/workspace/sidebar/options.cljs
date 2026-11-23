@@ -22,7 +22,7 @@
    [app.main.ui.context :as ctx]
    [app.main.ui.ds.layout.tab-switcher :refer [tab-switcher*]]
    [app.main.ui.inspect.right-sidebar :as hrs]
-   [app.main.ui.workspace.sidebar.assistant :refer [assistant-tab*]]
+   [app.main.ui.workspace.sidebar.assistant :as assistant :refer [assistant-tab*]]
    [app.main.ui.workspace.sidebar.options.drawing :as drawing]
    [app.main.ui.workspace.sidebar.options.menus.align :refer [align-options*]]
    [app.main.ui.workspace.sidebar.options.menus.bool :refer [bool-options*]]
@@ -41,6 +41,7 @@
    [app.main.ui.workspace.sidebar.options.shapes.svg-raw :as svg-raw]
    [app.main.ui.workspace.sidebar.options.shapes.text :as text]
    [app.util.i18n :as i18n :refer [tr]]
+   [app.util.storage :as storage]
    [okulary.core :as l]
    [rumext.v2 :as mf]))
 
@@ -229,14 +230,16 @@
     :else mode))
 
 (defn- options-tabs
-  []
+  [new-badge-dismissed?]
   (cond-> []
     (assistant-tab-visible?)
-    (conj {:label (tr "workspace.options.assistant")
-           :id "assistant"
-           ;; Referenced by file path instead of the sprite, so the icon can be
-           ;; replaced by overwriting resources/public/images/icons/assistant.svg.
-           :icon-url "images/icons/assistant.svg"})
+    (conj (cond-> {:label (tr "workspace.options.assistant")
+                   :id "assistant"
+                   ;; Referenced by file path instead of the sprite, so the icon can be
+                   ;; replaced by overwriting resources/public/images/icons/assistant.svg.
+                   :icon-url "images/icons/assistant.svg"}
+            (not new-badge-dismissed?)
+            (assoc :badge "NEW")))
 
     :always
     (conj {:label (tr "workspace.options.design")
@@ -273,7 +276,10 @@
           (sequence (keep (d/getf objects)) selected))
 
         effective-mode
-        (effective-options-mode options-mode)]
+        (effective-options-mode options-mode)
+
+        storage-data          (mf/deref storage/global)
+        new-badge-dismissed?  (true? (get storage-data assistant/new-badge-dismissed-key))]
 
     (mf/with-effect [options-mode]
       (when (and (not prototype-tab-enabled?)
@@ -286,7 +292,7 @@
 
     [:div {:class (stl/css :tool-window)}
      (if (and (:can-edit permissions) (not render-context-lost?))
-       [:> tab-switcher* {:tabs (options-tabs)
+       [:> tab-switcher* {:tabs (options-tabs new-badge-dismissed?)
                           :on-change on-option-tab-change
                           :selected (name effective-mode)
                           :class (stl/css :options-tab-switcher)}

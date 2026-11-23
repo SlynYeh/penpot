@@ -7468,6 +7468,16 @@ msgstr "Power up your plan"
 msgid "workspace.header.menu.option.preferences"
 msgstr "Preferences"
 
+#: src/app/main/ui/workspace/main_menu.cljs:906
+msgid "workspace.header.menu.option.prototype-code"
+msgstr "Prototype to code"
+
+#: src/app/main/ui/workspace/main_menu.cljs:838
+msgid "workspace.header.menu.prototype-code.guide.body"
+msgstr ""
+"Click \"Prototype to code\" to learn how to turn prototype designs into "
+"code."
+
 #: src/app/main/ui/workspace/main_menu.cljs:830
 msgid "workspace.header.menu.option.view"
 msgstr "View"

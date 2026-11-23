@@ -37,13 +37,19 @@
                                                main-menu-power-up*]]
    [app.main.ui.hooks.resize :as r]
    [app.main.ui.icons :as deprecated-icon]
+   [app.main.ui.onboarding.beginner-guide :as beginner-guide]
    [app.plugins.register :as preg]
    [app.util.dom :as dom]
+   [app.util.globals :as globals]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
+   [app.util.storage :as storage]
    [beicon.v2.core :as rx]
+   [cuerdas.core :as str]
+   [goog.events :as events]
    [potok.v2.core :as ptk]
-   [rumext.v2 :as mf]))
+   [rumext.v2 :as mf])
+  (:import goog.events.EventType))
 
 ;; --- Header menu and submenus
 
@@ -701,6 +707,24 @@
               [:span {:class (stl/css :item-icon)
                       :title (tr "workspace.plugins.error.need-editor")} deprecated-icon/help])]))])))
 
+(defn- origin-path-allowed?
+  "True when sessionStorage's EBEE_USER_KEY parses to an object whose
+  originPathId contains \"/990001/\". Every step is guarded: a missing
+  key, malformed JSON, a non-object value and a non-string originPathId
+  all return false."
+  []
+  (try
+    (let [raw    (unchecked-get js/sessionStorage "EBEE_USER_KEY")
+          parsed (when (string? raw)
+                   (js/JSON.parse raw))
+          path   (when (and (some? parsed) (object? parsed))
+                   (unchecked-get parsed "originPathId"))]
+      (boolean
+       (and (string? path)
+            (str/includes? path "/990001/"))))
+    (catch :default _
+      false)))
+
 (mf/defc menu*
   {::mf/props :obj}
   [{:keys [layout file profile]}]
@@ -773,7 +797,64 @@
             (modal/show :plugin-management {}))))
 
         subscription           (:subscription (:props profile))
-        subscription-type      (get-subscription-type subscription)]
+        subscription-type      (get-subscription-type subscription)
+
+        ;; One-time "原型出码" guide popover (fork feature). It chains
+        ;; after the help-center hint popover: it appears once the
+        ;; beginner video has been viewed AND the hint's "知道了" has
+        ;; been clicked (returning users therefore get it directly),
+        ;; and stays until its own "知道了" click. The popover requires
+        ;; the session user's originPathId to contain "/990001/" and is
+        ;; hidden in view mode (same check as the beginner video modal);
+        ;; the menu item is gated only on originPathId.
+        prototype-enabled?    (origin-path-allowed?)
+        view-mode?            (beginner-guide/current-view-mode?)
+        storage-data          (mf/deref storage/global)
+        video-viewed?         (true? (get storage-data beginner-guide/storage-key))
+        help-hint-seen?       (true? (get storage-data beginner-guide/help-hint-storage-key))
+        prototype-dismissed?  (true? (get storage-data ::prototype-code-guide-dismissed))
+        show-prototype-guide? (and prototype-enabled?
+                                    (not view-mode?)
+                                    video-viewed?
+                                    help-hint-seen?
+                                    (not prototype-dismissed?))
+
+        open-prototype-code
+        (mf/use-fn
+         (fn [event]
+           (dom/stop-propagation event)
+           (st/emit! (ptk/event ::ev/event {::ev/name "prototype-code-click"
+                                            ::ev/origin "workspace-menu"}))
+           (dom/open-new-window "https://doc.cmbchina.com/f/v?id=zf892V")
+           (reset! show-menu* false)
+           (reset! sub-menu* nil)))
+
+        dismiss-prototype-guide!
+        (mf/use-fn
+         (fn []
+           (swap! storage/global assoc ::prototype-code-guide-dismissed true)
+           (reset! show-menu* false)
+           (reset! sub-menu* nil)))]
+
+    ;; The popover points at the menu list, so the list must be open
+    ;; while the popover is visible.
+    (mf/with-effect [show-prototype-guide?]
+      (when show-prototype-guide?
+        (reset! show-menu* true)
+        (reset! sub-menu* nil)))
+
+    ;; Clicks inside the popover are stopped by its own stop-propagation
+    ;; handler, so any document click reaching this listener is an
+    ;; outside click: dismiss the popover like the help-center hint.
+    (mf/with-effect [show-prototype-guide?]
+      (when show-prototype-guide?
+        (let [on-doc-click
+              (fn [event]
+                (when-not (.-data-no-close ^js (dom/get-target event))
+                  (dismiss-prototype-guide!)))
+              key (events/listen globals/document EventType.CLICK on-doc-click)]
+          (fn []
+            (events/unlistenByKey key)))))
 
     (mf/with-effect []
       (let [disposable (->> st/stream
@@ -783,12 +864,30 @@
 
 
     [:*
-     [:button {:class (stl/css :menu-trigger)
-               :type "button"
-               :title (tr "shortcut-subsection.main-menu")
-               :aria-label (tr "shortcut-subsection.main-menu")
-               :on-click open-menu}
-      deprecated-icon/menu-lines]
+     [:div {:class (stl/css :menu-wrapper)}
+      [:button {:class (stl/css :menu-trigger)
+                :type "button"
+                :title (tr "shortcut-subsection.main-menu")
+                :aria-label (tr "shortcut-subsection.main-menu")
+                :on-click open-menu}
+       deprecated-icon/menu-lines]
+
+      (when show-prototype-guide?
+        [:div {:class (stl/css-case :prototype-guide-popover true
+                                    :prototype-guide-popover-read-only read-only?)
+               :role "status"
+               :data-no-close true
+               :on-click (fn [event]
+                           (dom/stop-propagation event))}
+         [:span {:class (stl/css :prototype-guide-arrow)}]
+         [:div {:class (stl/css :prototype-guide-body)}
+          (tr "workspace.header.menu.prototype-code.guide.body")]
+         [:div {:class (stl/css :prototype-guide-footer)}
+          [:button {:class (stl/css :prototype-guide-got-it)
+                    :type "button"
+                    :data-no-close true
+                    :on-click dismiss-prototype-guide!}
+           (tr "workspace.header.help.guide.got-it")]]])]
 
      [:> dropdown-menu* {:show show-menu?
                          :id "workspace-menu"
@@ -840,6 +939,20 @@
                                :id          "file-menu-preferences"}
        [:span {:class (stl/css :item-name)} (tr "workspace.header.menu.option.preferences")]
        [:span {:class (stl/css :open-arrow)} deprecated-icon/arrow]]
+
+      ;; Fork feature: direct link, opens in a new window (no submenu).
+      ;; Shown whenever the session user's originPathId contains
+      ;; "/990001/"; view mode only suppresses the popover, not the item.
+      (when prototype-enabled?
+        [:> dropdown-menu-item* {:class (stl/css :menu-item)
+                                 :on-click    open-prototype-code
+                                 :on-key-down (fn [event]
+                                                (when (kbd/enter? event)
+                                                  (open-prototype-code event)))
+                                 :on-pointer-enter close-sub-menu
+                                 :data-testid   "prototype-code"
+                                 :id          "file-menu-prototype-code"}
+         [:span {:class (stl/css :item-name)} (tr "workspace.header.menu.option.prototype-code")]])
 
       #_(when (features/active-feature? @st/state "plugins/runtime")
         [:> dropdown-menu-item* {:class (stl/css :menu-item)

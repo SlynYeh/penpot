@@ -236,3 +236,86 @@
   border-radius: $br-6;
   background-color: var(--menu-shortcut-background-color);
 }
+
+// --- One-time "prototype code" guide popover (fork feature)
+
+// Shrink-wraps the trigger so the popover can anchor to the button's
+// left edge (same pattern as help-center-menu's .help-wrapper).
+.menu-wrapper {
+  position: relative;
+}
+
+// Visual block intentionally duplicated from help-center-menu's
+// .guide-popover: css-modules cannot @extend across files. Anchored to
+// the right of the open menu list (.menu sits at left: $s-12 with
+// inline-size $sz-192, and the trigger's left edge lines up with it).
+// Vertically centered on the "Prototype to code" item (4th item: .menu
+// top $sz-48 + 4px padding + 3 * (28px item + 4px gap) + 14px half
+// item = 162px from the aside top; the trigger top sits 12px down, so
+// 162 - 12 - 32 trigger height = 118px below the trigger, i.e.
+// calc(100% + 86px) minus half the popover height ~ 18px).
+.prototype-guide-popover {
+  position: absolute;
+  top: calc(100% + #{px2rem(68)});
+  left: calc(#{$sz-192} + #{px2rem(6)});
+  z-index: var(--z-index-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: deprecated.$s-8;
+  inline-size: px2rem(240);
+  padding: deprecated.$s-12;
+  border-radius: $br-6;
+  background-color: #296afd;
+  box-shadow:
+    0 px2rem(6) px2rem(16) px2rem(-8) rgb(16 28 88 / 0.07),
+    0 px2rem(9) px2rem(28) 0 rgb(2 22 61 / 0.05),
+    0 px2rem(12) px2rem(48) px2rem(16) rgb(2 22 61 / 0.03);
+}
+
+// Read-only files hide the "File" item, so the target item moves up
+// one slot (3rd item: 162px - 32px = 130px from the aside top).
+.prototype-guide-popover-read-only {
+  top: calc(100% + #{px2rem(36)});
+}
+
+// 8px rotated square poking out of the popover's left edge toward the
+// menu list (arrow placement like help-center-menu's .hint-arrow).
+// Fixed offset instead of 50%: the target item position must not drift
+// when the popover height changes with text wrapping.
+.prototype-guide-arrow {
+  position: absolute;
+  top: px2rem(50);
+  left: px2rem(-4);
+  inline-size: px2rem(8);
+  block-size: px2rem(8);
+  border-radius: px2rem(1);
+  background-color: #296afd;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.prototype-guide-body {
+  @include t.use-typography("body-medium");
+
+  color: #ffffff;
+}
+
+.prototype-guide-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.prototype-guide-got-it {
+  @include t.use-typography("body-small");
+
+  height: deprecated.$s-24;
+  padding: deprecated.$s-2 deprecated.$s-8;
+  border: 0;
+  border-radius: px2rem(3);
+  background-color: #ffffff;
+  color: #296afd;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f2f5ff;
+  }
+}

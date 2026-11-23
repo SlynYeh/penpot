@@ -5896,9 +5896,17 @@ msgstr "升级您的计划"
 msgid "workspace.header.menu.option.preferences"
 msgstr "首选项"
 
+#: src/app/main/ui/workspace/main_menu.cljs:906
+msgid "workspace.header.menu.option.prototype-code"
+msgstr "原型出码"
+
 #: src/app/main/ui/workspace/main_menu.cljs:830
 msgid "workspace.header.menu.option.view"
 msgstr "视图"
+
+#: src/app/main/ui/workspace/main_menu.cljs:838
+msgid "workspace.header.menu.prototype-code.guide.body"
+msgstr "点击“原型出码”，了解原型图快速转代码具体方法。"
 
 #: src/app/main/ui/workspace/main_menu.cljs:523
 msgid "workspace.header.menu.redo"

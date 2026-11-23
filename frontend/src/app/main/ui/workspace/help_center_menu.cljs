@@ -26,6 +26,12 @@
 (def ^:private help-hint-ref
   (l/derived (l/key beginner-guide/help-hint-state-key) st/state))
 
+(def help-guide-dismissed-key
+  "Storage key marking the one-time help guide popover (新手引导视频
+  bubble) as dismissed. Public so the main menu can chain its own
+  one-time guide after this one."
+  ::help-guide-dismissed)
+
 ;; --- Help center menu
 
 (mf/defc help-center-menu*
@@ -36,14 +42,19 @@
 
         ;; One-time onboarding popover; persisted in storage/global so it is
         ;; shared across accounts on this browser (storage/user is wiped on
-        ;; logout). Lazy init evaluated once on mount.
-        show-guide* (mf/use-state #(not (get storage/global ::help-guide-dismissed)))
+        ;; logout). Lazy init evaluated once on mount. Suppressed once the
+        ;; onboarding chain is complete (video viewed + hint acknowledged),
+        ;; because then the 原型出码 popover takes over in the main menu.
+        show-guide* (mf/use-state
+                     #(and (not (get storage/global help-guide-dismissed-key))
+                           (not (and (beginner-guide/viewed?)
+                                     (beginner-guide/help-hint-seen?)))))
         show-guide? (deref show-guide*)
 
         dismiss-guide!
         (mf/use-fn
          (fn []
-           (swap! storage/global assoc ::help-guide-dismissed true)
+           (swap! storage/global assoc help-guide-dismissed-key true)
            (reset! show-guide* false)))
 
         dismiss-hint!

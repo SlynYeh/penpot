@@ -663,10 +663,11 @@ node target/tests/test.js --focus frontend-tests.util-embed-assistant-test --log
           :else
           (let [warned? (volatile! false)]
             (fn []
-              (let [targets (embed/target-origins)]
+              (let [parsed  (embed/origin-config)
+                    targets (embed/target-origins parsed)]
                 (when (and (some #(= "*" %) targets) (not (deref warned?)))
                   (vreset! warned? true)
-                  (if (= :none (embed/origin-config))
+                  (if (= :none parsed)
                     (log/inf :hint "assistant: parent origin validation disabled by config (none), posting with a wildcard target origin")
                     (log/wrn :hint "assistant: no usable parent origin configured, posting with a wildcard target origin")))
                 targets))))

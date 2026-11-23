@@ -124,11 +124,6 @@
   }
 }
 
-// The SDK mount is hidden (never unmounted) while history is on.
-.mount-hidden {
-  display: none;
-}
-
 // v2: history view header (IMG_4244) — back arrow + title, whole row
 // clickable. Sits 8 above the history list (spec).
 .history-head {

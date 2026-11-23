@@ -460,11 +460,15 @@
 
        ;; The SDK mount div is NEVER conditionally rendered: the host
        ;; SDK owns its DOM and a React remount would destroy it. It is
-       ;; only hidden while the history view is on.
+       ;; only hidden while the history view is on. The hide is an
+       ;; inline display:none instead of a css-module class so it cannot
+       ;; be defeated by a stale or desynchronized css bundle — it
+       ;; travels with the JS itself (verified broken in the real
+       ;; environment as a class: the js carried the class while the
+       ;; served css predated the rule).
        [:div {:id mount-dom-id
-              :class (cond-> (stl/css :mount)
-                       (= :history view)
-                       (str " " (stl/css :mount-hidden)))}]
+              :class (stl/css :mount)
+              :style {:display (when (= :history view) "none")}}]
 
        (when (= :history view)
          (cond

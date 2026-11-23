@@ -337,8 +337,17 @@
   (let [parsed  (origin-config)
         targets (target-origins parsed)]
     (when (some #(= "*" %) targets)
-      (if (= :none parsed)
+      (cond
+        (= :none parsed)
         (log/inf :hint "embed: posting ready with a wildcard target origin (validation disabled by config)")
+
+        ;; a wildcard pattern degrades the target set to "*" by design
+        ;; (a targetOrigin cannot express a wildcard host) — not a
+        ;; misconfiguration, so info, not wrn
+        (vector? parsed)
+        (log/inf :hint "embed: posting ready with a wildcard target origin (wildcard pattern configured)")
+
+        :else
         (log/wrn :hint "embed: posting ready with a wildcard target origin")))
     (doseq [origin targets]
       (.postMessage js/parent #js {:scope "penpot/embed" :type "ready"} origin))))

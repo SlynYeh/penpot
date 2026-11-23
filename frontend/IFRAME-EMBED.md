@@ -84,7 +84,7 @@ guest 在自己**被 iframe 嵌入**时，向 `window.parent` 发 `ready`：
 |---|---|
 | 发送时机 | guest 页面加载后立即（在发起任何后端请求之前） |
 | 发送频率 | 启动门打开前**每 2 秒重发**（凭据就绪、探测到可用 cookie、或到达降级上限，任一发生即停）；同一次加载宿主可能收到多条，监听器请**幂等**。iframe 重新加载 = 一轮新握手 |
-| targetOrigin | 1.1 配置的宿主 origin（未配置时为 `*`，会打告警日志） |
+| targetOrigin | 1.1 配置的宿主 origin（多 origin 时逐条各发一次；含通配条目或未配置时为 `*`，未配置才打告警日志） |
 | 顶层打开 | 直接访问 Penpot 网址（非 iframe）时**不发**，也不安装监听器 |
 
 ### 2.2 宿主 → guest：凭据
@@ -117,7 +117,7 @@ frame.contentWindow.postMessage(
 - `X-token` 和 `X-ClientId` 都必须存在、且是**非空白字符串**（`""`、`"  "` 无效）
 - `docContent` / `prompt` / `attachments` 不是凭据门槛：缺它们时握手仍成功
 - 消息**必须来自 `window.parent`**（兄弟 iframe、其他窗口发的都无效）
-- 发送方的 `event.origin` 必须与 1.1 配置的 origin **精确相等**（scheme + host + port 全一致；不做前缀匹配，`https://your-portal.example.com.attacker.io` 会被拒）
+- 发送方的 `event.origin` 必须与 1.1 配置的**任一条**条目匹配：精确条目要求 scheme + host + port 全一致；`*.` 通配条目匹配裸域及其任意层级子域；`https://your-portal.example.com.attacker.io` 仍会被拒（不做前缀匹配）
 - 除 `docContent` / `prompt` / `attachments` 外，其余多余字段被忽略
 
 生效后：`X-token` / `X-ClientId` 会作为请求头 `x-token` / `x-clientid` 发出（HTTP 头本身不区分大小写）。**`docContent` / `prompt` / `attachments` 不上请求头**，只保存在 guest 内存里供 AI 助手消费：
@@ -280,7 +280,7 @@ x-clientid: <你的 clientId>
 
 | 做法 | 期望现象 |
 |---|---|
-| 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin（多 origin 列表中配错任意一条，该条宿主收不到 `ready`，其余条目不受影响） | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃） |
+| 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin（多 origin 列表中配错任意一条，该条宿主收不到 `ready`，其余条目不受影响） | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃）（列表含通配条目时 ready 以 `*` 发出，配错的宿主也会收到 ready，但其凭据仍会被拒） |
 | 收到 `ready` 后故意不回复 | 5s 后开始探测（每 3s 一个**不带凭据**的 `get-profile`），期间每 2s 重发 `ready`；30s（deadline）前种好有效 cookie 即**自动恢复**为认证启动，否则 30s 降级为未登录启动（此阶段请求不带 header） |
 | 把字段名写成 `x-token` / `x-clientid` | 无效，等同于没发（消息键名大小写敏感） |
 | 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，等同没发——走上一行的探测→降级路径 |
@@ -291,7 +291,7 @@ x-clientid: <你的 clientId>
 
 | 现象 | 排查方向 |
 |---|---|
-| iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（多 origin 时逐条核对；通配条目注意 scheme/端口必须显式一致；结尾带点的 FQDN 写法如 `example.com.` 会被 entrypoint 拒绝）（注意端口、scheme、有无结尾 `/`） |
+| iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（多 origin 时逐条核对：注意端口、scheme、有无结尾 `/`；通配条目 scheme/端口必须显式一致；结尾带点的 FQDN 如 `example.com.` 会被 entrypoint 拒绝） |
 | 宿主收不到 `ready` | 同上——origin 不一致会导致 `ready` 发给一个不存在的窗口，**没有任何报错** |
 | 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或迟到超过上限。现已支持 30s（`penpotEmbedBootDeadlineMs`，默认）内 cookie/凭据迟到**自愈**（日志可见 `embed: session cookie detected`）；若仍出现该页面，说明超过 `penpotEmbedBootDeadlineMs` 上限或 cookie 无效 |
 | 所有请求都没有 `x-token` | payload 不合法，或凭据始终未有效到达（到达的凭据会走认证启动(30s 内)或补一次刷新(30s 后)，不会全程无 header） |
@@ -303,7 +303,7 @@ x-clientid: <你的 clientId>
 
 ## 5. 安全注意事项
 
-- **务必配置宿主 origin，不要用通配**：`PENPOT_EMBED_PARENT_ORIGIN` 留空或写成非法值时，guest 会退化为"接受任意窗口的凭据"（日志会告警 `no parent origin configured, accepting credentials from any window`）；`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；配置合法通配 pattern 时 ready 以 `"*"` 为目标（postMessage 固有限制），日志同为 **info**（`wildcard pattern configured`），不是告警
+- **务必配置宿主 origin，不要用通配**：`PENPOT_EMBED_PARENT_ORIGIN` 留空或写成非法值时，guest 会退化为"接受任意窗口的凭据"（日志会告警 `no parent origin configured, accepting credentials from any window`）；`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；配置合法通配 pattern 时 ready 以 `"*"` 为目标（postMessage 固有限制），日志同为 **info**（`wildcard pattern configured`），不是告警（经环境变量设 `none` 时 entrypoint 会清空该值，日志走未配置的 warn 文案，行为等价）
 - guest 只接受来自 `window.parent` 的消息，且 origin 与配置列表逐条精确匹配（`*.` 通配条目按裸域+子域匹配）
 - guest 记录日志时只记 token / client-id / docContent / prompt 的 **长度** 和 attachments 的 **条数**，不记值（`embed: credentials received :token-length … :client-id-length … :doc-content-length … :prompt-length … :attachments-count …`），宿主可以据此确认"收到了但没泄漏"
 - Penpot 只把凭据发往自己的后端，不会随外部资源请求外发

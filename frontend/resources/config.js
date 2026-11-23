@@ -111,7 +111,7 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
   // (scheme://host[:port], 可带一个结尾 /)或 *.<domain> 通配子域:
   // https://*.example.com 匹配 example.com 本身及其任意层级子域,
   // scheme 与端口须一致。任意一条通配即以 "*" 为 postMessage 目标
-  // (targetOrigin 无法表达通配主机名); 凭据校验仍按逐条精确匹配。
+  // (targetOrigin 无法表达通配主机名); 凭据校验仍逐条进行(通配条目按裸域+子域匹配)。
   // 特殊值 none(大小写不敏感)= 无条件跳过校验: 接受任意窗口的凭据,
   // 仅作用于 postMessage 层, 不影响 nginx 的嵌入控制(X-Frame-Options/CSP)。
   // 留空或全部条目非法则回退 "*", 即任何能触达本页面的窗口都可注入凭据

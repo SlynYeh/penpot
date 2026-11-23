@@ -127,6 +127,21 @@
   (t/is (true? (embed/origin-accepted? "none" "https://anything.example")))
   (t/is (true? (embed/origin-accepted? "NONE" "https://anything.example"))))
 
+(t/deftest target-origins-strategy
+  ;; wildcard fallbacks: nothing configured, nothing usable, none sentinel
+  (t/is (= ["*"] (embed/target-origins nil)))
+  (t/is (= ["*"] (embed/target-origins [])))
+  (t/is (= ["*"] (embed/target-origins :none)))
+  ;; every exact pattern posts once per origin: the browser delivers
+  ;; only the message whose target origin equals the real parent's
+  (t/is (= ["https://a.example.com" "https://b.example.com:8443"]
+           (embed/target-origins
+            ["https://a.example.com" "https://b.example.com:8443"])))
+  ;; a postMessage targetOrigin cannot express a wildcard host, so any
+  ;; wildcard pattern degrades the whole target set to "*"
+  (t/is (= ["*"] (embed/target-origins
+                  ["https://a.example.com" "https://*.example.com"]))))
+
 (t/deftest origin-accepted-exact-match
   (t/is (true? (embed/origin-accepted? "https://portal.example.com"
                                        "https://portal.example.com")))

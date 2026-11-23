@@ -188,6 +188,35 @@
       (boolean (and normalized
                     (some #(origin-matches-pattern? % normalized) parsed))))))
 
+(defonce ^:private parsed-origin-config
+  ;; Memoized `parse-origin-config` over the compile-time constant
+  ;; `cf/embed-parent-origin`: :none | pattern vector | nil.
+  (delay (parse-origin-config cf/embed-parent-origin)))
+
+(defn origin-config
+  "The memoized parse of the configured `penpotEmbedParentOrigin`:
+  `:none` | pattern vector | nil (unconfigured/unusable). Public so
+  the assistant namespace shares one parse and one policy."
+  []
+  (deref parsed-origin-config))
+
+(defn target-origins
+  "Vector of postMessage target origins for the parent window. Exact
+  patterns return themselves (one postMessage per origin; the browser
+  delivers only the one matching the real parent). The `none` sentinel,
+  an absent or unusable configuration, or any wildcard pattern returns
+  `[\"*\"]` — a targetOrigin cannot express a wildcard host, and the
+  ready/handshake messages carry no credentials. The one argument form
+  takes an already parsed config; the zero argument form parses the
+  live configuration. Public so the strategy can be unit-tested."
+  ([]
+   (target-origins (parse-origin-config cf/embed-parent-origin)))
+  ([parsed]
+   (cond
+     (or (= :none parsed) (nil? parsed) (empty? parsed)) ["*"]
+     (some wildcard-pattern? parsed) ["*"]
+     :else (vec parsed))))
+
 (defn origin-accepted?
   "Whether `origin`, as reported by a received message, is an acceptable
   parent origin for the raw `configured` value. The value is parsed

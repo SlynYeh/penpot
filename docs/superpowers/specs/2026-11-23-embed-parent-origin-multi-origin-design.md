@@ -71,8 +71,9 @@ Pattern 形式 `scheme://[*.]host[:port]`，仅 host 开头的 `*.` 有特殊含
 
 ### 3. `app.util.embed/assistant.cljs`（消重 + 多目标）
 
-- 默认 `origin-allowed?`：删除本地重复的 warned?/normalize 逻辑，改调 embed 公共解析；日志文案由
-  embed 统一提供（命名空间前缀 `embed:`/`assistant:` 以参数区分）。
+- 默认 `origin-allowed?`：删除本地重复的 warned?/normalize 逻辑，改调 embed 公共解析
+  （`embed/origin-config` + `embed/origins-accept?`，策略与数据单一来源）；日志文案保留各命名空间
+  自有的措辞（`embed:`/`assistant:` 前缀），按 `:none` → info、未配置 → wrn 分级。
 - 默认 `resolve-target-origin`：返回 `embed/target-origins` 向量；注入的 string/function 覆盖路径保留
   （string → 常量、function → 调用，返回值统一包装为向量再循环）。
 - `post!` 处改为循环 targets 调 `post-message!`；注入签名 `(message origin)` 不变。

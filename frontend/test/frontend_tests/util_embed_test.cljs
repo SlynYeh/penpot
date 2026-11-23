@@ -87,6 +87,46 @@
   (t/is (= ["https://a.example.com"]
            (embed/parse-origin-config "https://a.example.com,none"))))
 
+(t/deftest origin-accepted-matches-any-listed-origin
+  (t/is (true? (embed/origin-accepted?
+                "https://a.example.com,https://b.example.com:8443"
+                "https://b.example.com:8443")))
+  (t/is (false? (embed/origin-accepted?
+                 "https://a.example.com,https://b.example.com:8443"
+                 "https://a.example.com:8443"))))
+
+(t/deftest origin-accepted-wildcard-subdomains
+  ;; CSP host-source style: the wildcard covers the bare domain and
+  ;; subdomains at any depth, on the same scheme and, when the pattern
+  ;; carries one, the same port.
+  (t/is (true? (embed/origin-accepted? "https://*.example.com"
+                                       "https://example.com")))
+  (t/is (true? (embed/origin-accepted? "https://*.example.com"
+                                       "https://a.example.com")))
+  (t/is (true? (embed/origin-accepted? "https://*.example.com"
+                                       "https://a.b.example.com")))
+  (t/is (true? (embed/origin-accepted? "https://*.example.com/"
+                                       "https://a.example.com"))))
+
+(t/deftest origin-accepted-wildcard-lookalikes-rejected
+  (t/is (false? (embed/origin-accepted? "https://*.example.com"
+                                        "https://evil-example.com")))
+  (t/is (false? (embed/origin-accepted? "https://*.example.com"
+                                        "https://attacker.io")))
+  (t/is (false? (embed/origin-accepted? "https://*.example.com"
+                                        "http://a.example.com")))
+  ;; a pattern without a port never matches an origin with one
+  (t/is (false? (embed/origin-accepted? "https://*.example.com"
+                                        "https://a.example.com:8443")))
+  (t/is (false? (embed/origin-accepted? "https://*.example.com:8443"
+                                        "https://a.example.com")))
+  (t/is (true? (embed/origin-accepted? "https://*.example.com:8443"
+                                       "https://example.com:8443"))))
+
+(t/deftest origin-accepted-none-sentinel-accepts-anything
+  (t/is (true? (embed/origin-accepted? "none" "https://anything.example")))
+  (t/is (true? (embed/origin-accepted? "NONE" "https://anything.example"))))
+
 (t/deftest origin-accepted-exact-match
   (t/is (true? (embed/origin-accepted? "https://portal.example.com"
                                        "https://portal.example.com")))

@@ -144,17 +144,58 @@
                  :entries (str/join "," @dropped)))
       (when (seq parsed) parsed))))
 
+(defn- split-origin
+  "Splits a normalized `scheme://host[:port]` string into
+  `[scheme host-with-port]`, or nil for an unexpected shape."
+  [origin]
+  (when-let [idx (and (string? origin) (str/index-of origin "://"))]
+    [(subs origin 0 idx)
+     (subs origin (+ idx 3))]))
+
+(defn- wildcard-pattern?
+  "Whether `pattern` carries the leading `*.` host label."
+  [pattern]
+  (some? (str/index-of pattern "://*.")))
+
+(defn- origin-matches-pattern?
+  "Whether the normalized `origin` matches the normalized `pattern`.
+  Scheme and `host[:port]` compare exactly; a `*.` pattern host
+  additionally matches the bare domain and subdomains at any depth.
+  The port, when present, is part of the compared remainder and must
+  match too — so a pattern without a port never matches an origin
+  with one, and vice versa."
+  [pattern origin]
+  (when-let [[p-scheme p-rest] (split-origin pattern)]
+    (when-let [[o-scheme o-rest] (split-origin origin)]
+      (and (= p-scheme o-scheme)
+           (if (wildcard-pattern? pattern)
+             (let [suffix (subs p-rest 2)]
+               (or (= suffix o-rest)
+                   (str/ends-with? o-rest (str "." suffix))))
+             (= p-rest o-rest))))))
+
+(defn origins-accept?
+  "Whether `origin`, as reported by a received message, is accepted by
+  the parsed configuration `parsed` (`:none` | pattern vector | nil,
+  the shape returned by `parse-origin-config`). `:none` and absent or
+  unusable configurations accept anything; otherwise the origin must
+  match at least one pattern. Public so the matching rule can be
+  unit-tested."
+  [parsed origin]
+  (if (or (= :none parsed) (nil? parsed) (empty? parsed))
+    true
+    (let [normalized (normalize-origin origin)]
+      (boolean (and normalized
+                    (some #(origin-matches-pattern? % normalized) parsed))))))
+
 (defn origin-accepted?
   "Whether `origin`, as reported by a received message, is an acceptable
-  parent origin for the `configured` value. An absent or invalid
-  configured origin means wildcard, so anything is accepted. Public so the
-  matching rule can be unit-tested."
+  parent origin for the raw `configured` value. The value is parsed
+  with `parse-origin-config` (comma/whitespace separated origin
+  patterns; `none` and unusable values mean wildcard) and matched with
+  `origins-accept?`. Public so the matching rule can be unit-tested."
   [configured origin]
-  (if-let [expected (normalize-origin configured)]
-    ;; Exact comparison on normalized origins. A prefix check would accept
-    ;; `https://good.example.attacker.io` for `https://good.example`.
-    (= expected (normalize-origin origin))
-    true))
+  (origins-accept? (parse-origin-config configured) origin))
 
 (defn valid-payload?
   "Whether a received message carries usable `X-token` / `X-ClientId`

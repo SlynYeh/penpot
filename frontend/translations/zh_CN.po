@@ -6272,7 +6272,7 @@ msgstr "单击 + 按钮以添加交互。"
 
 #: src/app/main/ui/workspace/sidebar/options.cljs
 msgid "workspace.options.assistant"
-msgstr "智能原型"
+msgstr "原型·X"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.error.handshake"
@@ -6312,7 +6312,7 @@ msgstr "当天"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.loading"
-msgstr "正在连接智能原型…"
+msgstr "正在连接原型·X…"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.new-session"

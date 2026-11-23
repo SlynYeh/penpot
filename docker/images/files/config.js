@@ -131,11 +131,21 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 (function () {
   // 以 iframe 方式嵌入第三方系统时的父窗口源, 形如 https://portal.example.com。
   // 用途: (1) 向父窗口发 postMessage「就绪」消息时的 targetOrigin;
-  //      (2) 校验父窗口回传凭据消息的 event.origin(精确匹配)。
-  // 留空则回退 "*", 即任何能触达本页面的窗口都可注入凭据, 生产环境务必配置。
-  // 注意: 需与父页面同源, 否则页面会因 nginx 的 X-Frame-Options: SAMEORIGIN 无法被嵌入。
+  //      (2) 校验父窗口回传凭据消息的 event.origin。
+  // 支持逗号分隔的多个 origin(逗号/空白皆可作分隔符), 单条为裸 origin
+  // (scheme://host[:port], 可带一个结尾 /)或 *.<domain> 通配子域:
+  // https://*.example.com 匹配 example.com 本身及其任意层级子域,
+  // scheme 与端口须一致。任意一条通配即以 "*" 为 postMessage 目标
+  // (targetOrigin 无法表达通配主机名); 凭据校验仍按逐条精确匹配。
+  // 特殊值 none(大小写不敏感)= 无条件跳过校验: 接受任意窗口的凭据,
+  // 仅作用于 postMessage 层, 不影响 nginx 的嵌入控制(X-Frame-Options/CSP)。
+  // 留空或全部条目非法则回退 "*", 即任何能触达本页面的窗口都可注入凭据
+  // (日志 warn 提示未配置), 生产环境务必配置。
+  // 注意: 跨源嵌入还需 nginx 放开嵌入控制(设 PENPOT_EMBED_PARENT_ORIGIN
+  // 生成 frame-ancestors, 或由外部 nginx 自管), 否则页面无法被嵌入。
   // Docker 部署: 可用环境变量 PENPOT_EMBED_PARENT_ORIGIN 覆盖
-  // (由 nginx-entrypoint.sh 追加赋值, 优先级更高; 设为 none 则清空)。
+  // (由 nginx-entrypoint.sh 逐条校验后追加赋值, 优先级更高;
+  // 非法条目丢弃并告警, 全部非法则保留此处默认值; 设为 none 则清空)。
   globalThis.penpotEmbedParentOrigin = "";
 })();
 

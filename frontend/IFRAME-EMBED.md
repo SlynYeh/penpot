@@ -14,6 +14,7 @@
 
 ```yaml
 PENPOT_EMBED_PARENT_ORIGIN: "https://your-portal.example.com"
+# 多宿主/通配子域: "https://a.example.com,https://*.b.example.net"
 ```
 
 这一个变量同时决定两件事：
@@ -29,7 +30,7 @@ PENPOT_EMBED_PARENT_ORIGIN: "https://your-portal.example.com"
 Refused to display 'https://penpot.example.com/penpot/' in a frame because it set 'X-Frame-Options' to 'sameorigin'.
 ```
 
-要求：**裸 origin**（`scheme://host[:port]`，可带一个结尾 `/`）。写错格式不会报错，只会静默退回"通配 + 保持拒框"，所以请用第 4 节的命令自检。
+要求：每条为**裸 origin**（`scheme://host[:port]`，可带一个结尾 `/`）或 **`*.<domain>` 通配子域**（`https://*.example.com` 匹配 `example.com` 本身及其任意层级子域，scheme 与端口须一致），多条用**逗号分隔**。特殊值 `none`（大小写不敏感）= 跳过消息层 origin 校验（接受任意窗口的凭据；**不影响** nginx 嵌入控制）。单条非法只丢该条并告警，全部非法回退"通配 + 保持拒框"，所以请用第 4 节的命令自检。
 
 ### 1.2 guest 地址必须带 base path
 
@@ -241,7 +242,7 @@ curl -sI https://penpot.example.com/penpot/ | grep -iE "x-frame-options|content-
 | 无 `X-Frame-Options` | 已由 nginx 替换 |
 | `Content-Security-Policy: frame-ancestors 'self' https://your-portal.example.com` | origin 与宿主一致 |
 
-未配置 `PENPOT_EMBED_PARENT_ORIGIN` 时保留 `X-Frame-Options: SAMEORIGIN`（即**不允许**被跨域嵌入）。**值写成非法格式时也是保留 SAMEORIGIN**，同时 guest 侧退回通配——所以务必用这条命令确认，不要只看环境变量"已设置"。
+多 origin 时 `frame-ancestors` 会列出全部条目（空格分隔；`*.example.com` 通配条目会同时输出 `example.com` 裸域，保证裸域宿主也能嵌入）。未配置 `PENPOT_EMBED_PARENT_ORIGIN`、配置为 `none`、或全部条目非法时保留 `X-Frame-Options: SAMEORIGIN`（即**不允许**被跨域嵌入；`none` 只跳过消息层校验，不放开嵌入）。所以务必用这条命令确认，不要只看环境变量"已设置"。
 
 ### 4.2 第 1 层：握手是否发生（消息层）
 
@@ -279,7 +280,7 @@ x-clientid: <你的 clientId>
 
 | 做法 | 期望现象 |
 |---|---|
-| 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃） |
+| 把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin（多 origin 列表中配错任意一条，该条宿主收不到 `ready`，其余条目不受影响） | 宿主**收不到** `ready`（guest 的 targetOrigin 不匹配，静默丢弃） |
 | 收到 `ready` 后故意不回复 | 5s 后开始探测（每 3s 一个**不带凭据**的 `get-profile`），期间每 2s 重发 `ready`；30s（deadline）前种好有效 cookie 即**自动恢复**为认证启动，否则 30s 降级为未登录启动（此阶段请求不带 header） |
 | 把字段名写成 `x-token` / `x-clientid` | 无效，等同于没发（消息键名大小写敏感） |
 | 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，等同没发——走上一行的探测→降级路径 |
@@ -290,7 +291,7 @@ x-clientid: <你的 clientId>
 
 | 现象 | 排查方向 |
 |---|---|
-| iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（注意端口、scheme、有无结尾 `/`） |
+| iframe 白屏，控制台 `Refused to display ... X-Frame-Options` | 部署未设 `PENPOT_EMBED_PARENT_ORIGIN`，或值与宿主实际 origin 不一致（多 origin 时逐条核对；通配条目注意 scheme/端口必须显式一致；结尾带点的 FQDN 写法如 `example.com.` 会被 entrypoint 拒绝）（注意端口、scheme、有无结尾 `/`） |
 | 宿主收不到 `ready` | 同上——origin 不一致会导致 `ready` 发给一个不存在的窗口，**没有任何报错** |
 | 收到 `ready`，但 guest 内显示「此页面已被禁用」 | guest 认为未登录、跳到了登录页（本 fork 屏蔽了登录/注册页）。说明凭据没生效：键名大小写、空值、或迟到超过上限。现已支持 30s（`penpotEmbedBootDeadlineMs`，默认）内 cookie/凭据迟到**自愈**（日志可见 `embed: session cookie detected`）；若仍出现该页面，说明超过 `penpotEmbedBootDeadlineMs` 上限或 cookie 无效 |
 | 所有请求都没有 `x-token` | payload 不合法，或凭据始终未有效到达（到达的凭据会走认证启动(30s 内)或补一次刷新(30s 后)，不会全程无 header） |
@@ -302,8 +303,8 @@ x-clientid: <你的 clientId>
 
 ## 5. 安全注意事项
 
-- **务必配置宿主 origin，不要用通配**：`PENPOT_EMBED_PARENT_ORIGIN` 留空或写成非法值时，guest 会退化为"接受任意窗口的凭据"（日志会告警 `no parent origin configured, accepting credentials from any window`）
-- guest 只接受来自 `window.parent` 的消息，且 origin 精确匹配
+- **务必配置宿主 origin，不要用通配**：`PENPOT_EMBED_PARENT_ORIGIN` 留空或写成非法值时，guest 会退化为"接受任意窗口的凭据"（日志会告警 `no parent origin configured, accepting credentials from any window`）；`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；配置合法通配 pattern 时 ready 以 `"*"` 为目标（postMessage 固有限制），日志同为 **info**（`wildcard pattern configured`），不是告警
+- guest 只接受来自 `window.parent` 的消息，且 origin 与配置列表逐条精确匹配（`*.` 通配条目按裸域+子域匹配）
 - guest 记录日志时只记 token / client-id / docContent / prompt 的 **长度** 和 attachments 的 **条数**，不记值（`embed: credentials received :token-length … :client-id-length … :doc-content-length … :prompt-length … :attachments-count …`），宿主可以据此确认"收到了但没泄漏"
 - Penpot 只把凭据发往自己的后端，不会随外部资源请求外发
 - 凭据存放在 guest 的内存里，宿主页的 DevTools 能直接看到请求头；宿主自身应使用短 TTL 的 token 并全程 HTTPS

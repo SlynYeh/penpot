@@ -509,8 +509,17 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
   (let [parsed  (origin-config)
         targets (target-origins parsed)]
     (when (some #(= "*" %) targets)
-      (if (= :none parsed)
+      (cond
+        (= :none parsed)
         (log/inf :hint "embed: posting ready with a wildcard target origin (validation disabled by config)")
+
+        ;; a wildcard pattern degrades the target set to "*" by design
+        ;; (a targetOrigin cannot express a wildcard host) — not a
+        ;; misconfiguration, so info, not wrn
+        (vector? parsed)
+        (log/inf :hint "embed: posting ready with a wildcard target origin (wildcard pattern configured)")
+
+        :else
         (log/wrn :hint "embed: posting ready with a wildcard target origin")))
     (doseq [origin targets]
       (.postMessage js/parent #js {:scope "penpot/embed" :type "ready"} origin))))
@@ -667,8 +676,16 @@ node target/tests/test.js --focus frontend-tests.util-embed-assistant-test --log
                     targets (embed/target-origins parsed)]
                 (when (and (some #(= "*" %) targets) (not (deref warned?)))
                   (vreset! warned? true)
-                  (if (= :none parsed)
+                  (cond
+                    (= :none parsed)
                     (log/inf :hint "assistant: parent origin validation disabled by config (none), posting with a wildcard target origin")
+
+                    ;; wildcard pattern configured: "*" is by design, not
+                    ;; a misconfiguration — info, not wrn
+                    (vector? parsed)
+                    (log/inf :hint "assistant: posting with a wildcard target origin (wildcard pattern configured)")
+
+                    :else
                     (log/wrn :hint "assistant: no usable parent origin configured, posting with a wildcard target origin")))
                 targets))))
 ```
@@ -999,7 +1016,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
   3. 4.4 负向验证表（282 行那条）的「做法」列改为：把 `PENPOT_EMBED_PARENT_ORIGIN` 配成另一个 origin（多 origin 列表中配错任意一条，该条宿主收不到 `ready`，其余条目不受影响）。
   4. 4.5 排查表 293 行「或值与宿主实际 origin 不一致」后补「（多 origin 时逐条核对；通配条目注意 scheme/端口必须显式一致）」。
-  5. 第 5 节 305 行「**务必配置宿主 origin，不要用通配**」条目末尾补一句：`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；306 行「origin 精确匹配」改为「origin 与配置列表逐条精确匹配（`*.` 通配条目按裸域+子域匹配）」。
+  5. 第 5 节 305 行「**务必配置宿主 origin，不要用通配**」条目末尾补一句：`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；配置合法通配 pattern 时 ready 以 `"*"` 为目标（postMessage 固有限制），日志同为 **info**（`wildcard pattern configured`），不是告警；306 行「origin 精确匹配」改为「origin 与配置列表逐条精确匹配（`*.` 通配条目按裸域+子域匹配）」。
 
 - [ ] **Step 4: 无代码变更，不跑测试；提交**
 

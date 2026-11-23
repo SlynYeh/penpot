@@ -66,8 +66,9 @@ Pattern 形式 `scheme://[*.]host[:port]`，仅 host 开头的 `*.` 有特殊含
     命中那条送达）。
   - **含任一通配 pattern、或 `:none`/未配置 → `["*"]`**（postMessage targetOrigin 无法表达通配主机名，
     `https://*.b.com` 会被浏览器当字面量；ready 消息不含凭据，`*` 无敏感面扩大）。
-- `post-ready!` 循环 targets；`*` 告警细化：未配置 → 保持 wrn；`:none` → info 文案
-  「validation disabled by config」。
+- `post-ready!` 循环 targets；`*` 告警细化三分支：未配置 → 保持 wrn；`:none` → info 文案
+  「validation disabled by config」；**配置含通配 pattern → info**（`*` 目标是 postMessage 的固有限制
+  而非配置错误，不能让正确配置的运维者每 2s 重发都吃误导性 wrn；assistant 的 target 分支同规则）。
 
 ### 3. `app.util.embed/assistant.cljs`（消重 + 多目标）
 

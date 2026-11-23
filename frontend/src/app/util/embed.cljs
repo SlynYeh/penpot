@@ -282,23 +282,22 @@
        :prompt (when (string? raw-prompt) raw-prompt)
        :attachments (parse-attachments data)})))
 
-(defn- configured-origin
-  []
-  (normalize-origin cf/embed-parent-origin))
-
-(defn- target-origin
-  []
-  (or (configured-origin) "*"))
+(defonce ^:private none-warned?
+  (volatile! false))
 
 (defn- origin-allowed?
   [origin]
-  (if (configured-origin)
-    (origin-accepted? cf/embed-parent-origin origin)
-    (do
-      (when-not (deref wildcard-warned?)
-        (vreset! wildcard-warned? true)
-        (log/wrn :hint "embed: no parent origin configured, accepting credentials from any window"))
-      true)))
+  (let [parsed   (origin-config)
+        allowed? (origins-accept? parsed origin)]
+    (when (and allowed? (or (= :none parsed) (nil? parsed)))
+      (if (= :none parsed)
+        (when-not (deref none-warned?)
+          (vreset! none-warned? true)
+          (log/inf :hint "embed: parent origin validation disabled by config (none)"))
+        (when-not (deref wildcard-warned?)
+          (vreset! wildcard-warned? true)
+          (log/wrn :hint "embed: no parent origin configured, accepting credentials from any window"))))
+    allowed?))
 
 (defn- receive!
   [{:keys [token client-id doc-content prompt attachments] :as payload}]
@@ -335,10 +334,14 @@
 
 (defn- post-ready!
   []
-  (let [origin (target-origin)]
-    (when (= origin "*")
-      (log/wrn :hint "embed: posting ready with wildcard target origin"))
-    (.postMessage js/parent #js {:scope "penpot/embed" :type "ready"} origin)))
+  (let [parsed  (origin-config)
+        targets (target-origins parsed)]
+    (when (some #(= "*" %) targets)
+      (if (= :none parsed)
+        (log/inf :hint "embed: posting ready with a wildcard target origin (validation disabled by config)")
+        (log/wrn :hint "embed: posting ready with a wildcard target origin")))
+    (doseq [origin targets]
+      (.postMessage js/parent #js {:scope "penpot/embed" :type "ready"} origin))))
 
 (defn start!
   "Starts the handshake and returns a promise resolved with the received

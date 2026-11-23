@@ -83,23 +83,17 @@
            (reject cause)))))
     (p/resolved nil)))
 
-(defn- extract-sdk-tools
-  "Extracts the v2 session management surface from the host SDK global
-  (`getTools() -> {:jsSdk {:getSessionList}}` and `changeSessionId`),
-  every member nil checked and bound to its owner object so `this`
-  survives the extraction. An SDK without the v2 surface yields a map
-  of nils — the v2 UI degrades to hidden instead of throwing."
-  [^js sdk]
-  (when (object? sdk)
-    (let [tools (when (fn? (obj/get sdk "getTools"))
-                  (try (.getTools sdk) (catch :default _ nil)))
-          bind  (fn [owner name]
-                  (let [method (when (object? owner) (obj/get owner name))]
-                    (when (fn? method) (.bind method owner))))]
-      (when (object? tools)
-        (let [js-sdk (obj/get tools "jsSdk")]
-          {:change-session-id! (bind tools "changeSessionId")
-           :get-session-list!  (bind js-sdk "getSessionList")})))))
+(defn- fresh-sdk-tools
+  "Re-extracts the v2 tools surface from the CURRENT SDK global at
+  call time. Every SDK invocation goes through this instead of the
+  ready-time snapshot in `sdk-tools*`: the SDK script may be
+  re-injected and `window.X_Assistant` replaced while the session
+  stays ready, and methods bound to a previous script generation must
+  not keep being called. Nil when the global is gone (a torn-down
+  session) or lacks the surface; callers degrade exactly as they did
+  for a nil snapshot member."
+  []
+  (assistant/extract-sdk-tools (unchecked-get ug/global sdk-global-name)))
 
 (mf/defc assistant-tab*
   [{:keys [file-id page-id]}]
@@ -114,8 +108,10 @@
         ;; file) pair.
         session-id* (mf/use-state nil)
 
-        ;; v2: the {:change-session-id! :get-session-list!} bridge
-        ;; while the session is alive; nil outside the ready state.
+        ;; v2: liveness flag only — set when the session goes ready and
+        ;; cleared when the setup effect restarts. SDK methods are NOT
+        ;; taken from here: every call re-extracts them from the
+        ;; current global (fresh-sdk-tools).
         sdk-tools* (mf/use-state nil)
 
         profile    (mf/deref refs/profile)
@@ -164,7 +160,7 @@
         on-new-session!
         (mf/use-fn
          (fn []
-           (when-let [change! (:change-session-id! (deref sdk-tools*))]
+           (if-let [change! (:change-session-id! (fresh-sdk-tools))]
              (-> (try (adopt-sdk-result (change! ""))
                       (catch :default cause (p/rejected cause)))
                  (p/then (fn [_]
@@ -173,12 +169,13 @@
                            (reset! session-id* nil)))
                  (p/catch (fn [cause]
                             (log/wrn :hint "assistant: failed to start a new session"
-                                     :cause cause)))))))
+                                     :cause cause))))
+             (log/wrn :hint "assistant: no SDK changeSessionId available for a new session"))))
 
         on-select-session!
         (mf/use-fn
          (fn [session-id]
-           (when-let [change! (:change-session-id! (deref sdk-tools*))]
+           (if-let [change! (:change-session-id! (fresh-sdk-tools))]
              (-> (try (adopt-sdk-result (change! session-id))
                       (catch :default cause (p/rejected cause)))
                  (p/then (fn [_]
@@ -188,7 +185,8 @@
                            (reset! view* :chat)))
                  (p/catch (fn [cause]
                             (log/wrn :hint "assistant: failed to switch session"
-                                     :cause cause)))))))]
+                                     :cause cause))))
+             (log/wrn :hint "assistant: no SDK changeSessionId available to switch session"))))]
 
     (mf/use-effect
      (mf/deps attempt)
@@ -258,8 +256,8 @@
                (let [saved-id (assistant/load-saved-session-id
                                (mf/ref-val profile-id-ref)
                                (mf/ref-val file-id-ref))
-                     tools   (extract-sdk-tools sdk)
-                     change! (:change-session-id! tools)]
+                     tools   (assistant/extract-sdk-tools sdk)
+                     change! (:change-session-id! (fresh-sdk-tools))]
                  (when-not @cancelled?
                    (reset! session-id* saved-id))
                  (if (or (nil? saved-id) (nil? change!))
@@ -274,10 +272,12 @@
                            (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref))
                           (when-not @cancelled?
                             (reset! session-id* nil))
-                          (try (change! "")
-                               (catch :default cause
-                                 (log/wrn :hint "assistant: could not arm a new session after a failed restore"
-                                          :cause cause)))
+                          (if-let [fallback! (:change-session-id! (fresh-sdk-tools))]
+                            (try (fallback! "")
+                                 (catch :default cause
+                                   (log/wrn :hint "assistant: could not arm a new session after a failed restore"
+                                            :cause cause)))
+                            (log/wrn :hint "assistant: no SDK changeSessionId available after a failed restore"))
                           ;; fall through: ready! arms the UI on both the
                           ;; restored and the fallback path, exactly once
                           nil))
@@ -401,9 +401,10 @@
        (when (= :history view)
          (let [cancelled? (volatile! false)]
            (reset! history* :loading)
-           (let [{:keys [get-session-list!]} (deref sdk-tools*)]
+           (let [get-session-list! (:get-session-list! (fresh-sdk-tools))]
              (if (nil? get-session-list!)
-               (reset! history* :error)
+               (do (log/wrn :hint "assistant: no SDK getSessionList available")
+                   (reset! history* :error))
                (-> (try (adopt-sdk-result (get-session-list!))
                         (catch :default cause (p/rejected cause)))
                    (p/then (fn [^js result]

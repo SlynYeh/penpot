@@ -158,6 +158,31 @@
      (try (.removeItem storage (session-storage-key profile-id file-id))
           (catch :default _ nil)))))
 
+;; -------------------------------------------------------------------------
+;; v2: host SDK tools surface extraction. Lives here (not in the UI
+;; component) so the extraction contract stays unit-testable in node;
+;; the component re-runs it against the current SDK global at every
+;; call site instead of keeping a ready-time snapshot.
+;; -------------------------------------------------------------------------
+
+(defn extract-sdk-tools
+  "Extracts the v2 session management surface from the host SDK object
+  (`getTools() -> {jsSdk: {getSessionList}, changeSessionId}`), every
+  member nil checked and bound to its owner object so `this` survives
+  the extraction. An SDK without the v2 surface yields a map of nils —
+  the v2 UI degrades to hidden instead of throwing."
+  [^js sdk]
+  (when (object? sdk)
+    (let [tools (when (fn? (obj/get sdk "getTools"))
+                  (try (.getTools sdk) (catch :default _ nil)))
+          bind  (fn [owner name]
+                  (let [method (when (object? owner) (obj/get owner name))]
+                    (when (fn? method) (.bind method owner))))]
+      (when (object? tools)
+        (let [js-sdk (obj/get tools "jsSdk")]
+          {:change-session-id! (bind tools "changeSessionId")
+           :get-session-list!  (bind js-sdk "getSessionList")})))))
+
 (defn- valid-date?
   [date]
   (and (some? date) (not (js/isNaN (.getTime ^js date)))))

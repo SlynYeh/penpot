@@ -652,3 +652,63 @@
                      [key (mapv #(obj/get % "uid") sessions)])
                    (assistant/group-sessions-by-age
                     #js [(hist-session "fresh" fresh-ms)]))))))
+
+;;; -------------------------------------------------------------------------
+;;; v2 SDK tools extraction (the call-time contract with the UI
+;;; component). The component keeps no ready-time snapshot: every SDK
+;;; call re-extracts from the current global, so these tests pin what
+;;; a fresh extraction must deliver.
+;;; -------------------------------------------------------------------------
+
+(defn- mk-fake-tools
+  "A fake v2 tools object tagged with `tag`; its changeSessionId
+  records the tag of the instance it was invoked on (through `this`)
+  plus the session id."
+  [tag]
+  #js {"tag" tag
+       "changeSessionId"
+       (fn [id]
+         (this-as self #js [(unchecked-get self "tag") id]))
+       "jsSdk" #js {"getSessionList" (fn [] #js {"sessions" #js []})}})
+
+(t/deftest extract-sdk-tools-binds-methods-to-their-owner
+  (let [sdk  #js {"getTools" (fn [] (mk-fake-tools "gen0"))}
+        {:keys [change-session-id! get-session-list!]}
+        (assistant/extract-sdk-tools sdk)]
+    (t/is (fn? change-session-id!))
+    (t/is (fn? get-session-list!))
+    ;; `this` inside the SDK method is the tools object it came from
+    (t/is (= ["gen0" "s1"] (js->clj (change-session-id! "s1"))))
+    (t/is (object? (get-session-list!)))))
+
+(t/deftest extract-sdk-tools-follows-the-replaced-generation
+  ;; simulates the SDK script being re-executed while the session
+  ;; stays ready: getTools now returns a NEW tools object, and a fresh
+  ;; extraction must reach the new generation. The previously bound
+  ;; function keeps serving the old generation — which is exactly why
+  ;; the UI must re-extract at call time instead of keeping a snapshot.
+  (let [gen       (atom 0)
+        tools-ref (atom (mk-fake-tools (str "gen" @gen)))
+        sdk       #js {"getTools" (fn [] @tools-ref)}
+        first!    (:change-session-id! (assistant/extract-sdk-tools sdk))]
+    (reset! gen 1)
+    (reset! tools-ref (mk-fake-tools (str "gen" @gen)))
+    (let [second! (:change-session-id! (assistant/extract-sdk-tools sdk))]
+      (t/is (not (identical? first! second!)))
+      (t/is (= ["gen1" "x"] (js->clj (second! "x"))))
+      (t/is (= ["gen0" "x"] (js->clj (first! "x")))))))
+
+(t/deftest extract-sdk-tools-degrades-gracefully
+  ;; a tools object without the v2 members yields a map of nils
+  (let [result (assistant/extract-sdk-tools
+                #js {"getTools" (fn [] #js {"jsSdk" #js {}})})]
+    (t/is (map? result))
+    (t/is (nil? (:change-session-id! result)))
+    (t/is (nil? (:get-session-list! result))))
+  ;; no tools object at all, a throwing getTools, a non-object sdk or
+  ;; no sdk yields nil
+  (t/is (nil? (assistant/extract-sdk-tools #js {"getTools" (fn [] nil)})))
+  (t/is (nil? (assistant/extract-sdk-tools
+               #js {"getTools" (fn [] (throw (js/Error. "boom")))})))
+  (t/is (nil? (assistant/extract-sdk-tools #js {})))
+  (t/is (nil? (assistant/extract-sdk-tools nil))))

@@ -233,6 +233,12 @@
                (fn [data]
                  (post-event! event-name (event-payload data))))
 
+             sdk-forward-handlers
+             (into {}
+                   (comp (remove #(= "ai:createNewSession" %))
+                         (map (fn [event-name] [event-name (forward! event-name)])))
+                   assistant/sdk-forward-events)
+
              create-session-handler
              (fn [data]
                (when-not @cancelled?
@@ -240,7 +246,11 @@
                    (when (and (string? session-id) (pos? (count session-id)))
                      (assistant/save-session-id!
                       (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
-                     (reset! session-id* session-id)))))
+                     (reset! session-id* session-id)))
+                 ;; one-way host notification, after the local
+                 ;; persistence, whether or not the event carried a
+                 ;; usable session id
+                 (post-event! "ai:createNewSession" (event-payload data))))
 
              start-auto-open!
              (fn [open-chat!]
@@ -268,6 +278,12 @@
                  (reset! sdk-tools* tools)
                  (when-let [on (when (object? sdk) (obj/get sdk "on"))]
                    (when (fn? on)
+                     (doseq [[event-name handler] sdk-forward-handlers]
+                       (try
+                         (on event-name handler)
+                         (catch :default cause
+                           (log/wrn :hint "assistant: could not subscribe to the SDK event"
+                                    :event event-name :cause cause))))
                      (try
                        (on "ai:createNewSession" create-session-handler)
                        (catch :default cause
@@ -416,6 +432,8 @@
                (let [off (obj/get sdk "off")]
                  (when (fn? off)
                    (try
+                     (doseq [[event-name handler] sdk-forward-handlers]
+                       (off event-name handler))
                      (off "ai:createNewSession" create-session-handler)
                      (catch :default _ nil))))
                (try

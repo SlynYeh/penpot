@@ -864,3 +864,7 @@
     (t/is (fn? change-session-id!))
     (t/is (= ["obj" "hi" true]
              (js->clj (open-chat! "hi" #js {"triggerAnswer" true}))))))
+
+(t/deftest sdk-forward-events-contract
+  (t/is (= ["ai:connectX" "ai:tokenError" "ai:changeSession" "ai:createNewSession"]
+           (vec assistant/sdk-forward-events))))

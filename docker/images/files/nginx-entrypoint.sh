@@ -212,35 +212,80 @@ update_hide_tokens() {
   fi
 }
 
+valid_embed_parent_origins() {
+  # Prints the PENPOT_EMBED_PARENT_ORIGIN entries that pass validation,
+  # as a comma separated list (whitespace stripped, trailing slashes
+  # removed, invalid entries warned and dropped); prints nothing for an
+  # unset value, the "none" sentinel, or a list where nothing survived.
+  local raw="${PENPOT_EMBED_PARENT_ORIGIN:-}";
+  # strip whitespace so that " none " works and list items may be
+  # written with spaces around the commas
+  raw="${raw//[[:space:]]/}";
+
+  if [ -z "$raw" ] || [ "${raw,,}" == "none" ]; then
+    return;
+  fi
+
+  local rest="$raw" entry origin out="";
+  while [ -n "$rest" ]; do
+    if [[ "$rest" == *,* ]]; then
+      entry="${rest%%,*}";
+      rest="${rest#*,}";
+    else
+      entry="${rest}";
+      rest="";
+    fi
+
+    [ -z "$entry" ] && continue;
+
+    # Entries are interpolated into a double quoted JS string and into
+    # the nginx config, so a quote, a backslash or a newline would be
+    # an injection. Only accept bare origins, optionally with a leading
+    # `*.` wildcard label and/or a trailing slash.
+    if [[ ! "$entry" =~ ^https?://(\*\.)?[A-Za-z0-9._:-]+/?$ ]]; then
+      echo "nginx-entrypoint: dropping invalid PENPOT_EMBED_PARENT_ORIGIN entry '${entry}'" >&2;
+      continue;
+    fi
+
+    origin="${entry%/}";
+    if [ -z "$out" ]; then
+      out="${origin}";
+    else
+      out="${out},${origin}";
+    fi
+  done
+
+  [ -n "$out" ] && printf '%s' "$out";
+}
+
 update_embed_parent_origin() {
-  # Origin of the third party system embedding the app in an iframe, used
-  # both as the postMessage target origin and to validate the origin of the
-  # credentials the parent sends back. Overrides the js/config.js default.
-  # The special value "none" (case insensitive) clears it, falling back to
-  # a wildcard target origin that accepts credentials from any window.
+  # Origin(s) of the third party system embedding the app in an iframe,
+  # used both as the postMessage target origin(s) and to validate the
+  # origin of the credentials the parent sends back. Accepts a comma
+  # separated list of origins; each entry may carry a leading `*.`
+  # wildcard label (https://*.example.com). Overrides the js/config.js
+  # default. The special value "none" (case insensitive) writes the
+  # clearing default: the frontend then skips origin validation
+  # altogether, accepting credentials from any window. "none" does NOT
+  # change the nginx framing policy.
   if [ -z "${PENPOT_EMBED_PARENT_ORIGIN:-}" ]; then
     return;
   fi
 
-  local raw="${PENPOT_EMBED_PARENT_ORIGIN}";
-  # strip whitespace so that " none " works too
-  raw="${raw//[[:space:]]/}";
-
+  local raw="${PENPOT_EMBED_PARENT_ORIGIN//[[:space:]]/}";
   if [ "${raw,,}" == "none" ]; then
     printf 'globalThis.penpotEmbedParentOrigin = "";\n' >> "$1";
     return;
   fi
 
-  # The value is interpolated into a double quoted JS string, so a quote, a
-  # backslash or a newline would break the whole js/config.js file (every
-  # other global in it stops being assigned). Only accept a bare origin,
-  # optionally with a trailing slash.
-  if [[ ! "$raw" =~ ^https?://[A-Za-z0-9._:-]+/?$ ]]; then
-    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN must be an origin like https://portal.example.com; keeping the js/config.js default" >&2;
+  local origins;
+  origins="$(valid_embed_parent_origins)";
+  if [ -z "$origins" ]; then
+    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN had no valid origin entries; keeping the js/config.js default" >&2;
     return;
   fi
 
-  printf 'globalThis.penpotEmbedParentOrigin = "%s";\n' "$raw" >> "$1";
+  printf 'globalThis.penpotEmbedParentOrigin = "%s";\n' "$origins" >> "$1";
 }
 
 update_embed_timeout_ms() {
@@ -266,33 +311,37 @@ update_embed_timeout_ms() {
 }
 
 update_frame_ancestors() {
-  # Let the third party system that embeds the app actually frame it. The
+  # Let the third party systems that embed the app actually frame it. The
   # bundled `add_header X-Frame-Options SAMEORIGIN` makes the browser refuse
   # cross origin framing, which no amount of frontend handshake can work
-  # around, so when a parent origin is configured the X-Frame-Options line is
-  # swapped for the equivalent CSP directive naming that origin.
+  # around, so when parent origins are configured the X-Frame-Options line
+  # is swapped for the equivalent CSP directive naming them.
   #
-  # Only an explicit origin opens this up: unset, empty and "none" keep the
-  # SAMEORIGIN default, and a wildcard is not expressible on purpose (it would
-  # let any site frame the app). `'self'` stays in the list because the app
-  # frames itself (rasterizer, render, viewer).
-  local raw="${PENPOT_EMBED_PARENT_ORIGIN:-}";
-  raw="${raw//[[:space:]]/}";
-
-  if [ -z "$raw" ] || [ "${raw,,}" == "none" ]; then
+  # Only explicit origins/patterns open this up: unset, empty and "none"
+  # keep the SAMEORIGIN default, and a bare wildcard is not expressible on
+  # purpose (it would let any site frame the app). `'self'` stays in the
+  # list because the app frames itself (rasterizer, render, viewer).
+  if [ -z "${PENPOT_EMBED_PARENT_ORIGIN:-}" ]; then
     return;
   fi
 
-  # Same validation as update_embed_parent_origin: only a bare origin, since
-  # the value is interpolated into the nginx config and anything able to break
-  # out of the quoted string would be a config injection.
-  if [[ ! "$raw" =~ ^https?://[A-Za-z0-9._:-]+/?$ ]]; then
-    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN must be an origin like https://portal.example.com; keeping X-Frame-Options: SAMEORIGIN" >&2;
+  local raw="${PENPOT_EMBED_PARENT_ORIGIN//[[:space:]]/}";
+  if [ "${raw,,}" == "none" ]; then
     return;
   fi
 
-  local origin="${raw%/}";
-  local policy="add_header Content-Security-Policy \"frame-ancestors 'self' ${origin}\" always;";
+  local origins;
+  origins="$(valid_embed_parent_origins)";
+  if [ -z "$origins" ]; then
+    echo "nginx-entrypoint: PENPOT_EMBED_PARENT_ORIGIN had no valid origin entries; keeping X-Frame-Options: SAMEORIGIN" >&2;
+    return;
+  fi
+
+  # Comma separated entries become space separated CSP host-sources;
+  # `*.host` is a native CSP source with the same bare-domain-and-
+  # subdomains semantics the frontend matcher implements.
+  local sources="${origins//,/ }";
+  local policy="add_header Content-Security-Policy \"frame-ancestors 'self' ${sources}\" always;";
 
   # Rewritten with grep + mv rather than `sed -i`: the in-place flag is not
   # portable across the busybox/BSD/GNU seds this script may run under.

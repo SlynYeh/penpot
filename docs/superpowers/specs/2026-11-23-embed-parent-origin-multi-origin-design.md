@@ -87,8 +87,9 @@ Pattern 形式 `scheme://[*.]host[:port]`，仅 host 开头的 `*.` 有特殊含
 ### 4. nginx-entrypoint.sh
 
 - `update_embed_parent_origin`：trim → `none`（ci）→ 写空串（现状不变）；否则剥空白后按逗号 split，
-  逐条正则 `^https?://(\*\.)?[A-Za-z0-9._:-]+/?$`，非法条目 stderr 告警丢弃，合法条目去尾斜杠后
-  逗号 join 写入；**全部非法 → 不追加**（js/config.js 默认 = 通配，与今天一致）。
+  逐条经 `valid_embed_parent_origins` 共用正则
+  `^https?://(\*\.)?[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*(:[0-9]+)?/?$` 校验，非法条目 stderr 告警丢弃，
+  合法条目去尾斜杠后逗号 join 写入；**全部非法 → 不追加**（js/config.js 默认 = 通配，与今天一致）。
 - `update_frame_ancestors`：同样分割逐条校验，合法条目空格 join 进 `frame-ancestors 'self' o1 o2 …`；
   **每个 `*.` 通配条目额外输出其裸域 source**（CSP 通配只匹配子域，需双输出才能与前端语义一致）；
   helper 正则收紧为非空 dot 分隔标签 + 纯数字端口（拒绝 `*..host`、`https://...`、`:abc` 等无效形态）；

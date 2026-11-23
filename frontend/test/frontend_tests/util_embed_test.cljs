@@ -59,6 +59,34 @@
   ;; percent-decoding must not smuggle a wildcard past the guard
   (t/is (nil? (embed/normalize-origin-pattern "https://%2A.example.com"))))
 
+(t/deftest parse-origin-config-none-sentinel
+  (t/is (= :none (embed/parse-origin-config "none")))
+  (t/is (= :none (embed/parse-origin-config " NONE ")))
+  (t/is (= :none (embed/parse-origin-config "None"))))
+
+(t/deftest parse-origin-config-parses-lists
+  (t/is (= ["https://a.example.com" "https://b.example.com:8443"]
+           (embed/parse-origin-config
+            "https://a.example.com,https://b.example.com:8443")))
+  ;; commas and whitespace are both separators, freely mixed
+  (t/is (= ["https://a.example.com" "https://b.example.com"]
+           (embed/parse-origin-config
+            " https://a.example.com ,  https://b.example.com ")))
+  (t/is (= ["https://*.example.com"]
+           (embed/parse-origin-config "https://*.example.com,"))))
+
+(t/deftest parse-origin-config-drops-invalid-entries
+  ;; invalid entries are dropped individually when at least one is usable
+  (t/is (= ["https://a.example.com"]
+           (embed/parse-origin-config "https://a.example.com,junk")))
+  ;; every entry unusable means unconfigured: the wildcard fallback
+  (t/is (nil? (embed/parse-origin-config "junk,https://*")))
+  (t/is (nil? (embed/parse-origin-config "")))
+  (t/is (nil? (embed/parse-origin-config nil)))
+  ;; a mixed "none" token is just an invalid entry, not the sentinel
+  (t/is (= ["https://a.example.com"]
+           (embed/parse-origin-config "https://a.example.com,none"))))
+
 (t/deftest origin-accepted-exact-match
   (t/is (true? (embed/origin-accepted? "https://portal.example.com"
                                        "https://portal.example.com")))

@@ -119,6 +119,31 @@
           (.-origin url)))
       (catch :default _ nil))))
 
+(defn parse-origin-config
+  "Parses the raw `penpotEmbedParentOrigin` value. Returns `:none` for
+  the trimmed, case-insensitive sentinel (validation disabled), a
+  vector of normalized origin patterns when at least one entry is
+  usable, or nil when unset/blank or when every entry was unusable
+  (wildcard fallback, the historical behavior). Entries are separated
+  by commas and/or whitespace; invalid entries are dropped with a
+  warning. Public so the parsing rule can be unit-tested."
+  [configured]
+  (cond
+    (not (string? configured)) nil
+    (= "none" (str/lower (str/trim configured))) :none
+    :else
+    (let [tokens  (re-seq #"[^,\s]+" configured)
+          dropped (volatile! [])
+          parsed  (into []
+                        (keep (fn [token]
+                                (or (normalize-origin-pattern token)
+                                    (do (vswap! dropped conj token) nil))))
+                        tokens)]
+      (when (seq @dropped)
+        (log/wrn :hint "embed: dropping invalid penpotEmbedParentOrigin entries"
+                 :entries (str/join "," @dropped)))
+      (when (seq parsed) parsed))))
+
 (defn origin-accepted?
   "Whether `origin`, as reported by a received message, is an acceptable
   parent origin for the `configured` value. An absent or invalid

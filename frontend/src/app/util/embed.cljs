@@ -104,12 +104,14 @@
   "Like `normalize-origin`, but additionally accepts a configured origin
   pattern with a leading `*.` wildcard label in the host. Returns a
   comparable `scheme://[*.]host[:port]` form, or nil when the value is
-  missing or is not a valid url with a plain hostname — a bare `*` host
+  missing or is not a valid url with a plain hostname or contains
+  percent escapes — a bare `*` host
   is not a pattern (unconditional acceptance is the `none` sentinel)
   and `*` is only valid as the leading label. Public so the matching
   rule can be unit-tested."
   [pattern]
-  (when (and (string? pattern) (not (str/blank? pattern)))
+  (when (and (string? pattern) (not (str/blank? pattern))
+             (not (str/includes? pattern "%")))
     (try
       (let [url (js/URL. pattern)]
         (when (and (re-find #"^(\*\.)?[A-Za-z0-9._-]+$" (.-hostname url))

@@ -55,7 +55,9 @@
   ;; "none" sentinel, never a wildcard pattern
   (t/is (nil? (embed/normalize-origin-pattern "https://*")))
   ;; `*` is only valid as the leading `*.` label
-  (t/is (nil? (embed/normalize-origin-pattern "https://a*b.example.com"))))
+  (t/is (nil? (embed/normalize-origin-pattern "https://a*b.example.com")))
+  ;; percent-decoding must not smuggle a wildcard past the guard
+  (t/is (nil? (embed/normalize-origin-pattern "https://%2A.example.com"))))
 
 (t/deftest origin-accepted-exact-match
   (t/is (true? (embed/origin-accepted? "https://portal.example.com"

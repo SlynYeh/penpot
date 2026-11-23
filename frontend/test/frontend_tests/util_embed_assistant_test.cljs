@@ -590,6 +590,30 @@
     (t/is (= "*" (:origin (first @(:posted io)))))
     ((:close! conn))))
 
+(t/deftest post-event-targets-every-configured-origin
+  ;; an exact-only target set addresses one envelope per origin
+  (let [io     (fake-io)
+        parent (js-obj)
+        conn   (assistant/create-conn
+                (assoc (conn-opts io parent)
+                       :target-origin (fn [] ["https://a.example.com"
+                                              "https://b.example.com"])))]
+    ((:post-event! conn) "initialized" nil)
+    (t/is (= ["https://a.example.com" "https://b.example.com"]
+             (mapv :origin @(:posted io))))
+    ((:close! conn))))
+
+(t/deftest post-event-wraps-scalar-injected-target
+  ;; a scalar override keeps working (one envelope, one origin)
+  (let [io     (fake-io)
+        parent (js-obj)
+        conn   (assistant/create-conn
+                (assoc (conn-opts io parent)
+                       :target-origin (fn [] "https://a.example.com")))]
+    ((:post-event! conn) "initialized" nil)
+    (t/is (= ["https://a.example.com"] (mapv :origin @(:posted io))))
+    ((:close! conn))))
+
 ;; --- close! -----------------------------------------------------------
 
 (t/deftest close-removes-the-listener-and-is-idempotent

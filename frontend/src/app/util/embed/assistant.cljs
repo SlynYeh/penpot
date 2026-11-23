@@ -27,7 +27,6 @@
   (:require
    [app.common.logging :as log]
    [app.common.time :as ct]
-   [app.config :as cf]
    [app.util.embed :as embed]
    [app.util.globals :as ug]
    [app.util.object :as obj]
@@ -484,31 +483,48 @@
         (or origin-allowed?
             (let [warned? (volatile! false)]
               (fn [origin]
-                (if (embed/normalize-origin cf/embed-parent-origin)
-                  (embed/origin-accepted? cf/embed-parent-origin origin)
-                  (do
-                    (when-not @warned?
-                      (vreset! warned? true)
-                      (log/wrn :hint "assistant: no parent origin configured, accepting messages from any window"))
-                    true)))))
+                (let [parsed   (embed/origin-config)
+                      allowed? (embed/origins-accept? parsed origin)]
+                  (when (and allowed?
+                             (not (deref warned?))
+                             (or (= :none parsed) (nil? parsed)))
+                    (vreset! warned? true)
+                    (if (= :none parsed)
+                      (log/inf :hint "assistant: parent origin validation disabled by config (none)")
+                      (log/wrn :hint "assistant: no parent origin configured, accepting messages from any window")))
+                  allowed?))))
 
         resolve-target-origin
         (cond
           (string? target-origin)
-          (constantly target-origin)
+          (let [origin target-origin]
+            (constantly [origin]))
 
           (some? target-origin)
-          target-origin
+          (let [resolve target-origin]
+            (fn []
+              (let [resolved (resolve)]
+                (if (vector? resolved) resolved [resolved]))))
 
           :else
           (let [warned? (volatile! false)]
             (fn []
-              (or (embed/normalize-origin cf/embed-parent-origin)
-                  (do
-                    (when-not @warned?
-                      (vreset! warned? true)
-                      (log/wrn :hint "assistant: no parent origin configured, posting with a wildcard target origin"))
-                    "*")))))
+              (let [parsed  (embed/origin-config)
+                    targets (embed/target-origins parsed)]
+                (when (and (some #(= "*" %) targets) (not (deref warned?)))
+                  (vreset! warned? true)
+                  (cond
+                    (= :none parsed)
+                    (log/inf :hint "assistant: parent origin validation disabled by config (none), posting with a wildcard target origin")
+
+                    ;; wildcard pattern configured: "*" is by design, not
+                    ;; a misconfiguration — info, not wrn
+                    (vector? parsed)
+                    (log/inf :hint "assistant: posting with a wildcard target origin (wildcard pattern configured)")
+
+                    :else
+                    (log/wrn :hint "assistant: no usable parent origin configured, posting with a wildcard target origin")))
+                targets))))
 
         on-event
         (or on-event (fn [_]))
@@ -584,7 +600,8 @@
           ;; exception escaping into a host SDK callback would be far
           ;; harder to trace.
           (try
-            (post-message! message (resolve-target-origin))
+            (doseq [origin (resolve-target-origin)]
+              (post-message! message origin))
             (catch :default cause
               (when-not @post-failed?
                 (vreset! post-failed? true)

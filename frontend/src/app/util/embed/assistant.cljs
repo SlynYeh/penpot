@@ -40,9 +40,10 @@
 
 (def sdk-forward-events
   "The SDK events the component layer subscribes with `on` and
-  forwards verbatim to the host page over the assistant postMessage
-  channel, one-way (no reqId, no resend, no timeout). Contract
-  anchor: unit tested, and the host page can rely on these names."
+  forwards under their SDK names to the host page over the assistant
+  postMessage channel, one-way (no reqId, no resend, no timeout).
+  Contract anchor: unit tested, and the host page can rely on these
+  names."
   ["ai:connectX" "ai:tokenError" "ai:changeSession" "ai:createNewSession"])
 
 (def ^:private required-init-param-keys

@@ -865,6 +865,12 @@
     (t/is (= ["obj" "hi" true]
              (js->clj (open-chat! "hi" #js {"triggerAnswer" true}))))))
 
+;;; -------------------------------------------------------------------------
+;;; SDK forward events contract: the exact event names the UI component
+;;; subscribes with `on` and forwards to the host page. The host page
+;;; relies on these names, so they are pinned here.
+;;; -------------------------------------------------------------------------
+
 (t/deftest sdk-forward-events-contract
   (t/is (= ["ai:connectX" "ai:tokenError" "ai:changeSession" "ai:createNewSession"]
            (vec assistant/sdk-forward-events))))

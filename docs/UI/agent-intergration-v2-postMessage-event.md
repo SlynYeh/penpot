@@ -97,12 +97,15 @@ assistant tab 与嵌入宿主页面之间有一条专用 postMessage 通道（�
 | `ai:changeSession` | 无 | `{timestamp, oldSessionId, sessionId}` | SDK 会话切换回调透传 |
 | `ai:createNewSession` | 无 | `{timestamp, ...data}` | SDK 新建会话回调透传（iframe 内部同时持久化该会话） |
 
-后三个为一次性转发（无重发无超时）；`ready`/`getInitParams` 才有重发机制。
+除 `ready`/`getInitParams` 外，其余事件均为一次性转发（无重发无超时）。
 
 四个 `ai:*` 事件是 SDK 事件（`window.X_Assistant.on` 订阅，见文档开头），在
-assistant tab 就绪（SDK init 完成）后订阅转发：一次性转发（无重发无超时），
-payload 统一 `{timestamp, ...sdkData}`。SDK init 期间触发的事件（如 init 时
-token 校验失效）会因尚未订阅而漏发，宿主可用 `getInitParams` 失败路径兜底。
+assistant tab 就绪后订阅转发——订阅是上行 `initialized` 之前的最后一步
+（SDK init → render → 会话恢复全部完成后）：一次性转发（无重发无超时），
+payload 统一 `{timestamp, ...sdkData}`。在此之前触发的 SDK 事件都会漏发，
+包括会话恢复调用本身引发的 `ai:changeSession`；宿主收到 `initialized` 后，
+后续所有 SDK 事件都会转发，可把它当作监听同步点。`getInitParams` 失败
+路径可作为 init 阶段鉴权问题（token 失效）的兜底信号。
 
 ### 父 → 子应答表
 

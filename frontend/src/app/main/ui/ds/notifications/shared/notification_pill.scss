@@ -82,6 +82,23 @@
   margin-block-start: var(--notification-icon-margin);
 }
 
+.close-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: $sz-16;
+  height: $sz-16;
+  margin-inline-start: auto;
+  align-self: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--notification-icon-color);
+  cursor: pointer;
+}
+
 .notification-pill {
   display: grid;
   max-height: 92vh;

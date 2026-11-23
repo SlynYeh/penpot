@@ -7008,6 +7008,10 @@ msgstr "Text Transform"
 msgid "workspace.assets.ungroup"
 msgstr "Ungroup"
 
+#: src/app/main/ui/workspace.cljs:210
+msgid "workspace.banner.chrome-recommendation"
+msgstr "For a smoother experience, we recommend using Chrome (version 95 or later). 360 Browser may experience lag."
+
 #: src/app/main/ui/onboarding/beginner_guide.cljs:284
 msgid "workspace.beginner-guide.done"
 msgstr "Done"

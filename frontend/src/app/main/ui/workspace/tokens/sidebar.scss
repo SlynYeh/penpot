@@ -14,7 +14,7 @@
 
   // Overflow on the bottom section can't be done without hardcoded values for the height
   // This has to be changed from the wrapping sidebar styles
-  height: calc(100vh - #{deprecated.$s-92});
+  height: calc(var(--workspace-available-height, 100vh) - #{deprecated.$s-92});
   overflow: hidden;
 }
 

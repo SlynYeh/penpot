@@ -121,6 +121,15 @@
         color: #71717a;
         font-size: 11px;
       }
+      .panel input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-family: ui-monospace, monospace;
+        padding: 3px 8px;
+        border: 1px solid #d4d4d8;
+        border-radius: 5px;
+      }
       .origin-hint {
         margin: 0;
         color: #71717a;
@@ -219,6 +228,27 @@
             >
           </label>
         </fieldset>
+        <fieldset>
+          <legend>嵌入凭据模拟（scope penpot/embed）</legend>
+          <label>
+            <input type="checkbox" id="cred-sim" />
+            <span
+              >应答 ready 时回传凭据（含 prompt / attachments）<span
+                class="hint"
+                >（助手初始化完成后应自动 openChat）</span
+              ></span
+            >
+          </label>
+          <label>
+            <span>prompt</span>
+            <input
+              id="cred-prompt"
+              type="text"
+              value="生成原型：请设计一个登录页"
+              spellcheck="false"
+            />
+          </label>
+        </fieldset>
         <div class="log-head">
           <span>Child &rarr; parent events</span>
           <button id="clear-log" type="button">Clear</button>
@@ -245,6 +275,8 @@
         var faultSilent = document.getElementById("fault-silent");
         var faultPoison = document.getElementById("fault-poison");
         var faultError = document.getElementById("fault-error");
+        var credSim = document.getElementById("cred-sim");
+        var credPrompt = document.getElementById("cred-prompt");
 
         document.getElementById("host-origin").textContent =
           window.location.origin;
@@ -379,6 +411,26 @@
           );
         }
 
+        // ---- parent side of the embed credentials handshake ------------
+
+        function respondCredentials(source, origin) {
+          var targetOrigin = origin && origin !== "null" ? origin : "*";
+          source.postMessage(
+            {
+              "X-token": "mock-token",
+              "X-ClientId": "mock-client-id",
+              docContent: "mock document content",
+              prompt: credPrompt.value.trim(),
+              attachments: [
+                { name: "spec.txt", url: "https://example.com/files/spec.txt" },
+                { name: "mock.png", url: "https://example.com/files/mock.png" },
+              ],
+            },
+            targetOrigin,
+          );
+          logOutgoing("embed credentials {X-token, X-ClientId, docContent, prompt, attachments}");
+        }
+
         function mockParams() {
           return {
             idToken: "mock-id-token",
@@ -396,6 +448,23 @@
           if (!data || typeof data !== "object") {
             return;
           }
+
+          // ---- embed credentials handshake (scope penpot/embed) ----
+          if (data.scope === "penpot/embed" && data.type === "ready") {
+            if (event.source !== iframe.contentWindow) {
+              logSystem("ignored penpot/embed ready from a window that is not the iframe");
+              return;
+            }
+            if (credSim.checked) {
+              respondCredentials(event.source, event.origin);
+            } else {
+              logSystem(
+                "penpot/embed ready received (credentials sim off -> boot proceeds without credentials)",
+              );
+            }
+            return;
+          }
+
           if (data.type !== TYPE_EVENT || data.scope !== SCOPE) {
             return;
           }

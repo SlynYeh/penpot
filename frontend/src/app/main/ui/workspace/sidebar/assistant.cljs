@@ -16,7 +16,11 @@
   script node, clears `window.X_Assistant` and closes the connection.
   Since v2 the last session of the (profile, file) pair is remembered
   in localStorage: re-entering the tab restores it through
-  changeSessionId instead of always starting a new one."
+  changeSessionId instead of always starting a new one.
+  Right after the SDK is initialized, a prompt and/or attachments
+  received on the embed credentials handshake (app.util.embed)
+  auto-open a chat; the values are polled every 500ms, at most 10
+  checks, because the handshake may still be in flight."
   (:require-macros [app.main.style :as stl])
   (:require
    [app.common.logging :as log]
@@ -192,6 +196,9 @@
      (mf/deps attempt)
      (fn []
        (let [cancelled? (volatile! false)
+             ;; Cancel fn of the prompt/attachments poll started in
+             ;; ready!, invoked by the unmount cleanup below.
+             auto-open-cancel (volatile! nil)
              {:keys [handshake! request! post-event! close!]}
              (assistant/create-conn {})
 
@@ -235,6 +242,26 @@
                       (mf/ref-val profile-id-ref) (mf/ref-val file-id-ref) session-id)
                      (reset! session-id* session-id)))))
 
+             start-auto-open!
+             (fn [open-chat!]
+               (vreset! auto-open-cancel
+                        (assistant/start-auto-open!
+                         {:values! (fn []
+                                     [(embed/prompt) (embed/attachments)])
+                          :open-chat! (fn [prompt options]
+                                        ;; Never log the values
+                                        ;; themselves: the prompt may be
+                                        ;; sensitive host content.
+                                        (log/dbg :hint "assistant: auto opening a chat"
+                                                 :attachments? (some? (obj/get options "attachments")))
+                                        (try
+                                          (open-chat! prompt options)
+                                          (catch :default cause
+                                            (log/wrn :hint "assistant: auto open chat failed"
+                                                     :cause cause))))
+                          :schedule! js/setTimeout
+                          :cancel!  js/clearTimeout})))
+
              ready!
              (fn [^js sdk tools]
                (when-not @cancelled?
@@ -246,6 +273,11 @@
                        (catch :default cause
                          (log/wrn :hint "assistant: could not subscribe to the SDK session events"
                                   :cause cause)))))
+                 ;; The host may have handed over a prompt/attachments on
+                 ;; the embed handshake before or while this tab was
+                 ;; initializing; when present they auto-open a chat.
+                 (when-let [open-chat! (:open-chat! tools)]
+                   (start-auto-open! open-chat!))
                  ;; Only now, with init, render and (when applicable) the
                  ;; session restore settled, is the assistant really up.
                  (post-event! "initialized" #js {"timestamp" (now-ts)})
@@ -372,6 +404,9 @@
 
          (fn []
            (vreset! cancelled? true)
+           (when-let [cancel! @auto-open-cancel]
+             (vreset! auto-open-cancel nil)
+             (cancel!))
            ;; Fixed order: stop the SDK first, so its callbacks cannot
            ;; reach an already closed connection; then the script node,
            ;; then the global, then the connection itself. Every step is

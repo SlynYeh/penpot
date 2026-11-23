@@ -13,9 +13,10 @@
   parent and it replies with a flat object holding the `X-token` and
   `X-ClientId` strings, which are then sent as request headers on every
   backend call (see `app.util.http/default-headers`). The same payload
-  may also carry an optional `docContent` string; it is stored for the
-  embedded workspace (assistant message envs) and is never sent as an
-  HTTP header.
+  may also carry an optional `docContent` string, an optional `prompt`
+  string and an optional `attachments` array of `{name, url}` string
+  pairs; they are stored for the embedded workspace (assistant) and are
+  never sent as HTTP headers.
 
   IMPORTANT: this namespace must not have any top level side effect. It
   is reachable from `app.util.http`, which lands on the `:shared` chunk
@@ -35,9 +36,12 @@
 (def token-key "X-token")
 (def client-id-key "X-ClientId")
 (def doc-content-key "docContent")
+(def prompt-key "prompt")
+(def attachments-key "attachments")
 
 (defonce ^:private credentials
-  ;; nil | {:token "..." :client-id "..." :doc-content nil|"..."}
+  ;; nil | {:token "..." :client-id "..." :doc-content nil|"..."
+  ;;        :prompt nil|"..." :attachments nil|[{:name "..." :url "..."}]}
   (atom nil))
 
 (defonce ^:private handshake
@@ -56,7 +60,8 @@
 
 (defn headers
   "Request headers to add to every backend call. Empty until valid
-  credentials have been received. `docContent` is not a header."
+  credentials have been received. The optional `docContent` / `prompt` /
+  `attachments` fields are not headers."
   []
   (if-let [{:keys [token client-id]} @credentials]
     {token-key token client-id-key client-id}
@@ -68,6 +73,20 @@
   have been received yet."
   []
   (get @credentials :doc-content))
+
+(defn prompt
+  "The optional `prompt` string from the last accepted parent payload,
+  or nil when it was absent, not a string, or no credentials have been
+  received yet."
+  []
+  (get @credentials :prompt))
+
+(defn attachments
+  "The optional `attachments` vector of `{:name :url}` maps from the
+  last accepted parent payload, or nil when it was absent, malformed,
+  or no credentials have been received yet."
+  []
+  (get @credentials :attachments))
 
 (defn normalize-origin
   "Reduces a configured origin, or the `event.origin` of a received
@@ -95,8 +114,9 @@
 
 (defn valid-payload?
   "Whether a received message carries usable `X-token` / `X-ClientId`
-  values. Optional `docContent` is ignored here: credentials remain
-  valid with or without it. Public so the parsing rule can be unit-tested."
+  values. Optional `docContent` / `prompt` / `attachments` are ignored
+  here: credentials remain valid with or without them. Public so the
+  parsing rule can be unit-tested."
   [data]
   (and (object? data)
        (let [token     (obj/get data token-key)
@@ -104,20 +124,49 @@
          (and (string? token) (pos? (count (str/trim token)))
               (string? client-id) (pos? (count (str/trim client-id)))))))
 
+(defn- valid-attachment?
+  "An attachment entry must be an object whose `name` and `url` are
+  strings; both are kept as-is (empty strings included), any other
+  fields are ignored."
+  [item]
+  (and (object? item)
+       (string? (obj/get item "name"))
+       (string? (obj/get item "url"))))
+
+(defn- parse-attachments
+  "`attachments` is kept only when it is an array whose every entry is
+  a valid attachment; it is normalized to a vector of `{:name :url}`
+  maps. Any other value — including an array holding a malformed entry
+  — is treated as not provided (nil)."
+  [data]
+  (let [raw (obj/get data attachments-key)]
+    (when (and (obj/array? raw)
+               (every? valid-attachment? (seq raw)))
+      (mapv (fn [item]
+              {:name (obj/get item "name")
+               :url  (obj/get item "url")})
+            (seq raw)))))
+
 (defn parse-payload
   "Extracts the handshake fields from a received message. Returns
-  `{:token :client-id :doc-content}` when `valid-payload?` holds, else
-  nil. Token and client-id are trimmed; `docContent` is kept as-is when
-  it is a string (including empty) and nil otherwise. Public so the
+  `{:token :client-id :doc-content :prompt :attachments}` when
+  `valid-payload?` holds, else nil. Token and client-id are trimmed;
+  `docContent` and `prompt` are kept as-is when they are strings
+  (including empty) and nil otherwise; `attachments` is kept as a
+  vector of `{:name :url}` maps only when it is an array whose every
+  entry has string `name` and `url`, and nil otherwise. Public so the
   parsing rule can be unit-tested."
   [data]
   (when (valid-payload? data)
     (let [token           (str/trim (obj/get data token-key))
           client-id       (str/trim (obj/get data client-id-key))
-          raw-doc-content (obj/get data doc-content-key)]
+          raw-doc-content (obj/get data doc-content-key)
+          raw-prompt      (obj/get data prompt-key)]
       {:token token
        :client-id client-id
-       :doc-content (when (string? raw-doc-content) raw-doc-content)})))
+       :doc-content (when (string? raw-doc-content) raw-doc-content)
+       :prompt (when (string? raw-prompt) raw-prompt)
+       :attachments (parse-attachments data)})))
 
 (defn- configured-origin
   []
@@ -138,7 +187,7 @@
       true)))
 
 (defn- receive!
-  [{:keys [token client-id doc-content] :as payload}]
+  [{:keys [token client-id doc-content prompt attachments] :as payload}]
   (let [updated? (some? @credentials)]
     (reset! credentials payload)
     ;; Never log the values themselves.
@@ -146,6 +195,8 @@
              :token-length (count token)
              :client-id-length (count client-id)
              :doc-content-length (when (string? doc-content) (count doc-content))
+             :prompt-length (when (string? prompt) (count prompt))
+             :attachments-count (when (vector? attachments) (count attachments))
              :updated updated?)
     (when (p/pending? @handshake)
       (p/resolve! @handshake payload))))

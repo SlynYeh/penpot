@@ -608,6 +608,19 @@
           currentSession = found;
           renderCurrentSession();
         },
+
+        // auto-open contract: called by Penpot right after init when
+        // the embed handshake delivered a prompt and/or attachments
+        openChat: function (prompt, options) {
+          logLine(
+            "openChat(prompt=" +
+              JSON.stringify(prompt) +
+              ", options=" +
+              JSON.stringify(options || {}) +
+              ")",
+          );
+          console.log("[mock-assistant-sdk] openChat", prompt, options);
+        },
       };
     },
   };

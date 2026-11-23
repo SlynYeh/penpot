@@ -103,6 +103,77 @@
       config)))
 
 ;; -------------------------------------------------------------------------
+;; Auto-open: right after the SDK finished initializing, the prompt and
+;; attachments received on the embed credentials handshake
+;; (app.util.embed) open a chat automatically. The shape/decision
+;; helpers are pure, and the polling driver keeps every side effect
+;; injectable, so the whole contract stays unit-testable.
+;; -------------------------------------------------------------------------
+
+(def auto-open-max-attempts 10)
+(def auto-open-poll-ms 500)
+(def auto-open-default-prompt "生成原型")
+
+(defn open-chat-request?
+  "Whether the handshake values justify auto-opening a chat: a
+  non-blank prompt or a non-empty attachments vector."
+  [prompt attachments]
+  (boolean
+   (or (and (string? prompt) (not (str/blank? prompt)))
+       (and (vector? attachments) (seq attachments)))))
+
+(defn open-chat-prompt
+  "The prompt handed to `openChat`: the host supplied non-blank prompt,
+  or the default when it was not provided."
+  [prompt]
+  (if (and (string? prompt) (not (str/blank? prompt)))
+    prompt
+    auto-open-default-prompt))
+
+(defn build-open-chat-options
+  "Builds the options object of the `openChat` auto-open call:
+  `triggerAnswer` and `newSession` are always true; `attachments` is
+  included only when a non-empty vector arrived on the handshake (a
+  vector of `{:name :url}` maps, converted to a plain JS array)."
+  [attachments]
+  (let [options #js {"triggerAnswer" true
+                     "newSession" true}]
+    (when (and (vector? attachments) (seq attachments))
+      (obj/set! options "attachments" (clj->js attachments)))
+    options))
+
+(defn start-auto-open!
+  "Polls `values!` — a fn returning `[prompt attachments]` — and calls
+  `open-chat!` as soon as the pair justifies a chat
+  (`open-chat-request?`); otherwise it re-checks through `schedule!`
+  every `poll-ms`, at most `max-attempts` checks in total (the first
+  one runs immediately). Returns a cancel fn that clears any pending
+  schedule through `cancel!`."
+  [{:keys [values! open-chat! schedule! cancel!
+           max-attempts poll-ms]
+    :or {max-attempts auto-open-max-attempts
+         poll-ms auto-open-poll-ms
+         cancel! (constantly nil)}}]
+  (let [cancelled? (volatile! false)
+        timer      (volatile! nil)
+        tick!      (fn tick! [attempt]
+                     (when-not @cancelled?
+                       (let [[prompt attachments] (values!)]
+                         (if (open-chat-request? prompt attachments)
+                           (open-chat! (open-chat-prompt prompt)
+                                       (build-open-chat-options attachments))
+                           (when (< attempt max-attempts)
+                             (vreset! timer
+                                      (schedule! #(tick! (inc attempt))
+                                                 poll-ms)))))))]
+    (tick! 1)
+    (fn []
+      (vreset! cancelled? true)
+      (when-let [scheduled @timer]
+        (vreset! timer nil)
+        (cancel! scheduled)))))
+
+;; -------------------------------------------------------------------------
 ;; v2: session memory (localStorage) and history list formatting.
 ;; Pure key building / parsing lives here so the exact contracts stay
 ;; unit-testable; the localStorage IO is nil-safe and injectable.
@@ -167,21 +238,31 @@
 
 (defn extract-sdk-tools
   "Extracts the v2 session management surface from the host SDK object
-  (`getTools() -> {jsSdk: {getSessionList}, changeSessionId}`), every
-  member nil checked and bound to its owner object so `this` survives
-  the extraction. An SDK without the v2 surface yields a map of nils —
-  the v2 UI degrades to hidden instead of throwing."
+  (`getTools() -> {jsSdk: {getSessionList}, changeSessionId, openChat}`),
+  every member nil checked and bound to its owner object so `this`
+  survives the extraction. `getTools` may be a function or, per the
+  host SDK docs, an object carrying the members directly. An SDK
+  without the v2 surface yields a map of nils — the v2 UI and the
+  auto-open chat degrade to hidden instead of throwing."
   [^js sdk]
   (when (object? sdk)
-    (let [tools (when (fn? (obj/get sdk "getTools"))
-                  (try (.getTools sdk) (catch :default _ nil)))
-          bind  (fn [owner name]
-                  (let [method (when (object? owner) (obj/get owner name))]
-                    (when (fn? method) (.bind method owner))))]
+    (let [get-tools (obj/get sdk "getTools")
+          tools     (cond
+                      (fn? get-tools)
+                      (try (.getTools sdk) (catch :default _ nil))
+
+                      (object? get-tools)
+                      get-tools
+
+                      :else nil)
+          bind      (fn [owner name]
+                      (let [method (when (object? owner) (obj/get owner name))]
+                        (when (fn? method) (.bind method owner))))]
       (when (object? tools)
         (let [js-sdk (obj/get tools "jsSdk")]
           {:change-session-id! (bind tools "changeSessionId")
-           :get-session-list!  (bind js-sdk "getSessionList")})))))
+           :get-session-list!  (bind js-sdk "getSessionList")
+           :open-chat!         (bind tools "openChat")})))))
 
 (defn- valid-date?
   [date]

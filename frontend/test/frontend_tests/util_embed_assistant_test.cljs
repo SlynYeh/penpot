@@ -100,6 +100,138 @@
   (let [envs (assistant/build-message-envs "page-1" "file-1" "")]
     (t/is (= "" (obj/get envs "DOC_CONTENT")))))
 
+;; --- auto-open ---------------------------------------------------------
+
+(t/deftest open-chat-request-with-prompt-or-attachments
+  ;; a non-blank prompt alone justifies a chat
+  (t/is (true? (assistant/open-chat-request? "hello" nil)))
+  ;; so does a non-empty attachments vector, with or without a prompt
+  (t/is (true? (assistant/open-chat-request? "" [{:name "a" :url "b"}])))
+  (t/is (true? (assistant/open-chat-request? nil [{:name "a" :url "b"}])))
+  ;; nothing (or effectively nothing) provided: no chat
+  (t/is (false? (assistant/open-chat-request? nil nil)))
+  (t/is (false? (assistant/open-chat-request? nil [])))
+  (t/is (false? (assistant/open-chat-request? "" nil)))
+  (t/is (false? (assistant/open-chat-request? "   " []))))
+
+(t/deftest open-chat-prompt-defaults-when-absent
+  (t/is (= "hello" (assistant/open-chat-prompt "hello")))
+  (t/is (= assistant/auto-open-default-prompt
+           (assistant/open-chat-prompt nil)))
+  (t/is (= assistant/auto-open-default-prompt
+           (assistant/open-chat-prompt "")))
+  (t/is (= assistant/auto-open-default-prompt
+           (assistant/open-chat-prompt "   ")))
+  (t/is (= assistant/auto-open-default-prompt
+           (assistant/open-chat-prompt 42))))
+
+(t/deftest build-open-chat-options-triggers-a-fresh-answer
+  (let [options (assistant/build-open-chat-options nil)]
+    (t/is (true? (obj/get options "triggerAnswer")))
+    (t/is (true? (obj/get options "newSession")))
+    (t/is (undefined? (obj/get options "attachments"))))
+  ;; an empty vector is like "not provided" for the options object
+  (let [options (assistant/build-open-chat-options [])]
+    (t/is (undefined? (obj/get options "attachments"))))
+  (let [options (assistant/build-open-chat-options [{:name "a" :url "b"}])]
+    (t/is (true? (array? (obj/get options "attachments"))))
+    (t/is (= "a" (obj/get (first (obj/get options "attachments")) "name")))
+    (t/is (= "b" (obj/get (first (obj/get options "attachments")) "url")))))
+
+(defn- fake-polling
+  "A polling rig whose scheduler records (fn ms) pairs instead of
+  firing real timers; the tests drive the ticks manually."
+  []
+  (let [scheduled (atom [])
+        schedules (atom 0)
+        opened    (atom [])
+        cancelled (atom 0)]
+    {:scheduled scheduled
+     :schedules schedules
+     :opened    opened
+     :cancelled cancelled
+     :schedule! (fn [f ms] (swap! schedules inc) (swap! scheduled conj [f ms]) :timer)
+     :cancel!   (fn [_timer] (swap! cancelled inc))
+     :open-chat! (fn [prompt options] (swap! opened conj [prompt options]))}))
+
+(t/deftest start-auto-open-opens-immediately-when-values-present
+  (let [io      (fake-polling)
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] ["设计一个登录页" nil])
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (= 1 (count @(:opened io))))
+    (let [[prompt options] (first @(:opened io))]
+      (t/is (= "设计一个登录页" prompt))
+      (t/is (true? (obj/get options "triggerAnswer")))
+      (t/is (true? (obj/get options "newSession"))))
+    (t/is (empty? @(:scheduled io)) "no poll is scheduled after opening")
+    (cancel!)))
+
+(t/deftest start-auto-open-polls-until-values-arrive
+  (let [io     (fake-polling)
+        values (atom [nil nil])
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] @values)
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (empty? @(:opened io)))
+    (t/is (= 1 (count @(:scheduled io))) "the first check schedules a retry")
+    ;; nothing yet on the second check either
+    (let [[tick-2 _] (first @(:scheduled io))]
+      (tick-2)
+      (t/is (= 2 (count @(:scheduled io))))
+      (t/is (empty? @(:opened io))))
+    ;; the third check sees the attachments and opens the chat with the
+    ;; default prompt
+    (reset! values [nil [{:name "spec.txt" :url "https://example.com/spec.txt"}]])
+    (let [[tick-3 _] (second @(:scheduled io))]
+      (tick-3)
+      (t/is (= 1 (count @(:opened io))))
+      (let [[prompt options] (first @(:opened io))]
+        (t/is (= assistant/auto-open-default-prompt prompt))
+        (t/is (= "spec.txt"
+                 (obj/get (first (obj/get options "attachments")) "name"))))
+      (t/is (= 2 (count @(:scheduled io))) "no further poll after opening"))
+    (cancel!)))
+
+(t/deftest start-auto-open-gives-up-after-max-attempts
+  (let [io      (fake-polling)
+        cancel! (assistant/start-auto-open!
+                 {:values!      (fn [] [nil nil])
+                  :open-chat!   (:open-chat! io)
+                  :schedule!    (:schedule! io)
+                  :cancel!      (:cancel! io)
+                  :max-attempts 3})]
+    ;; drive every scheduled tick until nothing is scheduled anymore
+    (loop []
+      (when (seq @(:scheduled io))
+        (let [[tick _] (last @(:scheduled io))]
+          (swap! (:scheduled io) pop)
+          (tick)
+          (recur))))
+    (t/is (empty? @(:scheduled io)) "the poller stops scheduling")
+    (t/is (empty? @(:opened io)) "no chat was opened")
+    (t/is (= 2 @(:schedules io)) "3 checks total -> 2 re-schedules")
+    (cancel!)))
+
+(t/deftest start-auto-open-cancel-clears-the-pending-poll
+  (let [io      (fake-polling)
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] [nil nil])
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (cancel!)
+    (t/is (= 1 @(:cancelled io)) "the pending timer was cleared")
+    ;; a late tick can neither open a chat nor reschedule
+    (let [[tick _] (first @(:scheduled io))]
+      (tick)
+      (t/is (empty? @(:opened io)))
+      (t/is (= 1 (count @(:scheduled io)))))))
+
 (defn- recording-hooks
   "Wiring closures for build-init-config that record what the built
   config actually invokes: forward! produces the per-event callbacks,
@@ -704,7 +836,8 @@
                 #js {"getTools" (fn [] #js {"jsSdk" #js {}})})]
     (t/is (map? result))
     (t/is (nil? (:change-session-id! result)))
-    (t/is (nil? (:get-session-list! result))))
+    (t/is (nil? (:get-session-list! result)))
+    (t/is (nil? (:open-chat! result))))
   ;; no tools object at all, a throwing getTools, a non-object sdk or
   ;; no sdk yields nil
   (t/is (nil? (assistant/extract-sdk-tools #js {"getTools" (fn [] nil)})))
@@ -712,3 +845,22 @@
                #js {"getTools" (fn [] (throw (js/Error. "boom")))})))
   (t/is (nil? (assistant/extract-sdk-tools #js {})))
   (t/is (nil? (assistant/extract-sdk-tools nil))))
+
+(t/deftest extract-sdk-tools-accepts-an-object-gettools-and-binds-open-chat
+  ;; per the host SDK docs getTools may carry the members directly
+  ;; instead of being a function; openChat must bind to that same
+  ;; object so `this` survives (this is the auto-open entry point).
+  (let [tools #js {"tag" "obj"
+                   "openChat"
+                   (fn [prompt options]
+                     (this-as self
+                              #js [(unchecked-get self "tag") prompt
+                                   (unchecked-get options "triggerAnswer")]))
+                   "changeSessionId" (fn [_] nil)
+                   "jsSdk" #js {"getSessionList" (fn [] nil)}}
+        {:keys [open-chat! change-session-id!]}
+        (assistant/extract-sdk-tools #js {"getTools" tools})]
+    (t/is (fn? open-chat!))
+    (t/is (fn? change-session-id!))
+    (t/is (= ["obj" "hi" true]
+             (js->clj (open-chat! "hi" #js {"triggerAnswer" true}))))))

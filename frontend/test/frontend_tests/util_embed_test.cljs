@@ -32,6 +32,31 @@
   (t/is (nil? (embed/normalize-origin "portal.example.com")))
   (t/is (nil? (embed/normalize-origin "null"))))
 
+(t/deftest normalize-origin-pattern-accepts-origins-and-wildcards
+  (t/is (= "https://portal.example.com"
+           (embed/normalize-origin-pattern "https://portal.example.com")))
+  (t/is (= "https://portal.example.com"
+           (embed/normalize-origin-pattern "https://portal.example.com/")))
+  (t/is (= "https://*.example.com"
+           (embed/normalize-origin-pattern "https://*.example.com")))
+  (t/is (= "https://*.example.com"
+           (embed/normalize-origin-pattern "https://*.EXAMPLE.com/")))
+  (t/is (= "https://*.example.com:8443"
+           (embed/normalize-origin-pattern "https://*.example.com:8443")))
+  (t/is (= "http://*.localhost:3001"
+           (embed/normalize-origin-pattern "http://*.localhost:3001"))))
+
+(t/deftest normalize-origin-pattern-rejects-malformed
+  (t/is (nil? (embed/normalize-origin-pattern nil)))
+  (t/is (nil? (embed/normalize-origin-pattern "")))
+  (t/is (nil? (embed/normalize-origin-pattern "   ")))
+  (t/is (nil? (embed/normalize-origin-pattern "portal.example.com")))
+  ;; a bare `*` host is not a pattern; unconditional acceptance is the
+  ;; "none" sentinel, never a wildcard pattern
+  (t/is (nil? (embed/normalize-origin-pattern "https://*")))
+  ;; `*` is only valid as the leading `*.` label
+  (t/is (nil? (embed/normalize-origin-pattern "https://a*b.example.com"))))
+
 (t/deftest origin-accepted-exact-match
   (t/is (true? (embed/origin-accepted? "https://portal.example.com"
                                        "https://portal.example.com")))

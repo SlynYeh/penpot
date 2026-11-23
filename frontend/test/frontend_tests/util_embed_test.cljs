@@ -157,7 +157,9 @@
   (t/is (false? (embed/origin-accepted? "https://good.example"
                                         "http://good.example")))
   (t/is (false? (embed/origin-accepted? "https://good.example:8443"
-                                        "https://good.example"))))
+                                        "https://good.example")))
+  ;; an unparseable event.origin must fail closed under a configured pattern
+  (t/is (false? (embed/origin-accepted? "https://good.example" nil))))
 
 (t/deftest origin-accepted-without-configuration
   ;; An unset (or unusable) configuration means wildcard.

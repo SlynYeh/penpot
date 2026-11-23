@@ -240,9 +240,10 @@ valid_embed_parent_origins() {
 
     # Entries are interpolated into a double quoted JS string and into
     # the nginx config, so a quote, a backslash or a newline would be
-    # an injection. Only accept bare origins, optionally with a leading
-    # `*.` wildcard label and/or a trailing slash.
-    if [[ ! "$entry" =~ ^https?://(\*\.)?[A-Za-z0-9._:-]+/?$ ]]; then
+    # an injection. Only accept bare origins made of non-empty dot
+    # separated labels, optionally with a leading `*.` wildcard label,
+    # a digits-only port and/or a trailing slash.
+    if [[ ! "$entry" =~ ^https?://(\*\.)?[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*(:[0-9]+)?/?$ ]]; then
       echo "nginx-entrypoint: dropping invalid PENPOT_EMBED_PARENT_ORIGIN entry '${entry}'" >&2;
       continue;
     fi
@@ -337,10 +338,34 @@ update_frame_ancestors() {
     return;
   fi
 
-  # Comma separated entries become space separated CSP host-sources;
-  # `*.host` is a native CSP source with the same bare-domain-and-
-  # subdomains semantics the frontend matcher implements.
-  local sources="${origins//,/ }";
+  # Comma separated entries become space separated CSP host-sources. A
+  # `*.host` wildcard source matches subdomains only, while the frontend
+  # matcher also accepts the bare domain, so every wildcard entry also
+  # emits its bare-host source to keep the framing policy at parity.
+  local rest="$origins" entry sources="" bare;
+  while [ -n "$rest" ]; do
+    if [[ "$rest" == *,* ]]; then
+      entry="${rest%%,*}";
+      rest="${rest#*,}";
+    else
+      entry="${rest}";
+      rest="";
+    fi
+
+    [ -z "$entry" ] && continue;
+
+    if [ -z "$sources" ]; then
+      sources="${entry}";
+    else
+      sources="${sources} ${entry}";
+    fi
+
+    if [[ "$entry" == *"://*."* ]]; then
+      bare="${entry//\*./}";
+      sources="${sources} ${bare}";
+    fi
+  done
+
   local policy="add_header Content-Security-Policy \"frame-ancestors 'self' ${sources}\" always;";
 
   # Rewritten with grep + mv rather than `sed -i`: the in-place flag is not
@@ -422,9 +447,10 @@ update_x_front_sdk() {
   # The value is interpolated into a double quoted JS string, so a quote or
   # a backslash would break the whole js/config.js file, and a backtick or
   # angle brackets would let the URI escape the script tag downstream.
-  # Deliberately wider than the bare-origin check of
-  # update_embed_parent_origin: paths and query strings are part of the
-  # value. Regex spelling note: POSIX ERE has no \[ \] escapes inside a
+  # Deliberately wider than the origin checks of
+  # valid_embed_parent_origins (bare origins and `*.` wildcard labels
+  # only): paths and query strings are part of the value. Regex
+  # spelling note: POSIX ERE has no \[ \] escapes inside a
   # bracket expression (that spelling fails to compile), so the literal ]
   # is placed first in the list, where both [ and ] are plain members.
   local re='^(https?://|/)[]A-Za-z0-9._~:/?#[@!$&*+,;=%-]+$';

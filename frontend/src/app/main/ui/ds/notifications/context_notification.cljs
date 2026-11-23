@@ -18,13 +18,14 @@
    [:type  {:optional true} [:maybe [:enum :toast :context]]]
    [:appearance {:optional true} [:enum :neutral :ghost]]
    [:level {:optional true} [:maybe [:enum :default :info :warning :error :success]]]
-   [:is-html {:optional true} :boolean]])
+   [:is-html {:optional true} :boolean]
+   [:on-close {:optional true} [:maybe fn?]]])
 
 (mf/defc context-notification*
   "Persistent notifications, they do not disappear.
    These are contextual messages in specific areas of the tool, usually in modals and Dashboard area, and are mainly informative."
   {::mf/schema schema:context-notification}
-  [{:keys [class type appearance level is-html children] :rest props}]
+  [{:keys [class type appearance level is-html on-close children] :rest props}]
   (let [class (dm/str class " " (stl/css-case :contextual-notification true
                                               :contain-html is-html
                                               :level-default  (= level :default)
@@ -49,5 +50,6 @@
      [:> notification-pill* {:level level
                              :type type
                              :is-html is-html
-                             :appearance appearance} children]]))
+                             :appearance appearance
+                             :on-close on-close} children]]))
 

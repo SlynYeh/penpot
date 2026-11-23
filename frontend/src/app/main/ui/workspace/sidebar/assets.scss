@@ -11,7 +11,7 @@
   grid-auto-rows: max-content;
 
   // TODO: ugly hack :( Fix this! we shouldn't be hardcoding this height
-  height: calc(100vh - deprecated.$s-92);
+  height: calc(var(--workspace-available-height, 100vh) - deprecated.$s-92);
   scrollbar-gutter: stable;
   overflow-y: auto;
 

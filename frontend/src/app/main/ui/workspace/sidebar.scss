@@ -17,8 +17,8 @@
   width: var(--right-sidebar-width);
   overflow: visible;
   background-color: var(--panel-background-color);
-  height: 100vh;
-  max-height: 100vh;
+  height: var(--workspace-available-height, 100vh);
+  max-height: var(--workspace-available-height, 100vh);
   z-index: deprecated.$z-index-1;
 
   .resize-area {
@@ -67,7 +67,7 @@
   grid-area: right-sidebar;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  height: 100vh;
+  height: var(--workspace-available-height, 100vh);
   width: var(--right-sidebar-width);
   background-color: var(--panel-background-color);
   z-index: deprecated.$z-index-1;
@@ -84,7 +84,7 @@
     display: grid;
     grid-template-columns: 100%;
     grid-template-rows: 100%;
-    height: calc(100vh - deprecated.$s-52);
+    height: calc(var(--workspace-available-height, 100vh) - deprecated.$s-52);
     overflow: hidden;
   }
 }
@@ -192,7 +192,7 @@
 .versions-tab {
   width: 100%;
   overflow: hidden;
-  height: calc(100vh - deprecated.$s-88);
+  height: calc(var(--workspace-available-height, 100vh) - deprecated.$s-88);
 }
 
 .history-tab {

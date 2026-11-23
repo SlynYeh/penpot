@@ -28,11 +28,12 @@
    [:level [:enum :default :info :warning :error :success]]
    [:type  [:enum :toast :context]]
    [:appearance {:optional true} [:enum :neutral :ghost]]
-   [:is-html {:optional true} :boolean]])
+   [:is-html {:optional true} :boolean]
+   [:on-close {:optional true} [:maybe fn?]]])
 
 (mf/defc notification-pill*
   {::mf/schema schema:notification-pill}
-  [{:keys [level type is-html appearance detail children]}]
+  [{:keys [level type is-html appearance detail on-close children]}]
   (let [class (stl/css-case :appearance-neutral (= appearance :neutral)
                             :appearance-ghost (= appearance :ghost)
                             :with-detail detail
@@ -54,7 +55,14 @@
       (if is-html
         [:div {:class (stl/css :context-text)
                :dangerouslySetInnerHTML #js {:__html children}}]
-        children)]
+        children)
+
+      (when on-close
+        [:> "button" {:type "button"
+                      :on-click on-close
+                      :aria-label (tr "labels.close")
+                      :class (stl/css :close-button)}
+         [:> icon* {:icon-id i/close}]])]
 
      (when detail
        [:details {:class (stl/css :error-detail)}

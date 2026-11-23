@@ -5448,6 +5448,10 @@ msgstr "文本变换"
 msgid "workspace.assets.ungroup"
 msgstr "解组"
 
+#: src/app/main/ui/workspace.cljs:210
+msgid "workspace.banner.chrome-recommendation"
+msgstr "为保证流畅的使用体验，推荐使用Chrome浏览器(95以上版本)，360浏览器可能出现卡顿。"
+
 #: src/app/main/ui/onboarding/beginner_guide.cljs:284
 msgid "workspace.beginner-guide.done"
 msgstr "完成"

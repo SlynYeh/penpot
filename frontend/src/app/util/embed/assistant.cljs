@@ -599,6 +599,10 @@
           ;; once, and let the resend/timeout paths be the backstop; an
           ;; exception escaping into a host SDK callback would be far
           ;; harder to trace.
+          ;;
+          ;; A throw aborts the remaining targets of the loop below;
+          ;; handshake!/request! resends are the backstop (post-event! is
+          ;; one-way and does not resend).
           (try
             (doseq [origin (resolve-target-origin)]
               (post-message! message origin))

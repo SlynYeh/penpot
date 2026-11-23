@@ -764,9 +764,10 @@ valid_embed_parent_origins() {
 
     # Entries are interpolated into a double quoted JS string and into
     # the nginx config, so a quote, a backslash or a newline would be
-    # an injection. Only accept bare origins, optionally with a leading
-    # `*.` wildcard label and/or a trailing slash.
-    if [[ ! "$entry" =~ ^https?://(\*\.)?[A-Za-z0-9._:-]+/?$ ]]; then
+    # an injection. Only accept bare origins made of non-empty dot
+    # separated labels, optionally with a leading `*.` wildcard label,
+    # a digits-only port and/or a trailing slash.
+    if [[ ! "$entry" =~ ^https?://(\*\.)?[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*(:[0-9]+)?/?$ ]]; then
       echo "nginx-entrypoint: dropping invalid PENPOT_EMBED_PARENT_ORIGIN entry '${entry}'" >&2;
       continue;
     fi
@@ -849,10 +850,34 @@ update_frame_ancestors() {
     return;
   fi
 
-  # Comma separated entries become space separated CSP host-sources;
-  # `*.host` is a native CSP source with the same bare-domain-and-
-  # subdomains semantics the frontend matcher implements.
-  local sources="${origins//,/ }";
+  # Comma separated entries become space separated CSP host-sources. A
+  # `*.host` wildcard source matches subdomains only, while the frontend
+  # matcher also accepts the bare domain, so every wildcard entry also
+  # emits its bare-host source to keep the framing policy at parity.
+  local rest="$origins" entry sources="" bare;
+  while [ -n "$rest" ]; do
+    if [[ "$rest" == *,* ]]; then
+      entry="${rest%%,*}";
+      rest="${rest#*,}";
+    else
+      entry="${rest}";
+      rest="";
+    fi
+
+    [ -z "$entry" ] && continue;
+
+    if [ -z "$sources" ]; then
+      sources="${entry}";
+    else
+      sources="${sources} ${entry}";
+    fi
+
+    if [[ "$entry" == *"://*."* ]]; then
+      bare="${entry//\*./}";
+      sources="${sources} ${bare}";
+    fi
+  done
+
   local policy="add_header Content-Security-Policy \"frame-ancestors 'self' ${sources}\" always;";
 
   # Rewritten with grep + mv rather than `sed -i`: the in-place flag is not
@@ -891,7 +916,7 @@ PENPOT_EMBED_PARENT_ORIGIN="junk,alsobad" update_embed_parent_origin "$cfg"
 check "all-invalid-keeps-default" "" "$(cat "$cfg")"
 
 PENPOT_EMBED_PARENT_ORIGIN="https://a.example.com,https://*.b.example.com" update_frame_ancestors "$hdr"
-check "frame-ancestors-list" "add_header Content-Security-Policy \"frame-ancestors 'self' https://a.example.com https://*.b.example.com\" always;" "$(tail -n 1 "$hdr")"
+check "frame-ancestors-list" "add_header Content-Security-Policy \"frame-ancestors 'self' https://a.example.com https://*.b.example.com https://b.example.com\" always;" "$(tail -n 1 "$hdr")"
 check "xfo-removed" "0" "$(grep -c '^add_header X-Frame-Options' "$hdr")"
 
 printf 'add_header X-Frame-Options "SAMEORIGIN" always;\n' > "$hdr"

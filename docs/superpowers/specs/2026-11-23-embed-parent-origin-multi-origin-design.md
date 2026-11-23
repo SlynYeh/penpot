@@ -27,7 +27,7 @@
 
 | 决策点 | 结论 |
 |---|---|
-| 匹配语义 | 精确枚举 + 通配子域（CSP host-source 语义） |
+| 匹配语义 | 精确枚举 + 通配子域（通配条目放行裸域+任意深度子域；nginx 侧对通配条目同时输出裸域 source 以对齐，见 §1/§4） |
 | `none` 边界 | **仅**跳过前端 postMessage origin 校验；nginx X-Frame-Options/frame-ancestors 完全不动 |
 | 配置形态 | **方案 A**：保留单字符串，扩展为逗号分隔 origin 列表（向后兼容，方案 B 数组 / 方案 C 新键并存被否） |
 
@@ -45,6 +45,10 @@ Pattern 形式 `scheme://[*.]host[:port]`，仅 host 开头的 `*.` 有特殊含
 | 带端口 pattern（`:8443`） | 同 scheme 同端口的 origin | 无端口或异端口 origin |
 
 - 纯 `*`、`*://` 不支持——无条件跳过校验用 `none`，两者语义不混。
+- **与 nginx frame-ancestors 的对齐**（Chromium 实测）：CSP 的 `*.host` host-source **只匹配子域**，
+  不放行裸域，而本设计的通配语义包含裸域。因此 entrypoint 的 `update_frame_ancestors` 对每个通配
+  条目**同时输出裸域 source**（`https://*.example.com` → `https://*.example.com https://example.com`），
+  保证 HTTP 层与前端匹配器行为一致；前端匹配语义本身不变。
 - **`none`**（trim 后大小写不敏感）= 前端显式跳过 postMessage origin 校验：接受任意窗口凭据、
   postMessage 目标退为 `*`、打一条 info（区别于未配置的 wrn）。
 - **未配置/全非法回退不变**：通配 + wrn（dev-host.html 流程不受影响）。
@@ -85,8 +89,10 @@ Pattern 形式 `scheme://[*.]host[:port]`，仅 host 开头的 `*.` 有特殊含
 - `update_embed_parent_origin`：trim → `none`（ci）→ 写空串（现状不变）；否则剥空白后按逗号 split，
   逐条正则 `^https?://(\*\.)?[A-Za-z0-9._:-]+/?$`，非法条目 stderr 告警丢弃，合法条目去尾斜杠后
   逗号 join 写入；**全部非法 → 不追加**（js/config.js 默认 = 通配，与今天一致）。
-- `update_frame_ancestors`：同样分割逐条校验（`*.` 合法，CSP 原生支持 `*.host`，语义与前端一致），
-  合法条目空格 join 进 `frame-ancestors 'self' o1 o2 …`；`none`/空 → 保持 SAMEORIGIN（已确认不动）。
+- `update_frame_ancestors`：同样分割逐条校验，合法条目空格 join 进 `frame-ancestors 'self' o1 o2 …`；
+  **每个 `*.` 通配条目额外输出其裸域 source**（CSP 通配只匹配子域，需双输出才能与前端语义一致）；
+  helper 正则收紧为非空 dot 分隔标签 + 纯数字端口（拒绝 `*..host`、`https://...`、`:abc` 等无效形态）；
+  `none`/空 → 保持 SAMEORIGIN（已确认不动）。
 - 无 shell 测试基建：本地 bash 冒烟脚本验证（source 后调函数，断言生成的 config.js /
   security-headers 内容）。
 

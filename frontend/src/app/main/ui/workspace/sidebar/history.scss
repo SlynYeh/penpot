@@ -22,7 +22,7 @@
 }
 
 .history-entries {
-  height: calc(100vh - deprecated.$s-100);
+  height: calc(var(--workspace-available-height, 100vh) - deprecated.$s-100);
   padding: deprecated.$s-12;
   overflow: hidden auto;
   font-size: deprecated.$fs-12;

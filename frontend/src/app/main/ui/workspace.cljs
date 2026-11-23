@@ -18,6 +18,7 @@
    [app.main.router :as-alias rt]
    [app.main.store :as st]
    [app.main.ui.context :as ctx]
+   [app.main.ui.ds.notifications.context-notification :refer [context-notification*]]
    [app.main.ui.ds.product.loader :refer [loader*]]
    [app.main.ui.hooks :as hooks]
    [app.main.ui.hooks.resize :refer [use-resize-observer]]
@@ -48,6 +49,7 @@
    [app.util.dom :as dom]
    [app.util.globals :as globals]
    [app.util.i18n :as i18n :refer [tr]]
+   [app.util.storage :as storage]
    [goog.events :as events]
    [okulary.core :as l]
    [rumext.v2 :as mf]))
@@ -199,6 +201,14 @@
                               :layout layout}]
       [:> workspace-loader*])))
 
+(mf/defc workspace-banner*
+  {::mf/private true}
+  [{:keys [on-close]}]
+  [:> context-notification* {:level :info
+                             :class (stl/css :workspace-banner)
+                             :on-close on-close}
+   (tr "workspace.banner.chrome-recommendation")])
+
 (mf/defc workspace*
   {::mf/wrap [mf/memo]}
   [{:keys [team-id project-id file-id page-id layout-name]}]
@@ -230,6 +240,16 @@
         wasm-renderer-enabled? (features/use-feature "render-wasm/v1")
 
         first-frame-rendered?  (mf/use-state false)
+
+        show-banner*     (mf/use-state #(not (get storage/global ::chrome-banner-dismissed)))
+        show-banner?     (deref show-banner*)
+
+        dismiss-banner!
+        (mf/use-fn
+         (fn []
+           (binding [storage/*sync* true]
+             (swap! storage/global assoc ::chrome-banner-dismissed true))
+           (reset! show-banner* false)))
 
         background-color (:background-color wglobal)]
 
@@ -276,10 +296,13 @@
        [:> (mf/provider ctx/design-tokens) {:value design-tokens?}
         [:> (mf/provider ctx/workspace-read-only?) {:value read-only?}
          [:> modal-container*]
-         [:section {:class (stl/css :workspace)
+         [:section {:class (stl/css-case :workspace true
+                                         :with-banner show-banner?)
                     :style {:background-color background-color
                             :touch-action "none"
                             :position "relative"}}
+          (when show-banner?
+            [:> workspace-banner* {:on-close dismiss-banner!}])
           [:> context-menu*]
           (when (and file-loaded? page-id)
             [:> workspace-inner*

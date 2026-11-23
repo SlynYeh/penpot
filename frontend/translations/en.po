@@ -7008,6 +7008,10 @@ msgstr "Text Transform"
 msgid "workspace.assets.ungroup"
 msgstr "Ungroup"
 
+#: src/app/main/ui/workspace.cljs:210
+msgid "workspace.banner.chrome-recommendation"
+msgstr "For a smoother experience, we recommend using Chrome (version 95 or later). 360 Browser may experience lag."
+
 #: src/app/main/ui/onboarding/beginner_guide.cljs:284
 msgid "workspace.beginner-guide.done"
 msgstr "Done"
@@ -7463,6 +7467,16 @@ msgstr "Power up your plan"
 #: src/app/main/ui/workspace/main_menu.cljs:841
 msgid "workspace.header.menu.option.preferences"
 msgstr "Preferences"
+
+#: src/app/main/ui/workspace/main_menu.cljs:906
+msgid "workspace.header.menu.option.prototype-code"
+msgstr "Prototype to code"
+
+#: src/app/main/ui/workspace/main_menu.cljs:838
+msgid "workspace.header.menu.prototype-code.guide.body"
+msgstr ""
+"Click \"Prototype to code\" to learn how to turn prototype designs into "
+"code."
 
 #: src/app/main/ui/workspace/main_menu.cljs:830
 msgid "workspace.header.menu.option.view"

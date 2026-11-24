@@ -246,7 +246,7 @@ const initialized = () => {
 
 - 必须抽象出独立的iframe postMessage通信层
   - 通道为纯上行单向事件流（`initialized` 与 SDK 回调透传），无握手、无请求/应答、无入站监听；宿主必须在用户打开助手 tab 之前装好 message 监听（事件一次性转发、无缓冲）
-  - SDK 初始化参数不再经 postMessage 获取：appName/agentId/skillName 由 Penpot 侧环境变量配置（PENPOT_X_FRONT_APP_NAME / PENPOT_X_FRONT_AGENT_ID / PENPOT_X_FRONT_SKILL_NAME）；idToken 由宿主在与 iframe 同源的 sessionStorage 写入 `EBEE_USER_KEY`（JSON：`{ idToken: "xxx" }`），刷新 token 时必须回写
+  - SDK 初始化参数不再经 postMessage 获取：appName/agentId/skillName 由 Penpot 侧环境变量配置（PENPOT_X_FRONT_APP_NAME / PENPOT_X_FRONT_AGENT_ID / PENPOT_X_FRONT_SKILL_NAME）；idToken 由宿主在与 iframe 同源的 sessionStorage 写入 `EBEE_USER_KEY`（JSON：`{ idToken: "xxx" }`），刷新 token 时必须回写；可选的 `xPlatformEnv` 由 PENPOT_X_FRONT_PLATFORM_ENV 配置（未配置则不传该键，SDK 侧读到 undefined）
   - 回调类配置（函数）无法经 postMessage 传输，由 Penpot 侧本地接线；宿主不可透传任何其它 SDK 配置键（如需新增走 Penpot 侧新增环境变量并发版）
   - 主动发起的事件至少包括：initialized、afterSendMessage、onMessageFinish、onSatisfactionRatingComplete、ai:connectX、ai:tokenError、ai:changeSession、ai:createNewSession
   - 详见 [agent-intergration-v2-postMessage-event.md](./agent-intergration-v2-postMessage-event.md)

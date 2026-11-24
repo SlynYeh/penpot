@@ -82,6 +82,7 @@ SDK `init` 所需的参数不再经 postMessage 获取：
 | `appName` | docker env `PENPOT_X_FRONT_APP_NAME` → js/config.js `penpotXFrontAppName` |
 | `agentId` | `PENPOT_X_FRONT_AGENT_ID` → `penpotXFrontAgentId` |
 | `skillName` | `PENPOT_X_FRONT_SKILL_NAME` → `penpotXFrontSkillName`（同时作为 `defaultSkillName`） |
+| `xPlatformEnv`（可选） | `PENPOT_X_FRONT_PLATFORM_ENV` → `penpotXFrontPlatformEnv`；未配置或为空白时**不传该键**，SDK 侧读到 `undefined`，不影响助手 tab 启动 |
 | `idToken` | 宿主在与 Penpot iframe **同源**的 sessionStorage 写入 `EBEE_USER_KEY`，值为 JSON `{ idToken: "xxx" }` |
 
 约束：

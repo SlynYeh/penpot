@@ -106,7 +106,8 @@ hover 列表项右侧显示删除图标按钮，点击：
 | 点击「新对话」 | 清除 |
 | 删除的正是当前会话 | 清除 |
 
-**恢复流程**：tab 激活仍走 v1 全流程（握手 → getInitParams → 加载 SDK → init → render）；
+**恢复流程**：tab 激活走初始化全流程（config 校验 + `EBEE_USER_KEY` 轮询取 idToken → 加载 SDK → init → render，无握手，见
+[agent-intergration-v2-postMessage-event.md](./agent-intergration-v2-postMessage-event.md)）；
 **render 成功后**若存在 savedSessionId，调用 `changeSessionId(savedSessionId)` 恢复；
 不存在则维持 SDK 默认新会话。恢复切换瞬间 SDK 可能先短暂渲染默认会话再切换，属已知可接受行为。
 

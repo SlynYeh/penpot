@@ -73,6 +73,11 @@ useEffect(() => {
 }, [idToken, appName, idToken, skillName, agentId])
 ```
 
+> 注：以上是宿主侧最初的接线示意。Penpot 实际传给 `X_Assistant.init` 的 config 以
+> [agent-intergration-v2-postMessage-event.md](./agent-intergration-v2-postMessage-event.md)
+> 的「初始化参数来源」为准：`appName` / `agentId` / `skillName` / `idToken` 不再由宿主经
+> postMessage 提供，`appImage`、`prompts` 等宿主侧示例项 Penpot 不会注入。
+
 ### 配置参数
 
 ```typescript
@@ -237,25 +242,14 @@ const initialized = () => {
 }
 ```
 
-4. getInitParams - 获取初始化参数
-```typescript
-const getInitParams = () => {
-  window.parent.postMessage({
-    type: 'AI_ASSITANT_EVENT',
-    eventName: 'getInitParams',
-    payload: {
-      timestamp: new Date().toString()
-    }
-  }, PENPOT_EMBED_PARENT_ORIGIN)
-}
-```
-
 ## 重要规则
 
 - 必须抽象出独立的iframe postMessage通信层
-  - 建立简单的通信握手协议，确保父子页面在各自确认就绪，才执行正常的事件通讯
-  - 通信建立并就绪后，切换到 AI助手 Tab 时发起 getInitParams 事件，接收父页面响应的sdk初始化必要的参数：idToken、appName、idToken、skillName，需校验参数必填性。params 中的其他键（如 prompts、theme 等）将全量透传给 `X_Assistant.init` 的 config；回调类配置（函数）无法经 postMessage 传输，由 Penpot 侧本地接线
-  - 主动发起的事件至少包括：getInitParams、initialized、afterSendMessage、onMessageFinish、onSatisfactionRatingComplete
+  - 通道为纯上行单向事件流（`initialized` 与 SDK 回调透传），无握手、无请求/应答、无入站监听；宿主必须在用户打开助手 tab 之前装好 message 监听（事件一次性转发、无缓冲）
+  - SDK 初始化参数不再经 postMessage 获取：appName/agentId/skillName 由 Penpot 侧环境变量配置（PENPOT_X_FRONT_APP_NAME / PENPOT_X_FRONT_AGENT_ID / PENPOT_X_FRONT_SKILL_NAME）；idToken 由宿主在与 iframe 同源的 sessionStorage 写入 `EBEE_USER_KEY`（JSON：`{ idToken: "xxx" }`），刷新 token 时必须回写
+  - 回调类配置（函数）无法经 postMessage 传输，由 Penpot 侧本地接线；宿主不可透传任何其它 SDK 配置键（如需新增走 Penpot 侧新增环境变量并发版）
+  - 主动发起的事件至少包括：initialized、afterSendMessage、onMessageFinish、onSatisfactionRatingComplete、ai:connectX、ai:tokenError、ai:changeSession、ai:createNewSession
+  - 详见 [agent-intergration-v2-postMessage-event.md](./agent-intergration-v2-postMessage-event.md)
 - aiAssitantDomId 是 sdk 挂载的DOM ID，通常为 div，也就是 AI助手的 tab-content内容区
 - AI助手 tab只有在 iframe 嵌入场景才显示
 - 切换到 AI助手 tab时，触发初始化，切换到其它tab销毁

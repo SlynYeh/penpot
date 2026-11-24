@@ -112,8 +112,8 @@
       config)))
 
 ;; -------------------------------------------------------------------------
-;; Auto-open: right after the SDK finished initializing, the prompt and
-;; attachments received on the embed credentials handshake
+;; Auto-open: right after the SDK finished initializing, the prompt,
+;; attachments and doc-title received on the embed credentials handshake
 ;; (app.util.embed) open a chat automatically. The shape/decision
 ;; helpers are pure, and the polling driver keeps every side effect
 ;; injectable, so the whole contract stays unit-testable.
@@ -130,6 +130,13 @@
   (boolean
    (or (and (string? prompt) (not (str/blank? prompt)))
        (and (vector? attachments) (seq attachments)))))
+
+(defn open-chat-doc-title-request?
+  "Whether a doc-title alone justifies the attachment-simulating
+  auto-open: a non-blank string."
+  [doc-title]
+  (boolean
+   (and (string? doc-title) (not (str/blank? doc-title)))))
 
 (defn open-chat-prompt
   "The prompt handed to `openChat`: the host supplied non-blank prompt,
@@ -151,12 +158,27 @@
       (obj/set! options "attachments" (clj->js attachments)))
     options))
 
+(defn build-doc-title-open-chat-options
+  "Builds the options object of the `openChat` doc-title fallback
+  call: `triggerAnswer` is false so the model is not asked anything,
+  `newSession` is true, and the doc title rides along as a single
+  name-only attachment (`{name: doc-title, url: \"\"}`) to simulate a
+  pre-attached file without triggering a chat turn."
+  [doc-title]
+  #js {"triggerAnswer" false
+       "newSession" true
+       "attachments" #js [#js {"name" doc-title "url" ""}]})
+
 (defn start-auto-open!
-  "Polls `values!` — a fn returning `[prompt attachments]` — and calls
-  `open-chat!` as soon as the pair justifies a chat
-  (`open-chat-request?`); otherwise it re-checks through `schedule!`
-  every `poll-ms`, at most `max-attempts` checks in total (the first
-  one runs immediately). Returns a cancel fn that clears any pending
+  "Polls `values!` — a fn returning `[prompt attachments doc-title]` —
+  and calls `open-chat!` as soon as the values justify a chat: a
+  non-blank prompt or non-empty attachments (`open-chat-request?`)
+  opens with `triggerAnswer` true; otherwise a non-blank doc-title
+  (`open-chat-doc-title-request?`) opens an empty-prompt chat that
+  carries the title as a name-only attachment with `triggerAnswer`
+  false. Until either holds it re-checks through `schedule!` every
+  `poll-ms`, at most `max-attempts` checks in total (the first one
+  runs immediately). Returns a cancel fn that clears any pending
   schedule through `cancel!`."
   [{:keys [values! open-chat! schedule! cancel!
            max-attempts poll-ms]
@@ -167,10 +189,16 @@
         timer      (volatile! nil)
         tick!      (fn tick! [attempt]
                      (when-not @cancelled?
-                       (let [[prompt attachments] (values!)]
-                         (if (open-chat-request? prompt attachments)
+                       (let [[prompt attachments doc-title] (values!)]
+                         (cond
+                           (open-chat-request? prompt attachments)
                            (open-chat! (open-chat-prompt prompt)
                                        (build-open-chat-options attachments))
+
+                           (open-chat-doc-title-request? doc-title)
+                           (open-chat! "" (build-doc-title-open-chat-options doc-title))
+
+                           :else
                            (when (< attempt max-attempts)
                              (vreset! timer
                                       (schedule! #(tick! (inc attempt))

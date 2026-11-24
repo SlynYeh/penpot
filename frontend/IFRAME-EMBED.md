@@ -110,7 +110,7 @@ frame.contentWindow.postMessage(
 | `X-token` | string | 是 | **键名大小写敏感**，必须逐字一致 |
 | `X-ClientId` | string | 是 | 同上 |
 | `docContent` | string | 否 | 文档内容。不传、或类型不是 string，按「未提供」处理；**不会**让整条凭据消息失效。空字符串 `""` 会原样保存。文本前后空白**不裁剪** |
-| `docTitle` | string | 否 | 文档标题。规则与 `docContent` **完全相同**：不传、或类型不是 string，按「未提供」处理；不会让整条凭据消息失效；空字符串 `""` 原样保存，前后空白不裁剪 |
+| `docTitle` | string | 否 | 文档标题。规则与 `docContent` **完全相同**：不传、或类型不是 string，按「未提供」处理；不会让整条凭据消息失效；空字符串 `""` 原样保存，前后空白不裁剪。另外在 `prompt` / `attachments` 都未提供时，作为「模拟附件」触发自动开聊（见下文 2.2） |
 | `prompt` | string | 否 | 提示词。规则与 `docContent` 相同：不传或非 string 按「未提供」处理，不影响握手；空字符串 `""` 原样保存，前后空白不裁剪 |
 | `attachments` | array | 否 | 附件列表，每项必须是 `{name: string, url: string}`。`name`/`url` 均为字符串，**空字符串允许、原样保存**，多余字段被忽略；不传、或不是数组、或**任一项**不合规，整字段按「未提供」处理（不会逐项过滤），不影响握手 |
 
@@ -125,8 +125,8 @@ frame.contentWindow.postMessage(
 生效后：`X-token` / `X-ClientId` 会作为请求头 `x-token` / `x-clientid` 发出（HTTP 头本身不区分大小写）。**`docContent` / `docTitle` / `prompt` / `attachments` 不上请求头**，只保存在 guest 内存里供 AI 助手消费：
 
 - `docContent`：助手发消息时写入 `envs.DOC_CONTENT`（与 `PAGE_ID` / `FILE_ID` 一起）
-- `docTitle`：助手发消息时写入 `envs.DOC_TITLE`（与 `DOC_CONTENT` 同批注入；未提供时该键不存在）
-- `prompt` / `attachments`：助手 SDK 初始化完成后**自动开聊**——只要其中一个有值就调用 `getTools().openChat(prompt, {triggerAnswer: true, newSession: true, attachments})`；`prompt` 未提供（或空白）时用默认值「生成原型」。初始化完成后立即检测，没有值就每 **500ms** 重检一次，最多检测 **10** 次（约 4.5s 窗口，覆盖凭据晚于助手初始化的时序）
+- `docTitle`：助手发消息时写入 `envs.DOC_TITLE`（与 `DOC_CONTENT` 同批注入；未提供时该键不存在）。此外在自动开聊的 fallback 分支消费，见下一条
+- `prompt` / `attachments`：助手 SDK 初始化完成后**自动开聊**——只要其中一个有值就调用 `getTools().openChat(prompt, {triggerAnswer: true, newSession: true, attachments})`；`prompt` 未提供（或空白）时用默认值「生成原型」。两者**都**没有值而 `docTitle` 有值时走 fallback：`getTools().openChat('', {triggerAnswer: false, newSession: true, attachments: [{name: docTitle, url: ''}]})`——不触发回答，只把文档标题作为一条仅含 `name` 的附件挂进新会话（模拟预置附件）。三者都没有值则不自动开聊。初始化完成后立即检测，没有值就每 **500ms** 重检一次，最多检测 **10** 次（约 4.5s 窗口，覆盖凭据晚于助手初始化的时序）
 
 ### 2.3 时序
 
@@ -227,7 +227,7 @@ guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭�
 
 ### 3.3 凭据更新
 
-再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` / `docTitle` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊——初始化完成后的 10 次检测窗口（约 4.5s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
+再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` / `docTitle` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` / `docTitle` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊（`docTitle` 仅在 `prompt` / `attachments` 都缺失时走模拟附件 fallback）——初始化完成后的 10 次检测窗口（约 4.5s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
 
 payload 按整包覆盖：新消息里没有 `docContent` / `docTitle` / `prompt`（或不是 string）、没有 `attachments`（或不合规），先前存下的对应值会被清掉。不要发空的 `X-token` / `X-ClientId` 或残缺凭据字段——会被直接丢弃，等于没更新。
 
@@ -264,7 +264,7 @@ x-token: <你的 token>
 x-clientid: <你的 clientId>
 ```
 
-**不要**在 Request Headers 里找 `docContent` / `docTitle` / `prompt` / `attachments`：它们不上 HTTP 头。要确认 `docContent` / `docTitle` 生效，打开 AI 助手并发一条消息，看 SDK 侧收到的 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；要确认 `prompt` / `attachments` 生效，带上它们重开助手 tab，观察 SDK 侧收到 `openChat` 调用（开发用 mock SDK 会把 enrich 后的消息和 `openChat` 参数打到控制台）。
+**不要**在 Request Headers 里找 `docContent` / `docTitle` / `prompt` / `attachments`：它们不上 HTTP 头。要确认 `docContent` / `docTitle` 生效，打开 AI 助手并发一条消息，看 SDK 侧收到的 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；要确认 `prompt` / `attachments` 生效，带上它们重开助手 tab，观察 SDK 侧收到 `openChat` 调用；要确认 `docTitle` 的模拟附件 fallback 生效，只带 `docTitle`（不带 `prompt` / `attachments`）重开助手 tab，观察 SDK 侧收到 `openChat('', {triggerAnswer: false, ...})` 调用（开发用 mock SDK 会把 enrich 后的消息和 `openChat` 参数打到控制台）。
 
 参考实测结果（假 token、启动阶段、经真实后端）：
 
@@ -328,7 +328,7 @@ x-clientid: <你的 clientId>
 不需要，再发一条消息即可覆盖（见 3.3）。只有希望"已加载的 profile 立刻刷新"时才需要重载。更新 `docContent` / `docTitle` / `prompt` / `attachments` 同样不需要重载，但必须和有效的 `X-token` / `X-ClientId` 一起发（单独发这些字段会被当成残缺凭据丢掉）。
 
 **Q：`docContent` / `docTitle` / `prompt` / `attachments` 会带到后端请求吗？**
-不会。它们只保存在 guest 内存供 AI 助手侧消费（`docContent` / `docTitle` 已接入消息 `envs.DOC_CONTENT` / `envs.DOC_TITLE`）。后端鉴权仍然只看 cookie 以及 `x-token` / `x-clientid`。
+不会。它们只保存在 guest 内存供 AI 助手侧消费（`docContent` / `docTitle` 已接入消息 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` 驱动自动开聊，`docTitle` 在前两者缺失时以模拟附件形式自动开聊）。后端鉴权仍然只看 cookie 以及 `x-token` / `x-clientid`。
 
 **Q：`ready` 重复发送吗？**
 会。启动门打开前每 2 秒重发一次，凭据就绪、探测到可用 cookie、或到达降级上限（`penpotEmbedBootDeadlineMs`）任一发生即停；同一次加载宿主可能收到多条，请**幂等处理**（重复回发凭据无害）。宿主若想确认 guest 还活着，仍请自行在业务层做心跳，不要把 `ready` 当心跳使用（门打开后不会再发）。

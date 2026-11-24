@@ -266,7 +266,9 @@
                (vreset! auto-open-cancel
                         (assistant/start-auto-open!
                          {:values! (fn []
-                                     [(embed/prompt) (embed/attachments)])
+                                     [(embed/prompt)
+                                      (embed/attachments)
+                                      (embed/doc-title)])
                           :open-chat! (fn [prompt options]
                                         ;; Never log the values
                                         ;; themselves: the prompt may be

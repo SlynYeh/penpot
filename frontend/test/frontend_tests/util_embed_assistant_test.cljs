@@ -151,6 +151,25 @@
     (t/is (= "a" (obj/get (first (obj/get options "attachments")) "name")))
     (t/is (= "b" (obj/get (first (obj/get options "attachments")) "url")))))
 
+(t/deftest open-chat-doc-title-request-with-doc-title
+  ;; a non-blank doc-title alone justifies the attachment-simulating chat
+  (t/is (true? (assistant/open-chat-doc-title-request? "my design")))
+  ;; absent, blank or non-string doc-title: nothing to attach
+  (t/is (false? (assistant/open-chat-doc-title-request? nil)))
+  (t/is (false? (assistant/open-chat-doc-title-request? "")))
+  (t/is (false? (assistant/open-chat-doc-title-request? "   ")))
+  (t/is (false? (assistant/open-chat-doc-title-request? 42))))
+
+(t/deftest build-doc-title-open-chat-options-simulates-a-name-only-attachment
+  (let [options (assistant/build-doc-title-open-chat-options "my design")]
+    (t/is (false? (obj/get options "triggerAnswer")))
+    (t/is (true? (obj/get options "newSession")))
+    (let [attachments (obj/get options "attachments")]
+      (t/is (array? attachments))
+      (t/is (= 1 (count attachments)))
+      (t/is (= "my design" (obj/get (first attachments) "name")))
+      (t/is (= "" (obj/get (first attachments) "url"))))))
+
 (defn- fake-polling
   "A polling rig whose scheduler records (fn ms) pairs instead of
   firing real timers; the tests drive the ticks manually."
@@ -170,7 +189,7 @@
 (t/deftest start-auto-open-opens-immediately-when-values-present
   (let [io      (fake-polling)
         cancel! (assistant/start-auto-open!
-                 {:values!    (fn [] ["设计一个登录页" nil])
+                 {:values!    (fn [] ["设计一个登录页" nil nil])
                   :open-chat! (:open-chat! io)
                   :schedule!  (:schedule! io)
                   :cancel!    (:cancel! io)})]
@@ -182,9 +201,70 @@
     (t/is (empty? @(:scheduled io)) "no poll is scheduled after opening")
     (cancel!)))
 
+(t/deftest start-auto-open-falls-back-to-the-doc-title-attachment
+  (let [io      (fake-polling)
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] [nil nil "my design"])
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (= 1 (count @(:opened io))))
+    (let [[prompt options] (first @(:opened io))]
+      (t/is (= "" prompt))
+      (t/is (false? (obj/get options "triggerAnswer")))
+      (t/is (true? (obj/get options "newSession")))
+      (let [attachments (obj/get options "attachments")]
+        (t/is (= "my design" (obj/get (first attachments) "name")))
+        (t/is (= "" (obj/get (first attachments) "url")))))
+    (t/is (empty? @(:scheduled io)) "no poll is scheduled after opening")
+    (cancel!)))
+
+(t/deftest start-auto-open-prefers-the-prompt-branch-over-the-doc-title
+  ;; when both branches would fire, prompt/attachments win and the
+  ;; doc-title is ignored
+  (let [io      (fake-polling)
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] ["hi" nil "my design"])
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (let [[prompt options] (first @(:opened io))]
+      (t/is (= "hi" prompt))
+      (t/is (true? (obj/get options "triggerAnswer")))
+      (t/is (undefined? (obj/get options "attachments"))))
+    (cancel!)))
+
+(t/deftest start-auto-open-polls-until-the-doc-title-arrives
+  (let [io     (fake-polling)
+        values (atom [nil nil nil])
+        cancel! (assistant/start-auto-open!
+                 {:values!    (fn [] @values)
+                  :open-chat! (:open-chat! io)
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (empty? @(:opened io)))
+    (t/is (= 1 (count @(:scheduled io))) "the first check schedules a retry")
+    (let [[tick-2 _] (first @(:scheduled io))]
+      (tick-2)
+      (t/is (= 2 (count @(:scheduled io))))
+      (t/is (empty? @(:opened io))))
+    ;; the third check sees the doc-title and opens the simulated
+    ;; attachment chat with an empty prompt
+    (reset! values [nil nil "my design"])
+    (let [[tick-3 _] (second @(:scheduled io))]
+      (tick-3)
+      (t/is (= 1 (count @(:opened io))))
+      (let [[prompt options] (first @(:opened io))]
+        (t/is (= "" prompt))
+        (t/is (false? (obj/get options "triggerAnswer")))
+        (t/is (= "my design"
+                 (obj/get (first (obj/get options "attachments")) "name"))))
+      (t/is (= 2 (count @(:scheduled io))) "no further poll after opening"))
+    (cancel!)))
+
 (t/deftest start-auto-open-polls-until-values-arrive
   (let [io     (fake-polling)
-        values (atom [nil nil])
+        values (atom [nil nil nil])
         cancel! (assistant/start-auto-open!
                  {:values!    (fn [] @values)
                   :open-chat! (:open-chat! io)
@@ -199,7 +279,7 @@
       (t/is (empty? @(:opened io))))
     ;; the third check sees the attachments and opens the chat with the
     ;; default prompt
-    (reset! values [nil [{:name "spec.txt" :url "https://example.com/spec.txt"}]])
+    (reset! values [nil [{:name "spec.txt" :url "https://example.com/spec.txt"}] nil])
     (let [[tick-3 _] (second @(:scheduled io))]
       (tick-3)
       (t/is (= 1 (count @(:opened io))))
@@ -213,7 +293,7 @@
 (t/deftest start-auto-open-gives-up-after-max-attempts
   (let [io      (fake-polling)
         cancel! (assistant/start-auto-open!
-                 {:values!      (fn [] [nil nil])
+                 {:values!      (fn [] [nil nil nil])
                   :open-chat!   (:open-chat! io)
                   :schedule!    (:schedule! io)
                   :cancel!      (:cancel! io)
@@ -233,7 +313,7 @@
 (t/deftest start-auto-open-cancel-clears-the-pending-poll
   (let [io      (fake-polling)
         cancel! (assistant/start-auto-open!
-                 {:values!    (fn [] [nil nil])
+                 {:values!    (fn [] [nil nil nil])
                   :open-chat! (:open-chat! io)
                   :schedule!  (:schedule! io)
                   :cancel!    (:cancel! io)})]

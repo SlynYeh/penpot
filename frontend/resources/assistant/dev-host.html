@@ -198,35 +198,35 @@
       <aside class="panel">
         <p class="origin-hint">
           Requires <code>PENPOT_EMBED_PARENT_ORIGIN</code> unset (wildcard) or
-          set to this instance's own origin &mdash; a remote origin makes the
-          assistant handshake time out silently (15s).
+          set to this instance's own origin &mdash; a remote origin silently
+          breaks the assistant event channel (nothing detects it any more).
         </p>
         <fieldset>
-          <legend>Fault simulation</legend>
+          <legend>初始化参数模拟（sessionStorage）</legend>
           <label>
-            <input type="checkbox" id="fault-silent" />
+            <input type="checkbox" id="ebee-sim" checked />
             <span
-              >不应答 getInitParams<span class="hint"
-                >（子端 10s 超时 → 错误占位 + 重试）</span
+              >写入 EBEE_USER_KEY<span class="hint"
+                >（勾选写入 / 取消移除；仅本页 origin 可见）</span
               ></span
             >
           </label>
           <label>
-            <input type="checkbox" id="fault-poison" />
-            <span
-              >毒参数（应答缺 skillName）<span class="hint"
-                >（子端 :invalid-params）</span
-              ></span
-            >
+            <span>idToken</span>
+            <input
+              id="ebee-token"
+              type="text"
+              value="mock-id-token"
+              spellcheck="false"
+            />
           </label>
-          <label>
-            <input type="checkbox" id="fault-error" />
-            <span
-              >应答 ok:false<span class="hint"
-                >（error "mock failure"，优先于毒参数）</span
-              ></span
-            >
-          </label>
+          <p class="origin-hint">
+            sessionStorage 按 scheme/host/port 分区（与路径无关）：本页与 iframe
+            同源即共享；把 iframe 指向其它端口（如 shadow dev server 3449）则无法
+            共享，需在该源上手动执行
+            <code>sessionStorage.setItem("EBEE_USER_KEY", JSON.stringify({idToken:"…"}))</code>。
+            appName / agentId / skillName 来自 Penpot 侧环境配置，本页不再提供。
+          </p>
         </fieldset>
         <fieldset>
           <legend>嵌入凭据模拟（scope penpot/embed）</legend>
@@ -264,7 +264,6 @@
         var STORAGE_KEY = "penpot-dev-host.iframe-url";
         var SCOPE = "penpot/assistant";
         var TYPE_EVENT = "AI_ASSISTANT_EVENT";
-        var TYPE_RESPONSE = "AI_ASSISTANT_RESPONSE";
         var MAX_LOG_LINES = 400;
 
         var iframe = document.getElementById("penpot");
@@ -272,11 +271,10 @@
         var reloadButton = document.getElementById("reload");
         var clearButton = document.getElementById("clear-log");
         var logEl = document.getElementById("log");
-        var faultSilent = document.getElementById("fault-silent");
-        var faultPoison = document.getElementById("fault-poison");
-        var faultError = document.getElementById("fault-error");
         var credSim = document.getElementById("cred-sim");
         var credPrompt = document.getElementById("cred-prompt");
+        var ebeeSim = document.getElementById("ebee-sim");
+        var ebeeToken = document.getElementById("ebee-token");
 
         document.getElementById("host-origin").textContent =
           window.location.origin;
@@ -365,12 +363,7 @@
           evt.textContent = data.eventName;
           line.appendChild(evt);
           line.appendChild(
-            document.createTextNode(
-              "  reqId=" +
-                (data.reqId != null ? data.reqId : "-") +
-                "  payload=" +
-                safeJson(data.payload),
-            ),
+            document.createTextNode("  payload=" + safeJson(data.payload)),
           );
           logEl.appendChild(line);
           while (logEl.childElementCount > MAX_LOG_LINES) {
@@ -394,22 +387,8 @@
         // ---- parent side of the assistant protocol -----------------------
         //
         // child -> parent : {scope, type: AI_ASSISTANT_EVENT, eventName,
-        //                    payload, reqId?}
-        // parent -> child : {scope, type: AI_ASSISTANT_RESPONSE, eventName,
-        //                    payload}  posted to the iframe contentWindow
-
-        function respond(source, origin, eventName, payload) {
-          var targetOrigin = origin && origin !== "null" ? origin : "*";
-          source.postMessage(
-            {
-              scope: SCOPE,
-              type: TYPE_RESPONSE,
-              eventName: eventName,
-              payload: payload,
-            },
-            targetOrigin,
-          );
-        }
+        //                    payload}  one way notifications, logged below
+        // parent -> child : none (no ready ack, no getInitParams response)
 
         // ---- parent side of the embed credentials handshake ------------
 
@@ -432,17 +411,28 @@
           logOutgoing("embed credentials {X-token, X-ClientId, docContent, docTitle, prompt, attachments}");
         }
 
-        function mockParams() {
-          return {
-            idToken: "mock-id-token",
-            appName: "Penpot Dev",
-            agentId: "mock-agent",
-            skillName: "penpot-helper",
-            // Extra keys are passed through to X_Assistant.init in full
-            // (check window.__mockAssistantConfig after the tab loads).
-            theme: "dark",
-          };
+        function applyEbee() {
+          try {
+            if (ebeeSim.checked) {
+              sessionStorage.setItem(
+                "EBEE_USER_KEY",
+                JSON.stringify({ idToken: ebeeToken.value.trim() }),
+              );
+              logSystem(
+                "EBEE_USER_KEY written (visible to a same-origin iframe)",
+              );
+            } else {
+              sessionStorage.removeItem("EBEE_USER_KEY");
+              logSystem("EBEE_USER_KEY removed");
+            }
+          } catch (cause) {
+            logSystem("sessionStorage unavailable: " + cause);
+          }
         }
+
+        ebeeSim.addEventListener("change", applyEbee);
+        ebeeToken.addEventListener("input", applyEbee);
+        applyEbee();
 
         window.addEventListener("message", function (event) {
           var data = event.data;
@@ -478,42 +468,11 @@
 
           logIncoming(data);
 
-          if (data.eventName === "ready") {
-            // ack every ready; the child resends every 2s until one ack
-            // arrives, so several acks are normal protocol behavior
-            respond(event.source, event.origin, "ready", {
-              ok: true,
-              timestamp: Date.now(),
-            });
-            logOutgoing("ready ack {ok:true}");
-            return;
-          }
-
-          if (data.eventName === "getInitParams") {
-            if (faultSilent.checked) {
-              logOutgoing("getInitParams dropped (fault: silent)");
-              return;
-            }
-
-            var reqId = data.reqId != null ? data.reqId : null;
-            var payload;
-            if (faultError.checked) {
-              payload = { ok: false, reqId: reqId, error: "mock failure" };
-            } else {
-              var params = mockParams();
-              if (faultPoison.checked) {
-                delete params.skillName;
-              }
-              payload = { ok: true, reqId: reqId, params: params };
-            }
-
-            respond(event.source, event.origin, "getInitParams", payload);
-            logOutgoing("getInitParams response " + safeJson(payload));
-            return;
-          }
-
           // initialized / afterSendMessage / onMessageFinish /
-          // onSatisfactionRatingComplete: one way notifications, logged above.
+          // onSatisfactionRatingComplete / ai:* — one way notifications,
+          // logged above. There is no ready handshake and no getInitParams
+          // any more: the init values come from the environment config
+          // (appName/agentId/skillName) and EBEE_USER_KEY (idToken).
         });
 
         logSystem("dev host ready - listening for scope " + SCOPE);

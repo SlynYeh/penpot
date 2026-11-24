@@ -6287,10 +6287,6 @@ msgid "workspace.options.assistant"
 msgstr "原型·X"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
-msgid "workspace.options.assistant.error.handshake"
-msgstr "无法连接宿主页面。"
-
-#: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.error.params"
 msgstr "宿主页面未返回有效的助手初始化参数。"
 

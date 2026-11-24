@@ -7861,10 +7861,6 @@ msgid "workspace.options.assistant"
 msgstr "X.ai Proto"
 
 #: src/app/main/ui/workspace/sidebar/assistant.cljs
-msgid "workspace.options.assistant.error.handshake"
-msgstr "Could not reach the host page."
-
-#: src/app/main/ui/workspace/sidebar/assistant.cljs
 msgid "workspace.options.assistant.error.params"
 msgstr "The host page did not supply valid assistant parameters."
 

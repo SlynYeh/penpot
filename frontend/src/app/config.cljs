@@ -266,6 +266,40 @@
         (when-not (str/blank? value)
           value)))))
 
+(def x-front-app-name
+  "Application name handed to the host AI assistant SDK init config.
+   Configured via `penpotXFrontAppName` in resources/config.js (docker:
+   `PENPOT_X_FRONT_APP_NAME`). Blank values are normalized to nil; the
+   assistant tab fail-fasts with :missing-config when any of the three
+   x-front init strings is nil. Only meaningful together with
+   `penpotXFrontSdk`."
+  (let [value (obj/get global "penpotXFrontAppName")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
+(def x-front-agent-id
+  "Agent id handed to the host AI assistant SDK init config. Configured
+   via `penpotXFrontAgentId` in resources/config.js (docker:
+   `PENPOT_X_FRONT_AGENT_ID`). Blank values are normalized to nil."
+  (let [value (obj/get global "penpotXFrontAgentId")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
+(def x-front-skill-name
+  "Skill name handed to the host AI assistant SDK init config (also the
+   `defaultSkillName` the SDK receives). Configured via
+   `penpotXFrontSkillName` in resources/config.js (docker:
+   `PENPOT_X_FRONT_SKILL_NAME`). Blank values are normalized to nil."
+  (let [value (obj/get global "penpotXFrontSkillName")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
 (defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.

@@ -40,6 +40,37 @@
 (def prompt-key "prompt")
 (def attachments-key "attachments")
 
+(def ebee-user-key
+  "sessionStorage key under which the embedding portal stores the
+  session user as a JSON object. Shared contract of the host page:
+  the workspace menu reads `originPathId` from it, the assistant tab
+  reads `idToken` (see `read-user-key`)."
+  "EBEE_USER_KEY")
+
+(defn read-user-key
+  "Reads and parses the host page's sessionStorage user object (see
+  `ebee-user-key`). Returns the parsed JS object, or nil when the key
+  is absent, the stored value is not a string, the JSON is malformed,
+  the parsed value is not an object, or the storage itself throws
+  (node tests, privacy modes). The storage is injectable for tests;
+  the zero arity resolves the window's sessionStorage inside the same
+  try, on every call, so a host writing the key later is seen without
+  a reload."
+  ([]
+   (try
+     (let [storage (unchecked-get js/window "sessionStorage")]
+       (when (some? storage)
+         (read-user-key storage)))
+     (catch :default _ nil)))
+  ([^js storage]
+   (try
+     (let [raw (when (some? storage)
+                 (.getItem storage ebee-user-key))]
+       (when (string? raw)
+         (let [parsed (js/JSON.parse raw)]
+           (when (object? parsed) parsed))))
+     (catch :default _ nil))))
+
 (defonce ^:private credentials
   ;; nil | {:token "..." :client-id "..." :doc-content nil|"..."
   ;;        :doc-title nil|"..." :prompt nil|"..."

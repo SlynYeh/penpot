@@ -40,6 +40,7 @@
    [app.main.ui.onboarding.beginner-guide :as beginner-guide]
    [app.plugins.register :as preg]
    [app.util.dom :as dom]
+   [app.util.embed :as embed]
    [app.util.globals :as globals]
    [app.util.i18n :as i18n :refer [tr]]
    [app.util.keyboard :as kbd]
@@ -709,21 +710,17 @@
 
 (defn- origin-path-allowed?
   "True when sessionStorage's EBEE_USER_KEY parses to an object whose
-  originPathId contains \"/990001/\". Every step is guarded: a missing
-  key, malformed JSON, a non-object value and a non-string originPathId
-  all return false."
+  originPathId contains \"/990001/\". Parsing is delegated to the
+  shared reader (`app.util.embed/read-user-key`, single source of the
+  EBEE_USER_KEY contract): a missing key, malformed JSON, a non-object
+  value and a non-string originPathId all return false."
   []
-  (try
-    (let [raw    (unchecked-get js/sessionStorage "EBEE_USER_KEY")
-          parsed (when (string? raw)
-                   (js/JSON.parse raw))
-          path   (when (and (some? parsed) (object? parsed))
-                   (unchecked-get parsed "originPathId"))]
-      (boolean
-       (and (string? path)
-            (str/includes? path "/990001/"))))
-    (catch :default _
-      false)))
+  (let [parsed (embed/read-user-key)
+        path   (when (some? parsed)
+                 (unchecked-get parsed "originPathId"))]
+    (boolean
+     (and (string? path)
+          (str/includes? path "/990001/")))))
 
 (mf/defc menu*
   {::mf/props :obj}

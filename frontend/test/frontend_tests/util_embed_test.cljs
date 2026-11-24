@@ -10,6 +10,40 @@
    [cljs.test :as t :include-macros true]
    [promesa.core :as p]))
 
+(defn- fake-storage
+  "A read-only Storage double over a plain map: read-user-key only
+  ever calls getItem."
+  [m]
+  #js {"getItem" (fn [k] (get m k))})
+
+;; --- read-user-key (shared EBEE_USER_KEY reader) ----------------------
+
+(t/deftest read-user-key-parses-the-user-object
+  (let [parsed (embed/read-user-key
+                (fake-storage {"EBEE_USER_KEY"
+                               "{\"idToken\":\"t\",\"originPathId\":\"/990001/x\"}"}))]
+    (t/is (some? parsed))
+    (t/is (= "t" (unchecked-get parsed "idToken")))
+    (t/is (= "/990001/x" (unchecked-get parsed "originPathId")))))
+
+(t/deftest read-user-key-returns-nil-when-unusable
+  ;; key absent
+  (t/is (nil? (embed/read-user-key (fake-storage {}))))
+  ;; malformed JSON
+  (t/is (nil? (embed/read-user-key (fake-storage {"EBEE_USER_KEY" "{bad json"}))))
+  ;; JSON scalars and arrays are not user objects
+  (t/is (nil? (embed/read-user-key (fake-storage {"EBEE_USER_KEY" "42"}))))
+  (t/is (nil? (embed/read-user-key (fake-storage {"EBEE_USER_KEY" "null"}))))
+  (t/is (nil? (embed/read-user-key (fake-storage {"EBEE_USER_KEY" "[1,2]"}))))
+  ;; nil storage (node tests resolve no sessionStorage)
+  (t/is (nil? (embed/read-user-key nil)))
+  ;; zero arity: the node runner resolves no sessionStorage either
+  (t/is (nil? (embed/read-user-key))))
+
+(t/deftest read-user-key-tolerates-a-throwing-storage
+  (t/is (nil? (embed/read-user-key
+               #js {"getItem" (fn [_] (throw (js/Error. "boom")))}))))
+
 (t/deftest headers-without-credentials
   ;; Nothing is sent until the parent has actually handed over credentials.
   (t/is (= {} (embed/headers))))

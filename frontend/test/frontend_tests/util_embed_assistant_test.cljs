@@ -14,79 +14,59 @@
 (def ^:private parent-origin "https://portal.example.com")
 
 (defn- fake-io
-  "Injectable postMessage/listener pair: records every posted message
-  together with the target origin it was addressed to, and captures the
-  installed message listener so tests can play the parent window."
+  "Injectable postMessage double: records every posted message together
+  with the target origin it was addressed to."
   []
-  (let [posted  (atom [])
-        handler (atom nil)
-        removed (atom 0)]
-    {:posted  posted
-     :removed removed
-     :io      {:post-message!    (fn [message origin]
-                                   (swap! posted conj {:message message :origin origin}))
-               :add-listener!    (fn [h] (reset! handler h))
-               :remove-listener! (fn [_] (swap! removed inc))}
-     :emit!   (fn [parent data]
-                (when-let [h @handler]
-                  (h #js {"source" parent
-                          "origin" parent-origin
-                          "data"   data})))}))
+  (let [posted (atom [])]
+    {:posted posted
+     :io     {:post-message! (fn [message origin]
+                               (swap! posted conj {:message message :origin origin}))}}))
 
 (defn- conn-opts
   [io parent]
   (merge (:io io)
          {:parent parent
-          :origin-allowed? (constantly true)
-          :target-origin parent-origin
-          ;; real timers, small values: fast enough for the suite,
-          ;; slow enough to tell resends apart from the initial post.
-          :resend-interval-ms 20
-          :handshake-timeout-ms 400
-          :request-timeout-ms 400}))
+          :target-origin parent-origin}))
 
-(defn- response-data
-  [event-name payload]
-  #js {"scope" "penpot/assistant"
-       "type" "AI_ASSISTANT_RESPONSE"
-       "eventName" event-name
-       "payload" payload})
+(defn- fake-storage
+  [m]
+  #js {"getItem" (fn [k] (get m k))})
 
-(defn- posted-req-id
-  [io]
-  (unchecked-get (:message (first @(:posted io))) "reqId"))
+;; --- load-id-token / missing-config-keys --------------------------------
 
-(defn- init-params
-  []
-  #js {"idToken" "token"
-       "appName" "app"
-       "agentId" "agent"
-       "skillName" "skill"})
+(t/deftest load-id-token-reads-and-trims-the-token
+  (t/is (= "tok" (assistant/load-id-token
+                  (fake-storage {"EBEE_USER_KEY" "{\"idToken\":\"  tok  \"}"})))))
+
+(t/deftest load-id-token-returns-nil-when-unusable
+  (t/is (nil? (assistant/load-id-token (fake-storage {}))))
+  (t/is (nil? (assistant/load-id-token (fake-storage {"EBEE_USER_KEY" "{bad"}))))
+  (t/is (nil? (assistant/load-id-token (fake-storage {"EBEE_USER_KEY" "{}"}))))
+  (t/is (nil? (assistant/load-id-token
+               (fake-storage {"EBEE_USER_KEY" "{\"idToken\":42}"}))))
+  (t/is (nil? (assistant/load-id-token
+               (fake-storage {"EBEE_USER_KEY" "{\"idToken\":\"\"}"}))))
+  (t/is (nil? (assistant/load-id-token
+               (fake-storage {"EBEE_USER_KEY" "{\"idToken\":\"   \"}"}))))
+  (t/is (nil? (assistant/load-id-token
+               (fake-storage {"EBEE_USER_KEY" "{\"other\":\"x\"}"}))))
+  (t/is (nil? (assistant/load-id-token
+               #js {"getItem" (fn [_] (throw (js/Error. "boom")))}))))
+
+(t/deftest missing-config-keys-empty-when-all-set
+  (t/is (= [] (assistant/missing-config-keys "app" "agent" "skill"))))
+
+(t/deftest missing-config-keys-lists-in-fixed-order
+  (t/is (= [:app-name] (assistant/missing-config-keys nil "agent" "skill")))
+  (t/is (= [:agent-id :skill-name] (assistant/missing-config-keys "app" nil nil)))
+  (t/is (= [:app-name :agent-id :skill-name]
+           (assistant/missing-config-keys nil nil nil))))
+
+(t/deftest id-token-poll-contract-anchors
+  (t/is (= 500 assistant/id-token-poll-ms))
+  (t/is (= 10 assistant/id-token-max-attempts)))
 
 ;; --- pure functions ---------------------------------------------------
-
-(t/deftest valid-init-params-accepts-complete-params
-  (t/is (true? (assistant/valid-init-params? (init-params))))
-  ;; logoUrl is optional; a well formed one must not invalidate the rest.
-  (t/is (true? (assistant/valid-init-params?
-                (obj/set! (init-params) "logoUrl" "https://portal.example.com/logo.png")))))
-
-(t/deftest valid-init-params-rejects-broken-required-fields
-  (doseq [key ["idToken" "appName" "agentId" "skillName"]]
-    (t/is (false? (assistant/valid-init-params? (obj/unset! (init-params) key)))
-          (str "missing " key))
-    (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) key "")))
-          (str "empty " key))
-    (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) key "   ")))
-          (str "blank " key))
-    (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) key 42)))
-          (str "non-string " key)))
-  (t/is (false? (assistant/valid-init-params? nil)))
-  (t/is (false? (assistant/valid-init-params? "idToken"))))
-
-(t/deftest valid-init-params-rejects-broken-optional-logo
-  (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" "  "))))
-  (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" 42)))))
 
 (t/deftest build-message-envs-includes-page-and-file
   (let [envs (assistant/build-message-envs "page-1" "file-1" nil nil)]
@@ -325,6 +305,97 @@
       (t/is (empty? @(:opened io)))
       (t/is (= 1 (count @(:scheduled io)))))))
 
+;; --- start-token-wait! ---------------------------------------------------
+
+(t/deftest token-wait-opens-immediately-when-the-token-is-there
+  (let [io      (fake-polling)
+        got     (atom nil)
+        cancel! (assistant/start-token-wait!
+                 {:read!      (fn [] "tok")
+                  :ready!     (fn [token] (reset! got token))
+                  :exhausted! (fn [] (throw (js/Error. "must not exhaust")))
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (= "tok" @got))
+    (t/is (empty? @(:scheduled io)) "no poll is scheduled after a hit")
+    (cancel!)))
+
+(t/deftest token-wait-polls-until-the-token-arrives
+  (let [io      (fake-polling)
+        reads   (atom [nil "tok"])
+        got     (atom nil)
+        cancel! (assistant/start-token-wait!
+                 {:read!      (fn [] (let [v (first @reads)] (swap! reads rest) v))
+                  :ready!     (fn [token] (reset! got token))
+                  :exhausted! (fn [] (throw (js/Error. "must not exhaust")))
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (t/is (nil? @got))
+    (t/is (= 1 (count @(:scheduled io))) "the first miss schedules a retry")
+    (let [[tick-2 ms] (first @(:scheduled io))]
+      (t/is (= assistant/id-token-poll-ms ms) "the retry polls at the contract interval")
+      (tick-2)
+      (t/is (= "tok" @got))
+      (t/is (= 1 (count @(:scheduled io))) "no further poll after a hit"))
+    (cancel!)))
+
+(t/deftest token-wait-gives-up-after-max-attempts
+  (let [io       (fake-polling)
+        checks   (atom 0)
+        worn-out (atom false)
+        _        (assistant/start-token-wait!
+                  {:read!        (fn [] (swap! checks inc) nil)
+                   :ready!       (fn [_] (throw (js/Error. "must not open")))
+                   :exhausted!   (fn [] (reset! worn-out true))
+                   :schedule!    (:schedule! io)
+                   :cancel!      (:cancel! io)
+                   :max-attempts 3})]
+    ;; drive every scheduled tick until nothing is scheduled anymore
+    (loop []
+      (when (seq @(:scheduled io))
+        (let [[tick _] (last @(:scheduled io))]
+          (swap! (:scheduled io) pop)
+          (tick))
+        (recur)))
+    (t/is (empty? @(:scheduled io)) "the poller stops scheduling")
+    (t/is (= 2 @(:schedules io)) "3 checks total -> 2 re-schedules")
+    (t/is (true? @worn-out))
+    (t/is (= 3 @checks) "exactly max-attempts checks, the last one only exhausts")))
+
+(t/deftest token-wait-cancel-clears-the-pending-poll
+  (let [io      (fake-polling)
+        cancel! (assistant/start-token-wait!
+                 {:read!      (fn [] nil)
+                  :ready!     (fn [_] (throw (js/Error. "must not open")))
+                  :exhausted! (fn [] (throw (js/Error. "must not exhaust")))
+                  :schedule!  (:schedule! io)
+                  :cancel!    (:cancel! io)})]
+    (cancel!)
+    ;; a second call is a no-op, not another cancellation
+    (cancel!)
+    (t/is (= 1 @(:cancelled io)) "the pending timer was cleared")
+    ;; a late tick can neither open nor reschedule
+    (let [[tick _] (first @(:scheduled io))]
+      (tick)
+      (t/is (= 1 (count @(:scheduled io)))))))
+
+(t/deftest token-wait-defaults-match-the-contract-anchors
+  (let [io     (fake-polling)
+        checks (atom 0)
+        _      (assistant/start-token-wait!
+                {:read!      (fn [] (swap! checks inc) nil)
+                 :ready!     (fn [_] nil)
+                 :exhausted! (fn [] nil)
+                 :schedule!  (:schedule! io)
+                 :cancel!    (:cancel! io)})]
+    (loop []
+      (when (seq @(:scheduled io))
+        (let [[tick _] (last @(:scheduled io))]
+          (swap! (:scheduled io) pop)
+          (tick))
+        (recur)))
+    (t/is (= assistant/id-token-max-attempts @checks))))
+
 (defn- recording-hooks
   "Wiring closures for build-init-config that record what the built
   config actually invokes: forward! produces the per-event callbacks,
@@ -338,31 +409,31 @@
                 :forward!       (fn [event-name]
                                   (fn [data] (swap! events conj [event-name data])))}}))
 
-(t/deftest build-init-config-passes-host-params-through
-  ;; Anything the host returns in params must reach the init config
-  ;; untouched: unknown keys (the point of the pass-through), same-name
-  ;; keys and the raw alias keys alongside their derived counterparts.
-  (let [prompts #js [#js {"id" "p1"}]
-        params  (-> (init-params)
-                    (obj/set! "theme" "dark")
-                    (obj/set! "prompts" prompts)
-                    (obj/set! "logoUrl" "https://portal.example.com/logo.png"))
-        config  (assistant/build-init-config params (:hooks (recording-hooks)))]
-    (t/is (= "dark" (obj/get config "theme")))
-    (t/is (identical? prompts (obj/get config "prompts")))
+;; --- build-init-config (env config + sessionStorage edition) -------------
+
+(t/deftest build-init-config-carries-the-local-init-values
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"}
+                (:hooks (recording-hooks)))]
+    (t/is (= "tok" (obj/get config "idToken")))
     (t/is (= "app" (obj/get config "appName")))
     (t/is (= "agent" (obj/get config "agentId")))
-    (t/is (= "token" (obj/get config "idToken")))
     (t/is (= "skill" (obj/get config "skillName")))
-    (t/is (= "https://portal.example.com/logo.png" (obj/get config "logoUrl")))))
+    (t/is (= "skill" (obj/get config "defaultSkillName")))
+    (t/is (= "domMount" (obj/get config "layoutType")))
+    ;; the host passthrough and the logo/appImage derivation are gone
+    (t/is (nil? (obj/get config "appImage")))
+    (t/is (nil? (obj/get config "theme")))))
 
 (t/deftest build-init-config-overlays-the-local-wiring
   (let [{:keys [events enriched hooks]} (recording-hooks)
-        config (assistant/build-init-config (init-params) hooks)
+        config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"}
+                hooks)
         msg    #js {"messageId" "m1"}
         rating #js {"score" 5}]
-    (t/is (= "domMount" (obj/get config "layoutType")))
-    (t/is (= "skill" (obj/get config "defaultSkillName")))
     (t/is (fn? (obj/get config "getIdToken")))
     ;; the host SDK docs spell the hook two ways; both carry the same fn
     (t/is (identical? (obj/get config "beforeSendMessage")
@@ -379,283 +450,27 @@
               ["onSatisfactionRatingComplete" rating]]
              @events))))
 
-(t/deftest build-init-config-get-id-token-resolves-the-host-token
+(t/deftest build-init-config-get-id-token-rereads-on-every-call
   (t/async done
-    (let [config (assistant/build-init-config (init-params) (:hooks (recording-hooks)))]
+    (let [tokens (atom ["t1" "t2"])
+          config (assistant/build-init-config
+                  {:id-token "init" :app-name "app"
+                   :agent-id "agent" :skill-name "skill"}
+                  (assoc (:hooks (recording-hooks))
+                         :load-id-token!
+                         (fn []
+                           (let [value (first @tokens)]
+                             (swap! tokens rest)
+                             value))))]
       (p/then ((obj/get config "getIdToken"))
-              (fn [value]
-                (t/is (= "token" value))
-                (done))))))
+              (fn [first-value]
+                (t/is (= "t1" first-value) "not the init-time snapshot")
+                (p/then ((obj/get config "getIdToken"))
+                        (fn [second-value]
+                          (t/is (= "t2" second-value) "every call re-reads")
+                          (done))))))))
 
-(t/deftest build-init-config-derives-appimage-from-logo-url
-  ;; logoUrl wins over a host supplied appImage (documented precedence)
-  (let [config (assistant/build-init-config
-                (-> (init-params)
-                    (obj/set! "logoUrl" "https://portal.example.com/logo.png")
-                    (obj/set! "appImage" #js {"src" "https://portal.example.com/other.png"}))
-                (:hooks (recording-hooks)))
-        app-image (obj/get config "appImage")]
-    (t/is (= "https://portal.example.com/logo.png" (obj/get app-image "src")))
-    (t/is (= "ai-penpot-icon" (obj/get app-image "className")))
-    (t/is (true? (obj/get app-image "hideClose"))))
-  ;; without logoUrl nothing is injected...
-  (let [config (assistant/build-init-config (init-params) (:hooks (recording-hooks)))]
-    (t/is (nil? (obj/get config "appImage"))))
-  ;; ...and a host supplied appImage passes through untouched
-  (let [direct #js {"src" "https://portal.example.com/direct.png" "hideClose" false}
-        config (assistant/build-init-config (obj/set! (init-params) "appImage" direct)
-                                            (:hooks (recording-hooks)))]
-    (t/is (identical? direct (obj/get config "appImage")))))
-
-(t/deftest build-init-config-does-not-mutate-the-host-params
-  (let [params (-> (init-params)
-                   (obj/set! "theme" "dark")
-                   (obj/set! "logoUrl" "https://portal.example.com/logo.png"))
-        before (js->clj (obj/clone params))]
-    (assistant/build-init-config params (:hooks (recording-hooks)))
-    (t/is (= before (js->clj params)))))
-
-(t/deftest parse-incoming-accepts-valid-response
-  (let [payload #js {"ok" true "reqId" "r1" "params" #js {"idToken" "t"}}
-        parsed  (assistant/parse-incoming (response-data "getInitParams" payload))]
-    (t/is (= :AI_ASSISTANT_RESPONSE (:type parsed)))
-    (t/is (= :getInitParams (:event-name parsed)))
-    (t/is (= "r1" (:req-id parsed)))
-    (t/is (identical? payload (:payload parsed)))))
-
-(t/deftest parse-incoming-reads-req-id-from-the-envelope
-  ;; Tolerates a host that echoes the reqId next to the payload instead
-  ;; of inside it.
-  (let [data   (response-data "getInitParams" #js {"ok" true})
-        parsed (assistant/parse-incoming (obj/set! data "reqId" "env-1"))]
-    (t/is (= "env-1" (:req-id parsed)))))
-
-(t/deftest parse-incoming-tolerates-missing-scope
-  (let [parsed (assistant/parse-incoming
-                #js {"type" "AI_ASSISTANT_RESPONSE"
-                     "eventName" "ready"
-                     "payload" #js {"ok" true}})]
-    (t/is (= :ready (:event-name parsed)))
-    (t/is (nil? (:req-id parsed)))))
-
-(t/deftest parse-incoming-rejects-foreign-messages
-  ;; wrong scope
-  (t/is (nil? (assistant/parse-incoming
-               (obj/set! (response-data "ready" #js {"ok" true})
-                         "scope" "penpot/embed"))))
-  ;; wrong type: an EVENT envelope is child->parent only
-  (t/is (nil? (assistant/parse-incoming
-               #js {"scope" "penpot/assistant"
-                    "type" "AI_ASSISTANT_EVENT"
-                    "eventName" "ready"
-                    "payload" #js {"ok" true}})))
-  ;; missing / non-string eventName
-  (t/is (nil? (assistant/parse-incoming
-               #js {"scope" "penpot/assistant"
-                    "type" "AI_ASSISTANT_RESPONSE"
-                    "payload" #js {"ok" true}})))
-  (t/is (nil? (assistant/parse-incoming
-               #js {"scope" "penpot/assistant"
-                    "type" "AI_ASSISTANT_RESPONSE"
-                    "eventName" 42
-                    "payload" #js {"ok" true}}))))
-
-(t/deftest parse-incoming-rejects-non-objects
-  (t/is (nil? (assistant/parse-incoming nil)))
-  (t/is (nil? (assistant/parse-incoming "AI_ASSISTANT_RESPONSE")))
-  (t/is (nil? (assistant/parse-incoming 42)))
-  (t/is (nil? (assistant/parse-incoming #js ["AI_ASSISTANT_RESPONSE"]))))
-
-;; --- handshake! -------------------------------------------------------
-
-(t/deftest handshake-resolves-ready-on-parent-ack
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:handshake! conn))
-       (fn [result]
-         (t/is (= :ready result))
-         (t/is (= "ready" (unchecked-get (:message (first @(:posted io))) "eventName")))
-         ;; the handshake must stop resending once the ack arrived
-         (let [posts-at-ack (count @(:posted io))]
-           (js/setTimeout
-            (fn []
-              (t/is (= posts-at-ack (count @(:posted io)))
-                    "ready is not resent after the ack")
-              ((:close! conn))
-              (done))
-            60))))
-      (js/setTimeout
-       (fn []
-         ((:emit! io) parent (response-data "ready" #js {"ok" true "timestamp" 1})))
-       5))))
-
-(t/deftest handshake-resolves-timeout-without-ack
-  (t/async done
-    (let [io      (fake-io)
-          parent  (js-obj)
-          opts    (assoc (conn-opts io parent) :handshake-timeout-ms 60)
-          conn    (assistant/create-conn opts)
-          promise ((:handshake! conn))
-          promise-2 ((:handshake! conn))]
-      ;; memoized: a second call must not restart the handshake
-      (t/is (identical? promise promise-2))
-      (p/then
-       promise
-       (fn [result]
-         (t/is (= :timeout result))
-         ((:close! conn))
-         (done))))))
-
-(t/deftest handshake-ignores-messages-that-fail-security-checks
-  (t/async done
-    (let [io       (fake-io)
-          parent   (js-obj)
-          intruder (js-obj)
-          opts     (-> (conn-opts io parent)
-                       (assoc :origin-allowed? (constantly false)
-                              :handshake-timeout-ms 100))
-          conn     (assistant/create-conn opts)
-          ack      (response-data "ready" #js {"ok" true})]
-      (p/then
-       ((:handshake! conn))
-       (fn [result]
-         (t/is (= :timeout result)
-               "a rejected ack can never complete the handshake")
-         (t/is (>= (count @(:posted io)) 2)
-               "ready keeps being resent while unanswered")
-         ((:close! conn))
-         (done)))
-      ;; an ack from the wrong window...
-      (js/setTimeout (fn [] ((:emit! io) intruder ack)) 10)
-      ;; ...and one from the right window but a disallowed origin
-      (js/setTimeout (fn [] ((:emit! io) parent ack)) 30))))
-
-(t/deftest post-failures-never-escape-and-timeout-takes-over
-  ;; .postMessage throws synchronously on payloads that cannot be
-  ;; structurally cloned; nothing here may throw into the caller and
-  ;; the handshake must still settle through its timeout backstop.
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          opts   (-> (conn-opts io parent)
-                     (assoc :post-message! (fn [_message _origin]
-                                             (throw (js/Error. "DataCloneError")))
-                            :handshake-timeout-ms 50
-                            :request-timeout-ms 50))
-          conn   (assistant/create-conn opts)]
-      ;; any of these throwing synchronously fails the test
-      (t/is (some? ((:handshake! conn))))
-      (t/is (some? ((:request! conn) "getInitParams" #js {"timestamp" 1})))
-      ((:post-event! conn) "initialized" {"timestamp" 1})
-      (p/then
-       ((:handshake! conn))
-       (fn [result]
-         (t/is (= :timeout result) "the timeout path is the backstop")
-         ((:close! conn))
-         (done))))))
-
-;; --- request! ---------------------------------------------------------
-
-(t/deftest request-resolves-on-matching-req-id
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:request! conn) "getInitParams" #js {"timestamp" 1})
-       (fn [result]
-         (t/is (true? (:ok result)))
-         (t/is (= "token" (unchecked-get (:payload result) "idToken")))
-         ((:close! conn))
-         (done)))
-      (js/setTimeout
-       (fn []
-         (let [req-id (posted-req-id io)]
-           (t/is (string? req-id) "the request is sent with a reqId")
-           ((:emit! io) parent
-                        (response-data "getInitParams"
-                                       #js {"ok" true "reqId" req-id
-                                            "params" #js {"idToken" "token"
-                                                          "appName" "app"
-                                                          "agentId" "agent"
-                                                          "skillName" "skill"}}))))
-       5))))
-
-(t/deftest request-resolves-error-on-ok-false
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:request! conn) "getInitParams" #js {"timestamp" 1})
-       (fn [result]
-         (t/is (= {:ok false :error "missing config"} result))
-         ((:close! conn))
-         (done)))
-      (js/setTimeout
-       (fn []
-         ((:emit! io) parent
-                      (response-data "getInitParams"
-                                     #js {"ok" false "reqId" (posted-req-id io)
-                                          "error" "missing config"})))
-       5))))
-
-(t/deftest request-keeps-resending-until-the-req-id-matches
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:request! conn) "getInitParams" #js {"timestamp" 1})
-       (fn [result]
-         (t/is (true? (:ok result)))
-         ;; one single reqId for the initial send and every resend
-         (t/is (= 1 (count (distinct (map #(unchecked-get (:message %) "reqId")
-                                          @(:posted io)))))
-               "the reqId is stable across resends")
-         ((:close! conn))
-         (done)))
-      ;; a response echoing some other reqId must be ignored...
-      (js/setTimeout
-       (fn []
-         ((:emit! io) parent
-                      (response-data "getInitParams"
-                                     #js {"ok" true "reqId" "not-ours"
-                                          "params" #js {"idToken" "nope"}})))
-       5)
-      ;; ...the conn keeps resending, and only the matching echo resolves
-      (js/setTimeout
-       (fn []
-         (t/is (>= (count @(:posted io)) 2)
-               "the request is resent while unanswered")
-         ((:emit! io) parent
-                      (response-data "getInitParams"
-                                     #js {"ok" true "reqId" (posted-req-id io)
-                                          "params" #js {"idToken" "token"
-                                                        "appName" "app"
-                                                        "agentId" "agent"
-                                                        "skillName" "skill"}})))
-       50))))
-
-(t/deftest request-resolves-timeout-error
-  (t/async done
-    (let [io   (fake-io)
-          parent (js-obj)
-          opts (assoc (conn-opts io parent) :request-timeout-ms 80)
-          conn (assistant/create-conn opts)]
-      (p/then
-       ((:request! conn) "getInitParams" #js {"timestamp" 1})
-       (fn [result]
-         (t/is (= {:ok false :error :timeout} result))
-         (t/is (>= (count @(:posted io)) 2)
-               "the request is resent until the deadline")
-         ((:close! conn))
-         (done))))))
-
-;; --- post-event! ------------------------------------------------------
+;; --- post-event! --------------------------------------------------------
 
 (t/deftest post-event-sends-the-protocol-envelope
   (let [io     (fake-io)
@@ -707,50 +522,45 @@
     (t/is (= ["https://a.example.com"] (mapv :origin @(:posted io))))
     ((:close! conn))))
 
-;; --- close! -----------------------------------------------------------
+(t/deftest post-event-contains-a-throwing-post-message
+  ;; .postMessage throws synchronously on payloads that cannot be
+  ;; structurally cloned (third party SDK data flows through here) and
+  ;; on illegal target origins. Nothing here may throw into the SDK
+  ;; callback that forwarded the event (a synchronous test: any escape
+  ;; errors), and one failed post must not poison the outlet: the next
+  ;; event is still delivered. The one-shot error log is emitted on a
+  ;; microtask by the logging executor and is deliberately not asserted.
+  (let [delivered (atom [])
+        {:keys [post-event! close!]}
+        (assistant/create-conn
+         {:parent        #js {}
+          :target-origin parent-origin
+          :post-message! (fn [message _origin]
+                           (if (= "afterSendMessage" (unchecked-get message "eventName"))
+                             (throw (js/Error. "DataCloneError"))
+                             (swap! delivered conj (unchecked-get message "eventName"))))})]
+    (post-event! "afterSendMessage" #js {"timestamp" 1})
+    (post-event! "initialized" #js {"timestamp" 2})
+    (t/is (= ["initialized"] @delivered) "a failed post does not poison the outlet")
+    (close!)))
 
-(t/deftest close-removes-the-listener-and-is-idempotent
-  (let [io     (fake-io)
-        parent (js-obj)
-        conn   (assistant/create-conn (conn-opts io parent))]
-    (t/is (zero? @(:removed io)))
-    ((:close! conn))
-    (t/is (= 1 @(:removed io)))
-    ;; a second call must be a no-op, not a throw
-    ((:close! conn))
-    (t/is (= 1 @(:removed io)))))
+;; --- close! (emit-only edition) -------------------------------------------
 
-(t/deftest close-settles-a-pending-handshake
-  ;; an unmount race must read as :closed, not as "host unreachable"
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:handshake! conn))
-       (fn [result]
-         (t/is (= :closed result))
-         (done)))
-      ((:close! conn)))))
-
-(t/deftest close-settles-a-pending-request
-  ;; no promise is left dangling when the tab goes away mid-request
-  (t/async done
-    (let [io     (fake-io)
-          parent (js-obj)
-          conn   (assistant/create-conn (conn-opts io parent))]
-      (p/then
-       ((:request! conn) "getInitParams" #js {"timestamp" 1})
-       (fn [result]
-         (t/is (= {:ok false :error :closed} result))
-         (done)))
-      ((:close! conn)))))
+(t/deftest close-is-idempotent-and-drops-further-events
+  (let [io (fake-io)
+        {:keys [post-event! close!]}
+        (assistant/create-conn (conn-opts io #js {}))]
+    (post-event! "initialized" #js {"timestamp" 1})
+    (close!)
+    (close!)
+    (post-event! "initialized" #js {"timestamp" 2})
+    (t/is (= 1 (count @(:posted io))) "events after close are dropped")))
 
 ;; ---------------------------------------------------------------------------
 ;; v2: session memory (localStorage) and history list formatting
 ;; ---------------------------------------------------------------------------
 
-(defn- fake-storage
+(defn- fake-local-storage
   "The localStorage surface the session memory needs, backed by an atom;
   also able to throw on every method for the containment tests."
   [& {:keys [throwing]}]
@@ -770,7 +580,7 @@
            (assistant/session-storage-key "p1" "f1"))))
 
 (t/deftest saved-session-id-roundtrip
-  (let [storage (fake-storage)]
+  (let [storage (fake-local-storage)]
     (t/is (nil? (assistant/load-saved-session-id "p1" "f1" storage)))
     (assistant/save-session-id! "p1" "f1" "s1" storage)
     (t/is (= "s1" (assistant/load-saved-session-id "p1" "f1" storage)))
@@ -785,7 +595,7 @@
   (t/is (nil? (assistant/clear-saved-session-id! "p" "f" nil))))
 
 (t/deftest saved-session-id-throwing-storage-is-contained
-  (let [storage (fake-storage :throwing true)]
+  (let [storage (fake-local-storage :throwing true)]
     (t/is (nil? (assistant/load-saved-session-id "p" "f" storage)))
     (t/is (nil? (assistant/save-session-id! "p" "f" "s" storage)))
     (t/is (nil? (assistant/clear-saved-session-id! "p" "f" storage)))))

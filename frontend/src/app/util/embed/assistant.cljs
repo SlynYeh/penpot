@@ -9,19 +9,22 @@
   page, dedicated to the AI assistant tab.
 
   The parent cannot reach into this document, so the assistant session
-  talks to it over postMessage: a `ready` handshake repeated until the
-  parent acks it, a `getInitParams` request/response pair matched by
-  `reqId`, and a stream of one-way events forwarded from the assistant
-  SDK (`initialized`, `afterSendMessage`, ...). The protocol is defined
-  by this side; see the communication section of
-  docs/superpowers/plans/2026-11-09-ai-assistant-tab-integration.md.
+  emits events to it over postMessage: a one-way stream of forwarded
+  assistant SDK events (`initialized`, the init callback forwards and
+  the `ai:*` SDK events). The channel is emit-only — no handshake, no
+  request/response, no inbound listener. The init values the SDK needs
+  are resolved locally (appName/agentId/skillName from the environment
+  configuration, the idToken from the host page's sessionStorage
+  EBEE_USER_KEY), and postMessage does not queue messages, so the host
+  page must install its message listener before the user opens the
+  assistant tab.
 
-  One connection is created every time the assistant tab activates and
-  destroyed on unmount (`close!`); there is deliberately no defonce
-  state in this namespace.
+  One connection is created on every tab activation that passes the
+  environment config check, and destroyed on unmount (`close!`); there
+  is deliberately no defonce state in this namespace.
 
   IMPORTANT: this namespace must not have any top level side effect.
-  All the IO (window/parent access, listeners, timers) is resolved
+  All the IO (window/parent access and origin resolution) is resolved
   lazily inside `create-conn`, so the namespace stays inert until a
   connection is explicitly created and unit tests can inject fakes."
   (:require
@@ -35,7 +38,6 @@
 
 (def ^:private scope-value "penpot/assistant")
 (def ^:private type-event "AI_ASSISTANT_EVENT")
-(def ^:private type-response "AI_ASSISTANT_RESPONSE")
 
 (def sdk-forward-events
   "The SDK events the component layer subscribes with `on` and
@@ -45,26 +47,51 @@
   names."
   ["ai:connectX" "ai:tokenError" "ai:changeSession" "ai:createNewSession"])
 
-(def ^:private required-init-param-keys
-  #js ["idToken" "appName" "agentId" "skillName"])
+(def id-token-poll-ms
+  "Delay between two idToken availability checks while waiting for the
+  host page to write EBEE_USER_KEY. Contract anchor: unit tested."
+  500)
 
-(defn valid-init-params?
-  "Whether the `params` object of a getInitParams response carries
-  usable assistant initialization values: `idToken`, `appName`,
-  `agentId` and `skillName` must all be non-blank strings. `logoUrl` is
-  optional but, when present, must be a non-blank string too. Public so
-  the validation rule can be unit-tested."
-  [params]
-  (and (object? params)
-       (every? (fn [key]
-                 (let [value (obj/get params key)]
-                   (and (string? value)
-                        (pos? (count (str/trim value))))))
-               required-init-param-keys)
-       (let [logo-url (obj/get params "logoUrl")]
-         (or (nil? logo-url)
-             (and (string? logo-url)
-                  (pos? (count (str/trim logo-url))))))))
+(def id-token-max-attempts
+  "Total number of idToken CHECKS (the first one immediate), not
+  retries: 10 checks / 9 intervals / ~4.5s before the tab gives up and
+  enters the :token-missing error state. Contract anchor: unit
+  tested."
+  10)
+
+(defn- id-token-from
+  "Extracts the trimmed non-blank idToken from a parsed EBEE_USER_KEY
+  object, nil when there is nothing usable."
+  [^js user-key]
+  (let [value (when (some? user-key)
+                (obj/get user-key "idToken"))]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
+(defn load-id-token
+  "Reads the assistant `idToken` from the host page's sessionStorage
+  user object (`embed/read-user-key` on the shared EBEE_USER_KEY
+  contract): present, a string and non-blank after trimming returns the
+  trimmed value; anything else returns nil. The one arity injects the
+  storage for tests; the zero arity reads through `embed/read-user-key`'s
+  own default resolution (fresh window lookup on every call)."
+  ([] (id-token-from (embed/read-user-key)))
+  ([storage] (id-token-from (embed/read-user-key storage))))
+
+(defn missing-config-keys
+  "Returns the keyword vector of assistant init config keys that are
+  nil among their environment configured values — [:app-name :agent-id
+  :skill-name] in that fixed order, [] when all are set. Pure helper:
+  the component's fail-fast logs exactly which env var is absent."
+  [app-name agent-id skill-name]
+  (into []
+        (keep (fn [[key value]]
+                (when (nil? value) key)))
+        [[:app-name app-name]
+         [:agent-id agent-id]
+         [:skill-name skill-name]]))
 
 (defn build-message-envs
   "Builds the `envs` object injected into each assistant SDK message:
@@ -82,34 +109,37 @@
     envs))
 
 (defn build-init-config
-  "Builds the config object handed to the host SDK `init` method: the
-  init params returned by getInitParams are passed through in full —
-  any extra key the host adds reaches the SDK untouched — and overlaid
-  with the locally resolved wiring: the callback hooks (functions
-  cannot cross postMessage), the derived getIdToken/defaultSkillName
-  aliases, the domMount layout and the logoUrl->appImage derivation.
-  The received params object is never mutated."
-  [params {:keys [enrich-message forward!]}]
-  (let [config (obj/merge params
-                          #js {"getIdToken" (fn [] (p/resolved (obj/get params "idToken")))
-                               "defaultSkillName" (obj/get params "skillName")
-                               "layoutType" "domMount"
-                               ;; The host SDK docs spell this hook two
-                               ;; different ways; set both to the same fn.
-                               "beforeSendMesssage" enrich-message
-                               "beforeSendMessage" enrich-message
-                               "afterSendMessage" (forward! "afterSendMessage")
-                               "onMessageFinish" (forward! "onMessageFinish")
-                               "satisfactionRating"
-                               #js {"enabled" true
-                                    "onComplete" (forward! "onSatisfactionRatingComplete")}})
-        logo-url (obj/get params "logoUrl")]
-    (if (some? logo-url)
-      (obj/set! config "appImage"
-                #js {"src" logo-url
-                     "className" "ai-penpot-icon"
-                     "hideClose" true})
-      config)))
+  "Builds the config object handed to the host SDK `init` method from
+  the locally resolved init values — the environment configured
+  app/agent/skill names and the idToken polled from the host page's
+  sessionStorage — overlaid with the local wiring: the callback hooks,
+  the getIdToken/defaultSkillName derivatives and the domMount layout.
+  `getIdToken` re-reads the
+  sessionStorage on every call (the host may refresh the token; it must
+  write it back to EBEE_USER_KEY, Penpot never pulls it). Nothing else
+  is passed through: additional SDK config keys are added by adding an
+  environment variable, not by a generic channel. `load-id-token!` is
+  injectable (defaults to `load-id-token`) so the re-reading behavior
+  stays unit-testable."
+  [{:keys [id-token app-name agent-id skill-name]}
+   {:keys [enrich-message forward! load-id-token!]
+    :or {load-id-token! load-id-token}}]
+  #js {"idToken" id-token
+       "appName" app-name
+       "agentId" agent-id
+       "skillName" skill-name
+       "getIdToken" (fn [] (p/resolved (load-id-token!)))
+       "defaultSkillName" skill-name
+       "layoutType" "domMount"
+       ;; The host SDK docs spell this hook two different ways; set
+       ;; both to the same fn.
+       "beforeSendMesssage" enrich-message
+       "beforeSendMessage" enrich-message
+       "afterSendMessage" (forward! "afterSendMessage")
+       "onMessageFinish" (forward! "onMessageFinish")
+       "satisfactionRating"
+       #js {"enabled" true
+            "onComplete" (forward! "onSatisfactionRatingComplete")}})
 
 ;; -------------------------------------------------------------------------
 ;; Auto-open: right after the SDK finished initializing, the prompt,
@@ -203,6 +233,38 @@
                              (vreset! timer
                                       (schedule! #(tick! (inc attempt))
                                                  poll-ms)))))))]
+    (tick! 1)
+    (fn []
+      (vreset! cancelled? true)
+      (when-let [scheduled @timer]
+        (vreset! timer nil)
+        (cancel! scheduled)))))
+
+(defn start-token-wait!
+  "Polls `read!` (expected to return the idToken string or nil) and
+  calls `ready!` with the first non-nil value; when the
+  `max-attempts`-th CHECK still yields nothing, calls `exhausted!`
+  without scheduling again. max-attempts counts checks (first one
+  immediate), not retries — the defaults give 10 checks / 9 intervals /
+  ~4.5s. Returns a cancel fn that stops any pending schedule
+  (idempotent). All of `read!`, `ready!`, `exhausted!`, `schedule!`
+  and `cancel!` are injectable so the whole contract stays
+  unit-testable."
+  [{:keys [read! ready! exhausted! schedule! cancel!
+           max-attempts poll-ms]
+    :or {max-attempts id-token-max-attempts
+         poll-ms      id-token-poll-ms
+         cancel!      (constantly nil)}}]
+  (let [cancelled? (volatile! false)
+        timer      (volatile! nil)
+        tick!      (fn tick! [attempt]
+                     (when-not @cancelled?
+                       (if-let [token (read!)]
+                         (ready! token)
+                         (if (< attempt max-attempts)
+                           (vreset! timer
+                                    (schedule! #(tick! (inc attempt)) poll-ms))
+                           (exhausted!)))))]
     (tick! 1)
     (fn []
       (vreset! cancelled? true)
@@ -418,67 +480,44 @@
                         :sessions (mapv #(nth % 2) (sort by-time-desc entries))})))
              history-group-order)))))
 
-(defn parse-incoming
-  "Parses the `data` of a message event into
-  `{:type :event-name :req-id :payload}`, or nil when the message does
-  not belong to the assistant channel. Only RESPONSE messages are
-  expected from the parent, so any other type is rejected; a missing
-  `scope` is tolerated but a foreign one is not. The `reqId` is read
-  from the envelope and, failing that, from the payload (where the
-  getInitParams response carries it). Public so the parsing rule can be
-  unit-tested."
-  [data]
-  (when (object? data)
-    (let [scope      (obj/get data "scope")
-          type       (obj/get data "type")
-          event-name (obj/get data "eventName")]
-      (when (and (or (nil? scope) (= scope-value scope))
-                 (= type-response type)
-                 (string? event-name)
-                 (pos? (count event-name)))
-        (let [payload (obj/get data "payload")
-              req-id  (or (obj/get data "reqId")
-                          (when (object? payload)
-                            (obj/get payload "reqId")))]
-          {:type (keyword type)
-           :event-name (keyword event-name)
-           :req-id (when (string? req-id) req-id)
-           :payload payload})))))
+(defn- build-message
+  "The outbound envelope of the assistant channel. Every message is a
+  one-way event; the envelope carries no request id."
+  [event-name payload]
+  (let [payload (cond
+                  (nil? payload) nil
+                  (coll? payload) (clj->js payload)
+                  :else payload)]
+    #js {"scope" scope-value
+         "type" type-event
+         "eventName" (name event-name)
+         "payload" payload}))
 
 (defn create-conn
-  "Creates a postMessage connection to the embedding parent window.
-  One connection == one assistant tab session: create it on tab
-  activation, call `close!` on unmount. Returns:
+  "Creates the one-way postMessage outlet to the embedding parent
+  window for the assistant channel. One connection == one assistant
+  tab session: create it on every tab activation that passes the
+  environment config check, call `close!` on unmount.
+  Returns:
 
-   {:handshake!  (fn [] -> promise resolving :ready, :timeout, or
-                   :closed when the session is torn down first)
-    :request!    (fn [event-name payload] -> promise resolving
-                   {:ok true :payload …} or {:ok false :error …};
-                   timeouts resolve {:ok false :error :timeout},
-                   nothing ever rejects)
-    :post-event! (fn [event-name payload])   ; one way notification
+   {:post-event! (fn [event-name payload])   ; one way notification
     :close!      (fn [])}                    ; idempotent teardown
 
+  The channel is emit-only: no handshake, no request/response, no
+  inbound listener. The init values the SDK needs are resolved locally
+  (environment configuration + the host page's sessionStorage), and
+  postMessage does not queue messages — the host page must install its
+  message listener BEFORE the user opens the assistant tab, and a
+  misconfigured PENPOT_EMBED_PARENT_ORIGIN is silent (nothing probes
+  the parent any more).
+
   Every IO touchpoint is injectable for tests: `post-message!`,
-  `add-listener!`, `remove-listener!`, `set-timeout!`, `clear-timeout!`,
-  `set-interval!`, `clear-interval!`, `origin-allowed?`, `target-origin`
-  (string or nil-arity fn), `parent` and `on-event`. The defaults
+  `target-origin` (string or nil-arity fn) and `parent`. The defaults
   resolve lazily through `app.util.globals` and share the
   `penpotEmbedParentOrigin` configuration with the credentials
-  handshake in `app.util.embed`. Inbound messages are only accepted
-  from the injected `parent` window and an origin accepted by
-  `origin-allowed?`; responses are matched to requests by `reqId`, and
-  anything else that still parses is handed to the `on-event`
-  placeholder."
+  handshake in `app.util.embed`."
   [opts]
-  (let [{:keys [post-message! add-listener! remove-listener!
-                set-timeout! clear-timeout! set-interval! clear-interval!
-                origin-allowed? target-origin parent on-event
-                resend-interval-ms handshake-timeout-ms request-timeout-ms]
-         :or {resend-interval-ms 2000
-              handshake-timeout-ms 15000
-              request-timeout-ms 10000}}
-        opts
+  (let [{:keys [post-message! target-origin parent]} opts
 
         parent
         (or parent (unchecked-get ug/window "parent"))
@@ -488,41 +527,6 @@
             (fn [message origin]
               (when (some? parent)
                 (.postMessage parent message origin))))
-
-        add-listener!
-        (or add-listener!
-            (fn [handler] (.addEventListener ug/window "message" handler)))
-
-        remove-listener!
-        (or remove-listener!
-            (fn [handler] (.removeEventListener ug/window "message" handler)))
-
-        set-timeout!
-        (or set-timeout! (fn [f ms] (js/setTimeout f ms)))
-
-        clear-timeout!
-        (or clear-timeout! (fn [id] (js/clearTimeout id)))
-
-        set-interval!
-        (or set-interval! (fn [f ms] (js/setInterval f ms)))
-
-        clear-interval!
-        (or clear-interval! (fn [id] (js/clearInterval id)))
-
-        origin-allowed?
-        (or origin-allowed?
-            (let [warned? (volatile! false)]
-              (fn [origin]
-                (let [parsed   (embed/origin-config)
-                      allowed? (embed/origins-accept? parsed origin)]
-                  (when (and allowed?
-                             (not (deref warned?))
-                             (or (= :none parsed) (nil? parsed)))
-                    (vreset! warned? true)
-                    (if (= :none parsed)
-                      (log/inf :hint "assistant: parent origin validation disabled by config (none)")
-                      (log/wrn :hint "assistant: no parent origin configured, accepting messages from any window")))
-                  allowed?))))
 
         resolve-target-origin
         (cond
@@ -547,8 +551,8 @@
                     (= :none parsed)
                     (log/inf :hint "assistant: parent origin validation disabled by config (none), posting with a wildcard target origin")
 
-                    ;; wildcard pattern configured: "*" is by design, not
-                    ;; a misconfiguration — info, not wrn
+                    ;; wildcard pattern configured: "*" is by design,
+                    ;; not a misconfiguration — info, not wrn
                     (vector? parsed)
                     (log/inf :hint "assistant: posting with a wildcard target origin (wildcard pattern configured)")
 
@@ -556,83 +560,20 @@
                     (log/wrn :hint "assistant: no usable parent origin configured, posting with a wildcard target origin")))
                 targets))))
 
-        on-event
-        (or on-event (fn [_]))
-
         closed?
         (volatile! false)
-
-        intervals
-        (atom #{})
-
-        timeouts
-        (atom #{})
-
-        handshake
-        ;; nil | {:deferred :interval :timeout}; the entry survives
-        ;; completion so `handshake!` stays memoized like `embed/start!`.
-        (atom nil)
-
-        pending
-        ;; req-id -> {:deferred :interval :timeout}
-        (atom {})
-
-        counter
-        (volatile! 0)
-
-        install-interval!
-        (fn [f ms]
-          (let [id (set-interval! f ms)]
-            (swap! intervals conj id)
-            id))
-
-        cancel-interval!
-        (fn [id]
-          (when (contains? @intervals id)
-            (swap! intervals disj id)
-            (clear-interval! id)))
-
-        install-timeout!
-        (fn [f ms]
-          (let [id (set-timeout! f ms)]
-            (swap! timeouts conj id)
-            id))
-
-        cancel-timeout!
-        (fn [id]
-          (when (contains? @timeouts id)
-            (swap! timeouts disj id)
-            (clear-timeout! id)))
-
-        build-message
-        (fn [event-name payload req-id]
-          (let [payload (cond
-                          (nil? payload) nil
-                          (coll? payload) (clj->js payload)
-                          :else payload)
-                message #js {"scope" scope-value
-                             "type" type-event
-                             "eventName" (name event-name)
-                             "payload" payload}]
-            (when (some? req-id)
-              (obj/set! message "reqId" req-id))
-            message))
 
         post-failed?
         (volatile! false)
 
         post!
         (fn [message]
-          ;; postMessage throws synchronously on payloads that cannot be
-          ;; structurally cloned (third party SDK data flows through
+          ;; postMessage throws synchronously on payloads that cannot
+          ;; be structurally cloned (third party SDK data flows through
           ;; here) and on illegal target origins. Contain it, log it
-          ;; once, and let the resend/timeout paths be the backstop; an
-          ;; exception escaping into a host SDK callback would be far
-          ;; harder to trace.
-          ;;
-          ;; A throw aborts the remaining targets of the loop below;
-          ;; handshake!/request! resends are the backstop (post-event! is
-          ;; one-way and does not resend).
+          ;; once; an exception escaping into a host SDK callback would
+          ;; be far harder to trace. A throw aborts the remaining target
+          ;; origins of the loop below; there is no resend.
           (try
             (doseq [origin (resolve-target-origin)]
               (post-message! message origin))
@@ -643,123 +584,15 @@
                          :cause cause))
               nil)))
 
-        finish-handshake!
-        (fn [result]
-          (when-let [{:keys [deferred interval timeout]} @handshake]
-            (some-> interval cancel-interval!)
-            (some-> timeout cancel-timeout!)
-            (swap! handshake assoc :interval nil :timeout nil)
-            (when (p/pending? deferred)
-              (p/resolve! deferred result))))
-
-        finish-request!
-        (fn [req-id result]
-          (when-let [{:keys [deferred interval timeout]} (get @pending req-id)]
-            (swap! pending dissoc req-id)
-            (some-> interval cancel-interval!)
-            (some-> timeout cancel-timeout!)
-            (when (p/pending? deferred)
-              (p/resolve! deferred result))))
-
-        handshake!
-        (fn []
-          (if @closed?
-            (p/resolved :closed)
-            (or (some-> @handshake :deferred)
-                (let [deferred (p/deferred)
-                      ;; postMessage has no buffering: the first ready can
-                      ;; be lost if the parent listener is not installed
-                      ;; yet, so it is resent on an interval until the ack.
-                      message (build-message "ready" #js {"timestamp" (.now js/Date)} nil)]
-                  (reset! handshake {:deferred deferred})
-                  (swap! handshake assoc
-                         :interval (install-interval! #(post! message) resend-interval-ms)
-                         :timeout (install-timeout! #(finish-handshake! :timeout) handshake-timeout-ms))
-                  (post! message)
-                  deferred))))
-
-        request!
-        (fn [event-name payload]
-          (if @closed?
-            (p/resolved {:ok false :error :closed})
-            (let [req-id (str "penpot-assistant-"
-                              (vswap! counter inc) "-"
-                              (.now js/Date) "-"
-                              (.random js/Math))
-                  deferred (p/deferred)
-                  ;; the same reqId identifies the initial send and every
-                  ;; resend, so a slow parent answers exactly one request
-                  message (build-message event-name payload req-id)]
-              (swap! pending assoc req-id
-                     {:deferred deferred
-                      :interval (install-interval! #(post! message) resend-interval-ms)
-                      :timeout (install-timeout!
-                                #(finish-request! req-id {:ok false :error :timeout})
-                                request-timeout-ms)})
-              (post! message)
-              deferred)))
-
         post-event!
         (fn [event-name payload]
           (when-not @closed?
-            (post! (build-message event-name payload nil))))
-
-        on-message
-        (fn [^js event]
-          (let [source (unchecked-get event "source")
-                origin (unchecked-get event "origin")]
-            (cond
-              (not (identical? source parent))
-              (log/dbg :hint "assistant: ignoring message from a non-parent window")
-
-              (not (origin-allowed? origin))
-              (log/dbg :hint "assistant: ignoring message from a disallowed origin"
-                       :origin origin)
-
-              :else
-              (if-let [parsed (parse-incoming (unchecked-get event "data"))]
-                (let [{:keys [event-name req-id payload]} parsed]
-                  (cond
-                    (and (= :ready event-name)
-                         (some? @handshake)
-                         (p/pending? (:deferred @handshake))
-                         (obj/get payload "ok"))
-                    (finish-handshake! :ready)
-
-                    (and (some? req-id) (contains? @pending req-id))
-                    (if (obj/get payload "ok")
-                      (finish-request! req-id
-                                       {:ok true
-                                        :payload (let [params (obj/get payload "params")]
-                                                   (if (nil? params) payload params))})
-                      (finish-request! req-id
-                                       {:ok false :error (obj/get payload "error")}))
-
-                    :else
-                    (on-event parsed)))
-                (log/dbg :hint "assistant: ignoring message outside the assistant channel")))))
+            (post! (build-message event-name payload))))
 
         close!
         (fn []
-          ;; no CAS needed: single threaded, and close! never reenters
-          (when (and (not @closed?)
-                     (vreset! closed? true))
-            (remove-listener! on-message)
-            (doseq [id (vec @intervals)]
-              (cancel-interval! id))
-            (doseq [id (vec @timeouts)]
-              (cancel-timeout! id))
-            ;; settle anything still open so no promise is left dangling
-            ;; once the session is gone; :closed, not :timeout — the UI
-            ;; maps :timeout to "host page unreachable" copy, which a
-            ;; plain unmount race must not trigger
-            (finish-handshake! :closed)
-            (doseq [req-id (vec (keys @pending))]
-              (finish-request! req-id {:ok false :error :closed}))))]
+          ;; idempotent: a plain set, nothing else to release
+          (vreset! closed? true))]
 
-    (add-listener! on-message)
-
-    {:handshake! handshake!
-     :request! request!
-     :post-event! post-event!
+    {:post-event! post-event!
      :close! close!}))

@@ -7,11 +7,16 @@
 (ns app.main.ui.workspace.sidebar.assistant
   "AI assistant panel for the workspace right sidebar.
 
-  One session per tab activation: on mount (and again on every retry) a
-  fresh postMessage connection (`app.util.embed.assistant`) runs the
-  handshake and the `getInitParams` request against the embedding host
-  page, then the host provided SDK script is injected and initialized
-  against the `penpot-assistant-mount` div.
+  One session per tab activation: on mount (and again on every retry)
+  the init values are resolved locally — appName/agentId/skillName from
+  the environment configuration (app.config x-front-* defs) and the
+  idToken polled from the host page's sessionStorage EBEE_USER_KEY
+  (10 checks x 500ms, then an error state) — then the host provided SDK
+  script is injected and initialized against the
+  `penpot-assistant-mount` div. A one-way postMessage connection
+  (`app.util.embed.assistant`) forwards the SDK events to the host
+  page; there is no handshake and no inbound message, so the host must
+  have its listener ready before the tab is opened.
   Leaving the tab (or hitting retry) destroys the SDK, removes the
   script node, clears `window.X_Assistant` and closes the connection.
   Since v2 the last session of the (profile, file) pair is remembered
@@ -57,12 +62,11 @@
    :last-30-days  "workspace.options.assistant.history.group.last-30-days"})
 
 (def ^:private error->i18n-key
-  {:handshake-timeout "workspace.options.assistant.error.handshake"
-   :params-timeout    "workspace.options.assistant.error.params"
-   :invalid-params    "workspace.options.assistant.error.params"
-   :sdk-load          "workspace.options.assistant.error.sdk"
-   :sdk-global        "workspace.options.assistant.error.sdk"
-   :sdk-init          "workspace.options.assistant.error.sdk"})
+  {:missing-config "workspace.options.assistant.error.params"
+   :token-missing  "workspace.options.assistant.error.params"
+   :sdk-load       "workspace.options.assistant.error.sdk"
+   :sdk-global     "workspace.options.assistant.error.sdk"
+   :sdk-init       "workspace.options.assistant.error.sdk"})
 
 (defn- now-ts
   []
@@ -107,7 +111,7 @@
 
 (mf/defc assistant-tab*
   [{:keys [file-id page-id]}]
-  (let [state*   (mf/use-state :handshaking)
+  (let [state*   (mf/use-state :waiting-token)
         state    (deref state*)
         attempt* (mf/use-state 0)
         attempt  (deref attempt*)
@@ -202,11 +206,23 @@
      (mf/deps attempt)
      (fn []
        (let [cancelled? (volatile! false)
-             ;; Cancel fn of the prompt/attachments poll started in
-             ;; ready!, invoked by the unmount cleanup below.
+             ;; Cancel fns of the idToken wait started in the body below
+             ;; and of the prompt/attachments poll started in ready!,
+             ;; both invoked by the unmount cleanup.
+             token-cancel     (volatile! nil)
              auto-open-cancel (volatile! nil)
-             {:keys [handshake! request! post-event! close!]}
-             (assistant/create-conn {})
+             ;; The connection is created lazily, AFTER the config
+             ;; fail-fast: a session whose environment is not configured
+             ;; must not even open the outlet. Both wrappers are no-ops
+             ;; while there is no connection.
+             conn*       (volatile! nil)
+             post-event! (fn [event-name payload]
+                           (when-let [conn @conn*]
+                             ((:post-event! conn) event-name payload)))
+             close!      (fn []
+                           (when-let [conn @conn*]
+                             (vreset! conn* nil)
+                             ((:close! conn))))
 
              advance!
              (fn [new-state]
@@ -214,9 +230,12 @@
                  (reset! state* new-state)))
 
              fail!
-             (fn [reason]
-               (log/wrn :hint "assistant: session setup failed" :reason reason)
-               (advance! [:error reason]))
+             (fn fail!
+               ([reason] (fail! reason nil))
+               ([reason data]
+                (log/wrn :hint "assistant: session setup failed"
+                         :reason reason :data data)
+                (advance! [:error reason])))
 
              enrich-message
              (fn [message]
@@ -343,10 +362,13 @@
                        (p/then (fn [_] (ready! sdk tools)))))))
 
              init-and-render!
-             (fn [^js sdk params]
+             (fn [^js sdk id-token]
                (try
                  (let [config (assistant/build-init-config
-                               params
+                               {:id-token   id-token
+                                :app-name   cf/x-front-app-name
+                                :agent-id   cf/x-front-agent-id
+                                :skill-name cf/x-front-skill-name}
                                {:enrich-message enrich-message
                                 :forward!       forward!})]
                    (-> (adopt-sdk-result (.init sdk config))
@@ -363,17 +385,17 @@
                    (fail! :sdk-init))))
 
              check-sdk!
-             (fn [params]
+             (fn [id-token]
                (advance! :initializing)
                (let [^js sdk (unchecked-get ug/global sdk-global-name)]
                  (if (and (object? sdk)
                           (fn? (obj/get sdk "init"))
                           (fn? (obj/get sdk "render")))
-                   (init-and-render! sdk params)
+                   (init-and-render! sdk id-token)
                    (fail! :sdk-global))))
 
              load-sdk!
-             (fn [params]
+             (fn [id-token]
                (advance! :loading-sdk)
                ;; Drop any stale node left over from an older session
                ;; before injecting this one.
@@ -391,53 +413,50 @@
                            (when-not @cancelled?
                              (if (= status :failed)
                                (fail! :sdk-load)
-                               (check-sdk! params)))))))
-
-             on-params!
-             (fn [{:keys [ok error payload]}]
-               (when-not @cancelled?
-                 (cond
-                   (= error :closed)
-                   nil
-
-                   (not ok)
-                   (fail! (if (= error :timeout) :params-timeout :invalid-params))
-
-                   (not (assistant/valid-init-params? payload))
-                   (fail! :invalid-params)
-
-                   :else
-                   (load-sdk! payload))))
-
-             on-handshake!
-             (fn [result]
-               (when-not @cancelled?
-                 (if (= result :ready)
-                   (do
-                     (advance! :requesting)
-                     (p/then (request! "getInitParams" #js {"timestamp" (now-ts)})
-                             on-params!))
-                   (fail! :handshake-timeout))))]
+                               (check-sdk! id-token)))))))]
 
          (reset! sdk-tools* nil)
          (reset! session-id* nil)
-         (advance! :handshaking)
-         (-> (handshake!)
-             (p/then on-handshake!)
-             (p/catch
-              (fn [cause]
-                (log/err :hint "assistant: unexpected error during session setup" :cause cause)
-                (fail! :sdk-init))))
+         (advance! :waiting-token)
+         (if-let [missing (seq (assistant/missing-config-keys
+                                cf/x-front-app-name
+                                cf/x-front-agent-id
+                                cf/x-front-skill-name))]
+           ;; Environment not configured: fail immediately, without
+           ;; opening a connection or polling for a session that cannot
+           ;; start. The log names the missing keys.
+           (fail! :missing-config {:missing (vec missing)})
+           (do
+             (vreset! conn* (assistant/create-conn {}))
+             (vreset! token-cancel
+                      (assistant/start-token-wait!
+                       {:read!      assistant/load-id-token
+                        :ready!     (fn [id-token]
+                                      (when-not @cancelled?
+                                        (try (load-sdk! id-token)
+                                             (catch :default cause
+                                               (log/err :hint "assistant: unexpected error during session setup"
+                                                        :cause cause)
+                                               (fail! :sdk-init)))))
+                        :exhausted! (fn []
+                                      (fail! :token-missing
+                                             {:attempts assistant/id-token-max-attempts}))
+                        :schedule!  js/setTimeout
+                        :cancel!    js/clearTimeout}))))
 
          (fn []
            (vreset! cancelled? true)
-           (when-let [cancel! @auto-open-cancel]
-             (vreset! auto-open-cancel nil)
-             (cancel!))
-           ;; Fixed order: stop the SDK first, so its callbacks cannot
+           ;; Fixed order: stop the polls first (their late ticks must not
+           ;; revive the session), then the SDK, so its callbacks cannot
            ;; reach an already closed connection; then the script node,
            ;; then the global, then the connection itself. Every step is
            ;; nil guarded and the whole cleanup is idempotent.
+           (when-let [cancel! @token-cancel]
+             (vreset! token-cancel nil)
+             (cancel!))
+           (when-let [cancel! @auto-open-cancel]
+             (vreset! auto-open-cancel nil)
+             (cancel!))
            (let [sdk (unchecked-get ug/global sdk-global-name)]
              (when (object? sdk)
                (let [off (obj/get sdk "off")]

@@ -173,6 +173,22 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // AI 助手 SDK init 配置的三个普通字符串(fork 功能): appName / agentId /
+  // skillName, 由 X_Assistant.init 消费; skillName 同时作为 SDK 的
+  // defaultSkillName。仅当 penpotXFrontSdk 非空且处于同源 iframe 嵌入态时才有
+  // 意义(助手 tab 还需宿主页面在同源 sessionStorage 写入 EBEE_USER_KEY 提供
+  // idToken)。留空(默认)等价未配置, 前端归一为 null 后助手 tab 会立即进入
+  // 配置缺失错误态(日志以 :missing-config 列出缺失项)。
+  // Docker 部署: 可用环境变量 PENPOT_X_FRONT_APP_NAME /
+  // PENPOT_X_FRONT_AGENT_ID / PENPOT_X_FRONT_SKILL_NAME 覆盖此默认值
+  // (由 nginx-entrypoint.sh 经 js_escape 转义后追加赋值, 优先级更高;
+  // 空串或纯空白等价未设, 不追加)。
+  globalThis.penpotXFrontAppName = "";
+  globalThis.penpotXFrontAgentId = "";
+  globalThis.penpotXFrontSkillName = "";
+})();
+
+(function () {
   // 「新手基础操作」弹窗三张卡片的视频地址。改这里即可, 无需重新编译前端。
   // 键名对应卡片 id: click-through / table-shortcuts / component-library。
   // 某张卡片缺地址或为空字符串时, 弹窗仍显示, 该卡走占位文案。

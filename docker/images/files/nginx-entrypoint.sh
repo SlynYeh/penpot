@@ -462,6 +462,35 @@ update_x_front_sdk() {
   printf 'globalThis.penpotXFrontSdk = "%s";\n' "$raw" >> "$1";
 }
 
+update_x_front_init_config() {
+  # Plain display strings for the assistant SDK init config (app /
+  # agent / skill names). Unlike PENPOT_X_FRONT_SDK there is no URL to
+  # validate and no "none" sentinel: an empty or whitespace-only value
+  # equals "unset" and the js/config.js empty default is kept. The
+  # values are still embedded in double quoted JS string literals, so
+  # they MUST go through js_escape — a quote, backslash or newline
+  # would corrupt the whole js/config.js (every frontend knob, not
+  # just the assistant tab).
+  local pairs=(
+    "PENPOT_X_FRONT_APP_NAME:penpotXFrontAppName"
+    "PENPOT_X_FRONT_AGENT_ID:penpotXFrontAgentId"
+    "PENPOT_X_FRONT_SKILL_NAME:penpotXFrontSkillName"
+  )
+  local pair env_name config_key raw
+  for pair in "${pairs[@]}"; do
+    env_name="${pair%%:*}"
+    config_key="${pair##*:}"
+    raw="${!env_name:-}"
+    # Trim leading/trailing whitespace on a copy: "  " equals unset.
+    raw="${raw#"${raw%%[![:space:]]*}"}"
+    raw="${raw%"${raw##*[![:space:]]}"}"
+    if [ -z "$raw" ]; then
+      continue;
+    fi
+    printf 'globalThis.%s = "%s";\n' "$config_key" "$(js_escape "$raw")" >> "$1"
+  done
+}
+
 update_flags /var/www/app/js/config.js
 update_oidc_name /var/www/app/js/config.js
 update_help_uris /var/www/app/js/config.js
@@ -475,6 +504,7 @@ update_embed_timeout_ms /var/www/app/js/config.js
 update_show_beginner_guide /var/www/app/js/config.js
 update_beginner_guide_videos /var/www/app/js/config.js
 update_x_front_sdk /var/www/app/js/config.js
+update_x_front_init_config /var/www/app/js/config.js
 
 #########################################
 ## Nginx Config

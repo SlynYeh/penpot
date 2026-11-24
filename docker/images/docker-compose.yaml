@@ -149,7 +149,7 @@ services:
       # third party system(s) that embed the app, otherwise the handshake
       # keeps the js/config.js default (empty -> wildcard) and accepts
       # credentials from any window. Used as the postMessage target origin(s)
-      # for the ready message and to validate the origin of the X-token /
+      # of the assistant event channel and to validate the origin of the X-token /
       # X-ClientId credentials the parent sends back, which are then added as
       # request headers to every backend call. Accepts a comma separated list
       # of bare origins, optionally with a trailing slash and/or a leading
@@ -187,8 +187,20 @@ services:
       # PENPOT_X_FRONT_SDK: "/assistant/mock-assistant-sdk.js"
       # (when driving it from the bundled dev host page
       # /assistant/dev-host.html, keep PENPOT_EMBED_PARENT_ORIGIN unset
-      # or set to the instance's own origin; a remote origin makes the
-      # assistant handshake time out silently)
+      # or set to the instance's own origin; a remote origin silently
+      # breaks the assistant event channel)
+      # Host AI assistant tab (fork feature): plain display strings handed
+      # to the assistant SDK init config (appName / agentId / skillName),
+      # sourced from the environment — the getInitParams postMessage round
+      # trip was removed. Unset, empty or whitespace-only makes the
+      # assistant tab fail fast with a configuration error that names the
+      # missing key in the logs. Values are escaped into js/config.js.
+      # The SDK also needs an idToken: the embedding page must write
+      # sessionStorage "EBEE_USER_KEY" = JSON {idToken: "..."} in a
+      # same-origin (same scheme/host/port) context before the tab opens.
+      # PENPOT_X_FRONT_APP_NAME: "Portal Design"
+      # PENPOT_X_FRONT_AGENT_ID: "penpot-agent"
+      # PENPOT_X_FRONT_SKILL_NAME: "penpot-helper"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

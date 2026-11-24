@@ -173,6 +173,18 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
+  // AI 助手 SDK init 参数的 dev mock 值(appName / agentId / skillName, 对齐原
+  // dev-host 的 mockParams()), mock SDK 摘要区会显示; 缺任一项时助手 tab 立即
+  // 进入配置缺失错误态。idToken 不在这里: 由宿主页面在同源 sessionStorage 写入
+  // EBEE_USER_KEY 提供。
+  // Docker 部署由 nginx-entrypoint.sh 追加 PENPOT_X_FRONT_APP_NAME /
+  // PENPOT_X_FRONT_AGENT_ID / PENPOT_X_FRONT_SKILL_NAME 的赋值覆盖(优先级更高)。
+  globalThis.penpotXFrontAppName = "Penpot Dev";
+  globalThis.penpotXFrontAgentId = "mock-agent";
+  globalThis.penpotXFrontSkillName = "penpot-helper";
+})();
+
+(function () {
   var blockedPaths = ['/auth/login', '/auth/register',];
   function isBlocked(path) {
     return blockedPaths.some(function (bp) { return path.indexOf(bp) !== -1; });

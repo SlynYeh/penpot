@@ -46,6 +46,40 @@
   (t/is (= "http://*.localhost:3001"
            (embed/normalize-origin-pattern "http://*.localhost:3001"))))
 
+(t/deftest normalize-origin-pattern-wildcards-under-host-escaping-url-engine
+  ;; URL engines disagree on a `*` in the host: Blink (Chrome and every
+  ;; Chromium based browser, including the 360-kernel clients this fork
+  ;; targets) percent-escapes it — `new URL("https://*.a.b").hostname`
+  ;; is "%2A.a.b" — while Node's URL passes it through, which is why the
+  ;; plain tests above stay green either way. Emulate the escaping engine
+  ;; here so the regression — every wildcard entry dropped as invalid and
+  ;; the whole allowlist silently failing open in real browsers — is
+  ;; pinned in the Node runner too.
+  (let [real (.-URL js/globalThis)
+        wrap (fn [spec]
+               (let [u (new real spec)]
+                 #js {:hostname (.replace (.-hostname u) "*" "%2A")
+                      :origin   (.replace (.-origin u) "*" "%2A")}))]
+    (set! (.-URL js/globalThis) wrap)
+    (let [result
+          (try
+            [(embed/normalize-origin-pattern "https://*.st.test.cn")
+             (embed/normalize-origin-pattern "https://*.uat.test.cn")
+             (embed/normalize-origin-pattern "https://*.EXAMPLE.com/")
+             (embed/normalize-origin-pattern "https://*.example.com:8443")
+             (embed/normalize-origin-pattern "https://a*b.example.com")
+             (embed/normalize-origin-pattern "https://example.com")]
+            (finally
+              (set! (.-URL js/globalThis) real)))]
+      ;; wildcard entries must survive an engine that escapes them
+      (t/is (= ["https://*.st.test.cn"
+                "https://*.uat.test.cn"
+                "https://*.example.com"
+                "https://*.example.com:8443"
+                nil
+                "https://example.com"]
+               result)))))
+
 (t/deftest normalize-origin-pattern-rejects-malformed
   (t/is (nil? (embed/normalize-origin-pattern nil)))
   (t/is (nil? (embed/normalize-origin-pattern "")))

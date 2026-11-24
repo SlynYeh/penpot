@@ -109,12 +109,26 @@
         (when-not (= value "null") value))
       (catch :default _ nil))))
 
+(def ^:private wildcard-host-prefix
+  "An absolute url whose host starts with the `*.` wildcard label,
+  capturing the scheme and the remainder. The label is split off before
+  `js/URL` parsing because URL engines disagree on a `*` in the host:
+  Blink (Chrome and every Chromium based browser) percent-escapes it
+  (`new URL(\"https://*.a.b\").hostname` is `\"%2A.a.b\"`) while Node's
+  URL passes it through — neither behavior can be relied on, so the
+  wildcard label never reaches the parser. Anchored to the start so a
+  `://*.` inside a path cannot be mistaken for a wildcard host."
+  #"^([a-zA-Z][a-zA-Z0-9+.-]*)://\*\.(.+)$")
+
 (defn normalize-origin-pattern
   "Like `normalize-origin`, but additionally accepts a configured origin
-  pattern with a leading `*.` wildcard label in the host. Returns a
-  comparable `scheme://[*.]host[:port]` form, or nil when the value is
-  missing or is not a valid url with a plain hostname or contains
-  percent escapes — a bare `*` host
+  pattern with a leading `*.` wildcard label in the host. The wildcard
+  label is stripped before parsing (see `wildcard-host-prefix`) and
+  re-attached to the parsed origin afterwards, so the result does not
+  depend on how the runtime URL engine treats a `*` in the host.
+  Returns a comparable `scheme://[*.]host[:port]` form, or nil when the
+  value is missing or is not a valid url with a plain hostname or
+  contains percent escapes — a bare `*` host
   is not a pattern (unconditional acceptance is the `none` sentinel)
   and `*` is only valid as the leading label. Public so the matching
   rule can be unit-tested."
@@ -122,10 +136,17 @@
   (when (and (string? pattern) (not (str/blank? pattern))
              (not (str/includes? pattern "%")))
     (try
-      (let [url (js/URL. pattern)]
-        (when (and (re-find #"^(\*\.)?[A-Za-z0-9._-]+$" (.-hostname url))
+      (let [[_ scheme tail] (re-find wildcard-host-prefix pattern)
+            url (js/URL. (if scheme (str scheme "://" tail) pattern))]
+        (when (and (re-find #"^[A-Za-z0-9._-]+$" (.-hostname url))
                    (not= (.-origin url) "null"))
-          (.-origin url)))
+          (if (nil? scheme)
+            (.-origin url)
+            (let [idx  (str/index-of (.-origin url) "://")
+                  base (.-origin url)]
+              (str (subs base 0 (+ idx 3))
+                   "*."
+                   (subs base (+ idx 3)))))))
       (catch :default _ nil))))
 
 (defn parse-origin-config

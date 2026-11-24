@@ -111,35 +111,43 @@
 (defn build-init-config
   "Builds the config object handed to the host SDK `init` method from
   the locally resolved init values — the environment configured
-  app/agent/skill names and the idToken polled from the host page's
-  sessionStorage — overlaid with the local wiring: the callback hooks,
-  the getIdToken/defaultSkillName derivatives and the domMount layout.
-  `getIdToken` re-reads the
+  app/agent/skill names, the optional platform env and the idToken
+  polled from the host page's sessionStorage — overlaid with the local
+  wiring: the callback hooks, the getIdToken/defaultSkillName
+  derivatives and the domMount layout. `xPlatformEnv` is optional: when
+  no platform env is configured the key is left out, so the SDK reads
+  `undefined`. `getIdToken` re-reads the
   sessionStorage on every call (the host may refresh the token; it must
   write it back to EBEE_USER_KEY, Penpot never pulls it). Nothing else
   is passed through: additional SDK config keys are added by adding an
   environment variable, not by a generic channel. `load-id-token!` is
   injectable (defaults to `load-id-token`) so the re-reading behavior
   stays unit-testable."
-  [{:keys [id-token app-name agent-id skill-name]}
+  [{:keys [id-token app-name agent-id skill-name platform-env]}
    {:keys [enrich-message forward! load-id-token!]
     :or {load-id-token! load-id-token}}]
-  #js {"idToken" id-token
-       "appName" app-name
-       "agentId" agent-id
-       "skillName" skill-name
-       "getIdToken" (fn [] (p/resolved (load-id-token!)))
-       "defaultSkillName" skill-name
-       "layoutType" "domMount"
-       ;; The host SDK docs spell this hook two different ways; set
-       ;; both to the same fn.
-       "beforeSendMesssage" enrich-message
-       "beforeSendMessage" enrich-message
-       "afterSendMessage" (forward! "afterSendMessage")
-       "onMessageFinish" (forward! "onMessageFinish")
-       "satisfactionRating"
-       #js {"enabled" true
-            "onComplete" (forward! "onSatisfactionRatingComplete")}})
+  (let [config #js {"idToken" id-token
+                    "appName" app-name
+                    "agentId" agent-id
+                    "skillName" skill-name
+                    "getIdToken" (fn [] (p/resolved (load-id-token!)))
+                    "defaultSkillName" skill-name
+                    "layoutType" "domMount"
+                    ;; The host SDK docs spell this hook two different
+                    ;; ways; set both to the same fn.
+                    "beforeSendMesssage" enrich-message
+                    "beforeSendMessage" enrich-message
+                    "afterSendMessage" (forward! "afterSendMessage")
+                    "onMessageFinish" (forward! "onMessageFinish")
+                    "satisfactionRating"
+                    #js {"enabled" true
+                         "onComplete" (forward! "onSatisfactionRatingComplete")}}]
+    ;; Optional by contract: an unset platform env must read as
+    ;; `undefined` on the SDK side, so the key is left out entirely
+    ;; rather than set to nil or an empty string.
+    (when (some? platform-env)
+      (obj/set! config "xPlatformEnv" platform-env))
+    config))
 
 ;; -------------------------------------------------------------------------
 ;; Auto-open: right after the SDK finished initializing, the prompt,

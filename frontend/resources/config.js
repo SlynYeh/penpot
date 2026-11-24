@@ -182,6 +182,9 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
   globalThis.penpotXFrontAppName = "Penpot Dev";
   globalThis.penpotXFrontAgentId = "mock-agent";
   globalThis.penpotXFrontSkillName = "penpot-helper";
+  // 可选的 xPlatformEnv(平台环境): 不设则该键不传给 SDK(SDK 侧读到 undefined);
+  // 对应 docker env PENPOT_X_FRONT_PLATFORM_ENV。本地联调需要时取消下一行注释:
+  // globalThis.penpotXFrontPlatformEnv = "dev";
 })();
 
 (function () {

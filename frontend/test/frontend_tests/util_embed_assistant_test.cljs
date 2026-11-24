@@ -426,6 +426,23 @@
     (t/is (nil? (obj/get config "appImage")))
     (t/is (nil? (obj/get config "theme")))))
 
+(t/deftest build-init-config-omits-platform-env-when-unset
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"}
+                (:hooks (recording-hooks)))]
+    ;; the optional key is absent, so the SDK reads `undefined`
+    (t/is (undefined? (obj/get config "xPlatformEnv")))
+    (t/is (false? (.hasOwnProperty config "xPlatformEnv")))))
+
+(t/deftest build-init-config-carries-platform-env-when-set
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"
+                 :platform-env "uat"}
+                (:hooks (recording-hooks)))]
+    (t/is (= "uat" (obj/get config "xPlatformEnv")))))
+
 (t/deftest build-init-config-overlays-the-local-wiring
   (let [{:keys [events enriched hooks]} (recording-hooks)
         config (assistant/build-init-config

@@ -192,15 +192,21 @@ services:
       # Host AI assistant tab (fork feature): plain display strings handed
       # to the assistant SDK init config (appName / agentId / skillName),
       # sourced from the environment — the getInitParams postMessage round
-      # trip was removed. Unset, empty or whitespace-only makes the
-      # assistant tab fail fast with a configuration error that names the
-      # missing key in the logs. Values are escaped into js/config.js.
+      # trip was removed. When one of these three is unset, empty or
+      # whitespace-only the assistant tab fails fast with a configuration
+      # error that names the missing key in the logs. Values are escaped
+      # into js/config.js. The optional platform env further down never
+      # makes the tab fail.
       # The SDK also needs an idToken: the embedding page must write
       # sessionStorage "EBEE_USER_KEY" = JSON {idToken: "..."} in a
       # same-origin (same scheme/host/port) context before the tab opens.
       # PENPOT_X_FRONT_APP_NAME: "Portal Design"
       # PENPOT_X_FRONT_AGENT_ID: "penpot-agent"
       # PENPOT_X_FRONT_SKILL_NAME: "penpot-helper"
+      # Optional: the platform environment handed to the SDK as the init
+      # key `xPlatformEnv`. Unset or blank leaves the key out of the
+      # init config entirely (the SDK reads undefined).
+      # PENPOT_X_FRONT_PLATFORM_ENV: "prod"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

@@ -248,7 +248,10 @@
           get("agentId") +
           "\n" +
           "defaultSkillName : " +
-          get("defaultSkillName"),
+          get("defaultSkillName") +
+          "\n" +
+          "xPlatformEnv     : " +
+          get("xPlatformEnv"),
       ),
     );
     return summary;

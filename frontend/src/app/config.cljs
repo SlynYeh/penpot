@@ -300,6 +300,20 @@
         (when-not (str/blank? value)
           value)))))
 
+(def x-front-platform-env
+  "Optional platform environment handed to the host AI assistant SDK
+   init config as `xPlatformEnv`. Configured via `penpotXFrontPlatformEnv`
+   in resources/config.js (docker: `PENPOT_X_FRONT_PLATFORM_ENV`). Blank
+   values are normalized to nil, and nil means the key is not sent to
+   the SDK at all (it reads `undefined`), so this one is never part of
+   the assistant tab's missing-config check. Only meaningful together
+   with `penpotXFrontSdk`."
+  (let [value (obj/get global "penpotXFrontPlatformEnv")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
 (defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.

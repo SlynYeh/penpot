@@ -173,9 +173,10 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 })();
 
 (function () {
-  // AI 助手 SDK init 配置的三个普通字符串(fork 功能): appName / agentId /
+  // AI 助手 SDK init 配置的三个必填字符串(fork 功能): appName / agentId /
   // skillName, 由 X_Assistant.init 消费; skillName 同时作为 SDK 的
-  // defaultSkillName。仅当 penpotXFrontSdk 非空且处于同源 iframe 嵌入态时才有
+  // defaultSkillName。下方另有一个可选值 penpotXFrontPlatformEnv。
+  // 仅当 penpotXFrontSdk 非空且处于同源 iframe 嵌入态时才有
   // 意义(助手 tab 还需宿主页面在同源 sessionStorage 写入 EBEE_USER_KEY 提供
   // idToken)。留空(默认)等价未配置, 前端归一为 null 后助手 tab 会立即进入
   // 配置缺失错误态(日志以 :missing-config 列出缺失项)。
@@ -186,6 +187,10 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
   globalThis.penpotXFrontAppName = "";
   globalThis.penpotXFrontAgentId = "";
   globalThis.penpotXFrontSkillName = "";
+  // 可选的平台环境, 作为 init 参数 xPlatformEnv 传给 SDK; 留空(默认)则该键
+  // 不传给 SDK(SDK 侧读到 undefined), 不影响助手 tab 启动。
+  // Docker 部署: 可用环境变量 PENPOT_X_FRONT_PLATFORM_ENV 配置(规则同上)。
+  globalThis.penpotXFrontPlatformEnv = "";
 })();
 
 (function () {

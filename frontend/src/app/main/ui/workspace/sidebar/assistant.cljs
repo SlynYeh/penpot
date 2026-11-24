@@ -8,8 +8,9 @@
   "AI assistant panel for the workspace right sidebar.
 
   One session per tab activation: on mount (and again on every retry)
-  the init values are resolved locally — appName/agentId/skillName from
-  the environment configuration (app.config x-front-* defs) and the
+  the init values are resolved locally — appName/agentId/skillName and
+  the optional platform env from the environment configuration
+  (app.config x-front-* defs) and the
   idToken polled from the host page's sessionStorage EBEE_USER_KEY
   (10 checks x 500ms, then an error state) — then the host provided SDK
   script is injected and initialized against the
@@ -365,10 +366,11 @@
              (fn [^js sdk id-token]
                (try
                  (let [config (assistant/build-init-config
-                               {:id-token   id-token
-                                :app-name   cf/x-front-app-name
-                                :agent-id   cf/x-front-agent-id
-                                :skill-name cf/x-front-skill-name}
+                               {:id-token     id-token
+                                :app-name     cf/x-front-app-name
+                                :agent-id     cf/x-front-agent-id
+                                :skill-name   cf/x-front-skill-name
+                                :platform-env cf/x-front-platform-env}
                                {:enrich-message enrich-message
                                 :forward!       forward!})]
                    (-> (adopt-sdk-result (.init sdk config))

@@ -174,11 +174,12 @@
   ;; Whitespace around a value is trimmed, not rejected.
   (t/is (true? (embed/valid-payload? #js {"X-token" " abc "
                                           "X-ClientId" "xyz"})))
-  ;; Optional docContent is extra data, not a credential; its presence
-  ;; must not change whether the handshake payload is accepted.
+  ;; Optional docContent/docTitle are extra data, not credentials; their
+  ;; presence must not change whether the handshake payload is accepted.
   (t/is (true? (embed/valid-payload? #js {"X-token" "abc"
                                           "X-ClientId" "xyz"
-                                          "docContent" "hello"})))
+                                          "docContent" "hello"
+                                          "docTitle" "my design"})))
   ;; Optional prompt/attachments are extra data too, not credentials.
   (t/is (true? (embed/valid-payload? #js {"X-token" "abc"
                                           "X-ClientId" "xyz"
@@ -207,79 +208,112 @@
                                            "X-ClientId" "xyz"})))
   ;; docContent alone is not a credentials payload.
   (t/is (false? (embed/valid-payload? #js {"docContent" "hello"})))
+  ;; docTitle alone is not a credentials payload either.
+  (t/is (false? (embed/valid-payload? #js {"docTitle" "my design"})))
   ;; prompt/attachments alone are not a credentials payload either.
   (t/is (false? (embed/valid-payload? #js {"prompt" "hello"
                                            "attachments" #js []}))))
 
 (t/deftest parse-payload-extracts-credentials
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"})))
   ;; Token and client-id are trimmed; the rest of the handshake still
   ;; requires both to be present.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" " abc "
                                      "X-ClientId" " xyz "}))))
 
 (t/deftest parse-payload-extracts-optional-doc-content
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content "hello"
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content "hello" :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "docContent" "hello"})))
   ;; Empty string is a real value, not "missing".
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content ""
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content "" :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "docContent" ""})))
   ;; Leading/trailing whitespace in document text is preserved.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content "  keep  "
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content "  keep  " :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "docContent" "  keep  "})))
   ;; Wrong type is ignored rather than rejecting the credentials.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "docContent" 1})))
   ;; Wrong key casing is not the agreed shape for this field.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "DocContent" "hello"}))))
 
+(t/deftest parse-payload-extracts-optional-doc-title
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title "my design"
+            :prompt nil :attachments nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docTitle" "my design"})))
+  ;; Empty string is a real value, not "missing".
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title ""
+            :prompt nil :attachments nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docTitle" ""})))
+  ;; Leading/trailing whitespace is preserved, like docContent.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title "  keep  "
+            :prompt nil :attachments nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docTitle" "  keep  "})))
+  ;; Wrong type is ignored rather than rejecting the credentials.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
+            :prompt nil :attachments nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "docTitle" 1})))
+  ;; Wrong key casing is not the agreed shape for this field.
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
+            :prompt nil :attachments nil}
+           (embed/parse-payload #js {"X-token" "abc"
+                                     "X-ClientId" "xyz"
+                                     "DocTitle" "my design"}))))
+
 (t/deftest parse-payload-extracts-optional-prompt
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt "please review" :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "prompt" "please review"})))
   ;; Empty string is a real value, not "missing".
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt "" :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "prompt" ""})))
   ;; Leading/trailing whitespace is preserved, like docContent.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt "  keep  " :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "prompt" "  keep  "})))
   ;; Wrong type is ignored rather than rejecting the credentials.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "prompt" 1})))
   ;; Wrong key casing is not the agreed shape for this field.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil
             :prompt nil :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
@@ -288,7 +322,7 @@
 (t/deftest parse-payload-extracts-optional-attachments
   ;; A well formed array is normalized to a vector of {:name :url}
   ;; maps; name/url are kept as-is, empty strings included.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments [{:name "spec.pdf"
                            :url "https://portal.example.com/files/spec.pdf"}
                           {:name "" :url ""}]}
@@ -299,13 +333,13 @@
                                          "url" "https://portal.example.com/files/spec.pdf"}
                                     #js {"name" "" "url" ""}]})))
   ;; An empty array is a real value, not "missing".
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments []}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js []})))
   ;; Extra fields on an entry are ignored; only name/url are kept.
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments [{:name "a" :url "b"}]}
            (embed/parse-payload
             #js {"X-token" "abc"
@@ -314,43 +348,43 @@
 
 (t/deftest parse-payload-rejects-malformed-attachments
   ;; not an array at all
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js {"name" "a" "url" "b"}})))
   ;; an entry that is not an object
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js ["just-a-string"]})))
   ;; an entry missing url
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js [#js {"name" "a"}]})))
   ;; a non-string name / url
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js [#js {"name" 1 "url" "b"}]})))
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js [#js {"name" "a" "url" nil}]})))
   ;; one bad entry invalidates the whole field (kept or dropped as a unit)
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"
                                      "attachments" #js [#js {"name" "a" "url" "b"}
                                                         "junk"]})))
   ;; wrong key casing is not the agreed shape for this field
-  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :prompt nil
+  (t/is (= {:token "abc" :client-id "xyz" :doc-content nil :doc-title nil :prompt nil
             :attachments nil}
            (embed/parse-payload #js {"X-token" "abc"
                                      "X-ClientId" "xyz"

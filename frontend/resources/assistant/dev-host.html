@@ -420,6 +420,7 @@
               "X-token": "mock-token",
               "X-ClientId": "mock-client-id",
               docContent: "mock document content",
+              docTitle: "mock document title",
               prompt: credPrompt.value.trim(),
               attachments: [
                 { name: "spec.txt", url: "https://example.com/files/spec.txt" },
@@ -428,7 +429,7 @@
             },
             targetOrigin,
           );
-          logOutgoing("embed credentials {X-token, X-ClientId, docContent, prompt, attachments}");
+          logOutgoing("embed credentials {X-token, X-ClientId, docContent, docTitle, prompt, attachments}");
         }
 
         function mockParams() {

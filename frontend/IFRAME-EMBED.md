@@ -97,6 +97,7 @@ frame.contentWindow.postMessage(
     "X-token": "<token>",
     "X-ClientId": "<clientId>",
     "docContent": "<optional document text>",
+    "docTitle": "<optional document title>",
     "prompt": "<optional prompt text>",
     "attachments": [{ "name": "<file name>", "url": "<file url>" }],
   },
@@ -109,20 +110,22 @@ frame.contentWindow.postMessage(
 | `X-token` | string | 是 | **键名大小写敏感**，必须逐字一致 |
 | `X-ClientId` | string | 是 | 同上 |
 | `docContent` | string | 否 | 文档内容。不传、或类型不是 string，按「未提供」处理；**不会**让整条凭据消息失效。空字符串 `""` 会原样保存。文本前后空白**不裁剪** |
+| `docTitle` | string | 否 | 文档标题。规则与 `docContent` **完全相同**：不传、或类型不是 string，按「未提供」处理；不会让整条凭据消息失效；空字符串 `""` 原样保存，前后空白不裁剪 |
 | `prompt` | string | 否 | 提示词。规则与 `docContent` 相同：不传或非 string 按「未提供」处理，不影响握手；空字符串 `""` 原样保存，前后空白不裁剪 |
 | `attachments` | array | 否 | 附件列表，每项必须是 `{name: string, url: string}`。`name`/`url` 均为字符串，**空字符串允许、原样保存**，多余字段被忽略；不传、或不是数组、或**任一项**不合规，整字段按「未提供」处理（不会逐项过滤），不影响握手 |
 
 校验规则（凭据字段任一条不满足，整条消息被丢弃并忽略）：
 
 - `X-token` 和 `X-ClientId` 都必须存在、且是**非空白字符串**（`""`、`"  "` 无效）
-- `docContent` / `prompt` / `attachments` 不是凭据门槛：缺它们时握手仍成功
+- `docContent` / `docTitle` / `prompt` / `attachments` 不是凭据门槛：缺它们时握手仍成功
 - 消息**必须来自 `window.parent`**（兄弟 iframe、其他窗口发的都无效）
 - 发送方的 `event.origin` 必须与 1.1 配置的**任一条**条目匹配：精确条目要求 scheme + host + port 全一致；`*.` 通配条目匹配裸域及其任意层级子域；`https://your-portal.example.com.attacker.io` 仍会被拒（不做前缀匹配）
-- 除 `docContent` / `prompt` / `attachments` 外，其余多余字段被忽略
+- 除 `docContent` / `docTitle` / `prompt` / `attachments` 外，其余多余字段被忽略
 
-生效后：`X-token` / `X-ClientId` 会作为请求头 `x-token` / `x-clientid` 发出（HTTP 头本身不区分大小写）。**`docContent` / `prompt` / `attachments` 不上请求头**，只保存在 guest 内存里供 AI 助手消费：
+生效后：`X-token` / `X-ClientId` 会作为请求头 `x-token` / `x-clientid` 发出（HTTP 头本身不区分大小写）。**`docContent` / `docTitle` / `prompt` / `attachments` 不上请求头**，只保存在 guest 内存里供 AI 助手消费：
 
 - `docContent`：助手发消息时写入 `envs.DOC_CONTENT`（与 `PAGE_ID` / `FILE_ID` 一起）
+- `docTitle`：助手发消息时写入 `envs.DOC_TITLE`（与 `DOC_CONTENT` 同批注入；未提供时该键不存在）
 - `prompt` / `attachments`：助手 SDK 初始化完成后**自动开聊**——只要其中一个有值就调用 `getTools().openChat(prompt, {triggerAnswer: true, newSession: true, attachments})`；`prompt` 未提供（或空白）时用默认值「生成原型」。初始化完成后立即检测，没有值就每 **500ms** 重检一次，最多检测 **10** 次（约 4.5s 窗口，覆盖凭据晚于助手初始化的时序）
 
 ### 2.3 时序
@@ -164,8 +167,9 @@ frame.contentWindow.postMessage(
       {
         "X-token": TOKEN,
         "X-ClientId": CLIENT_ID,
-        // 可选。不传则 AI 助手消息的 envs 里没有 DOC_CONTENT
+        // 可选。不传则 AI 助手消息的 envs 里没有 DOC_CONTENT / DOC_TITLE
         "docContent": DOC_CONTENT,
+        "docTitle": DOC_TITLE,
         // 可选。提示词与附件列表，同样只存 guest 内存，不上请求头
         "prompt": PROMPT,
         "attachments": ATTACHMENTS, // [{ name: string, url: string }]
@@ -223,9 +227,9 @@ guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭�
 
 ### 3.3 凭据更新
 
-再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT`；`prompt` / `attachments` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊——初始化完成后的 10 次检测窗口（约 4.5s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
+再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` / `docTitle` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊——初始化完成后的 10 次检测窗口（约 4.5s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
 
-payload 按整包覆盖：新消息里没有 `docContent` / `prompt`（或不是 string）、没有 `attachments`（或不合规），先前存下的对应值会被清掉。不要发空的 `X-token` / `X-ClientId` 或残缺凭据字段——会被直接丢弃，等于没更新。
+payload 按整包覆盖：新消息里没有 `docContent` / `docTitle` / `prompt`（或不是 string）、没有 `attachments`（或不合规），先前存下的对应值会被清掉。不要发空的 `X-token` / `X-ClientId` 或残缺凭据字段——会被直接丢弃，等于没更新。
 
 ---
 
@@ -260,7 +264,7 @@ x-token: <你的 token>
 x-clientid: <你的 clientId>
 ```
 
-**不要**在 Request Headers 里找 `docContent` / `prompt` / `attachments`：它们不上 HTTP 头。要确认 `docContent` 生效，打开 AI 助手并发一条消息，看 SDK 侧收到的 `envs.DOC_CONTENT`；要确认 `prompt` / `attachments` 生效，带上它们重开助手 tab，观察 SDK 侧收到 `openChat` 调用（开发用 mock SDK 会把 enrich 后的消息和 `openChat` 参数打到控制台）。
+**不要**在 Request Headers 里找 `docContent` / `docTitle` / `prompt` / `attachments`：它们不上 HTTP 头。要确认 `docContent` / `docTitle` 生效，打开 AI 助手并发一条消息，看 SDK 侧收到的 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；要确认 `prompt` / `attachments` 生效，带上它们重开助手 tab，观察 SDK 侧收到 `openChat` 调用（开发用 mock SDK 会把 enrich 后的消息和 `openChat` 参数打到控制台）。
 
 参考实测结果（假 token、启动阶段、经真实后端）：
 
@@ -284,7 +288,7 @@ x-clientid: <你的 clientId>
 | 收到 `ready` 后故意不回复 | 5s 后开始探测（每 3s 一个**不带凭据**的 `get-profile`），期间每 2s 重发 `ready`；30s（deadline）前种好有效 cookie 即**自动恢复**为认证启动，否则 30s 降级为未登录启动（此阶段请求不带 header） |
 | 把字段名写成 `x-token` / `x-clientid` | 无效，等同于没发（消息键名大小写敏感） |
 | 传 `{"X-token": "", "X-ClientId": "x"}` | 无效，等同没发——走上一行的探测→降级路径 |
-| 凭据正确但写成 `DocContent` / 传入非 string | 握手仍成功，只是 `docContent` 按未提供处理 |
+| 凭据正确但写成 `DocContent` / `DocTitle` / 传入非 string | 握手仍成功，只是对应字段按未提供处理 |
 | 凭据正确但 `prompt` 非 string、或 `attachments` 不是合规数组 | 握手仍成功，只是对应字段按未提供处理 |
 
 ### 4.5 故障排查表
@@ -305,7 +309,7 @@ x-clientid: <你的 clientId>
 
 - **务必配置宿主 origin，不要用通配**：`PENPOT_EMBED_PARENT_ORIGIN` 留空或写成非法值时，guest 会退化为"接受任意窗口的凭据"（日志会告警 `no parent origin configured, accepting credentials from any window`）；`none` 同样会让 guest 接受任意窗口凭据，仅用于明确知道风险的场景（日志为 info `parent origin validation disabled by config (none)`）；配置合法通配 pattern 时 ready 以 `"*"` 为目标（postMessage 固有限制），日志同为 **info**（`wildcard pattern configured`），不是告警（经环境变量设 `none` 时 entrypoint 会清空该值，日志走未配置的 warn 文案，行为等价）
 - guest 只接受来自 `window.parent` 的消息，且 origin 与配置列表逐条精确匹配（`*.` 通配条目按裸域+子域匹配）
-- guest 记录日志时只记 token / client-id / docContent / prompt 的 **长度** 和 attachments 的 **条数**，不记值（`embed: credentials received :token-length … :client-id-length … :doc-content-length … :prompt-length … :attachments-count …`），宿主可以据此确认"收到了但没泄漏"
+- guest 记录日志时只记 token / client-id / docContent / docTitle / prompt 的 **长度** 和 attachments 的 **条数**，不记值（`embed: credentials received :token-length … :client-id-length … :doc-content-length … :prompt-length … :attachments-count …`），宿主可以据此确认"收到了但没泄漏"
 - Penpot 只把凭据发往自己的后端，不会随外部资源请求外发
 - 凭据存放在 guest 的内存里，宿主页的 DevTools 能直接看到请求头；宿主自身应使用短 TTL 的 token 并全程 HTTPS
 - 顶层直接打开 Penpot 网址时不会发 `ready`、不安装监听器，不存在"被页面直接读取凭据"的路径
@@ -321,10 +325,10 @@ x-clientid: <你的 clientId>
 可以，每个 iframe 各自独立握手；同一个 Penpot 域下用不同 token 即可（注意配额与并发）。
 
 **Q：换 token 需要重新加载 iframe 吗？**
-不需要，再发一条消息即可覆盖（见 3.3）。只有希望"已加载的 profile 立刻刷新"时才需要重载。更新 `docContent` / `prompt` / `attachments` 同样不需要重载，但必须和有效的 `X-token` / `X-ClientId` 一起发（单独发这些字段会被当成残缺凭据丢掉）。
+不需要，再发一条消息即可覆盖（见 3.3）。只有希望"已加载的 profile 立刻刷新"时才需要重载。更新 `docContent` / `docTitle` / `prompt` / `attachments` 同样不需要重载，但必须和有效的 `X-token` / `X-ClientId` 一起发（单独发这些字段会被当成残缺凭据丢掉）。
 
-**Q：`docContent` / `prompt` / `attachments` 会带到后端请求吗？**
-不会。它们只保存在 guest 内存供 AI 助手侧消费（`docContent` 已接入消息 `envs.DOC_CONTENT`）。后端鉴权仍然只看 cookie 以及 `x-token` / `x-clientid`。
+**Q：`docContent` / `docTitle` / `prompt` / `attachments` 会带到后端请求吗？**
+不会。它们只保存在 guest 内存供 AI 助手侧消费（`docContent` / `docTitle` 已接入消息 `envs.DOC_CONTENT` / `envs.DOC_TITLE`）。后端鉴权仍然只看 cookie 以及 `x-token` / `x-clientid`。
 
 **Q：`ready` 重复发送吗？**
 会。启动门打开前每 2 秒重发一次，凭据就绪、探测到可用 cookie、或到达降级上限（`penpotEmbedBootDeadlineMs`）任一发生即停；同一次加载宿主可能收到多条，请**幂等处理**（重复回发凭据无害）。宿主若想确认 guest 还活着，仍请自行在业务层做心跳，不要把 `ready` 当心跳使用（门打开后不会再发）。

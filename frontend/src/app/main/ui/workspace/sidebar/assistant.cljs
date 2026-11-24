@@ -226,7 +226,8 @@
                              (assistant/build-message-envs
                               (mf/ref-val page-id-ref)
                               (mf/ref-val file-id-ref)
-                              (embed/doc-content))))
+                              (embed/doc-content)
+                              (embed/doc-title))))
                  (catch :default cause
                    ;; A frozen/sealed SDK message object cannot be
                    ;; enriched; hand it back untouched instead of

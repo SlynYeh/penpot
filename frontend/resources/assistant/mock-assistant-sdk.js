@@ -28,7 +28,8 @@
  * button per hook so the full callback event chain can be triggered by
  * hand, and a small input that pipes a message through the before-send
  * hook and prints the (enriched) result so the `envs: {PAGE_ID,
- * FILE_ID}` injection performed by Penpot is visible.
+ * FILE_ID, DOC_CONTENT?, DOC_TITLE?}` injection performed by Penpot
+ * is visible.
  *
  * Plain IIFE, zero dependencies, native DOM APIs only, styling through
  * a small injected <style> block (no external css).

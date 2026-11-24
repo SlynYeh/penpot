@@ -52,6 +52,10 @@ useEffect(() => {
           envs: {
             'PAGE_ID': query['page-id'] ?? '',
             'FILE_ID': query['file-id'] ?? '',
+            // Penpot 侧本地接线时额外注入（嵌入凭据握手收到的可选字段，
+            // 未提供时对应键不存在）：
+            'DOC_CONTENT': '宿主回传的 docContent',
+            'DOC_TITLE': '宿主回传的 docTitle',
           }
         }
       },

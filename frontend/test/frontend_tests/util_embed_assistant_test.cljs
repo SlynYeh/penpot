@@ -89,16 +89,29 @@
   (t/is (false? (assistant/valid-init-params? (obj/set! (init-params) "logoUrl" 42)))))
 
 (t/deftest build-message-envs-includes-page-and-file
-  (let [envs (assistant/build-message-envs "page-1" "file-1" nil)]
+  (let [envs (assistant/build-message-envs "page-1" "file-1" nil nil)]
     (t/is (= "page-1" (obj/get envs "PAGE_ID")))
     (t/is (= "file-1" (obj/get envs "FILE_ID")))
-    (t/is (undefined? (obj/get envs "DOC_CONTENT")))))
+    (t/is (undefined? (obj/get envs "DOC_CONTENT")))
+    (t/is (undefined? (obj/get envs "DOC_TITLE")))))
 
 (t/deftest build-message-envs-includes-doc-content-when-string
-  (let [envs (assistant/build-message-envs "page-1" "file-1" "the-doc")]
+  (let [envs (assistant/build-message-envs "page-1" "file-1" "the-doc" nil)]
     (t/is (= "the-doc" (obj/get envs "DOC_CONTENT"))))
-  (let [envs (assistant/build-message-envs "page-1" "file-1" "")]
-    (t/is (= "" (obj/get envs "DOC_CONTENT")))))
+  (let [envs (assistant/build-message-envs "page-1" "file-1" "" nil)]
+    (t/is (= "" (obj/get envs "DOC_CONTENT"))))
+  ;; Non-string doc-content is omitted, like it was never sent.
+  (let [envs (assistant/build-message-envs "page-1" "file-1" 42 nil)]
+    (t/is (undefined? (obj/get envs "DOC_CONTENT")))))
+
+(t/deftest build-message-envs-includes-doc-title-when-string
+  (let [envs (assistant/build-message-envs "page-1" "file-1" nil "the-design")]
+    (t/is (= "the-design" (obj/get envs "DOC_TITLE"))))
+  (let [envs (assistant/build-message-envs "page-1" "file-1" nil "")]
+    (t/is (= "" (obj/get envs "DOC_TITLE"))))
+  ;; Non-string doc-title is omitted, like it was never sent.
+  (let [envs (assistant/build-message-envs "page-1" "file-1" nil 42)]
+    (t/is (undefined? (obj/get envs "DOC_TITLE")))))
 
 ;; --- auto-open ---------------------------------------------------------
 

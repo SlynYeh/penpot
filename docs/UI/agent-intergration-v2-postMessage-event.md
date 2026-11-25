@@ -83,7 +83,18 @@ SDK `init` 所需的参数不再经 postMessage 获取：
 | `agentId` | `PENPOT_X_FRONT_AGENT_ID` → `penpotXFrontAgentId` |
 | `skillName` | `PENPOT_X_FRONT_SKILL_NAME` → `penpotXFrontSkillName`（同时作为 `defaultSkillName`） |
 | `xPlatformEnv`（可选） | `PENPOT_X_FRONT_PLATFORM_ENV` → `penpotXFrontPlatformEnv`；未配置或为空白时**不传该键**，SDK 侧读到 `undefined`，不影响助手 tab 启动 |
+| `prompts`（可选） | `PENPOT_X_FRONT_PROMPTS` → `penpotXFrontPrompts`，值是**半角 `\|` 分隔的一个字符串**；Penpot 把它切成 `Array<{key, triggerChat, description}>`（规则见表后）；未配置或为空白时传**空数组**，不影响助手 tab 启动 |
 | `idToken` | 宿主在与 Penpot iframe **同源**的 sessionStorage 写入 `EBEE_USER_KEY`，值为 JSON `{ idToken: "xxx" }` |
+
+`prompts` 的解析在 Penpot 前端完成（entrypoint 只把字符串原样写进 js/config.js）：
+
+- 按半角 `|` 切分；每段去掉首尾空白；空白段忽略；重复的提示词只保留第一条；顺序与配置一致。
+- 每条为 `{ key: "prompt-<hash>", triggerChat: false, description }`：`key` 由提示词内容哈希得到
+  （同一内容 key 恒定），`triggerChat` 恒为 `false`，`description` 是去掉首尾空白后的提示词。
+- 半角 `|` 一律是分隔符，没有转义：没法在一条提示词的正文里把它当普通字符用。
+  这不会报错，只会被切开——`对比 A|B 两个方案` 会变成 `对比 A` 和 `B 两个方案` 两条提示词。
+  确实需要竖线时用全角 `｜`；全角 `｜`、换行都是普通字符。
+- compose 里取值须加引号（否则 ` #`、`: ` 会破坏 YAML）；字面 `$` 须写成 `$$`（compose 会做插值）。
 
 约束：
 
@@ -97,8 +108,8 @@ SDK `init` 所需的参数不再经 postMessage 获取：
   `:token-missing`；可点重试。
 - SDK 的 `getIdToken()` 每次调用都重新读取 `EBEE_USER_KEY`：宿主刷新 token 后**必须
   回写**该 key，否则 SDK 永远拿到旧值（Penpot 不会主动向宿主索取）。
-- 宿主无法再透传任何其它 SDK 配置键（如 `prompts`、`theme`、`appImage`）：日后新增
-  配置项走「Penpot 侧新增 env 变量并发版」，不存在通用 JSON 通道。
+- 宿主无法再透传任何其它 SDK 配置键（如 `theme`、`appImage`）：新增配置项一律走
+  「Penpot 侧新增 env 变量并发版」（`xPlatformEnv`、`prompts` 即如此），不存在通用 JSON 通道。
 - 发布次序：① 宿主先按新契约写 `EBEE_USER_KEY`（旧 `ready` / `getInitParams` handler
   可先留着，无害）→ ② 升级 Penpot → ③ 观察期后宿主再删旧 handler。Penpot 先上而宿主
   未写 key 时助手 tab 必然进入错误态。

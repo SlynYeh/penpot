@@ -76,7 +76,8 @@ useEffect(() => {
 > 注：以上是宿主侧最初的接线示意。Penpot 实际传给 `X_Assistant.init` 的 config 以
 > [agent-intergration-v2-postMessage-event.md](./agent-intergration-v2-postMessage-event.md)
 > 的「初始化参数来源」为准：`appName` / `agentId` / `skillName` / `idToken` 不再由宿主经
-> postMessage 提供，`appImage`、`prompts` 等宿主侧示例项 Penpot 不会注入。
+> postMessage 提供；`prompts` 改由 Penpot 侧环境变量 `PENPOT_X_FRONT_PROMPTS`（`|` 分隔的字符串）
+> 配置，`appImage` 等其余宿主侧示例项 Penpot 不会注入。
 
 ### 配置参数
 

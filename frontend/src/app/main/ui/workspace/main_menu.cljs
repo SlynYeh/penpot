@@ -54,6 +54,13 @@
 
 ;; --- Header menu and submenus
 
+;; The primary list and every secondary panel must share one :id:
+;; `dropdown-evicts?` treats an identical id as a single logical menu, so the
+;; two levels stay open together while any other dropdown (help center,
+;; tokens, profile) evicts the whole group. Per-panel ids would make a
+;; secondary panel close the primary list the moment it opens.
+(def ^:private menu-group-id "workspace-menu")
+
 (mf/defc help-info-menu*
   {::mf/props :obj
    ::mf/private true
@@ -129,7 +136,7 @@
                (st/emit! (modal/show {:type :release-notes :version version}))))))]
 
     [:> dropdown-menu* {:show true
-                        ;; :id "workspace-help-menu"
+                        :id menu-group-id
                         :on-close on-close
                         :class (stl/css-case :sub-menu true
                                              :help-info plugins?
@@ -238,7 +245,7 @@
                        (ptk/data-event ::ev/force-persist {})))))]
 
     [:> dropdown-menu* {:show true
-                        ;; :id "workspace-preferences-menu"
+                        :id menu-group-id
                         :class (stl/css-case :sub-menu true
                                             :preferences (not read-only?)
                                             :preferences-read-only read-only?)
@@ -366,7 +373,7 @@
                          (vary-meta assoc ::ev/origin "workspace-menu")))))]
 
     [:> dropdown-menu* {:show true
-                        ;; :id "workspace-view-menu"
+                        :id menu-group-id
                         :class (stl/css-case :sub-menu true
                                             :view (not read-only?)
                                             :view-read-only read-only?)
@@ -486,7 +493,7 @@
         can-edit   (:can-edit perms)]
 
     [:> dropdown-menu* {:show true
-                        ;; :id "workspace-edit-menu"
+                        :id menu-group-id
                         :class (stl/css-case :sub-menu true
                                              :edit true)
                         :on-close on-close}
@@ -614,7 +621,7 @@
              (on-pin-version event))))]
 
     [:> dropdown-menu* {:show true
-                        ;; :id "workspace-file-menu"
+                        :id menu-group-id
                         :class (stl/css-case :sub-menu true
                                              :file true)
                         :on-close on-close}
@@ -650,7 +657,7 @@
           user-can-edit?           (:can-edit (deref refs/permissions))
           permissions-peek         (deref refs/plugins-permissions-peek)]
       [:> dropdown-menu* {:show true
-                          ;; :id "workspace-plugins-menu"
+                          :id menu-group-id
                           :class (stl/css-case :sub-menu true :plugins true)
                           :on-close on-close}
        [:> dropdown-menu-item* {:on-click    open-plugins
@@ -737,22 +744,26 @@
            (dom/stop-propagation event)
            (reset! show-menu* true)))
 
+        close-all-menus
+        (mf/use-fn
+         (fn []
+           (reset! show-menu* false)
+           (reset! sub-menu* nil)))
+
+        ;; Closing the group must clear sub-menu* too: the secondary panels
+        ;; render outside the show-menu? guard, so leaving it set would orphan
+        ;; a panel on screen with no primary list attached to it.
         close-menu
         (mf/use-fn
+         (mf/deps close-all-menus)
          (fn [event]
            (dom/stop-propagation event)
-           (reset! show-menu* false)))
+           (close-all-menus)))
 
         close-sub-menu
         (mf/use-fn
          (fn [event]
            (dom/stop-propagation event)
-           (reset! sub-menu* nil)))
-
-        close-all-menus
-        (mf/use-fn
-         (fn []
-           (reset! show-menu* false)
            (reset! sub-menu* nil)))
 
         on-menu-click
@@ -887,7 +898,7 @@
            (tr "workspace.header.help.guide.got-it")]]])]
 
      [:> dropdown-menu* {:show show-menu?
-                         :id "workspace-menu"
+                         :id menu-group-id
                          :on-close close-menu
                          :class (stl/css :menu)}
       ;; File menu

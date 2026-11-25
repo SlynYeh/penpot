@@ -25,6 +25,15 @@
         props     (mf/spread-props props {:role "menuitem" :tab-index tab-index})]
     [:> :li props]))
 
+(defn dropdown-evicts?
+  "Decides whether a dropdown registered as `own-id` must close because
+  `opened-id` just opened. Passing the SAME :id to several dropdown-menu*
+  declares them one logical group and lets them coexist; nil opts out."
+  [own-id opened-id]
+  (boolean
+   (and (some? own-id)
+        (not= own-id opened-id))))
+
 (mf/defc internal-dropdown-menu*
   {::mf/private true}
   [{:keys [on-close children class id]}]
@@ -92,7 +101,7 @@
         (let [stream (->> st/stream
                           (rx/filter (ptk/type? :dropdown/open))
                           (rx/map deref)
-                          (rx/filter #(not= id (:id %)))
+                          (rx/filter #(dropdown-evicts? id (:id %)))
                           (rx/take 1))
               subs   (rx/subs! nil nil on-close stream)]
           (fn []

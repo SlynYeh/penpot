@@ -8,7 +8,8 @@ READ `mem:testing` FIRST — it defines the execution discipline (no piping, tee
 
 Frontend unit tests live under `frontend/test/frontend_tests/` and use `cljs.test`. They should be deterministic, avoid DOM/UI integration where possible, and mock side effects such as RPC, storage, timers, or network access.
 
-From `frontend/`:
+From `frontend/`, inside the devenv container (see `mem:devenv/core` for why host runs break
+the toolchain):
 - Full unit test run (always builds, suppressed output): `pnpm run test:quiet`.
 - Full unit test run (always builds, build output visible): `pnpm run test`.
 - Focus a frontend CLJS test namespace: `pnpm run test:quiet -- --focus frontend-tests.logic.components-and-tokens`.
@@ -18,7 +19,23 @@ From `frontend/`:
 - After `build:test` has been run, run the compiled runner directly: `node target/tests/test.js [--focus ...] [--log-level ...]`.
 - Watch tests: `pnpm run watch:test`.
 
-New frontend test namespaces must be required/listed in `frontend_tests/runner.cljs`; new vars in existing namespaces need no runner change.
+New frontend test namespaces must be registered in `frontend_tests/runner.cljs` in two
+places: the `:require` vector and the quoted-symbol `test-namespaces` list. Both matter —
+the full run without `--focus` iterates `test-namespaces`, so a namespace only required but
+not listed there compiles and its tests silently never execute, while `--focus` still finds
+them and gives a false green. The `:require` vector is kept alphabetical by cljfmt
+(`:sort-ns-references?`); `test-namespaces` has no formatter check and contains drift and
+duplicates. New vars in existing namespaces need no runner change.
+
+Assertions: `cljs.test` has no `t/true?`/`t/false?`. Shadow-cljs only warns on the unknown
+var and the test bundle then fails at runtime with
+`Cannot read properties of undefined (reading 'cljs$core$IFn$_invoke$arity$1')`. Write
+`(t/is (true? expr))` / `(t/is (false? expr))`.
+
+The quiet runner prints a `  ▸` line per passing test name only; keyword-grepping the log for
+`FAILURE|ERROR` matches passing test names that contain those words. Isolate real failures
+with something like `grep -vE "^  ▸ |^$"` over the tee'd log, and judge the run by its
+`Ran N tests containing M assertions. 0 failures, 0 errors` summary.
 
 ## Playwright integration tests
 

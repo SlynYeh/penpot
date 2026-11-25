@@ -17,7 +17,8 @@ Frontend: CLJS SPA; React/Rumext; Potok; RxJS; okulary refs; SCSS modules; share
 
 ## Lint and Format
 
-From `frontend/`:
+From `frontend/`, inside the devenv container (never the macOS host — host runs write
+platform-mismatched native bindings into the shared `node_modules`; see `mem:devenv/core`):
 
 - CLJ/CLJS lint: `pnpm run lint:clj`.
 - JS lint currently no-ops via `pnpm run lint:js`.
@@ -35,6 +36,7 @@ See `mem:tools/paren-repair`.
 
 UI and packages:
 - App UI components, SCSS modules, style-system boundaries, accessibility, i18n, and render performance: `mem:frontend/ui-conventions-and-style-system`.
+- `dropdown-menu*`/`:id` groups, why one menu fails to close another, submenus that open on top of a sibling menu, and multi-level menu open/close state: `mem:frontend/dropdown-menu-subtleties`.
 - JS/TS packages, shared UI package, text editor, Storybook, and package builds: `mem:frontend/ui-packages-text-editor-workflow`.
 
 Workspace behavior:

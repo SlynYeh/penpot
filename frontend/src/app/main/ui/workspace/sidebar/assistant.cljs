@@ -23,10 +23,11 @@
   Since v2 the last session of the (profile, file) pair is remembered
   in localStorage: re-entering the tab restores it through
   changeSessionId instead of always starting a new one.
-  Right after the SDK is initialized, a prompt and/or attachments
+  Right after the SDK is initialized, a prompt, attachments and/or docTitle
   received on the embed credentials handshake (app.util.embed)
-  auto-open a chat; the values are polled every 500ms, at most 10
-  checks, because the handshake may still be in flight."
+  auto-open a chat; the values and the current SDK `openChat` tool are
+  polled every 1s, at most 20 checks, because either side may still be
+  initializing."
   (:require-macros [app.main.style :as stl])
   (:require
    [app.common.logging :as log]
@@ -247,7 +248,8 @@
                               (mf/ref-val page-id-ref)
                               (mf/ref-val file-id-ref)
                               (embed/doc-content)
-                              (embed/doc-title))))
+                              (embed/doc-title)
+                              (obj/get message "envs"))))
                  (catch :default cause
                    ;; A frozen/sealed SDK message object cannot be
                    ;; enriched; hand it back untouched instead of
@@ -282,31 +284,59 @@
                  (post-event! "ai:createNewSession" (event-payload data))))
 
              start-auto-open!
-             (fn [open-chat!]
-               (vreset! auto-open-cancel
-                        (assistant/start-auto-open!
-                         {:values! (fn []
-                                     [(embed/prompt)
-                                      (embed/attachments)
-                                      (embed/doc-title)])
-                          :open-chat! (fn [prompt options]
-                                        ;; Never log the values
-                                        ;; themselves: the prompt may be
-                                        ;; sensitive host content.
-                                        (log/dbg :hint "assistant: auto opening a chat"
-                                                 :attachments? (some? (obj/get options "attachments")))
-                                        (try
-                                          (open-chat! prompt options)
-                                          (catch :default cause
-                                            (log/wrn :hint "assistant: auto open chat failed"
-                                                     :cause cause))))
-                          :schedule! js/setTimeout
-                          :cancel!  js/clearTimeout})))
+             (fn []
+               (let [resolved-open-chat! (volatile! nil)]
+                 (vreset! auto-open-cancel
+                          (assistant/start-auto-open!
+                           {:values! (fn []
+                                       [(embed/prompt)
+                                        (embed/attachments)
+                                        (embed/doc-title)])
+                            :open-chat-ready? (fn []
+                                                 (let [open-chat! (:open-chat! (fresh-sdk-tools))]
+                                                   (vreset! resolved-open-chat! open-chat!)
+                                                   (some? open-chat!)))
+                            :open-chat! (fn [prompt options]
+                                          ;; Never log the values
+                                          ;; themselves: the prompt may be
+                                          ;; sensitive host content.
+                                          (when-let [open-chat! @resolved-open-chat!]
+                                            (vreset! resolved-open-chat! nil)
+                                            (let [attachments (obj/get options "attachments")]
+                                              (log/inf :hint "assistant: dispatching SDK openChat"
+                                                       :prompt-length (when (string? prompt) (count prompt))
+                                                       :trigger-answer (obj/get options "triggerAnswer")
+                                                       :new-session (obj/get options "newSession")
+                                                       :attachments-count (if (array? attachments)
+                                                                            (alength attachments)
+                                                                            0)))
+                                            (try
+                                              (let [result (open-chat! prompt options)
+                                                    thenable? (and (some? result)
+                                                                   (fn? (obj/get result "then")))]
+                                                (log/inf :hint "assistant: SDK openChat dispatched"
+                                                         :async thenable?)
+                                                (when thenable?
+                                                  (-> (adopt-sdk-result result)
+                                                      (p/then
+                                                       (fn [_]
+                                                         (log/inf :hint "assistant: SDK openChat resolved")))
+                                                      (p/catch
+                                                       (fn [cause]
+                                                         (log/wrn :hint "assistant: SDK openChat rejected"
+                                                                  :cause cause))))))
+                                              (catch :default cause
+                                                (log/wrn :hint "assistant: auto open chat failed"
+                                                         :cause cause)))))
+                            :schedule! js/setTimeout
+                            :cancel!  js/clearTimeout}))))
 
              ready!
              (fn [^js sdk tools]
                (when-not @cancelled?
                  (reset! sdk-tools* tools)
+                 (log/inf :hint "assistant: SDK ready, starting auto-open polling"
+                          :initial-open-chat-ready (some? (:open-chat! tools)))
                  (when-let [on (when (object? sdk) (obj/get sdk "on"))]
                    (when (fn? on)
                      (doseq [[event-name handler] sdk-forward-handlers]
@@ -320,11 +350,11 @@
                        (catch :default cause
                          (log/wrn :hint "assistant: could not subscribe to the SDK session events"
                                   :cause cause)))))
-                 ;; The host may have handed over a prompt/attachments on
-                 ;; the embed handshake before or while this tab was
-                 ;; initializing; when present they auto-open a chat.
-                 (when-let [open-chat! (:open-chat! tools)]
-                   (start-auto-open! open-chat!))
+                 ;; The host may have handed over values before or while
+                 ;; this tab was initializing. Start polling even when the
+                 ;; SDK has not exposed getTools().openChat yet; each check
+                 ;; re-extracts the current tool before consuming the values.
+                 (start-auto-open!)
                  ;; Only now, with init, render and (when applicable) the
                  ;; session restore settled, is the assistant really up.
                  (post-event! "initialized" #js {"timestamp" (now-ts)})

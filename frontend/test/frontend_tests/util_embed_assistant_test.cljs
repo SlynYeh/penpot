@@ -93,7 +93,24 @@
   (let [envs (assistant/build-message-envs "page-1" "file-1" nil 42)]
     (t/is (undefined? (obj/get envs "DOC_TITLE")))))
 
+(t/deftest build-message-envs-preserves-existing-values
+  (let [existing #js {"SDK_ENV" "keep-me"
+                      "PAGE_ID" "old-page"}
+        envs     (assistant/build-message-envs "page-1" "file-1"
+                                               "the-doc" "the-design"
+                                               existing)]
+    (t/is (identical? existing envs))
+    (t/is (= "keep-me" (obj/get envs "SDK_ENV")))
+    (t/is (= "page-1" (obj/get envs "PAGE_ID")))
+    (t/is (= "file-1" (obj/get envs "FILE_ID")))
+    (t/is (= "the-doc" (obj/get envs "DOC_CONTENT")))
+    (t/is (= "the-design" (obj/get envs "DOC_TITLE")))))
+
 ;; --- auto-open ---------------------------------------------------------
+
+(t/deftest auto-open-defaults-to-one-second-and-twenty-checks
+  (t/is (= 1000 assistant/auto-open-poll-ms))
+  (t/is (= 20 assistant/auto-open-max-attempts)))
 
 (t/deftest open-chat-request-with-prompt-or-attachments
   ;; a non-blank prompt alone justifies a chat
@@ -143,7 +160,7 @@
 (t/deftest build-doc-title-open-chat-options-simulates-a-name-only-attachment
   (let [options (assistant/build-doc-title-open-chat-options "my design")]
     (t/is (false? (obj/get options "triggerAnswer")))
-    (t/is (true? (obj/get options "newSession")))
+    (t/is (false? (obj/get options "newSession")))
     (let [attachments (obj/get options "attachments")]
       (t/is (array? attachments))
       (t/is (= 1 (count attachments)))
@@ -192,7 +209,7 @@
     (let [[prompt options] (first @(:opened io))]
       (t/is (= "" prompt))
       (t/is (false? (obj/get options "triggerAnswer")))
-      (t/is (true? (obj/get options "newSession")))
+      (t/is (false? (obj/get options "newSession")))
       (let [attachments (obj/get options "attachments")]
         (t/is (= "my design" (obj/get (first attachments) "name")))
         (t/is (= "" (obj/get (first attachments) "url")))))
@@ -240,6 +257,24 @@
         (t/is (= "my design"
                  (obj/get (first (obj/get options "attachments")) "name"))))
       (t/is (= 2 (count @(:scheduled io))) "no further poll after opening"))
+    (cancel!)))
+
+(t/deftest start-auto-open-waits-for-sdk-tool
+  (let [io        (fake-polling)
+        available (atom false)
+        cancel!   (assistant/start-auto-open!
+                   {:values!           (fn [] [nil nil "my design"])
+                    :open-chat-ready?  (fn [] @available)
+                    :open-chat!        (:open-chat! io)
+                    :schedule!         (:schedule! io)
+                    :cancel!           (:cancel! io)})]
+    (t/is (empty? @(:opened io)))
+    (t/is (= 1 (count @(:scheduled io))))
+    (reset! available true)
+    (let [[tick _] (first @(:scheduled io))]
+      (tick)
+      (t/is (= 1 (count @(:opened io))))
+      (t/is (empty? @(:scheduled io))))
     (cancel!)))
 
 (t/deftest start-auto-open-polls-until-values-arrive

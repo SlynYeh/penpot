@@ -97,17 +97,22 @@
 (defn build-message-envs
   "Builds the `envs` object injected into each assistant SDK message:
   current page/file ids plus the optional `docContent` / `docTitle`
-  received on the embed credentials handshake. Each optional field is
-  omitted when it is not a string so a host that never sends it does
-  not get an empty env key. Public so the shape can be unit-tested."
-  [page-id file-id doc-content doc-title]
-  (let [envs #js {"PAGE_ID" (str page-id)
-                  "FILE_ID" (str file-id)}]
-    (when (string? doc-content)
-      (obj/set! envs "DOC_CONTENT" doc-content))
-    (when (string? doc-title)
-      (obj/set! envs "DOC_TITLE" doc-title))
-    envs))
+  received on the embed credentials handshake. Existing environment
+  values are preserved and Penpot-owned keys are updated in place. Each
+  optional field is omitted when it is not a string so a host that never
+  sends it does not get an empty env key. Public so the shape can be
+  unit-tested."
+  ([page-id file-id doc-content doc-title]
+   (build-message-envs page-id file-id doc-content doc-title nil))
+  ([page-id file-id doc-content doc-title existing-envs]
+   (let [envs (if (object? existing-envs) existing-envs #js {})]
+     (obj/set! envs "PAGE_ID" (str page-id))
+     (obj/set! envs "FILE_ID" (str file-id))
+     (when (string? doc-content)
+       (obj/set! envs "DOC_CONTENT" doc-content))
+     (when (string? doc-title)
+       (obj/set! envs "DOC_TITLE" doc-title))
+     envs)))
 
 (defn prompt-key
   "Builds the stable `key` of a recommended prompt from its content:
@@ -199,8 +204,8 @@
 ;; injectable, so the whole contract stays unit-testable.
 ;; -------------------------------------------------------------------------
 
-(def auto-open-max-attempts 10)
-(def auto-open-poll-ms 500)
+(def auto-open-max-attempts 20)
+(def auto-open-poll-ms 1000)
 (def auto-open-default-prompt "生成原型")
 
 (defn open-chat-request?
@@ -241,48 +246,91 @@
 (defn build-doc-title-open-chat-options
   "Builds the options object of the `openChat` doc-title fallback
   call: `triggerAnswer` is false so the model is not asked anything,
-  `newSession` is true, and the doc title rides along as a single
-  name-only attachment (`{name: doc-title, url: \"\"}`) to simulate a
-  pre-attached file without triggering a chat turn."
+  `newSession` is false so the current session is kept, and the doc
+  title rides along as a single name-only attachment
+  (`{name: doc-title, url: \"\"}`) to simulate a pre-attached file
+  without triggering a chat turn."
   [doc-title]
   #js {"triggerAnswer" false
-       "newSession" true
+       "newSession" false
        "attachments" #js [#js {"name" doc-title "url" ""}]})
 
 (defn start-auto-open!
   "Polls `values!` — a fn returning `[prompt attachments doc-title]` —
-  and calls `open-chat!` as soon as the values justify a chat: a
-  non-blank prompt or non-empty attachments (`open-chat-request?`)
-  opens with `triggerAnswer` true; otherwise a non-blank doc-title
-  (`open-chat-doc-title-request?`) opens an empty-prompt chat that
-  carries the title as a name-only attachment with `triggerAnswer`
-  false. Until either holds it re-checks through `schedule!` every
+  and calls `open-chat!` as soon as the values and the SDK tool are
+  ready. A non-blank prompt or non-empty attachments
+  (`open-chat-request?`) opens with `triggerAnswer` true; otherwise a
+  non-blank doc-title (`open-chat-doc-title-request?`) opens an
+  empty-prompt chat that carries the title as a name-only attachment
+  with `triggerAnswer` false. Until both the values and
+  `open-chat-ready?` hold it re-checks through `schedule!` every
   `poll-ms`, at most `max-attempts` checks in total (the first one
   runs immediately). Returns a cancel fn that clears any pending
   schedule through `cancel!`."
-  [{:keys [values! open-chat! schedule! cancel!
+  [{:keys [values! open-chat! open-chat-ready? schedule! cancel!
            max-attempts poll-ms]
     :or {max-attempts auto-open-max-attempts
          poll-ms auto-open-poll-ms
+         open-chat-ready? (constantly true)
          cancel! (constantly nil)}}]
   (let [cancelled? (volatile! false)
         timer      (volatile! nil)
         tick!      (fn tick! [attempt]
                      (when-not @cancelled?
-                       (let [[prompt attachments doc-title] (values!)]
+                       (let [[prompt attachments doc-title] (values!)
+                             tool-ready?       (boolean (open-chat-ready?))
+                             prompt-ready?     (and (string? prompt)
+                                                    (not (str/blank? prompt)))
+                             attachments-count (if (vector? attachments)
+                                                 (count attachments)
+                                                 0)
+                             doc-title-ready?   (open-chat-doc-title-request? doc-title)]
+                         (log/inf :hint "assistant: auto-open check"
+                                  :attempt attempt
+                                  :max-attempts max-attempts
+                                  :open-chat-ready tool-ready?
+                                  :prompt-ready prompt-ready?
+                                  :prompt-length (when (string? prompt) (count prompt))
+                                  :attachments-count attachments-count
+                                  :doc-title-ready doc-title-ready?
+                                  :doc-title-length (when (string? doc-title) (count doc-title)))
                          (cond
-                           (open-chat-request? prompt attachments)
-                           (open-chat! (open-chat-prompt prompt)
-                                       (build-open-chat-options attachments))
+                           (not tool-ready?)
+                           (if (< attempt max-attempts)
+                             (vreset! timer
+                                      (schedule! #(tick! (inc attempt)) poll-ms))
+                             (log/wrn :hint "assistant: auto-open polling exhausted"
+                                      :reason :open-chat-not-ready
+                                      :attempts attempt))
 
-                           (open-chat-doc-title-request? doc-title)
-                           (open-chat! "" (build-doc-title-open-chat-options doc-title))
+                           (open-chat-request? prompt attachments)
+                           (do
+                             (log/inf :hint "assistant: auto-open conditions matched"
+                                      :branch :prompt-or-attachments
+                                      :attempt attempt
+                                      :prompt-ready prompt-ready?
+                                      :attachments-count attachments-count)
+                             (open-chat! (open-chat-prompt prompt)
+                                         (build-open-chat-options attachments)))
+
+                           doc-title-ready?
+                           (do
+                             (log/inf :hint "assistant: auto-open conditions matched"
+                                      :branch :doc-title-placeholder
+                                      :attempt attempt
+                                      :doc-title-length (count doc-title))
+                             (open-chat! "" (build-doc-title-open-chat-options doc-title)))
 
                            :else
-                           (when (< attempt max-attempts)
+                           (if (< attempt max-attempts)
                              (vreset! timer
-                                      (schedule! #(tick! (inc attempt))
-                                                 poll-ms)))))))]
+                                      (schedule! #(tick! (inc attempt)) poll-ms))
+                             (log/wrn :hint "assistant: auto-open polling exhausted"
+                                      :reason :values-not-ready
+                                      :attempts attempt))))))]
+    (log/inf :hint "assistant: auto-open polling started"
+             :poll-ms poll-ms
+             :max-attempts max-attempts)
     (tick! 1)
     (fn []
       (vreset! cancelled? true)
@@ -398,7 +446,12 @@
     (let [get-tools (obj/get sdk "getTools")
           tools     (cond
                       (fn? get-tools)
-                      (try (.getTools sdk) (catch :default _ nil))
+                      (try
+                        (.getTools sdk)
+                        (catch :default cause
+                          (log/wrn :hint "assistant: SDK getTools failed during tool extraction"
+                                   :cause cause)
+                          nil))
 
                       (object? get-tools)
                       get-tools

@@ -126,7 +126,7 @@ frame.contentWindow.postMessage(
 
 - `docContent`：助手发消息时写入 `envs.DOC_CONTENT`（与 `PAGE_ID` / `FILE_ID` 一起）
 - `docTitle`：助手发消息时写入 `envs.DOC_TITLE`（与 `DOC_CONTENT` 同批注入；未提供时该键不存在）。此外在自动开聊的 fallback 分支消费，见下一条
-- `prompt` / `attachments`：助手 SDK 初始化完成后**自动开聊**——只要其中一个有值就调用 `getTools().openChat(prompt, {triggerAnswer: true, newSession: true, attachments})`；`prompt` 未提供（或空白）时用默认值「生成原型」。两者**都**没有值而 `docTitle` 有值时走 fallback：`getTools().openChat('', {triggerAnswer: false, newSession: true, attachments: [{name: docTitle, url: ''}]})`——不触发回答，只把文档标题作为一条仅含 `name` 的附件挂进新会话（模拟预置附件）。三者都没有值则不自动开聊。初始化完成后立即检测，没有值就每 **500ms** 重检一次，最多检测 **10** 次（约 4.5s 窗口，覆盖凭据晚于助手初始化的时序）
+- `prompt` / `attachments`：助手 SDK 初始化完成后**自动开聊**——只要其中一个有值就调用 `getTools().openChat(prompt, {triggerAnswer: true, newSession: true, attachments})`；`prompt` 未提供（或空白）时用默认值「生成原型」。两者**都**没有值而 `docTitle` 有值时走 fallback：`getTools().openChat('', {triggerAnswer: false, newSession: false, attachments: [{name: docTitle, url: ''}]})`——不触发回答，不新开会话，只把文档标题作为一条仅含 `name` 的附件挂进当前会话（模拟预置附件）。三者都没有值则不自动开聊。SDK 初始化、渲染和会话恢复完成后立即检测；每次检测都会重新执行当前 SDK 的 `getTools()`，只有 `openChat` 与数据同时可用时才调用，否则每 **1s** 重检一次，最多检测 **20** 次（约 19s 窗口，同时覆盖 SDK 工具或凭据数据较晚就绪的时序）
 
 ### 2.3 时序
 
@@ -227,7 +227,7 @@ guest 会**先过启动门，再启动**，尽力保证第一个请求就带凭�
 
 ### 3.3 凭据更新
 
-再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` / `docTitle` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` / `docTitle` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊（`docTitle` 仅在 `prompt` / `attachments` 都缺失时走模拟附件 fallback）——初始化完成后的 10 次检测窗口（约 4.5s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
+再发一条消息即可覆盖：`X-token` / `X-ClientId` 从**下一次**后端请求起生效；`docContent` / `docTitle` 从**下一条** AI 助手消息起写入 `envs.DOC_CONTENT` / `envs.DOC_TITLE`；`prompt` / `attachments` / `docTitle` 在助手 tab **下一次初始化**（切走再切回助手 tab）时触发自动开聊（`docTitle` 仅在 `prompt` / `attachments` 都缺失时走模拟附件 fallback）——初始化完成后的 20 次检测窗口（约 19s）一旦过去，新值要等到下一轮初始化才生效。已经加载的 profile 不会自动重拉（要立即生效可让宿主控制 iframe 重新加载）。
 
 payload 按整包覆盖：新消息里没有 `docContent` / `docTitle` / `prompt`（或不是 string）、没有 `attachments`（或不合规），先前存下的对应值会被清掉。不要发空的 `X-token` / `X-ClientId` 或残缺凭据字段——会被直接丢弃，等于没更新。
 

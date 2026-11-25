@@ -97,3 +97,4 @@ opencode.json
 docker/images/penpot-backend.doc
 docker/images/penpot-backend.tar
 /.idea
+/.learnings/

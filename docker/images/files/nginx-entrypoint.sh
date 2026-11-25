@@ -464,7 +464,9 @@ update_x_front_sdk() {
 
 update_x_front_init_config() {
   # Plain display strings for the assistant SDK init config (app /
-  # agent / skill names and the optional platform env). Unlike
+  # agent / skill names, the optional platform env and the optional
+  # prompts list). PENPOT_X_FRONT_PROMPTS is passed through as one
+  # single string: the `|` splitting happens in the frontend. Unlike
   # PENPOT_X_FRONT_SDK there is no URL to validate and no "none"
   # sentinel: an empty or whitespace-only value
   # equals "unset" and the js/config.js empty default is kept. The
@@ -477,6 +479,7 @@ update_x_front_init_config() {
     "PENPOT_X_FRONT_AGENT_ID:penpotXFrontAgentId"
     "PENPOT_X_FRONT_SKILL_NAME:penpotXFrontSkillName"
     "PENPOT_X_FRONT_PLATFORM_ENV:penpotXFrontPlatformEnv"
+    "PENPOT_X_FRONT_PROMPTS:penpotXFrontPrompts"
   )
   local pair env_name config_key raw
   for pair in "${pairs[@]}"; do

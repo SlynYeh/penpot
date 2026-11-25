@@ -207,6 +207,16 @@ services:
       # key `xPlatformEnv`. Unset or blank leaves the key out of the
       # init config entirely (the SDK reads undefined).
       # PENPOT_X_FRONT_PLATFORM_ENV: "prod"
+      # Optional: recommended prompts handed to the SDK as the init key
+      # `prompts` — one half-width `|` separated string; each piece is
+      # trimmed, empty pieces are dropped, repeats are deduplicated
+      # (first occurrence wins). A `|` has no escape: wherever it
+      # appears it starts a new prompt (no error), so use the full-width
+      # `｜` if a prompt needs a vertical bar. Unset or blank sends an
+      # empty list and never makes the assistant tab fail. The value must be quoted, or ` #` / `: `
+      # inside it would corrupt the compose parsing; a literal `$` must
+      # be written `$$` (compose interpolates it).
+      # PENPOT_X_FRONT_PROMPTS: "Prompt one|Prompt two"
 
   penpot-backend:
     image: "penpotapp/backend:${PENPOT_VERSION:-2.16}"

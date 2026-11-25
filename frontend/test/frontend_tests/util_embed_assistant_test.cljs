@@ -443,6 +443,122 @@
                 (:hooks (recording-hooks)))]
     (t/is (= "uat" (obj/get config "xPlatformEnv")))))
 
+;; --- prompts (parse-prompts / prompt-key / build-init-config) -------------
+
+(t/deftest parse-prompts-returns-empty-when-unset
+  (t/is (= [] (assistant/parse-prompts nil)))
+  (t/is (= [] (assistant/parse-prompts "")))
+  (t/is (= [] (assistant/parse-prompts "   ")))
+  (t/is (= [] (assistant/parse-prompts 42))))
+
+(t/deftest parse-prompts-splits-on-the-pipe-trims-and-drops-empty-pieces
+  (let [prompts (assistant/parse-prompts "  a | | b  ")]
+    (t/is (= ["a" "b"] (mapv :description prompts))))
+  (t/is (= 1 (count (assistant/parse-prompts "a")))))
+
+(t/deftest parse-prompts-keeps-order-and-dedupes-repeats
+  (let [prompts (assistant/parse-prompts "a | b | a")]
+    (t/is (= 2 (count prompts)))
+    (t/is (= ["a" "b"] (mapv :description prompts)))
+    (t/is (= [(assistant/prompt-key "a") (assistant/prompt-key "b")]
+             (mapv :key prompts)))))
+
+(t/deftest parse-prompts-only-the-half-width-pipe-separates
+  (let [prompts (assistant/parse-prompts "甲｜乙")]
+    (t/is (= 1 (count prompts)))
+    (t/is (= "甲｜乙" (:description (first prompts))))))
+
+(t/deftest parse-prompts-builds-the-sdk-record-shape
+  (doseq [prompt (assistant/parse-prompts "  a  | b ")]
+    (t/is (= #{:key :trigger-chat :description} (set (keys prompt))))
+    (t/is (false? (:trigger-chat prompt)))))
+
+(t/deftest parse-prompts-separators-only-yield-no-prompts
+  (t/is (= [] (assistant/parse-prompts "|")))
+  (t/is (= [] (assistant/parse-prompts "|||")))
+  (t/is (= [] (assistant/parse-prompts " | | "))))
+
+(t/deftest parse-prompts-drops-leading-and-trailing-separators
+  (t/is (= ["a" "b"]
+           (mapv :description (assistant/parse-prompts "|a|b|")))))
+
+(t/deftest parse-prompts-trims-before-deduping-and-keeps-keys-distinct
+  (let [prompts (assistant/parse-prompts "b | a |  a  | b | c")]
+    (t/is (= ["b" "a" "c"] (mapv :description prompts)))
+    (t/is (apply distinct? (mapv :key prompts)))
+    (t/is (= (mapv assistant/prompt-key ["b" "a" "c"])
+             (mapv :key prompts)))))
+
+(t/deftest parse-prompts-keeps-whitespace-inside-a-piece
+  (t/is (= "优化  布局"
+           (:description (first (assistant/parse-prompts "优化  布局 | b"))))))
+
+(t/deftest parse-prompts-trims-newlines-and-tabs-around-pieces
+  (t/is (= ["a" "b"]
+           (mapv :description (assistant/parse-prompts "a\n|\tb")))))
+
+(t/deftest parse-prompts-rejects-non-string-inputs
+  (t/is (= [] (assistant/parse-prompts #js {})))
+  (t/is (= [] (assistant/parse-prompts true)))
+  (t/is (= [] (assistant/parse-prompts 3.14))))
+
+(t/deftest parse-prompts-keeps-quotes-and-backslashes-verbatim
+  (t/is (= ["帮我\"优化\"这\\个" "检查"]
+           (mapv :description
+                 (assistant/parse-prompts "帮我\"优化\"这\\个 | 检查")))))
+
+(t/deftest prompt-key-is-content-derived
+  (t/is (= (assistant/prompt-key "hello") (assistant/prompt-key "hello")))
+  (t/is (not= (assistant/prompt-key "hello") (assistant/prompt-key "world")))
+  (t/is (re-matches #"prompt-[0-9]+" (assistant/prompt-key "hello")))
+  ;; golden values pin the key format; the CLJS string hash equals the
+  ;; JVM `(hash ...)` of the same content (checked on the JVM too)
+  (t/is (= "prompt-1715862179" (assistant/prompt-key "hello")))
+  ;; (hash "world") is negative (-2116508994): the unsigned conversion
+  ;; is what keeps the key free of a second "-"
+  (t/is (= "prompt-2178458302" (assistant/prompt-key "world"))))
+
+(t/deftest build-init-config-carries-prompts-as-a-js-array
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"
+                 :prompts (assistant/parse-prompts "a | b")}
+                (:hooks (recording-hooks)))
+        prompts (obj/get config "prompts")]
+    (t/is (true? (.hasOwnProperty config "prompts")))
+    (t/is (array? prompts))
+    (t/is (= 2 (alength prompts)))
+    (t/is (true? (.hasOwnProperty (aget prompts 0) "key")))
+    (t/is (true? (.hasOwnProperty (aget prompts 0) "triggerChat")))
+    (t/is (true? (.hasOwnProperty (aget prompts 0) "description")))
+    (t/is (false? (obj/get (aget prompts 0) "triggerChat")))
+    (t/is (false? (obj/get (aget prompts 1) "triggerChat")))
+    (t/is (= "a" (obj/get (aget prompts 0) "description")))
+    (t/is (= "b" (obj/get (aget prompts 1) "description")))
+    (t/is (= (assistant/prompt-key "a") (obj/get (aget prompts 0) "key")))
+    (t/is (= (assistant/prompt-key "b") (obj/get (aget prompts 1) "key")))))
+
+(t/deftest build-init-config-sends-an-empty-prompt-list-when-unset
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"}
+                (:hooks (recording-hooks)))
+        prompts (obj/get config "prompts")]
+    (t/is (true? (.hasOwnProperty config "prompts")))
+    (t/is (array? prompts))
+    (t/is (= 0 (alength prompts)))))
+
+(t/deftest build-init-config-sends-an-empty-prompt-list-when-prompts-is-nil
+  (let [config (assistant/build-init-config
+                {:id-token "tok" :app-name "app"
+                 :agent-id "agent" :skill-name "skill"
+                 :prompts nil}
+                (:hooks (recording-hooks)))
+        prompts (obj/get config "prompts")]
+    (t/is (true? (.hasOwnProperty config "prompts")))
+    (t/is (array? prompts))
+    (t/is (= 0 (alength prompts)))))
+
 (t/deftest build-init-config-overlays-the-local-wiring
   (let [{:keys [events enriched hooks]} (recording-hooks)
         config (assistant/build-init-config

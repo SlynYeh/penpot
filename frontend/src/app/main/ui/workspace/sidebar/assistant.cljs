@@ -370,7 +370,9 @@
                                 :app-name     cf/x-front-app-name
                                 :agent-id     cf/x-front-agent-id
                                 :skill-name   cf/x-front-skill-name
-                                :platform-env cf/x-front-platform-env}
+                                :platform-env cf/x-front-platform-env
+                                :prompts      (assistant/parse-prompts
+                                               cf/x-front-prompts)}
                                {:enrich-message enrich-message
                                 :forward!       forward!})]
                    (-> (adopt-sdk-result (.init sdk config))

@@ -314,6 +314,21 @@
         (when-not (str/blank? value)
           value)))))
 
+(def x-front-prompts
+  "Optional recommended prompts handed to the host AI assistant SDK
+   init config as `prompts`. Configured via `penpotXFrontPrompts` in
+   resources/config.js (docker: `PENPOT_X_FRONT_PROMPTS`) — a single
+   `|` separated string, split further down by
+   `app.util.embed.assistant/parse-prompts`, so the raw trimmed string
+   is kept here. Blank values are normalized to nil, and nil means an
+   empty prompt list is sent (this one never makes the assistant tab
+   fail). Only meaningful together with `penpotXFrontSdk`."
+  (let [value (obj/get global "penpotXFrontPrompts")]
+    (when (string? value)
+      (let [value (str/trim value)]
+        (when-not (str/blank? value)
+          value)))))
+
 (defn parse-beginner-guide-videos
   "Turns `penpotBeginnerGuideVideos` into a {id url} map. Blank or non-string
    values are dropped so a missing URL falls through to the modal placeholder.

@@ -13,7 +13,8 @@
   assistant SDK events (`initialized`, the init callback forwards and
   the `ai:*` SDK events). The channel is emit-only — no handshake, no
   request/response, no inbound listener. The init values the SDK needs
-  are resolved locally (appName/agentId/skillName from the environment
+  are resolved locally (appName/agentId/skillName and the optional
+  prompts from the environment
   configuration, the idToken from the host page's sessionStorage
   EBEE_USER_KEY), and postMessage does not queue messages, so the host
   page must install its message listener before the user opens the
@@ -108,10 +109,44 @@
       (obj/set! envs "DOC_TITLE" doc-title))
     envs))
 
+(defn prompt-key
+  "Builds the stable `key` of a recommended prompt from its content:
+  \"prompt-\" plus the unsigned 32 bit decimal of the CLJS string hash
+  (same unsigned conversion as the wasm color serializer). Content
+  derived so the host SDK can reference a prompt without Penpot
+  assigning global ids. Public so the exact format stays unit-testable."
+  [description]
+  (str "prompt-" (unsigned-bit-shift-right (hash description) 0)))
+
+(defn parse-prompts
+  "Parses the raw `penpotXFrontPrompts` configuration string into the
+  recommended prompt records of the init config: the string is split
+  on the half-width `|` (the only separator — full-width `｜` and
+  newlines are ordinary content), each piece trimmed, empty pieces
+  dropped and repeats deduplicated keeping the first occurrence in
+  order. Every prompt becomes `{:key ... :trigger-chat false
+  :description ...}` where `key` comes from `prompt-key` and
+  `trigger-chat` is always false. nil, non strings and blank strings
+  yield []. Public so the parsing contract stays unit-testable."
+  [source]
+  (if (string? source)
+    (let [pieces  (str/split source #"\|")
+          trimmed (map str/trim pieces)
+          usable  (remove str/blank? trimmed)
+          unique  (distinct usable)]
+      (mapv (fn [description]
+              {:key         (prompt-key description)
+               :trigger-chat false
+               :description description})
+            unique))
+    []))
+
 (defn build-init-config
   "Builds the config object handed to the host SDK `init` method from
   the locally resolved init values — the environment configured
-  app/agent/skill names, the optional platform env and the idToken
+  app/agent/skill names, the optional platform env, the recommended
+  prompts (see `parse-prompts`, always sent, an empty JS array when
+  none are configured) and the idToken
   polled from the host page's sessionStorage — overlaid with the local
   wiring: the callback hooks, the getIdToken/defaultSkillName
   derivatives and the domMount layout. `xPlatformEnv` is optional: when
@@ -123,13 +158,20 @@
   environment variable, not by a generic channel. `load-id-token!` is
   injectable (defaults to `load-id-token`) so the re-reading behavior
   stays unit-testable."
-  [{:keys [id-token app-name agent-id skill-name platform-env]}
+  [{:keys [id-token app-name agent-id skill-name platform-env prompts]}
    {:keys [enrich-message forward! load-id-token!]
     :or {load-id-token! load-id-token}}]
-  (let [config #js {"idToken" id-token
+  (let [prompts-array (into-array
+                       (map (fn [{:keys [key trigger-chat description]}]
+                              #js {"key" key
+                                   "triggerChat" (boolean trigger-chat)
+                                   "description" description})
+                            prompts))
+        config #js {"idToken" id-token
                     "appName" app-name
                     "agentId" agent-id
                     "skillName" skill-name
+                    "prompts" prompts-array
                     "getIdToken" (fn [] (p/resolved (load-id-token!)))
                     "defaultSkillName" skill-name
                     "layoutType" "domMount"

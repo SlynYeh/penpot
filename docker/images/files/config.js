@@ -175,7 +175,8 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
 (function () {
   // AI 助手 SDK init 配置的三个必填字符串(fork 功能): appName / agentId /
   // skillName, 由 X_Assistant.init 消费; skillName 同时作为 SDK 的
-  // defaultSkillName。下方另有一个可选值 penpotXFrontPlatformEnv。
+  // defaultSkillName。下方另有两个可选值 penpotXFrontPlatformEnv /
+  // penpotXFrontPrompts。
   // 仅当 penpotXFrontSdk 非空且处于同源 iframe 嵌入态时才有
   // 意义(助手 tab 还需宿主页面在同源 sessionStorage 写入 EBEE_USER_KEY 提供
   // idToken)。留空(默认)等价未配置, 前端归一为 null 后助手 tab 会立即进入
@@ -191,6 +192,13 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
   // 不传给 SDK(SDK 侧读到 undefined), 不影响助手 tab 启动。
   // Docker 部署: 可用环境变量 PENPOT_X_FRONT_PLATFORM_ENV 配置(规则同上)。
   globalThis.penpotXFrontPlatformEnv = "";
+  // 可选的推荐提示词列表, 作为 init 参数 prompts 传给 SDK; 一个半角 | 分隔的
+  // 字符串, 前端按 | 切分、每段去首尾空白、空白段忽略; 重复的提示词只保留
+  // 第一条(顺序不变)。留空(默认)传空数组, 不影响助手 tab 启动。
+  // 注意: 半角 | 一律是分隔符, 没有转义 — 它出现在哪, 提示词就从那里被切成
+  // 两条(不会报错); 需要竖线字符时请用全角 ｜。
+  // Docker 部署: 可用环境变量 PENPOT_X_FRONT_PROMPTS 配置(值需加引号)。
+  globalThis.penpotXFrontPrompts = "";
 })();
 
 (function () {

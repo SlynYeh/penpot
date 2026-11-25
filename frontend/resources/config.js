@@ -185,6 +185,10 @@ globalThis.penpotAutoUnbindLibraryIds = ["caf3ed7a-ac34-8165-8008-1fb0a074f9a9"]
   // 可选的 xPlatformEnv(平台环境): 不设则该键不传给 SDK(SDK 侧读到 undefined);
   // 对应 docker env PENPOT_X_FRONT_PLATFORM_ENV。本地联调需要时取消下一行注释:
   // globalThis.penpotXFrontPlatformEnv = "dev";
+  // 可选的推荐提示词列表: 半角 | 分隔, 前端切分、去首尾空白、去重;
+  // 留空传空数组, 不影响助手 tab 启动。对应 docker env
+  // PENPOT_X_FRONT_PROMPTS(值需加引号):
+  globalThis.penpotXFrontPrompts = "帮我优化这个画板的间距|检查配色的对比度|为选中的组件生成使用说明";
 })();
 
 (function () {

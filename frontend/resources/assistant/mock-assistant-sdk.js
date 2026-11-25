@@ -239,6 +239,20 @@
     var get = function (key) {
       return config && config[key] != null ? String(config[key]) : "(not set)";
     };
+    var prompts = config && Array.isArray(config.prompts) ? config.prompts : [];
+    var promptsText = "prompts (" + prompts.length + ")";
+    for (var i = 0; i < prompts.length; i++) {
+      var prompt = prompts[i] || {};
+      promptsText +=
+        "\n  " +
+        (i + 1) +
+        ". " +
+        String(prompt.key) +
+        " | triggerChat=" +
+        String(prompt.triggerChat) +
+        " | " +
+        String(prompt.description);
+    }
     summary.appendChild(
       text(
         "appName          : " +
@@ -251,7 +265,9 @@
           get("defaultSkillName") +
           "\n" +
           "xPlatformEnv     : " +
-          get("xPlatformEnv"),
+          get("xPlatformEnv") +
+          "\n" +
+          promptsText,
       ),
     );
     return summary;

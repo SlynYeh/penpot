@@ -11,7 +11,8 @@
    [app.common.data.macros :as dm]
    [app.common.uuid :as uuid]
    [app.config :as cf]
-   [app.main.constants :refer [left-sidebar-default-width]]
+   [app.main.constants :refer [left-sidebar-default-width
+                               right-sidebar-default-width]]
    [app.main.data.event :as ev]
    [app.main.data.workspace :as dw]
    [app.main.data.workspace.colors :as mdc]
@@ -38,17 +39,21 @@
   (l/derived :vport refs/workspace-local))
 
 (defn- calculate-palette-style
-  [rulers?]
+  [rulers? right-sidebar-size]
   (let [left-sidebar           (dom/get-element "left-sidebar-aside")
         left-sidebar-size      (-> (dom/get-data left-sidebar "width")
                                    (d/parse-integer))
         rulers-width           (if rulers? 22 0)
         min-left-sidebar-width left-sidebar-default-width
-        left-padding           4
-        calculate-padding-left (+ rulers-width (or left-sidebar-size min-left-sidebar-width) left-padding 1)]
+        palette-gap            4
+        calculate-padding-left (+ rulers-width (or left-sidebar-size min-left-sidebar-width) palette-gap 1)
+        ;; Both sidebars are user-resizable and the right one also widens on
+        ;; the assistant tab, so the palette's right edge is measured from
+        ;; the DOM instead of using a fixed padding.
+        calculate-padding-right (+ (or right-sidebar-size right-sidebar-default-width) palette-gap)]
 
     #js {"paddingLeft" (dm/str calculate-padding-left "px")
-         "paddingRight" "322px"}))
+         "paddingRight" (dm/str calculate-padding-right "px")}))
 
 (defn default-palette-library
   "Shared library id to pre-select in the 调色盘 colour palette, or nil.
@@ -89,6 +94,9 @@
         rulers?        (mf/deref refs/rulers?)
         vport          (mf/deref ref:viewport)
         vport-width    (get vport :width)
+
+        right-sidebar-size* (mf/use-state nil)
+        right-sidebar-size  (deref right-sidebar-size*)
 
         {:keys [on-pointer-down
                 on-lost-pointer-capture
@@ -192,9 +200,23 @@
             width (obj/get dom "clientWidth")]
         (swap! state* assoc :width width)))
 
+    ;; Track the right sidebar width so the palette never overlaps it: the
+    ;; sidebar is resizable and widens when the assistant tab is selected.
+    (mf/with-layout-effect []
+      (when-let [node (dom/get-element "right-sidebar-aside")]
+        (let [update-size
+              (fn []
+                (let [size (obj/get node "offsetWidth")]
+                  (when (and (some? size) (not= size @right-sidebar-size*))
+                    (reset! right-sidebar-size* size))))
+              observer (js/ResizeObserver. update-size)]
+          (update-size)
+          (.observe observer node)
+          (fn [] (.disconnect observer)))))
+
     [:section {:class (stl/css :palette-wrapper)
                :id "palette-wrapper"
-               :style  (calculate-palette-style rulers?)
+               :style  (calculate-palette-style rulers? right-sidebar-size)
                :aria-label (tr "workspace.toolbar.palette-bar")
                :data-testid "palette"}
      (when-not ^boolean read-only?
